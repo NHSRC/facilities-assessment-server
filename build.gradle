@@ -28,6 +28,7 @@ repositories {
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('joda-time:joda-time')
     runtime('org.postgresql:postgresql')
     runtime('com.h2database:h2:1.4.192')
     runtime('com.zaxxer:HikariCP:2.5.1')
