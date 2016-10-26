@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "district")
@@ -16,6 +18,9 @@ public class District extends AbstractEntity {
     @JoinColumn(name = "state_id")
     @NotNull
     private State state;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "district")
+    private Set<Facility> facilities = new HashSet<>();
 
     public String getName() {
         return name;
@@ -32,4 +37,13 @@ public class District extends AbstractEntity {
     public void setState(State state) {
         this.state = state;
     }
+
+    public Set<Facility> getFacilities() {
+        return facilities;
+    }
+
+    public void setFacilities(Set<Facility> facilities) {
+        this.facilities = facilities;
+    }
+
 }
