@@ -27,6 +27,7 @@ public class StateController {
 
     @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
     public ResponseEntity<State> get(@PathVariable String uuid) {
-        return new ResponseEntity<>(stateRepository.find(UUID.fromString(uuid)), HttpStatus.OK);
+        State state = stateRepository.find(UUID.fromString(uuid));
+        return new ResponseEntity<>(state, HttpStatus.OK);
     }
 }
