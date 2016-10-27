@@ -16,7 +16,7 @@ import java.util.UUID;
 @EntityListeners({AuditingEntityListener.class})
 abstract class AbstractEntity implements Persistable<Long> {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
