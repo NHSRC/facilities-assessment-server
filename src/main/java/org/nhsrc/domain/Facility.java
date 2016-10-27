@@ -22,7 +22,6 @@ public class Facility extends AbstractEntity {
     @JoinColumn(name = "facility_type_id", nullable = false)
     private FacilityType facilityType;
 
-
     public String getName() {
         return name;
     }
