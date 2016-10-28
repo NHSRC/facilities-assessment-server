@@ -9,6 +9,14 @@ CREATE TABLE area_of_concern (
   name               CHARACTER VARYING(255)      NOT NULL
 );
 
+CREATE TABLE assessment_type (
+  id                 SERIAL PRIMARY KEY,
+  created_date       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  last_modified_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  uuid               UUID                        NOT NULL,
+  name               CHARACTER VARYING(255)      NOT NULL
+);
+
 --
 -- Name: checklist; Type: TABLE; Schema: public; 
 --
@@ -18,16 +26,16 @@ CREATE TABLE checklist (
   last_modified_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   uuid               UUID                        NOT NULL,
   name               CHARACTER VARYING(255)      NOT NULL,
-  department_id      BIGINT                      NOT NULL,
-  facility_type_id   BIGINT                      NOT NULL
+  department_id      INT                      NOT NULL,
+  assessment_type_id INT                      NOT NULL
 );
 
 --
 -- Name: checklist_area_of_concern; Type: TABLE; Schema: public; 
 --
 CREATE TABLE checklist_area_of_concern (
-  area_of_concern_id BIGINT NOT NULL,
-  checklist_id       BIGINT NOT NULL
+  area_of_concern_id INT NOT NULL,
+  checklist_id       INT NOT NULL
 );
 
 --
@@ -50,7 +58,7 @@ CREATE TABLE district (
   last_modified_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   uuid               UUID                        NOT NULL,
   name               CHARACTER VARYING(255)      NOT NULL,
-  state_id           BIGINT                      NOT NULL
+  state_id           INT                      NOT NULL
 );
 
 --
@@ -62,8 +70,8 @@ CREATE TABLE facility (
   last_modified_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   uuid               UUID                        NOT NULL,
   name               CHARACTER VARYING(255)      NOT NULL,
-  district_id        BIGINT                      NOT NULL,
-  facility_type_id   BIGINT                      NOT NULL
+  district_id        INT                      NOT NULL,
+  facility_type_id   INT                      NOT NULL
 );
 
 --
@@ -97,7 +105,7 @@ CREATE TABLE state (
   last_modified_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   uuid               UUID                        NOT NULL,
   name               CHARACTER VARYING(255)      NOT NULL,
-  region_id          BIGINT                      NOT NULL
+  region_id          INT                      NOT NULL
 );
 
 ALTER TABLE ONLY department
@@ -238,7 +246,7 @@ ALTER TABLE ONLY checklist
 --
 
 ALTER TABLE ONLY checklist
-  ADD CONSTRAINT fks15er2kj6ieh7a28uwrgye1qs FOREIGN KEY (facility_type_id) REFERENCES facility_type (id);
+  ADD CONSTRAINT fks15er2kj6ieh7a28uwrgye1qs FOREIGN KEY (assessment_type_id) REFERENCES assessment_type (id);
 
 --
 -- Name: fksbu6vuvxcq9hqkrxpcyyad0h1; Type: FK CONSTRAINT; Schema: public; 
@@ -246,3 +254,7 @@ ALTER TABLE ONLY checklist
 
 ALTER TABLE ONLY checklist_area_of_concern
   ADD CONSTRAINT fksbu6vuvxcq9hqkrxpcyyad0h1 FOREIGN KEY (area_of_concern_id) REFERENCES area_of_concern (id);
+
+
+ALTER TABLE ONLY assessment_type
+  ADD CONSTRAINT uk_1t68827l97cwyxo9r1u6t4p7m UNIQUE (name);

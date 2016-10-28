@@ -14,14 +14,14 @@ import java.util.UUID;
 
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
-abstract class AbstractEntity implements Persistable<Long> {
+abstract class AbstractEntity implements Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
+    private Integer id;
 
     @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "uuid", updatable = false, unique = true, nullable = false)
     private UUID uuid;
 
@@ -43,11 +43,11 @@ abstract class AbstractEntity implements Persistable<Long> {
     }
 
     @Override
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

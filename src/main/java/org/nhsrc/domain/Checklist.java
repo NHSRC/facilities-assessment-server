@@ -1,5 +1,7 @@
 package org.nhsrc.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -11,10 +13,11 @@ public class Checklist extends AbstractEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @OneToOne(targetEntity = FacilityType.class, fetch = FetchType.EAGER, cascade = {CascadeType.DETACH})
-    @JoinColumn(name = "facility_type_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne(targetEntity = AssessmentType.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @JoinColumn(name = "assessment_type_id")
     @NotNull
-    private FacilityType facilityType;
+    private AssessmentType assessmentType;
 
     @OneToOne
     @JoinColumn(name = "department_id")
@@ -33,12 +36,12 @@ public class Checklist extends AbstractEntity {
         this.name = name;
     }
 
-    public FacilityType getFacilityType() {
-        return facilityType;
+    public AssessmentType getAssessmentType() {
+        return assessmentType;
     }
 
-    public void setFacilityType(FacilityType facilityType) {
-        this.facilityType = facilityType;
+    public void setAssessmentType(AssessmentType assessmentType) {
+        this.assessmentType = assessmentType;
     }
 
     public Department getDepartment() {
