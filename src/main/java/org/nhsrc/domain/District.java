@@ -13,14 +13,14 @@ public class District extends AbstractEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "district")
+    private Set<Facility> facilities = new HashSet<>();
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "state_id")
     @NotNull
     private State state;
-
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "district")
-    private Set<Facility> facilities = new HashSet<>();
 
     public String getName() {
         return name;
