@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Repository
-@RepositoryRestResource(collectionResourceRel = "facilityType", path = "facilityType")
+@RepositoryRestResource(collectionResourceRel = "facilitytype", path = "facilitytype")
 @Transactional
 public interface FacilityTypeRepository extends BaseRepository<FacilityType> {
     @Query(value = "SELECT entity FROM FacilityType entity WHERE entity.uuid=?1")
