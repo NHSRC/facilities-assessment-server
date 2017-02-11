@@ -1,17 +1,16 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.State;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.util.Date;
 
 @Repository
-@RepositoryRestResource(collectionResourceRel = "state", path = "state")
 @Transactional
 public interface StateRepository extends BaseRepository<State> {
-    @Query(value = "SELECT entity FROM State entity WHERE entity.uuid=?1")
-    State find(UUID uuid);
+    Page<State> findByLastModifiedDateGreaterThanOrderById(@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss") Date lastModifiedDateTime, Pageable pageable);
 }

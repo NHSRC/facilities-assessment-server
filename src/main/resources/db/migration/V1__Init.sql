@@ -1,20 +1,11 @@
 SET TIME ZONE 'Asia/Calcutta';
 
-CREATE TABLE region (
-  id                 SERIAL PRIMARY KEY,
-  created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  uuid               UUID DEFAULT uuid_generate_v4() UNIQUE                  NOT NULL,
-  name               CHARACTER VARYING(255) UNIQUE                           NOT NULL
-);
-
 CREATE TABLE state (
   id                 SERIAL PRIMARY KEY,
   created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
   last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
   uuid               UUID DEFAULT uuid_generate_v4() UNIQUE                  NOT NULL,
-  name               CHARACTER VARYING(255) UNIQUE                           NOT NULL,
-  region_id          INT REFERENCES region (id)                              NOT NULL
+  name               CHARACTER VARYING(255) UNIQUE                           NOT NULL
 );
 
 CREATE TABLE district (
@@ -106,90 +97,51 @@ CREATE TABLE measurable_element (
 
 CREATE TABLE checkpoint (
   id                    SERIAL PRIMARY KEY,
-  created_date          TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  last_modified_date    TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  uuid                  UUID DEFAULT uuid_generate_v4() UNIQUE                  NOT NULL,
-  name                  CHARACTER VARYING(255)                                  NOT NULL,
+  created_date          TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              NOT NULL,
+  last_modified_date    TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             NOT NULL,
+  uuid                  UUID    DEFAULT uuid_generate_v4() UNIQUE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             NOT NULL,
+  name                  CHARACTER VARYING(255) NOT NULL,
   means_of_verification CHARACTER VARYING(1023),
-  measurable_element_id INT REFERENCES measurable_element (id)                  NOT NULL,
-  checklist_id          INT REFERENCES checklist (id)                           NOT NULL,
-  is_default            BOOLEAN DEFAULT TRUE                                    NOT NULL,
-  state_id              INT  DEFAULT NULL REFERENCES state (id)
+  measurable_element_id INT REFERENCES measurable_element (id)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             NOT NULL,
+  checklist_id          INT REFERENCES checklist (id)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      NOT NULL,
+  is_default            BOOLEAN DEFAULT TRUE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               NOT NULL,
+  state_id              INT     DEFAULT NULL REFERENCES state (id),
+  am_observation        BOOLEAN DEFAULT FALSE,
+  am_staff_interview    BOOLEAN DEFAULT FALSE,
+  am_patient_interview  BOOLEAN DEFAULT FALSE,
+  am_record_review      BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE assessment (
+CREATE TABLE facility_assessment (
   id                 SERIAL PRIMARY KEY,
-  created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  facility_id        INT REFERENCES facility (id)                            NOT NULL,
-  checklist_id       INT REFERENCES checklist (id)                           NOT NULL,
-  start_date         TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
+  uuid               UUID DEFAULT uuid_generate_v4() UNIQUE                                NOT NULL,
+  created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                NOT NULL,
+  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                NOT NULL,
+  facility_id        INT REFERENCES facility (id)                                          NOT NULL,
+  start_date         TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                NOT NULL,
   end_date           TIMESTAMP WITHOUT TIME ZONE,
   CHECK (end_date :: TIMESTAMP >= start_date :: TIMESTAMP)
 );
 
 
+CREATE TABLE checklist_assessment (
+  id                     SERIAL PRIMARY KEY,
+  uuid                   UUID DEFAULT uuid_generate_v4() UNIQUE                                    NOT NULL,
+  created_date           TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                    NOT NULL,
+  last_modified_date     TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                    NOT NULL,
+  facility_assessment_id INT REFERENCES facility_assessment (id)                                   NOT NULL,
+  checklist_id           INT REFERENCES checklist (id)                                             NOT NULL
+);
+
+
 CREATE TABLE checkpoint_score (
-  id                    SERIAL PRIMARY KEY,
-  created_date          TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  last_modified_date    TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  assessment_id         INT REFERENCES assessment (id)                          NOT NULL,
-  facility_id           INT REFERENCES facility (id)                            NOT NULL,
-  checkpoint_id         INT REFERENCES checkpoint (id)                          NOT NULL,
-  score                 INT CHECK (score >= 0 AND score <= 2)                   NOT NULL,
-  remarks               TEXT,
-  mov_observation       BOOLEAN DEFAULT FALSE,
-  mov_staff_interview   BOOLEAN DEFAULT FALSE,
-  mov_patient_interview BOOLEAN DEFAULT FALSE,
-  mov_record_review     BOOLEAN DEFAULT FALSE
-);
-
-CREATE TABLE measurable_element_score (
-  id                    SERIAL PRIMARY KEY,
-  created_date          TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  last_modified_date    TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  assessment_id         INT REFERENCES assessment (id)                          NOT NULL,
-  facility_id           INT REFERENCES facility (id)                            NOT NULL,
-  measurable_element_id INT REFERENCES measurable_element (id)                  NOT NULL,
-  score                 INT                                                     NOT NULL
-);
-
-
-CREATE TABLE standard_score (
-  id                 SERIAL PRIMARY KEY,
-  created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  assessment_id      INT REFERENCES assessment (id)                          NOT NULL,
-  facility_id        INT REFERENCES facility (id)                            NOT NULL,
-  standard_id        INT REFERENCES standard (id)                            NOT NULL,
-  score              INT                                                     NOT NULL
-);
-
-CREATE TABLE area_of_concern_score (
-  id                 SERIAL PRIMARY KEY,
-  created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  assessment_id      INT REFERENCES assessment (id)                          NOT NULL,
-  facility_id        INT REFERENCES facility (id)                            NOT NULL,
-  area_of_concern_id INT REFERENCES area_of_concern (id)                     NOT NULL,
-  score              INT                                                     NOT NULL
-);
-
-CREATE TABLE checklist_score (
-  id                 SERIAL PRIMARY KEY,
-  created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  assessment_id      INT REFERENCES assessment (id)                          NOT NULL,
-  facility_id        INT REFERENCES facility (id)                            NOT NULL,
-  checklist_id       INT REFERENCES checklist (id)                           NOT NULL,
-  score              INT                                                     NOT NULL
-);
-
-CREATE TABLE facility_score (
-  id                 SERIAL PRIMARY KEY,
-  created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
-  assessment_id      INT REFERENCES assessment (id)                          NOT NULL,
-  facility_id        INT REFERENCES facility (id)                            NOT NULL,
-  score              INT                                                     NOT NULL
+  id                      SERIAL PRIMARY KEY,
+  uuid                    UUID DEFAULT uuid_generate_v4() UNIQUE                                               NOT NULL,
+  created_date            TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                               NOT NULL,
+  last_modified_date      TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                               NOT NULL,
+  checklist_assessment_id INT REFERENCES checklist_assessment (id)                                             NOT NULL,
+  checkpoint_id           INT REFERENCES checkpoint (id)                                                       NOT NULL,
+  checklist_id            INT REFERENCES checklist (id)                                                        NOT NULL,
+  score                   INT CHECK (score >= 0 AND score <= 2)                                                NOT NULL,
+  remarks                 TEXT
 );

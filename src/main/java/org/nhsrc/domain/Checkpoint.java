@@ -11,6 +11,9 @@ public class Checkpoint extends AbstractEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
+    @Column(name = "means_of_verification", unique = true, nullable = false, length = 1023)
+    private String meansOfVerification;
+
     @Column(name = "reference", unique = true, nullable = false)
     private String reference;
 
@@ -25,6 +28,27 @@ public class Checkpoint extends AbstractEntity {
     @JoinColumn(name = "checklist_id")
     @NotNull
     private Checklist checklist;
+
+    @Column(name = "is_default")
+    @NotNull
+    private Boolean isDefault = true;
+
+    @Column(name = "am_observation")
+    @NotNull
+    private Boolean assessmentMethodObservation = false;
+
+    @Column(name = "am_staff_interview")
+    @NotNull
+    private Boolean assessmentMethodStaffInterview = false;
+
+    @Column(name = "am_patient_interview")
+    @NotNull
+    private Boolean assessmentMethodPatientInterview = false;
+
+    @Column(name = "am_record_review")
+    @NotNull
+    private Boolean assessmentMethodRecordReview = false;
+
 
     public String getName() {
         return name;
@@ -56,5 +80,53 @@ public class Checkpoint extends AbstractEntity {
 
     public void setMeasurableElement(MeasurableElement measurableElement) {
         this.measurableElement = measurableElement;
+    }
+
+    public String getMeansOfVerification() {
+        return meansOfVerification;
+    }
+
+    public void setMeansOfVerification(String meansOfVerification) {
+        this.meansOfVerification = meansOfVerification;
+    }
+
+    public Boolean getDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(Boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    public Boolean getAssessmentMethodObservation() {
+        return assessmentMethodObservation;
+    }
+
+    public void setAssessmentMethodObservation(Boolean assessmentMethodObservation) {
+        this.assessmentMethodObservation = assessmentMethodObservation;
+    }
+
+    public Boolean getAssessmentMethodStaffInterview() {
+        return assessmentMethodStaffInterview;
+    }
+
+    public void setAssessmentMethodStaffInterview(Boolean assessmentMethodStaffInterview) {
+        this.assessmentMethodStaffInterview = assessmentMethodStaffInterview;
+    }
+
+    public Boolean getAssessmentMethodPatientInterview() {
+        return assessmentMethodPatientInterview;
+    }
+
+    public void setAssessmentMethodPatientInterview(Boolean assessmentMethodPatientInterview) {
+        this.assessmentMethodPatientInterview = assessmentMethodPatientInterview;
+    }
+
+    public Boolean getAssessmentMethodRecordReview() {
+        return assessmentMethodRecordReview;
+    }
+
+    public void setAssessmentMethodRecordReview(Boolean assessmentMethodRecordReview) {
+        this.assessmentMethodRecordReview = assessmentMethodRecordReview;
     }
 }
