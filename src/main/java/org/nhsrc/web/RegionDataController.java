@@ -16,17 +16,26 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
+
 @RestController
 @RequestMapping("/api")
 public class RegionDataController {
-    @Autowired
-    private StateRepository stateRepository;
 
-    @RequestMapping(value = "/states", method = RequestMethod.GET)
+    private final StateRepository stateRepository;
+    private final PageRequest page;
+
+
+    @Autowired
+    public RegionDataController(StateRepository stateRepository) {
+        this.stateRepository = stateRepository;
+        page = new PageRequest(0, Math.max(1, Math.toIntExact(this.stateRepository.count())));
+    }
+
+    @RequestMapping(value = "/regionData", method = RequestMethod.GET)
     public ResponseEntity<Set<State>> getModifiedEntities(
-            @RequestParam("lastSyncedDate")
-            @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss") Date lastSyncedDate) {
-        PageRequest page = new PageRequest(0, 10);
+            @RequestParam(value = "lastSyncedDate", required = false, defaultValue = "01-01-1000 00:00:00")
+            @DateTimeFormat(pattern = DATE_TIME_FORMAT_STRING) Date lastSyncedDate) {
         HashSet<State> states = new HashSet<>(
                 stateRepository.findByLastModifiedDateGreaterThanOrderById(lastSyncedDate, page).getContent());
         return new ResponseEntity<Set<State>>(states, HttpStatus.OK);

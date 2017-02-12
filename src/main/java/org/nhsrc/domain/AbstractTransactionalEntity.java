@@ -30,6 +30,8 @@ abstract class AbstractTransactionalEntity implements Persistable<Integer> {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private java.util.Date lastModifiedDate;
 
+    @Column(name = "inactive", nullable = false)
+    private Boolean inactive = false;
 
     @Override
     public Integer getId() {
@@ -56,6 +58,13 @@ abstract class AbstractTransactionalEntity implements Persistable<Integer> {
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    public Boolean getInactive() {
+        return inactive;
+    }
+
+    public void setInactive(Boolean inactive) {
+        this.inactive = inactive;
+    }
 
     @JsonIgnore
     public boolean isNew() {

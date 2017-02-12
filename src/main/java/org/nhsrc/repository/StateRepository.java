@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
+import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
+
 @Repository
 @Transactional
 public interface StateRepository extends BaseRepository<State> {
-    Page<State> findByLastModifiedDateGreaterThanOrderById(@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss") Date lastModifiedDateTime, Pageable pageable);
+    Page<State> findByLastModifiedDateGreaterThanOrderById(@DateTimeFormat(pattern = DATE_TIME_FORMAT_STRING) Date lastModifiedDateTime, Pageable pageable);
 }
