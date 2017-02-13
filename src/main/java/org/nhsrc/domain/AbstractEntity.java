@@ -18,10 +18,12 @@ abstract class AbstractEntity extends AbstractTransactionalEntity {
     private UUID uuid;
 
 
+    @Column(name = "inactive", nullable = false)
+    private Boolean inactive = false;
+
     AbstractEntity() {
         this.uuid = UUID.randomUUID();
     }
-
 
     public UUID getUuid() {
         return uuid;
@@ -30,5 +32,14 @@ abstract class AbstractEntity extends AbstractTransactionalEntity {
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
+
+    public Boolean getInactive() {
+        return inactive;
+    }
+
+    public void setInactive(Boolean inactive) {
+        this.inactive = inactive;
+    }
+
 }
 
