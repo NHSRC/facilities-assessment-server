@@ -57,6 +57,16 @@ CREATE TABLE assessment_type (
   name               CHARACTER VARYING(255) UNIQUE                           NOT NULL
 );
 
+CREATE TABLE assessment_tool (
+  id                 SERIAL PRIMARY KEY,
+  created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
+  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
+  uuid               UUID DEFAULT uuid_generate_v4() UNIQUE                  NOT NULL,
+  inactive           BOOLEAN DEFAULT FALSE                                   NOT NULL,
+  name               CHARACTER VARYING(255) UNIQUE                           NOT NULL
+);
+
+
 CREATE TABLE checklist (
   id                 SERIAL PRIMARY KEY,
   created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP  NOT NULL,
@@ -65,7 +75,7 @@ CREATE TABLE checklist (
   inactive           BOOLEAN DEFAULT FALSE                                   NOT NULL,
   name               CHARACTER VARYING(255) UNIQUE                           NOT NULL,
   department_id      INT REFERENCES department (id)                          NOT NULL,
-  assessment_type_id INT REFERENCES assessment_type (id)                     NOT NULL
+  assessment_tool_id INT REFERENCES assessment_tool (id)                     NOT NULL
 );
 
 CREATE TABLE area_of_concern (

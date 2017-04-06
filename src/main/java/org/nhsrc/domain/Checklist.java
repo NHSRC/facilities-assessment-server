@@ -14,10 +14,10 @@ public class Checklist extends AbstractEntity {
     private String name;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = AssessmentType.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
-    @JoinColumn(name = "assessment_type_id")
+    @ManyToOne(targetEntity = AssessmentTool.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @JoinColumn(name = "assessment_tool_id")
     @NotNull
-    private AssessmentType assessmentType;
+    private AssessmentTool assessmentTool;
 
     @OneToOne
     @JoinColumn(name = "department_id")
@@ -39,12 +39,12 @@ public class Checklist extends AbstractEntity {
         this.name = name;
     }
 
-    public AssessmentType getAssessmentType() {
-        return assessmentType;
+    public AssessmentTool getAssessmentTool() {
+        return assessmentTool;
     }
 
-    public void setAssessmentType(AssessmentType assessmentType) {
-        this.assessmentType = assessmentType;
+    public void setAssessmentTool(AssessmentTool assessmentTool) {
+        this.assessmentTool = assessmentTool;
     }
 
     public Department getDepartment() {
