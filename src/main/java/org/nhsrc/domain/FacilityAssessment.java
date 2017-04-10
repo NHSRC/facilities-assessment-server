@@ -1,26 +1,27 @@
 package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 @Entity
+@DynamicUpdate
+@SelectBeforeUpdate
 @Table(name = "facility_assessment")
-public class FacilityAssessment extends AbstractTransactionalEntity {
-
-    @Column(name = "uuid", updatable = false, unique = true)
-    @NotNull
-    private UUID uuid;
-
-    @OneToOne
+public class FacilityAssessment extends AbstractScoreEntity {
+    @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "facility_id")
     @NotNull
     private Facility facility;
+
+    @OneToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "assessment_tool_id")
+    @NotNull
+    private AssessmentTool assessmentTool;
 
     @Column(name = "start_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -31,10 +32,6 @@ public class FacilityAssessment extends AbstractTransactionalEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private java.util.Date endDate;
-
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "facilityAssessment")
-    private Set<ChecklistAssessment> checklistAssessments = new HashSet<>();
-
 
     public Facility getFacility() {
         return facility;
@@ -60,19 +57,11 @@ public class FacilityAssessment extends AbstractTransactionalEntity {
         this.endDate = endDate;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public AssessmentTool getAssessmentTool() {
+        return assessmentTool;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    public Set<ChecklistAssessment> getChecklistAssessments() {
-        return checklistAssessments;
-    }
-
-    public void setChecklistAssessments(Set<ChecklistAssessment> checklistAssessments) {
-        this.checklistAssessments = checklistAssessments;
+    public void setAssessmentTool(AssessmentTool assessmentTool) {
+        this.assessmentTool = assessmentTool;
     }
 }

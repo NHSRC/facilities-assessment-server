@@ -25,10 +25,6 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    dev
-}
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
@@ -38,7 +34,7 @@ dependencies {
     runtime('org.postgresql:postgresql')
     runtime('com.h2database:h2:1.4.192')
     runtime('com.zaxxer:HikariCP:2.5.1')
-    dev("org.springframework.boot:spring-boot-devtools")
+    compile("org.springframework.boot:spring-boot-devtools")
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 

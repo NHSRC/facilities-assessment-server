@@ -139,19 +139,10 @@ CREATE TABLE facility_assessment (
   created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                      NOT NULL,
   last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                NOT NULL,
   facility_id        INT REFERENCES facility (id)                                          NOT NULL,
+  assessment_tool_id INT REFERENCES assessment_tool (id)                                   NOT NULL,
   start_date         TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                NOT NULL,
   end_date           TIMESTAMP WITHOUT TIME ZONE,
   CHECK (end_date :: TIMESTAMP >= start_date :: TIMESTAMP)
-);
-
-
-CREATE TABLE checklist_assessment (
-  id                     SERIAL PRIMARY KEY,
-  uuid UUID DEFAULT uuid_generate_v4() UNIQUE                                                      NOT NULL,
-  created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                              NOT NULL,
-  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                        NOT NULL,
-  facility_assessment_id INT REFERENCES facility_assessment (id)                                   NOT NULL,
-  checklist_id           INT REFERENCES checklist (id)                                             NOT NULL
 );
 
 
@@ -160,7 +151,7 @@ CREATE TABLE checkpoint_score (
   uuid UUID DEFAULT uuid_generate_v4() UNIQUE                                                                  NOT NULL,
   created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                                          NOT NULL,
   last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP                                    NOT NULL,
-  checklist_assessment_id INT REFERENCES checklist_assessment (id)                                             NOT NULL,
+  facility_assessment_id  INT REFERENCES facility_assessment (id)                                             NOT NULL,
   checkpoint_id           INT REFERENCES checkpoint (id)                                                       NOT NULL,
   checklist_id            INT REFERENCES checklist (id)                                                        NOT NULL,
   score                   INT CHECK (score >= 0 AND score <= 2)                                                NOT NULL,

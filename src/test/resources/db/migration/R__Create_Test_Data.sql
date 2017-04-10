@@ -6,6 +6,7 @@ DECLARE   state_id                 BIGINT;
   DECLARE community_hospital_id    BIGINT;
   DECLARE primary_health_center_id BIGINT;
   DECLARE facility_id              BIGINT;
+  DECLARE assessment_tool_id              BIGINT;
 BEGIN
   district_hospital_id = create_facility_type('District Hospital');
   community_hospital_id = create_facility_type('Community Hospital');
@@ -39,6 +40,8 @@ BEGIN
   state_id = create_state('Andhra Pradesh');
   district_id = create_district('Hyderabad', state_id);
   facility_id = create_facility('Good Medicare Hospital', district_id, district_hospital_id);
+  assessment_tool_id = create_assessment_tool('District Hospital (DH)');
+  assessment_tool_id = create_assessment_tool('Primary Health Center (PHC)');
   RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;

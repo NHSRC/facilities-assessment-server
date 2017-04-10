@@ -13,11 +13,7 @@ init-db:
 	-psql postgres -c 'create database facilities_assessment with owner nhsrc';
 
 seed-db:
-
-	-psql -Unhsrc facilities_assessment < '${CURDIR}/src/test/resources/db/migration/R__Create_Test_Data.sql'
-	-psql -Unhsrc facilities_assessment < '${CURDIR}/src/test/resources/db/migration/R__Delete_Test_Data.sql'
-	-psql -Unhsrc facilities_assessment < src/test/resources/setup.sql
-
+	-psql -Unhsrc facilities_assessment < seed.sql
 
 run:
 	./gradlew bootRun

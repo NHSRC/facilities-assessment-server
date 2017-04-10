@@ -8,15 +8,22 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.util.UUID;
+
 
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
-public abstract class AbstractTransactionalEntity implements Persistable<Integer> {
-    @Id
+public abstract class AbstractScoreEntity implements Persistable<UUID> {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, insertable = false, nullable = false, columnDefinition = "serial")
     private Integer id;
+
+    @Id
+    @Column(name = "uuid", updatable = false, unique = true)
+    @NotNull
+    private UUID uuid;
 
     @CreatedDate
     @Column(name = "created_date", updatable = false, nullable = false)
@@ -30,13 +37,13 @@ public abstract class AbstractTransactionalEntity implements Persistable<Integer
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private java.util.Date lastModifiedDate;
 
-    @Override
-    public Integer getId() {
-        return id;
+    public void setId(UUID uuid) {
+        this.uuid = uuid;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    @Override
+    public UUID getId() {
+        return uuid;
     }
 
     public java.util.Date getCreatedDate() {
@@ -55,33 +62,25 @@ public abstract class AbstractTransactionalEntity implements Persistable<Integer
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setCreatedDate(java.util.Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public void setLastModifiedDate(java.util.Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     @JsonIgnore
     public boolean isNew() {
-        return this.id == null;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (this == obj) {
-            return true;
-        }
-
-        if (!getClass().equals(obj.getClass())) {
-            return false;
-        }
-
-        AbstractEntity rhs = (AbstractEntity) obj;
-        return this.id != null && (this.id.equals(rhs.getId()));
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
+        return this.uuid == null;
     }
 }
 

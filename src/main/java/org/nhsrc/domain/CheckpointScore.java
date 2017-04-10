@@ -6,21 +6,16 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 @Entity
 @Table(name = "checkpoint_score")
-public class CheckpointScore extends AbstractTransactionalEntity {
-
-    @Column(name = "uuid", updatable = false, unique = true)
-    @NotNull
-    private UUID uuid;
+public class CheckpointScore extends AbstractScoreEntity {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = ChecklistAssessment.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
-    @JoinColumn(name = "checklist_assessment_id")
+    @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @JoinColumn(name = "facility_assessment_id")
     @NotNull
-    private ChecklistAssessment checklistAssessment;
+    private FacilityAssessment facilityAssessment;
 
     @OneToOne
     @JoinColumn(name = "checklist_id")
@@ -41,20 +36,12 @@ public class CheckpointScore extends AbstractTransactionalEntity {
     @Column(name = "remarks")
     private String remarks;
 
-    public UUID getUuid() {
-        return uuid;
+    public FacilityAssessment getFacilityAssessment() {
+        return facilityAssessment;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    public ChecklistAssessment getChecklistAssessment() {
-        return checklistAssessment;
-    }
-
-    public void setChecklistAssessment(ChecklistAssessment checklistAssessment) {
-        this.checklistAssessment = checklistAssessment;
+    public void setFacilityAssessment(FacilityAssessment facilityAssessment) {
+        this.facilityAssessment = facilityAssessment;
     }
 
     public Checklist getChecklist() {
