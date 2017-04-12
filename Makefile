@@ -2,6 +2,8 @@ reset-db:
 	-psql postgres -c 'drop database facilities_assessment';
 	-psql postgres -c 'create database facilities_assessment with owner nhsrc';
 	-psql facilities_assessment -c 'create extension if not exists "uuid-ossp"';
+	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment -schemas=public clean
+	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
 
 reset-test-db:
 	-psql postgres -c 'drop database facilities_assessment_test';
@@ -13,7 +15,9 @@ init-db:
 	-psql postgres -c 'create database facilities_assessment with owner nhsrc';
 
 seed-db:
-	-psql -Unhsrc facilities_assessment < seed.sql
+	-psql -Unhsrc facilities_assessment < src/test/resources/db/migration/R__Create_Test_Data.sql
+	-psql -Unhsrc facilities_assessment < src/test/resources/db/migration/R__Delete_Test_Data.sql
+	-psql -Unhsrc facilities_assessment < src/test/resources/setup.sql
 
 run:
 	./gradlew bootRun

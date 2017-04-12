@@ -14,9 +14,6 @@ public class Checkpoint extends AbstractEntity {
     @Column(name = "means_of_verification", unique = true, nullable = false, length = 1023)
     private String meansOfVerification;
 
-    @Column(name = "reference", unique = true, nullable = false)
-    private String reference;
-
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = MeasurableElement.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "measurable_element_id")
@@ -56,14 +53,6 @@ public class Checkpoint extends AbstractEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
     }
 
     public MeasurableElement getMeasurableElement() {

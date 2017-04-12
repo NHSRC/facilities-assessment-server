@@ -28,7 +28,7 @@ public class Checklist extends AbstractEntity {
     @JoinTable(name = "checklist_area_of_concern", inverseJoinColumns = @JoinColumn(name = "area_of_concern_id", referencedColumnName = "id"), joinColumns = @JoinColumn(name = "checklist_id", referencedColumnName = "id"))
     private Set<AreaOfConcern> areasOfConcern = new HashSet<>();
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "checklist")
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "checklist")
     private Set<Checkpoint> checkpoints = new HashSet<>();
 
     public String getName() {
