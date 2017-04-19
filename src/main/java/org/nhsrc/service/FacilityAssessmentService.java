@@ -24,6 +24,7 @@ public class FacilityAssessmentService {
     private final ChecklistRepository checklistRepository;
     private final CheckpointScoreRepository checkpointScoreRepository;
     private final CheckpointRepository checkpointRepository;
+    private final AssessmentMatchingService assessmentMatchingService;
 
     @Autowired
     public FacilityAssessmentService(FacilityRepository facilityRepository,
@@ -31,19 +32,22 @@ public class FacilityAssessmentService {
                                      FacilityAssessmentRepository facilityAssessmentRepository,
                                      ChecklistRepository checklistRepository,
                                      CheckpointScoreRepository checkpointScoreRepository,
-                                     CheckpointRepository checkpointRepository) {
+                                     CheckpointRepository checkpointRepository,
+                                     AssessmentMatchingService assessmentMatchingService) {
         this.facilityRepository = facilityRepository;
         this.assessmentToolRepository = assessmentToolRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
         this.checklistRepository = checklistRepository;
         this.checkpointScoreRepository = checkpointScoreRepository;
         this.checkpointRepository = checkpointRepository;
+        this.assessmentMatchingService = assessmentMatchingService;
     }
 
     public FacilityAssessment save(FacilityAssessmentDTO facilityAssessmentDTO) {
         Facility facility = facilityRepository.findByUuid(facilityAssessmentDTO.getFacility());
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
         FacilityAssessment facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool);
+        FacilityAssessment matchingAssessment = this.assessmentMatchingService.findMatching(facilityAssessment);
         return facilityAssessmentRepository.save(facilityAssessment);
     }
 
