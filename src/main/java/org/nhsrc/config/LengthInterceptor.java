@@ -13,14 +13,12 @@ public class LengthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         this.startTime = System.currentTimeMillis();
         long length = request.getContentLength();
-        System.out.println(length);
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         long l = System.currentTimeMillis() - startTime;
-        System.out.println(l);
     }
 
     @Override
