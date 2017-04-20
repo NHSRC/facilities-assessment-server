@@ -48,7 +48,7 @@ public class FacilityAssessmentService {
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
         FacilityAssessment facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool);
         FacilityAssessment matchingAssessment = this.assessmentMatchingService.findMatching(facilityAssessment);
-        return facilityAssessmentRepository.save(facilityAssessment);
+        return facilityAssessmentRepository.save(matchingAssessment);
     }
 
     public List<CheckpointScore> saveChecklist(ChecklistDTO checklistDTO) {
