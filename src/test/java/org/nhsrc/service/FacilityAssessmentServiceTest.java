@@ -61,6 +61,7 @@ public class FacilityAssessmentServiceTest extends AbstractWebIntegrationTest {
                 .build();
         FacilityAssessment savedAssessment2 = facilityAssessmentService.save(facilityAssessmentDTO2);
         assertEquals(savedAssessment1.getUuid(), savedAssessment2.getUuid());
+        assertEquals(uuid1, savedAssessment2.getUuid().toString());
         long count = facilityAssessmentRepository.count();
         assertEquals(1L, (count - prevCount));
     }
