@@ -65,4 +65,26 @@ public class FacilityAssessmentServiceTest extends AbstractWebIntegrationTest {
         long count = facilityAssessmentRepository.count();
         assertEquals(1L, (count - prevCount));
     }
+
+    @Test
+    public void positiveMatchTestImmediateCreation() throws Exception {
+        long prevCount = facilityAssessmentRepository.count();
+        String uuid1 = "cadeb162-dcaa-4891-b9e8-0b6073ae9666";
+        String uuid2 = "5e7b0828-9335-4a16-877f-5eba875ca477";
+        FacilityAssessmentDTO facilityAssessmentDTO1 = facilityAssessmentDTOBuilder
+                .withUUID(uuid1)
+                .asDistrictHospital()
+                .build();
+        FacilityAssessment savedAssessment1 = facilityAssessmentService.save(facilityAssessmentDTO1);
+        FacilityAssessmentDTO facilityAssessmentDTO2 = facilityAssessmentDTOBuilder
+                .withUUID(uuid2)
+                .asDistrictHospital()
+                .withStartDate(new Date())
+                .build();
+        FacilityAssessment savedAssessment2 = facilityAssessmentService.save(facilityAssessmentDTO2);
+        assertEquals(savedAssessment1.getUuid(), savedAssessment2.getUuid());
+        assertEquals(uuid1, savedAssessment2.getUuid().toString());
+        long count = facilityAssessmentRepository.count();
+        assertEquals(1L, (count - prevCount));
+    }
 }
