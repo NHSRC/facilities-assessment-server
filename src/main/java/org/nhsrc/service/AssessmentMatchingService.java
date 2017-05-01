@@ -26,7 +26,13 @@ public class AssessmentMatchingService {
         calendar.setTime(startDate);
         calendar.add(Calendar.DATE, -2);
         Date dateAfter = calendar.getTime();
-        FacilityAssessment matchingAssessment = this.facilityAssessmentRepository.findByFacilityAndAssessmentToolAndStartDateBeforeAndStartDateAfter(facilityAssessment.getFacility(), facilityAssessment.getAssessmentTool(), dateBefore, dateAfter);
+        FacilityAssessment matchingAssessment =
+                this.facilityAssessmentRepository
+                        .findByFacilityAndAssessmentToolAndStartDateBeforeAndStartDateAfter(
+                                facilityAssessment.getFacility(),
+                                facilityAssessment.getAssessmentTool(),
+                                dateBefore,
+                                dateAfter);
         return matchingAssessment == null ? facilityAssessment : matchingAssessment;
     }
 }
