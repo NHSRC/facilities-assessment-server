@@ -1,6 +1,7 @@
 package org.nhsrc.repository;
 
-import org.nhsrc.domain.AssessmentTool;
+import org.nhsrc.domain.District;
+import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -15,8 +16,8 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 
 @Repository
 @Transactional
-@RepositoryRestResource(collectionResourceRel = "assessmentTool", path = "assessmentTool")
-public interface AssessmentToolRepository extends BaseRepository<AssessmentTool> {
+@RepositoryRestResource(collectionResourceRel = "district", path = "district")
+public interface DistrictRepository extends BaseRepository<District> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<AssessmentTool> findByLastModifiedDateGreaterThanOrderById(@DateTimeFormat(pattern = DATE_TIME_FORMAT_STRING) Date lastModifiedDateTime, Pageable pageable);
+    Page<District> findByLastModifiedDateGreaterThanOrderById(@DateTimeFormat(pattern = DATE_TIME_FORMAT_STRING) Date lastModifiedDateTime, Pageable pageable);
 }
