@@ -1,7 +1,7 @@
-package org.nhsrc.repository;
+package org.nhsrc.repository.tag;
 
-import org.nhsrc.domain.Facility;
-import org.nhsrc.domain.tag.StandardTag;
+import org.nhsrc.domain.tag.MeasurableElementTag;
+import org.nhsrc.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -16,8 +16,8 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 
 @Repository
 @Transactional
-@RepositoryRestResource(collectionResourceRel = "facility", path = "facility")
-public interface FacilityRepository extends BaseRepository<Facility> {
+@RepositoryRestResource(collectionResourceRel = "measurableElementTag", path = "measurableElementTag")
+public interface MeasurableElementTagRepository extends BaseRepository<MeasurableElementTag> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<Facility> findByLastModifiedDateGreaterThanOrderById(@DateTimeFormat(pattern = DATE_TIME_FORMAT_STRING) Date lastModifiedDateTime, Pageable pageable);
+    Page<MeasurableElementTag> findByLastModifiedDateGreaterThanOrderById(@DateTimeFormat(pattern = DATE_TIME_FORMAT_STRING) Date lastModifiedDateTime, Pageable pageable);
 }
