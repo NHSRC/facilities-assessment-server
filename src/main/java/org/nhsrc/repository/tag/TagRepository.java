@@ -1,6 +1,8 @@
-package org.nhsrc.repository;
+package org.nhsrc.repository.tag;
 
-import org.nhsrc.domain.AssessmentType;
+import org.nhsrc.domain.Tag;
+import org.nhsrc.domain.tag.StandardTag;
+import org.nhsrc.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -12,12 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
-import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
-
 @Repository
 @Transactional
-@RepositoryRestResource(collectionResourceRel = "assessmentType", path = "assessmentType")
-public interface AssessmentTypeRepository extends BaseRepository<AssessmentType> {
+@RepositoryRestResource(collectionResourceRel = "tag", path = "tag")
+public interface TagRepository extends BaseRepository<Tag> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<AssessmentType> findByLastModifiedDateGreaterThanOrderById(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
+    Page<Tag> findByLastModifiedDateGreaterThanOrderById(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 }
