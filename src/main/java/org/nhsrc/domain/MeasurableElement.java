@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "measurable_element")
-public class MeasurableElement extends AbstractEntity {
+class MeasurableElement extends AbstractEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
