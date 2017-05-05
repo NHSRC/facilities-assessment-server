@@ -33,3 +33,6 @@ FROM
       WHERE f.name={{facility_name}}
     GROUP BY d.name
   ) AS ad;
+
+
+
