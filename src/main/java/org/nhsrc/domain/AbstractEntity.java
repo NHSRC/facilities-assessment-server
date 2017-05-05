@@ -21,7 +21,7 @@ public abstract class AbstractEntity extends AbstractTransactionalEntity {
     @Column(name = "inactive", nullable = false)
     private Boolean inactive = false;
 
-    public AbstractEntity() {
+    AbstractEntity() {
         this.uuid = UUID.randomUUID();
     }
 
