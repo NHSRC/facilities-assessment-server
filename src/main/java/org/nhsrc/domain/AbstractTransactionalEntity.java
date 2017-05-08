@@ -21,13 +21,11 @@ public abstract class AbstractTransactionalEntity implements Persistable<Integer
     @CreatedDate
     @Column(name = "created_date", updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private java.util.Date createdDate;
 
     @LastModifiedDate
     @Column(name = "last_modified_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private java.util.Date lastModifiedDate;
 
     @Override
