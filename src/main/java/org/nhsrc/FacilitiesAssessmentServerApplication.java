@@ -2,8 +2,7 @@ package org.nhsrc;
 
 import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
-import org.nhsrc.domain.District;
-import org.nhsrc.domain.Facility;
+import org.nhsrc.domain.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -49,6 +48,47 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 District district = resource.getContent();
                 resource.removeLinks();
                 resource.add(new Link(district.getState().getUuid().toString(), "stateUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    public ResourceProcessor<Resource<Standard>> standardProcessor() {
+        return new ResourceProcessor<Resource<Standard>>() {
+            @Override
+            public Resource<Standard> process(Resource<Standard> resource) {
+                Standard standard = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(standard.getAreaOfConcern().getUuid().toString(), "areaOfConcernUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    public ResourceProcessor<Resource<MeasurableElement>> measurableElementProcessor() {
+        return new ResourceProcessor<Resource<MeasurableElement>>() {
+            @Override
+            public Resource<MeasurableElement> process(Resource<MeasurableElement> resource) {
+                MeasurableElement measurableElement = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(measurableElement.getStandard().getUuid().toString(), "standardUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    public ResourceProcessor<Resource<Checkpoint>> checkpointProcessor() {
+        return new ResourceProcessor<Resource<Checkpoint>>() {
+            @Override
+            public Resource<Checkpoint> process(Resource<Checkpoint> resource) {
+                Checkpoint checkpoint = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(checkpoint.getChecklist().getUuid().toString(), "checklistUUID"));
+                resource.add(new Link(checkpoint.getMeasurableElement().getUuid().toString(), "measurableElementUUID"));
+                resource.add(new Link(checkpoint.getState().getUuid().toString(), "stateUUID"));
                 return resource;
             }
         };

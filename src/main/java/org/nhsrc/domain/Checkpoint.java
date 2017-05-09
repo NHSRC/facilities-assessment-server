@@ -26,6 +26,12 @@ public class Checkpoint extends AbstractEntity {
     @NotNull
     private Checklist checklist;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @JoinColumn(name = "state_id")
+    @NotNull
+    private State state;
+
     @Column(name = "is_default")
     @NotNull
     private Boolean isDefault = true;
@@ -45,7 +51,6 @@ public class Checkpoint extends AbstractEntity {
     @Column(name = "am_record_review")
     @NotNull
     private Boolean assessmentMethodRecordReview = false;
-
 
     public String getName() {
         return name;
@@ -117,5 +122,13 @@ public class Checkpoint extends AbstractEntity {
 
     public void setAssessmentMethodRecordReview(Boolean assessmentMethodRecordReview) {
         this.assessmentMethodRecordReview = assessmentMethodRecordReview;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 }

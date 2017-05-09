@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION create_seed_ref_data()
   DECLARE department_id            BIGINT;
 BEGIN
   department_id = create_department('Admin', '6370e310-a55d-4294-9201-c784f1cf186e');
-assessment_tool_id = create_assessment_tool('District Hospital (DH)', 'c76a1683-ea08-4472-a7b2-6588716501e5');
+assessment_tool_id = create_assessment_tool('District Hospital (DH)', 'c76a1683-ea08-4472-a7b2-6588716501e5', 'Nqas');
 checklist_id = create_checklist('Admin', department_id, assessment_tool_id, 'd397cb11-2c8e-42be-b3ee-a42375a541ca');
 aoc_id = create_area_of_concern('Service Provision', 'A', '71314b36-e3a4-4052-9433-a476efe0f4a7');
 std_id = create_standard('Facility Provides Curative Services', 'A1', aoc_id, '9cf09a1f-c6e3-4214-bc76-d9ea3ca1c565');
