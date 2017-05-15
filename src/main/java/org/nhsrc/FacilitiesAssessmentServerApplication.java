@@ -11,10 +11,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceProcessor;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 @SpringBootApplication
 @Import({RestConfiguration.class, DatabaseConfiguration.class})
@@ -89,6 +89,21 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 resource.add(new Link(checkpoint.getChecklist().getUuid().toString(), "checklistUUID"));
                 resource.add(new Link(checkpoint.getMeasurableElement().getUuid().toString(), "measurableElementUUID"));
                 resource.add(new Link(checkpoint.getState().getUuid().toString(), "stateUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    public ResourceProcessor<Resource<Checklist>> checklistProcessor() {
+        return new ResourceProcessor<Resource<Checklist>>() {
+            @Override
+            public Resource<Checklist> process(Resource<Checklist> resource) {
+                Checklist checklist = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(checklist.getDepartment().getUuid().toString(), "departmentUUID"));
+                resource.add(new Link(checklist.getAssessmentTool().getUuid().toString(), "assessmentToolUUID"));
+                resource.add(checklist.getAreasOfConcern().stream().map(aoc -> new Link(aoc.getUuid().toString(), "areasOfConcernUUIDs")).collect(Collectors.toList()));
                 return resource;
             }
         };
