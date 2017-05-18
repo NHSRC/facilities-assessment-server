@@ -53,9 +53,37 @@ public class SheetRowImporter {
         } else if (getText(currentRow, 0).startsWith("ME") && isEmpty(currentRow, 2)) {
         } else if (getText(currentRow, 0).startsWith("ME")) {
             this.me(currentRow, state, checklist);
-        } else if (!isEmpty(currentRow, 2)) {
+        } else if (getText(currentRow, 0).replace(" ", "").startsWith(this.currStandard.getReference()) && checklist.getName().equals("Kayakalp")) {
+            this.kayakalpME(currentRow, state, checklist);
+        } else if (!isEmpty(currentRow, 2) && !checklist.getName().equals("Kayakalp")) {
             this.checkpoint(currentRow, state, checklist);
         }
+    }
+
+    private void kayakalpME(Row currentRow, State state, Checklist checklist) {
+        String ref = getText(currentRow, 0).replace(" ", "");
+        String name = getText(currentRow, 1).trim();
+        MeasurableElement me = currStandard.getMeasurableElement(ref);
+        if (me == null) {
+            me = new MeasurableElement();
+            me.setName(name);
+            me.setReference(ref);
+            currStandard.addMeasurableElement(me);
+        }
+        currME = me;
+
+        Checkpoint checkpoint = new Checkpoint();
+        checkpoint.setName(name);
+        String am = getText(currentRow, 3);
+        checkpoint.setAssessmentMethodObservation(am.toLowerCase().contains("ob"));
+        checkpoint.setAssessmentMethodPatientInterview(am.toLowerCase().contains("pi"));
+        checkpoint.setAssessmentMethodRecordReview(am.toLowerCase().contains("rr"));
+        checkpoint.setAssessmentMethodStaffInterview(am.toLowerCase().contains("si"));
+        checkpoint.setDefault(true);
+        checkpoint.setState(state);
+        checkpoint.setMeasurableElement(currME);
+        currME.addCheckpoint(checkpoint);
+        checklist.addCheckpoint(checkpoint);
     }
 
     private String getCellValue(Cell cell) {

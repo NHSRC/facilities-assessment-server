@@ -28,3 +28,9 @@ seed-db:
 
 run:
 	./gradlew bootRun
+
+assessment-tools: reset-db
+	-psql -Unhsrc facilities_assessment < src/test/resources/db/migration/R__Create_Test_State_Data.sql
+	-psql -Unhsrc facilities_assessment < src/test/resources/setup.sql
+	-psql --echo-all -Unhsrc facilities_assessment < ~/Downloads/nqas.sql
+	-psql --echo-all -Unhsrc facilities_assessment < ~/Downloads/kayakalp.sql

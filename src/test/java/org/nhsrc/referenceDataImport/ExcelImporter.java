@@ -4,11 +4,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.nhsrc.domain.*;
-import org.nhsrc.repository.*;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 public class ExcelImporter {
@@ -18,15 +16,15 @@ public class ExcelImporter {
         this.data = data;
     }
 
-    public void importFile(File file, AssessmentTool assessmentTool, State state) throws Exception {
+    public void importFile(File file, AssessmentTool assessmentTool, State state, int startingSheet) throws Exception {
         FileInputStream inputStream = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         try {
             int numberOfSheets = workbook.getNumberOfSheets();
-            for (int i = 1; i < numberOfSheets; i++) {
+            for (int i = startingSheet; i < numberOfSheets; i++) {
                 XSSFSheet sheet = workbook.getSheetAt(i);
                 this.sheetImport(sheet, state, assessmentTool);
-                System.out.println("COMPLETED SHEET");
+                System.out.println("COMPLETED SHEET: " + sheet.getSheetName());
             }
         } finally {
             workbook.close();
@@ -35,7 +33,7 @@ public class ExcelImporter {
     }
 
     public Checklist sheetImport(XSSFSheet sheet, State state, AssessmentTool assessmentTool) throws Exception {
-        Department department = makeDepartment(sheet.getSheetName());
+        Department department = makeDepartment(sheet.getSheetName().trim());
         data.addDepartment(department);
 
         final Checklist checklist = new Checklist();
@@ -53,7 +51,7 @@ public class ExcelImporter {
             sheetImporter.importRow(iterator.next(), state, checklist);
         }
 
-        System.out.println(checklist.toSummary());
+//        System.out.println(checklist.toSummary());
         return checklist;
     }
 
