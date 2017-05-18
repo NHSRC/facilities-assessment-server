@@ -3,7 +3,9 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -16,7 +18,7 @@ public class AssessmentTool extends AbstractEntity {
     private String mode;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "assessmentTool")
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "assessmentTool")
     private Set<Checklist> checklists = new HashSet<>();
 
     public String getName() {
@@ -41,5 +43,13 @@ public class AssessmentTool extends AbstractEntity {
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+    public void addChecklist(Checklist checklist) {
+        this.checklists.add(checklist);
+    }
+
+    public void addChecklists(ArrayList<Checklist> checklists) {
+        this.checklists.addAll(checklists);
     }
 }

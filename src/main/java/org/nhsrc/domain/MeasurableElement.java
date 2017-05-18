@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -56,5 +58,19 @@ public class MeasurableElement extends AbstractEntity {
 
     public void setStandard(Standard standard) {
         this.standard = standard;
+    }
+
+    public String toSummary() {
+        String problemText = checkpoints.size() == 0 ? "############################" : "";
+        return String.format("%sME=%s  #Checkpoint=%d", problemText, name, checkpoints.size());
+    }
+
+    public void addCheckpoint(Checkpoint checkpoint) {
+        this.checkpoints.add(checkpoint);
+        checkpoint.setMeasurableElement(this);
+    }
+
+    public int estimatedCount() {
+        return checkpoints.size() - 1;
     }
 }

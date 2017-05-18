@@ -1,5 +1,6 @@
 package org.nhsrc.repository;
 
+import org.nhsrc.domain.AreaOfConcern;
 import org.nhsrc.domain.Standard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,4 +21,5 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 public interface StandardRepository extends BaseRepository<Standard> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<Standard> findByLastModifiedDateGreaterThanOrderById(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Standard findByReference(String reference);
 }

@@ -17,7 +17,7 @@ public class District extends AbstractEntity {
     private Set<Facility> facilities = new HashSet<>();
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id")
     @NotNull
     private State state;

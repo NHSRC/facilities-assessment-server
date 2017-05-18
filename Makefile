@@ -10,7 +10,7 @@ reset-test-db:
 	-psql postgres -c 'create database facilities_assessment_test with owner nhsrc';
 	-psql facilities_assessment_test -c 'create extension if not exists "uuid-ossp"';
 	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment_test -schemas=public clean
-    	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment_test -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
+	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment_test -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
 
 init-db:
 	-psql postgres -c "create user nhsrc with password 'password'";

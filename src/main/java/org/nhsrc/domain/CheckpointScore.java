@@ -25,7 +25,7 @@ public class CheckpointScore extends AbstractScoreEntity {
     }
 
     @JsonIgnore
-    @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.EAGER, cascade = {CascadeType.DETACH})
+    @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_assessment_id", referencedColumnName = "id")
     @NotNull
     private FacilityAssessment facilityAssessment;

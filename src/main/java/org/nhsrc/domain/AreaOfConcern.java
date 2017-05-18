@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -55,5 +57,40 @@ public class AreaOfConcern extends AbstractEntity {
 
     public void setStandards(Set<Standard> standards) {
         this.standards = standards;
+    }
+
+    public void addStandard(Standard standard) {
+        this.standards.add(standard);
+        standard.setAreaOfConcern(this);
+    }
+
+    public String toSummary() {
+        StringBuffer stringBuffer = new StringBuffer();
+        standards.stream().sorted((o1, o2) -> o1.getReference().compareTo(o2.getReference())).forEach(standard -> stringBuffer.append(standard.toSummary()).append("\n\t"));
+        return String.format("EST_COUNT=%d  REF_AOC=%s  AOC=%s  #Standard=%d  \n\t%s", this.estimatedCount(), reference, name, standards.size(), stringBuffer.toString());
+    }
+
+    public void removeEmptyOnes() {
+        standards.forEach(Standard::removeEmptyOnes);
+
+        List<Standard> toRemove = new ArrayList<>();
+        standards.forEach(standard -> {
+            if (standard.getMeasurableElements().size() == 0) toRemove.add(standard);
+        });
+        standards.removeAll(toRemove);
+    }
+
+    public int estimatedCount() {
+        int count = standards.size();
+        for (Standard standard : standards) count = count + standard.estimatedCount();
+        return count;
+    }
+
+    public void addChecklist(Checklist checklist) {
+        this.checklists.add(checklist);
+    }
+
+    public Standard getStandard(String reference) {
+        return this.standards.stream().filter(std -> std.getReference().equals(reference)).findAny().orElse(null);
     }
 }

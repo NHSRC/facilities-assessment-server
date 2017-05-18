@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.geom.Area;
 import java.util.Date;
 
 import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
@@ -21,4 +22,5 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<AreaOfConcern> findByLastModifiedDateGreaterThanOrderById(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
+    AreaOfConcern findByReference(String reference);
 }

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -55,5 +57,36 @@ public class Standard extends AbstractEntity {
 
     public void setMeasurableElements(Set<MeasurableElement> measurableElements) {
         this.measurableElements = measurableElements;
+    }
+
+    public void addMeasurableElement(MeasurableElement measurableElement) {
+        if (this.measurableElements.stream().noneMatch(std -> std.getReference().equals(measurableElement.getReference()))) {
+            this.measurableElements.add(measurableElement);
+            measurableElement.setStandard(this);
+        }
+    }
+
+    public String toSummary() {
+        StringBuffer stringBuffer = new StringBuffer();
+        measurableElements.stream().sorted((o1, o2) -> o1.getReference().compareTo(o2.getReference())).forEach(measurableElement -> stringBuffer.append(measurableElement.toSummary()).append("\n\t"));
+        return String.format("EST_COUNT=%d  STD_REF=%s  STD=%s  #ME=%d  \n\t%s", this.estimatedCount(), reference, name, measurableElements.size(), stringBuffer.toString());
+    }
+
+    public void removeEmptyOnes() {
+        List<MeasurableElement> toRemove = new ArrayList<>();
+        measurableElements.forEach(measurableElement -> {
+            if (measurableElement.getCheckpoints().size() == 0) toRemove.add(measurableElement);
+        });
+        measurableElements.removeAll(toRemove);
+    }
+
+    public int estimatedCount() {
+        int count = measurableElements.size();
+        for (MeasurableElement measurableElement : measurableElements) count = count + measurableElement.estimatedCount();
+        return count;
+    }
+
+    public MeasurableElement getMeasurableElement(String reference) {
+        return this.measurableElements.stream().filter(std -> std.getReference().equals(reference)).findAny().orElse(null);
     }
 }

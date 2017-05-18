@@ -1,6 +1,5 @@
 package org.nhsrc.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -79,6 +78,7 @@ public abstract class AbstractTransactionalEntity implements Persistable<Integer
 
     @Override
     public int hashCode() {
+        if (id == null) return super.hashCode();
         return id.hashCode();
     }
 }

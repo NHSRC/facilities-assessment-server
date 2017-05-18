@@ -35,6 +35,8 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-rest")
     compile("org.flywaydb:flyway-core:4.0.3")
     compile('joda-time:joda-time')
+    compile group: 'org.apache.poi', name: 'poi', version: '3.16-beta2'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.16-beta2'
     runtime('org.postgresql:postgresql')
     runtime('com.h2database:h2:1.4.192')
     runtime('com.zaxxer:HikariCP:2.5.1')

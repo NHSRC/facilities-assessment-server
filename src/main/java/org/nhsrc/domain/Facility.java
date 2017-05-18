@@ -13,12 +13,12 @@ public class Facility extends AbstractEntity {
     private String name;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = District.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = District.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "district_id")
     @NotNull
     private District district;
 
-    @OneToOne(targetEntity = FacilityType.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(targetEntity = FacilityType.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_type_id", nullable = false)
     private FacilityType facilityType;
 
