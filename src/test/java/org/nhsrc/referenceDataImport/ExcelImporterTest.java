@@ -9,8 +9,8 @@ import java.io.File;
 public class ExcelImporterTest {
     @Test
     public void importNQAS_Emergency() throws Exception {
-        String dirPath = "/Users/vsingh/Downloads";
-        File file = new File(dirPath, "Chececklist_DH_New_Revised May 2016.xlsx");
+        String dirPath = "/Users/mihir/projects/nhsrc/pilot";
+        File file = new File(dirPath, "NQAS_DH.xlsx");
         SQLGenerator sqlGenerator = new SQLGenerator();
 
         AssessmentChecklistData nqasData = new AssessmentChecklistData();
@@ -32,12 +32,12 @@ public class ExcelImporterTest {
 
         AssessmentChecklistData kayakalpData = new AssessmentChecklistData();
         assessmentTool = new AssessmentTool();
-        assessmentTool.setMode("Kayakalp");
+        assessmentTool.setMode("kayakalp");
         assessmentTool.setName("Kayakalp");
         kayakalpData.set(assessmentTool);
         kayakalpData.set(state);
 
-        file = new File(dirPath, "DH,SDH & CHC Kayakalp  28 July 2016.xlsx");
+        file = new File(dirPath, "Kayakalp_DH.xlsx");
         excelImporter = new ExcelImporter(kayakalpData);
         stringBuffer = new StringBuffer();
         excelImporter.importFile(file, assessmentTool, state, 0);

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "area_of_concern_tag")
 public class AreaOfConcernTag extends AbstractEntity {
-    @JoinColumn(name = "area_of_concern_tag_id")
+    @JoinColumn(name = "tag_id")
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private Tag tag;

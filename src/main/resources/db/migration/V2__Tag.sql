@@ -3,6 +3,7 @@ CREATE TABLE tag (
   name               CHARACTER VARYING(255)                                   NOT NULL,
   uuid               UUID DEFAULT uuid_generate_v4() UNIQUE                   NOT NULL,
   version            INTEGER                                                  NOT NULL,
+  inactive           BOOLEAN DEFAULT FALSE                                    NOT NULL,
   created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL,
   last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL
 );
@@ -13,6 +14,7 @@ CREATE TABLE measurable_element_tag (
   measurable_element_id INTEGER NOT NULL,
   uuid               UUID DEFAULT uuid_generate_v4() UNIQUE                   NOT NULL,
   version            INTEGER                                                  NOT NULL,
+  inactive           BOOLEAN DEFAULT FALSE                                    NOT NULL,
   created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL,
   last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL
 );
@@ -30,7 +32,8 @@ CREATE TABLE checkpoint_tag (
   uuid               UUID DEFAULT uuid_generate_v4() UNIQUE                   NOT NULL,
   version            INTEGER                                                  NOT NULL,
   created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL,
-  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL
+  last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL ,
+  inactive           BOOLEAN DEFAULT FALSE                                    NOT NULL
 );
 
 ALTER TABLE ONLY checkpoint_tag
@@ -46,6 +49,7 @@ CREATE TABLE area_of_concern_tag (
   uuid               UUID DEFAULT uuid_generate_v4() UNIQUE                   NOT NULL,
   version            INTEGER                                                  NOT NULL,
   created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL,
+  inactive           BOOLEAN DEFAULT FALSE                                    NOT NULL,
   last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL
 );
 
@@ -61,6 +65,7 @@ CREATE TABLE standard_tag (
   standard_id INTEGER NOT NULL,
   uuid               UUID DEFAULT uuid_generate_v4() UNIQUE                   NOT NULL,
   version            INTEGER                                                  NOT NULL,
+  inactive           BOOLEAN DEFAULT FALSE                                    NOT NULL,
   created_date       TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL,
   last_modified_date TIMESTAMP WITHOUT TIME ZONE DEFAULT now() :: TIMESTAMP   NOT NULL
 );

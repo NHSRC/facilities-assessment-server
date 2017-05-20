@@ -21,9 +21,9 @@ init-test-db:
 	-psql postgres -c 'create database facilities_assessment_test with owner nhsrc';
 
 seed-db:
+	-psql -Unhsrc facilities_assessment < src/test/resources/db/migration/R__Delete_Test_Data.sql
 	-psql -Unhsrc facilities_assessment < src/test/resources/db/migration/R__Create_Test_State_Data.sql
 	-psql -Unhsrc facilities_assessment < src/test/resources/db/migration/R__Create_Test_Ref_Data.sql
-	-psql -Unhsrc facilities_assessment < src/test/resources/db/migration/R__Delete_Test_Data.sql
 	-psql -Unhsrc facilities_assessment < src/test/resources/setup.sql
 
 run:

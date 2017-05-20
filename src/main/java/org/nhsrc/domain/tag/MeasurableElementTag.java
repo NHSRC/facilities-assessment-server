@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "measurable_element_tag")
 public class MeasurableElementTag extends AbstractEntity {
-    @JoinColumn(name = "measurable_element_tag_id")
+    @JoinColumn(name = "tag_id")
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private Tag tag;
