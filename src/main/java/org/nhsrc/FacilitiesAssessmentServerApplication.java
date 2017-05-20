@@ -11,8 +11,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceProcessor;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import java.io.File;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,11 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Calcutta"));
         SpringApplication.run(FacilitiesAssessmentServerApplication.class, args);
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/ext/**").addResourceLocations(String.format("file:///%s/", new File("external").getAbsolutePath()));
     }
 
     @Bean
@@ -88,7 +95,8 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 resource.removeLinks();
                 resource.add(new Link(checkpoint.getChecklist().getUuid().toString(), "checklistUUID"));
                 resource.add(new Link(checkpoint.getMeasurableElement().getUuid().toString(), "measurableElementUUID"));
-                resource.add(new Link(checkpoint.getState().getUuid().toString(), "stateUUID"));
+                if (checkpoint.getState() != null)
+                    resource.add(new Link(checkpoint.getState().getUuid().toString(), "stateUUID"));
                 return resource;
             }
         };
