@@ -34,3 +34,7 @@ assessment-tools: reset-db
 	-psql -Unhsrc facilities_assessment < src/test/resources/setup.sql
 	-psql --echo-all -Unhsrc facilities_assessment < ~/Downloads/nqas.sql
 	-psql --echo-all -Unhsrc facilities_assessment < ~/Downloads/kayakalp.sql
+
+jss-cg-assessment-tools: reset-db
+	-psql -Unhsrc facilities_assessment < src/test/resources/db/migration/jss/CGDeployment.sql
+	-psql -v ON_ERROR_STOP=1 --echo-all -Unhsrc facilities_assessment < ../checklists/jss/cg/CG-NQAS-DH-English/output.sql

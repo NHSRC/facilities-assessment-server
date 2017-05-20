@@ -89,4 +89,11 @@ public class Standard extends AbstractEntity {
     public MeasurableElement getMeasurableElement(String reference) {
         return this.measurableElements.stream().filter(std -> std.getReference().equals(reference)).findAny().orElse(null);
     }
+
+    @Override
+    public String toString() {
+        return "Standard{" +
+                "reference='" + reference + '\'' +
+                '}';
+    }
 }

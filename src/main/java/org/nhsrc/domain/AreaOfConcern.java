@@ -93,4 +93,11 @@ public class AreaOfConcern extends AbstractEntity {
     public Standard getStandard(String reference) {
         return this.standards.stream().filter(std -> std.getReference().equals(reference)).findAny().orElse(null);
     }
+
+    @Override
+    public String toString() {
+        return "AreaOfConcern{" +
+                "reference='" + reference + '\'' +
+                '}';
+    }
 }

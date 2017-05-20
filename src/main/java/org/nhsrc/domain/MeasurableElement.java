@@ -73,4 +73,11 @@ public class MeasurableElement extends AbstractEntity {
     public int estimatedCount() {
         return checkpoints.size() - 1;
     }
+
+    @Override
+    public String toString() {
+        return "MeasurableElement{" +
+                "reference='" + reference + '\'' +
+                '}';
+    }
 }

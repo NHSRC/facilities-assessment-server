@@ -16,14 +16,14 @@ public class ExcelImporter {
         this.data = data;
     }
 
-    public void importFile(File file, AssessmentTool assessmentTool, State state, int startingSheet) throws Exception {
+    public void importFile(File file, AssessmentTool assessmentTool, int startingSheet) throws Exception {
         FileInputStream inputStream = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         try {
             int numberOfSheets = workbook.getNumberOfSheets();
             for (int i = startingSheet; i < numberOfSheets; i++) {
                 XSSFSheet sheet = workbook.getSheetAt(i);
-                this.sheetImport(sheet, state, assessmentTool);
+                this.sheetImport(sheet, assessmentTool);
                 System.out.println("COMPLETED SHEET: " + sheet.getSheetName());
             }
         } finally {
@@ -32,7 +32,7 @@ public class ExcelImporter {
         }
     }
 
-    public Checklist sheetImport(XSSFSheet sheet, State state, AssessmentTool assessmentTool) throws Exception {
+    public Checklist sheetImport(XSSFSheet sheet, AssessmentTool assessmentTool) throws Exception {
         Department department = makeDepartment(sheet.getSheetName().trim());
         data.addDepartment(department);
 
@@ -48,7 +48,7 @@ public class ExcelImporter {
         Iterator<Row> iterator = sheet.iterator();
         while (iterator.hasNext()) {
 //            System.out.println(sheet.getSheetName() + ", Processing row " + i++);
-            sheetImporter.importRow(iterator.next(), state, checklist);
+            sheetImporter.importRow(iterator.next(), checklist);
         }
 
 //        System.out.println(checklist.toSummary());

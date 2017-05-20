@@ -104,4 +104,12 @@ public class Checklist extends AbstractEntity {
         checkpoints.add(checkpoint);
         checkpoint.setChecklist(this);
     }
+
+    @Override
+    public String toString() {
+        return "Checklist{" +
+                "name='" + name + '\'' +
+                ", assessmentTool=" + assessmentTool +
+                '}';
+    }
 }

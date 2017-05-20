@@ -32,16 +32,8 @@ public class AssessmentChecklistData {
         this.assessmentTool = assessmentTool;
     }
 
-    public void set(State state) {
-        this.state = state;
-    }
-
     public List<Checklist> getChecklists() {
         return this.checklists;
-    }
-
-    public State getState() {
-        return state;
     }
 
     public List<Department> getDepartments() {

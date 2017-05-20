@@ -4,11 +4,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.nhsrc.domain.*;
-import org.nhsrc.repository.AreaOfConcernRepository;
-import org.nhsrc.repository.MeasurableElementRepository;
-import org.nhsrc.repository.StandardRepository;
 
-import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,24 +39,24 @@ public class SheetRowImporter {
         return getCleanedRef(cell, standardPattern, "Standard");
     }
 
-    public void importRow(Row currentRow, State state, Checklist checklist) {
+    public void importRow(Row currentRow, Checklist checklist) {
         if (isEmpty(currentRow, 0) && isEmpty(currentRow, 1) && isEmpty(currentRow, 2)) {
         } else if (!getText(currentRow, 1).startsWith("Area of Concern - ") && currAOC == null) {
-        } else if (getText(currentRow, 1).startsWith("Area of Concern - ")) {
+        } else if (getText(currentRow, 1).startsWith("Area of Concern - ") || getText(currentRow, 1).startsWith("Area of Concern – ")) {
             this.aoc(currentRow, checklist);
         } else if (getText(currentRow, 0).startsWith("Standard ") && getText(currentRow, 0).length() <= 15) {
             this.standard(getText(currentRow, 0), getText(currentRow, 1));
         } else if (getText(currentRow, 0).startsWith("ME") && isEmpty(currentRow, 2)) {
         } else if (getText(currentRow, 0).startsWith("ME")) {
-            this.me(currentRow, state, checklist);
+            this.me(currentRow, checklist);
         } else if (getText(currentRow, 0).replace(" ", "").startsWith(this.currStandard.getReference()) && checklist.getName().equals("Kayakalp")) {
-            this.kayakalpME(currentRow, state, checklist);
+            this.kayakalpME(currentRow, checklist);
         } else if (!isEmpty(currentRow, 2) && !checklist.getName().equals("Kayakalp")) {
-            this.checkpoint(currentRow, state, checklist);
+            this.checkpoint(currentRow, checklist);
         }
     }
 
-    private void kayakalpME(Row currentRow, State state, Checklist checklist) {
+    private void kayakalpME(Row currentRow, Checklist checklist) {
         String ref = getText(currentRow, 0).replace(" ", "");
         String name = getText(currentRow, 1).trim();
         MeasurableElement me = currStandard.getMeasurableElement(ref);
@@ -80,7 +76,6 @@ public class SheetRowImporter {
         checkpoint.setAssessmentMethodRecordReview(am.toLowerCase().contains("rr"));
         checkpoint.setAssessmentMethodStaffInterview(am.toLowerCase().contains("si"));
         checkpoint.setDefault(true);
-        checkpoint.setState(state);
         checkpoint.setMeasurableElement(currME);
         currME.addCheckpoint(checkpoint);
         checklist.addCheckpoint(checkpoint);
@@ -98,7 +93,7 @@ public class SheetRowImporter {
         if (cell == null) return true;
 
         String stringCellValue = getCellValue(cell);
-        if (stringCellValue == null || stringCellValue.trim().equals("")) return true;
+        if (stringCellValue == null || stringCellValue.trim().equals("") || stringCellValue.trim().equals(".")) return true;
 
         return false;
     }
@@ -110,7 +105,7 @@ public class SheetRowImporter {
         return stringCellValue.trim();
     }
 
-    private void checkpoint(Row row, State state, Checklist checklist) {
+    private void checkpoint(Row row, Checklist checklist) {
         Checkpoint checkpoint = new Checkpoint();
         checkpoint.setName(getText(row, 2));
         String am = getText(row, 4);
@@ -119,7 +114,6 @@ public class SheetRowImporter {
         checkpoint.setAssessmentMethodRecordReview(am.toLowerCase().contains("rr"));
         checkpoint.setAssessmentMethodStaffInterview(am.toLowerCase().contains("si"));
         checkpoint.setDefault(true);
-        checkpoint.setState(state);
         checkpoint.setMeasurableElement(currME);
         if (!getText(row, 5).equals("")) {
             checkpoint.setMeansOfVerification(getText(row, 5));
@@ -128,7 +122,7 @@ public class SheetRowImporter {
         checklist.addCheckpoint(checkpoint);
     }
 
-    private void me(Row row, State state, Checklist checklist) {
+    private void me(Row row, Checklist checklist) {
         String ref = getMERef(getText(row, 0));
         String name = getText(row, 1).trim();
         MeasurableElement me = currStandard.getMeasurableElement(ref);
@@ -139,7 +133,7 @@ public class SheetRowImporter {
             currStandard.addMeasurableElement(me);
         }
         currME = me;
-        checkpoint(row, state, checklist);
+        checkpoint(row, checklist);
     }
 
     private void standard(String standardRefCellText, String standardNameCellText) {
@@ -156,7 +150,7 @@ public class SheetRowImporter {
     }
 
     private void aoc(Row row, Checklist checklist) {
-        String aocRefName = row.getCell(1).getStringCellValue().replace("Area of Concern - ", "");
+        String aocRefName = row.getCell(1).getStringCellValue().replace("Area of Concern - ", "").replace("Area of Concern – ", "");
         String ref = aocRefName.substring(0, 1);
         String name = aocRefName.substring(2).trim();
 
