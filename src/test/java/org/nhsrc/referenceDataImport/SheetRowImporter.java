@@ -21,7 +21,7 @@ public class SheetRowImporter {
     }
 
     private String getCleanedRef(String cell, Pattern pattern, String replacement) {
-        String ref = cell.replace(replacement, "").trim();
+        String ref = cell.replace(replacement, "").trim().replaceAll(" +", " ");
         ref = ref.replaceAll("\\s", "");
         Matcher matcher = pattern.matcher(ref);
         String cleanedRef = ref;
@@ -41,9 +41,9 @@ public class SheetRowImporter {
 
     public void importRow(Row currentRow, Checklist checklist) {
         if (isEmpty(currentRow, 0) && isEmpty(currentRow, 1) && isEmpty(currentRow, 2)) {
-        } else if (!getText(currentRow, 1).startsWith("Area of Concern - ") && currAOC == null) {
-        } else if (getText(currentRow, 1).startsWith("Area of Concern - ") || getText(currentRow, 1).startsWith("Area of Concern – ")) {
-            this.aoc(currentRow, checklist);
+        } else if (!isAreaOfConcernRow(currentRow) && currAOC == null) {
+        } else if (isAreaOfConcernRow(currentRow)) {
+            this.aoc(currentRow, checklist, getAreaOfConcernCellNum(currentRow));
         } else if (getText(currentRow, 0).startsWith("Standard ") && getText(currentRow, 0).length() <= 15) {
             this.standard(getText(currentRow, 0), getText(currentRow, 1));
         } else if (getText(currentRow, 0).startsWith("ME") && isEmpty(currentRow, 2)) {
@@ -56,9 +56,23 @@ public class SheetRowImporter {
         }
     }
 
+    private int getAreaOfConcernCellNum(Row currentRow) {
+        String cell0Text = getText(currentRow, 0);
+        String cell1Text = getText(currentRow, 1);
+        if (cell1Text.startsWith("Area of Concern -") || cell1Text.startsWith("Area of Concern –")) return 1;
+        else if (cell0Text.startsWith("Area of Concern -") || cell0Text.startsWith("Area of Concern –")) return 0;
+        throw new RuntimeException("Could not find AOC in the row");
+    }
+
+    private boolean isAreaOfConcernRow(Row currentRow) {
+        String cell0Text = getText(currentRow, 0);
+        String cell1Text = getText(currentRow, 1);
+        return cell1Text.startsWith("Area of Concern -") || cell1Text.startsWith("Area of Concern –") || cell0Text.startsWith("Area of Concern -") || cell0Text.startsWith("Area of Concern –");
+    }
+
     private void kayakalpME(Row currentRow, Checklist checklist) {
         String ref = getText(currentRow, 0).replace(" ", "");
-        String name = getText(currentRow, 1).trim();
+        String name = getText(currentRow, 1).trim().replaceAll(" +", " ");
         MeasurableElement me = currStandard.getMeasurableElement(ref);
         if (me == null) {
             me = new MeasurableElement();
@@ -102,7 +116,7 @@ public class SheetRowImporter {
         Cell cell = row.getCell(cellnum);
         if (cell == null) return "";
         String stringCellValue = getCellValue(cell);
-        return stringCellValue.trim();
+        return stringCellValue.trim().replaceAll(" +", " ");
     }
 
     private void checkpoint(Row row, Checklist checklist) {
@@ -124,7 +138,7 @@ public class SheetRowImporter {
 
     private void me(Row row, Checklist checklist) {
         String ref = getMERef(getText(row, 0));
-        String name = getText(row, 1).trim();
+        String name = getText(row, 1).trim().replaceAll(" +", " ");
         MeasurableElement me = currStandard.getMeasurableElement(ref);
         if (me == null) {
             me = new MeasurableElement();
@@ -149,10 +163,10 @@ public class SheetRowImporter {
         currStandard = standard;
     }
 
-    private void aoc(Row row, Checklist checklist) {
-        String aocRefName = row.getCell(1).getStringCellValue().replace("Area of Concern - ", "").replace("Area of Concern – ", "");
+    private void aoc(Row row, Checklist checklist, int cellnum) {
+        String aocRefName = row.getCell(cellnum).getStringCellValue().replace("Area of Concern - ", "").replace("Area of Concern – ", "").replace("Area of Concern -", "").replace("Area of Concern –", "");
         String ref = aocRefName.substring(0, 1);
-        String name = aocRefName.substring(2).trim();
+        String name = aocRefName.substring(2).trim().replaceAll(" +", " ");
 
         AreaOfConcern areaOfConcern = data.findAreaOfConcern(ref);
         if (areaOfConcern == null) {

@@ -10,29 +10,29 @@ import java.util.stream.Collectors;
 public class JSSDataCreator {
     @Test
     public void generateCGSQL() throws Exception {
-        File dhInputDirectory = new File("../checklists/jss/cg/CG-NQAS-DH-English");
+        String jssCGInputDir = "../checklists/jss/cg";
+        File dhInputDirectory = new File(jssCGInputDir,"CG-NQAS-DH-English");
         ChecklistCreator checklistCreator = new ChecklistCreator();
-        List<File> files = Arrays.asList(dhInputDirectory.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return !(name.contains("DS_Store") || name.contains(".sql"));
-            }
-        }));
+        List<File> files = Arrays.asList(dhInputDirectory.listFiles((dir, name) -> !(name.contains("DS_Store") || name.contains(".sql"))));
         List<File> dhFiles = files.stream().sorted(Comparator.comparing(this::getFileNumber)).collect(Collectors.toList());
 
-        AssessmentChecklistData nqasData = new AssessmentChecklistData();
-        File chFile = new File("../checklists/jss/cg/CG-NQAS-CHC-English.xlsx");
+        AssessmentChecklistData nqasCGDHData = new AssessmentChecklistData();
+
         dhFiles.forEach(dhFile -> {
             try {
-                checklistCreator.performImport("District Hospital (DH)", "nqas", dhFile, 0, nqasData);
+//                checklistCreator.performImport("District Hospital (DH)", "nqas", dhFile, 0, nqasData);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-        checklistCreator.generate(nqasData, new File(dhInputDirectory, "output.sql"));
-//        checklistCreator.create("nqas", chFile, 0, new File(getOutputFileName(chFile)));
+//        checklistCreator.generate(nqasCGDHData, new File(dhInputDirectory, "output.sql"));
+
+        File chFile = new File(jssCGInputDir, "CG-NQAS-CHC-English.xlsx");
+        AssessmentChecklistData nqasCGCHCData = new AssessmentChecklistData();
+        checklistCreator.performImport("Community Hospital (CH)", "nqas", chFile, 0, nqasCGCHCData);
+        checklistCreator.generate(nqasCGCHCData, new File(jssCGInputDir, "output.sql"));
     }
-    
+
     @Test
     public void generateMPSQL() {
     }

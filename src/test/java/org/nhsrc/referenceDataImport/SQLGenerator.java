@@ -25,7 +25,7 @@ public class SQLGenerator {
     private void generateChecklistAreaOfConcernMapping(AssessmentChecklistData data, StringBuffer stringBuffer) {
         data.getChecklists().forEach(checklist -> {
             checklist.getAreasOfConcern().forEach(areaOfConcern -> {
-                stringBuffer.append(String.format("insert into checklist_area_of_concern (area_of_concern_id, checklist_id) values ((select area_of_concern.id from area_of_concern, assessment_tool where area_of_concern.reference = '%s' and area_of_concern.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from checklist where name = '%s'));\n", areaOfConcern.getReference(), data.getAssessmentTool().getName(), checklist.getName()));
+                stringBuffer.append(String.format("insert into checklist_area_of_concern (area_of_concern_id, checklist_id) values ((select area_of_concern.id from area_of_concern, assessment_tool where area_of_concern.reference = '%s' and area_of_concern.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from checklist where name = '%s' and assessment_tool_id = (select id from assessment_tool where name = '%s')));\n", areaOfConcern.getReference(), data.getAssessmentTool().getName(), checklist.getName(), data.getAssessmentTool().getName()));
             });
         });
     }
@@ -40,7 +40,7 @@ public class SQLGenerator {
                     stringBuffer.append(String.format("insert into measurable_element (name, reference, standard_id, assessment_tool_id) values ('%s', '%s', (select standard.id from standard, assessment_tool where standard.reference = '%s' and standard.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from assessment_tool where name = '%s'));\n", me.getName().replace("'", "''"), me.getReference(), standard.getReference(), name, name));
                     me.getCheckpoints().forEach(checkpoint -> {
                         String mov = checkpoint.getMeansOfVerification() == null ? "" : checkpoint.getMeansOfVerification().replace("'", "''");
-                        stringBuffer.append(String.format("insert into checkpoint (name, means_of_verification, measurable_element_id, checklist_id, is_default, am_observation, am_staff_interview, am_patient_interview, am_record_review) values ('%s', '%s', (select measurable_element.id from measurable_element, assessment_tool where measurable_element.reference = '%s' and measurable_element.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from checklist where name = '%s'), %b, %b, %b, %b, %b);\n", checkpoint.getName().replace("'", "''"), mov, me.getReference(), name, checkpoint.getChecklist().getName(), checkpoint.getDefault(), checkpoint.getAssessmentMethodObservation(), checkpoint.getAssessmentMethodStaffInterview(), checkpoint.getAssessmentMethodPatientInterview(), checkpoint.getAssessmentMethodRecordReview()));
+                        stringBuffer.append(String.format("insert into checkpoint (name, means_of_verification, measurable_element_id, checklist_id, is_default, am_observation, am_staff_interview, am_patient_interview, am_record_review) values ('%s', '%s', (select measurable_element.id from measurable_element, assessment_tool where measurable_element.reference = '%s' and measurable_element.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from checklist where name = '%s' and assessment_tool_id = (select id from assessment_tool where name = '%s')), %b, %b, %b, %b, %b);\n", checkpoint.getName().replace("'", "''"), mov, me.getReference(), name, checkpoint.getChecklist().getName(), data.getAssessmentTool().getName(), checkpoint.getDefault(), checkpoint.getAssessmentMethodObservation(), checkpoint.getAssessmentMethodStaffInterview(), checkpoint.getAssessmentMethodPatientInterview(), checkpoint.getAssessmentMethodRecordReview()));
                     });
                 });
             });
@@ -50,7 +50,7 @@ public class SQLGenerator {
     private void generateDepartment(AssessmentChecklistData data, StringBuffer stringBuffer) {
         List<Department> departments = data.getDepartments();
         departments.forEach(department -> {
-            stringBuffer.append(String.format("insert into department (name) values ('%s');\n", department.getName()));
+            stringBuffer.append(String.format("insert into department (name) select '%s' where not exists (select name from department where name = '%s');\n", department.getName(), department.getName()));
         });
     }
 
