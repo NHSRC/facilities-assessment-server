@@ -21,7 +21,7 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 @RepositoryRestResource(collectionResourceRel = "assessmentTool", path = "assessmentTool")
 public interface AssessmentToolRepository extends BaseRepository<AssessmentTool> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<AssessmentTool> findByLastModifiedDateGreaterThanOrderById(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
+    Page<AssessmentTool> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
 
     AssessmentTool findByName(String name);
 }

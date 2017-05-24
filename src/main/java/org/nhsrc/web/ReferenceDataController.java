@@ -52,7 +52,7 @@ public class ReferenceDataController {
             @RequestParam(value = "lastSyncedDate", required = false, defaultValue = "01-01-1000 00:00:00")
             @DateTimeFormat(pattern = DATE_TIME_FORMAT_STRING) Date lastSyncedDate) {
         HashSet<State> states = new HashSet<>(
-                stateRepository.findByLastModifiedDateGreaterThanOrderById(lastSyncedDate, page).getContent());
+                stateRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(lastSyncedDate, page).getContent());
         return new ResponseEntity<>(states, HttpStatus.OK);
     }
 
@@ -61,7 +61,7 @@ public class ReferenceDataController {
             @RequestParam(value = "lastSyncedDate", required = false, defaultValue = "01-01-1000 00:00:00")
             @DateTimeFormat(pattern = DATE_TIME_FORMAT_STRING) Date lastSyncedDate) {
         HashSet<FacilityType> facilityTypes = new HashSet<>(
-                facilityTypeRepository.findByLastModifiedDateGreaterThanOrderById(lastSyncedDate, page).getContent());
+                facilityTypeRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(lastSyncedDate, page).getContent());
         return new ResponseEntity<>(facilityTypes, HttpStatus.OK);
     }
 
@@ -70,7 +70,7 @@ public class ReferenceDataController {
             @RequestParam(value = "lastSyncedDate", required = false, defaultValue = "01-01-1000 00:00:00")
             @DateTimeFormat(pattern = DATE_TIME_FORMAT_STRING) Date lastSyncedDate) {
         HashSet<AssessmentTool> facilityTypes = new HashSet<>(
-                assessmentToolRepository.findByLastModifiedDateGreaterThanOrderById(lastSyncedDate, page).getContent());
+                assessmentToolRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(lastSyncedDate, page).getContent());
         return new ResponseEntity<>(facilityTypes, HttpStatus.OK);
     }
 
@@ -79,7 +79,7 @@ public class ReferenceDataController {
             @RequestParam(value = "lastSyncedDate", required = false, defaultValue = "01-01-1000 00:00:00")
             @DateTimeFormat(pattern = DATE_TIME_FORMAT_STRING) Date lastSyncedDate) {
         HashSet<Department> facilityTypes = new HashSet<>(
-                departmentRepository.findByLastModifiedDateGreaterThanOrderById(lastSyncedDate, page).getContent());
+                departmentRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(lastSyncedDate, page).getContent());
         return new ResponseEntity<>(facilityTypes, HttpStatus.OK);
     }
 }

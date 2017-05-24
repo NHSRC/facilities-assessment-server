@@ -12,3 +12,5 @@ select c.name as Checklist, aoc.reference as AOC, s.reference as Standard, me.re
 from checklist c, area_of_concern aoc, checklist_area_of_concern caoc, standard s, measurable_element me
 where caoc.checklist_id = c.id and aoc.id = caoc.area_of_concern_id and s.area_of_concern_id = aoc.id and me.standard_id = s.id and me.reference = 'BC5.7'
 order by Checklist, AOC, Standard, ME;
+
+SELECT DISTINCT COUNT(*) AS Count, last_modified_date FROM checkpoint GROUP BY last_modified_date order by Count desc;

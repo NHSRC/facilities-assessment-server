@@ -19,7 +19,7 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 @RepositoryRestResource(collectionResourceRel = "state", path = "state")
 public interface StateRepository extends BaseRepository<State> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<State> findByLastModifiedDateGreaterThanOrderById(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<State> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     State findByName(String name);
 }

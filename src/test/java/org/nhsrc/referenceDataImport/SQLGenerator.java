@@ -7,8 +7,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class SQLGenerator {
     public void generate(AssessmentChecklistData data, File file, StringBuffer stringBuffer) throws IOException {

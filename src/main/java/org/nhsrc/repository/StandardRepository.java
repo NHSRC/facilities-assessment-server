@@ -20,6 +20,6 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 @RepositoryRestResource(collectionResourceRel = "standard", path = "standard")
 public interface StandardRepository extends BaseRepository<Standard> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<Standard> findByLastModifiedDateGreaterThanOrderById(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<Standard> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
     Standard findByReference(String reference);
 }
