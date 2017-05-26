@@ -19,5 +19,5 @@ import java.util.Date;
 @RepositoryRestResource(collectionResourceRel = "tag", path = "tag")
 public interface TagRepository extends BaseRepository<Tag> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<Tag> findByLastModifiedDateGreaterThanOrderById(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<Tag> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 }

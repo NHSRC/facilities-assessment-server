@@ -20,5 +20,5 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 @RepositoryRestResource(collectionResourceRel = "checkpointTag", path = "checkpointTag")
 public interface CheckpointTagRepository extends BaseRepository<CheckpointTag> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<CheckpointTag> findByLastModifiedDateGreaterThanOrderById(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<CheckpointTag> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 }

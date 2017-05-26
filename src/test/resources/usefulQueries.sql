@@ -14,3 +14,7 @@ where caoc.checklist_id = c.id and aoc.id = caoc.area_of_concern_id and s.area_o
 order by Checklist, AOC, Standard, ME;
 
 SELECT DISTINCT COUNT(*) AS Count, last_modified_date FROM checkpoint GROUP BY last_modified_date order by Count desc;
+
+select DISTINCT checklist.name from checkpoint_score, checklist where checkpoint_score.checklist_id = checklist.id;
+
+select cl.name ChecklistName, count(cs.id) as NumScores from checkpoint_score cs inner join checklist cl on cs.checklist_id = cl.id GROUP BY cl.name;

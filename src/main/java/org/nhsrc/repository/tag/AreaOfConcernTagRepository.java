@@ -21,5 +21,5 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 @RepositoryRestResource(collectionResourceRel = "areaOfConcernTag", path = "areaOfConcernTag")
 public interface AreaOfConcernTagRepository extends BaseRepository<AreaOfConcernTag> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<AreaOfConcernTag> findByLastModifiedDateGreaterThanOrderById(@Param("lastModifiedDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<AreaOfConcernTag> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 }
