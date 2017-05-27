@@ -15,9 +15,9 @@ public class ChecklistCreator {
         excelImporter.importFile(inputExcelFile, assessmentTool, startingSheet);
     }
 
-    public void generate(AssessmentChecklistData data, File outputFile) throws IOException {
+    public void generate(AssessmentChecklistData data, File outputFile, boolean assessmentToolExists) throws IOException {
         SQLGenerator sqlGenerator = new SQLGenerator();
         StringBuffer stringBuffer = new StringBuffer();
-        sqlGenerator.generate(data, outputFile, stringBuffer);
+        sqlGenerator.generate(data, outputFile, stringBuffer, assessmentToolExists);
     }
 }

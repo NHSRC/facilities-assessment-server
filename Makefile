@@ -39,6 +39,7 @@ jss-cg-assessment-tools: reset-db
 	-psql -Unhsrc facilities_assessment < src/test/resources/db/migration/jss/CGDeployment.sql
 	-psql -v ON_ERROR_STOP=1 --echo-all -Unhsrc facilities_assessment < ../checklists/jss/cg/CG-NQAS-DH-English/output.sql
 	-psql -v ON_ERROR_STOP=1 --echo-all -Unhsrc facilities_assessment < ../checklists/jss/cg/output.sql
+	-psql -v ON_ERROR_STOP=1 --echo-all -Unhsrc facilities_assessment < ../checklists/jss/cg/output-bsu.sql
 
 binary:
 	./gradlew clean build -x test

@@ -7,17 +7,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 public class SQLGenerator {
-    public void generate(AssessmentChecklistData data, File file, StringBuffer stringBuffer) throws IOException {
+    public void generate(AssessmentChecklistData data, File file, StringBuffer stringBuffer, boolean assessmentToolExists) throws IOException {
         generateDepartment(data, stringBuffer);
-        generateChecklist(data, stringBuffer);
-        generateAreaOfConcern(data, stringBuffer);
+        generateChecklist(data, stringBuffer, assessmentToolExists);
+        generateAreaOfConcern(data, stringBuffer, assessmentToolExists);
         generateChecklistAreaOfConcernMapping(data, stringBuffer);
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
@@ -33,17 +29,23 @@ public class SQLGenerator {
         });
     }
 
-    private void generateAreaOfConcern(AssessmentChecklistData data, StringBuffer stringBuffer) {
+    private void generateAreaOfConcern(AssessmentChecklistData data, StringBuffer stringBuffer, boolean assessmentToolExists) {
         data.getAreaOfConcerns().forEach(areaOfConcern -> {
-            String name = data.getAssessmentTool().getName();
-            stringBuffer.append(String.format("insert into area_of_concern (name, reference, assessment_tool_id) values ('%s', '%s', (select id from assessment_tool where name = '%s'));\n", areaOfConcern.getName(), areaOfConcern.getReference(), name));
+            String assessmentToolName = data.getAssessmentTool().getName();
+            String existingAOCCheck = assessmentToolExists ? String.format(" where not exists (select area_of_concern.id from area_of_concern, assessment_tool where area_of_concern.reference = '%s' and area_of_concern.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s')", areaOfConcern.getReference(), assessmentToolName) : "";
+            stringBuffer.append(String.format("insert into area_of_concern (name, reference, assessment_tool_id) select '%s', '%s', (select id from assessment_tool where name = '%s')%s;\n", areaOfConcern.getName(), areaOfConcern.getReference(), assessmentToolName, existingAOCCheck));
+
             areaOfConcern.getStandards().forEach(standard -> {
-                stringBuffer.append(String.format("insert into standard (name, reference, area_of_concern_id, assessment_tool_id) values ('%s', '%s', (select area_of_concern.id from area_of_concern, assessment_tool where area_of_concern.reference = '%s' and area_of_concern.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from assessment_tool where name = '%s'));\n", standard.getName(), standard.getReference(), areaOfConcern.getReference(), name, name));
+                String existingStandardCheck = assessmentToolExists ? String.format(" where not exists (select standard.id from assessment_tool, standard where standard.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s' and standard.reference = '%s')", assessmentToolName, standard.getReference()) : "";
+                stringBuffer.append(String.format("insert into standard (name, reference, area_of_concern_id, assessment_tool_id) select '%s', '%s', (select area_of_concern.id from area_of_concern, assessment_tool where area_of_concern.reference = '%s' and area_of_concern.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from assessment_tool where name = '%s')%s;\n", standard.getName(), standard.getReference(), areaOfConcern.getReference(), assessmentToolName, assessmentToolName, existingStandardCheck));
+
                 standard.getMeasurableElements().forEach(me -> {
-                    stringBuffer.append(String.format("insert into measurable_element (name, reference, standard_id, assessment_tool_id) values ('%s', '%s', (select standard.id from standard, assessment_tool where standard.reference = '%s' and standard.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from assessment_tool where name = '%s'));\n", me.getName().replace("'", "''"), me.getReference(), standard.getReference(), name, name));
+                    String existingMECheck = assessmentToolExists ? String.format(" where not exists (select measurable_element.id from assessment_tool, measurable_element where assessment_tool.name = '%s' and measurable_element.reference = '%s' and measurable_element.assessment_tool_id = assessment_tool.id)", assessmentToolName, me.getReference()) : "";
+                    stringBuffer.append(String.format("insert into measurable_element (name, reference, standard_id, assessment_tool_id) select '%s', '%s', (select standard.id from standard, assessment_tool where standard.reference = '%s' and standard.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from assessment_tool where name = '%s')%s;\n", me.getName().replace("'", "''"), me.getReference(), standard.getReference(), assessmentToolName, assessmentToolName, existingMECheck));
+
                     me.getCheckpoints().forEach(checkpoint -> {
                         String mov = checkpoint.getMeansOfVerification() == null ? "" : checkpoint.getMeansOfVerification().replace("'", "''");
-                        stringBuffer.append(String.format("insert into checkpoint (name, means_of_verification, measurable_element_id, checklist_id, is_default, am_observation, am_staff_interview, am_patient_interview, am_record_review) values ('%s', '%s', (select measurable_element.id from measurable_element, assessment_tool where measurable_element.reference = '%s' and measurable_element.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from checklist where name = '%s' and assessment_tool_id = (select id from assessment_tool where name = '%s')), %b, %b, %b, %b, %b);\n", checkpoint.getName().replace("'", "''"), mov, me.getReference(), name, checkpoint.getChecklist().getName(), data.getAssessmentTool().getName(), checkpoint.getDefault(), checkpoint.getAssessmentMethodObservation(), checkpoint.getAssessmentMethodStaffInterview(), checkpoint.getAssessmentMethodPatientInterview(), checkpoint.getAssessmentMethodRecordReview()));
+                        stringBuffer.append(String.format("insert into checkpoint (name, means_of_verification, measurable_element_id, checklist_id, is_default, am_observation, am_staff_interview, am_patient_interview, am_record_review) values ('%s', '%s', (select measurable_element.id from measurable_element, assessment_tool where measurable_element.reference = '%s' and measurable_element.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from checklist where name = '%s' and assessment_tool_id = (select id from assessment_tool where name = '%s')), %b, %b, %b, %b, %b);\n", checkpoint.getName().replace("'", "''"), mov, me.getReference(), assessmentToolName, checkpoint.getChecklist().getName(), data.getAssessmentTool().getName(), checkpoint.getDefault(), checkpoint.getAssessmentMethodObservation(), checkpoint.getAssessmentMethodStaffInterview(), checkpoint.getAssessmentMethodPatientInterview(), checkpoint.getAssessmentMethodRecordReview()));
                     });
                 });
             });
@@ -57,10 +59,11 @@ public class SQLGenerator {
         });
     }
 
-    private void generateChecklist(AssessmentChecklistData data, StringBuffer stringBuffer) {
+    private void generateChecklist(AssessmentChecklistData data, StringBuffer stringBuffer, boolean assessmentToolExists) {
         List<Checklist> checklists = data.getChecklists();
         checklists.forEach(checklist -> {
-            stringBuffer.append(String.format("insert into checklist (name, assessment_tool_id, department_id) values ('%s', (select id from assessment_tool where name = '%s'), (select id from department where name = '%s'));\n", checklist.getName(), checklist.getAssessmentTool().getName(), checklist.getDepartment().getName()));
+            String checklistCheck = assessmentToolExists ? String.format(" where not exists (select checklist.id from checklist, assessment_tool where checklist.assessment_tool_id = assessment_tool.id and checklist.name = '%s' and assessment_tool.name = '%s')", checklist.getName(), checklist.getAssessmentTool().getName()) : "";
+            stringBuffer.append(String.format("insert into checklist (name, assessment_tool_id, department_id) select '%s', (select id from assessment_tool where name = '%s'), (select id from department where name = '%s')%s;\n", checklist.getName(), checklist.getAssessmentTool().getName(), checklist.getDepartment().getName(), checklistCheck));
         });
     }
 }

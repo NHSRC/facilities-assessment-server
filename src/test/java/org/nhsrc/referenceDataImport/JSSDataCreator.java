@@ -16,21 +16,25 @@ public class JSSDataCreator {
         List<File> files = Arrays.asList(dhInputDirectory.listFiles((dir, name) -> !(name.contains("DS_Store") || name.contains(".sql"))));
         List<File> dhFiles = files.stream().sorted(Comparator.comparing(this::getFileNumber)).collect(Collectors.toList());
 
-        AssessmentChecklistData nqasCGDHData = new AssessmentChecklistData();
-
-        dhFiles.forEach(dhFile -> {
-            try {
+//        AssessmentChecklistData nqasCGDHData = new AssessmentChecklistData();
+//        dhFiles.forEach(dhFile -> {
+//            try {
 //                checklistCreator.performImport("District Hospital (DH)", "nqas", dhFile, 0, nqasData);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
 //        checklistCreator.generate(nqasCGDHData, new File(dhInputDirectory, "output.sql"));
 
-        File chFile = new File(jssCGInputDir, "CG-NQAS-CHC-English.xlsx");
-        AssessmentChecklistData nqasCGCHCData = new AssessmentChecklistData();
-        checklistCreator.performImport("Community Hospital (CH)", "nqas", chFile, 0, nqasCGCHCData);
-        checklistCreator.generate(nqasCGCHCData, new File(jssCGInputDir, "output.sql"));
+//        File chFile = new File(jssCGInputDir, "CG-NQAS-CHC-English.xlsx");
+//        AssessmentChecklistData nqasCGCHCData = new AssessmentChecklistData();
+//        checklistCreator.performImport("Community Hospital (CH)", "nqas", chFile, 0, nqasCGCHCData);
+//        checklistCreator.generate(nqasCGCHCData, new File(jssCGInputDir, "output.sql"));
+
+        File chFile = new File(jssCGInputDir, "CG-NQAS-CHC-BSU-English.xlsx");
+        AssessmentChecklistData nqasCGCHCBSUData = new AssessmentChecklistData();
+        checklistCreator.performImport("Community Hospital (CH)", "nqas", chFile, 0, nqasCGCHCBSUData);
+        checklistCreator.generate(nqasCGCHCBSUData, new File(jssCGInputDir, "output-bsu.sql"), true);
     }
 
     @Test
