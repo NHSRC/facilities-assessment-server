@@ -1,12 +1,20 @@
 package org.nhsrc.domain;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "state")
 public class State extends AbstractEntity {
+    public State(String name) {
+        this.name = name;
+    }
+
+    public State() {
+    }
+
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
@@ -27,5 +35,15 @@ public class State extends AbstractEntity {
 
     public void setDistricts(Set<District> districts) {
         this.districts = districts;
+    }
+
+    public void addDistricts(Collection<District> districts) {
+        districts.forEach(districtToAdd -> {
+            District existingDistrict = this.districts.stream().filter(district -> district.getName().equalsIgnoreCase(districtToAdd.getName())).findFirst().orElse(districtToAdd);
+            existingDistrict.addFacilities(districtToAdd.getFacilities());
+            this.districts.removeIf(district -> district.getName().equalsIgnoreCase(existingDistrict.getName()));
+            this.districts.add(existingDistrict);
+
+        });
     }
 }

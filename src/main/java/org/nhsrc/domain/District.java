@@ -4,12 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "district")
 public class District extends AbstractEntity {
+    public District() {
+    }
+
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -44,6 +48,10 @@ public class District extends AbstractEntity {
 
     public void setFacilities(Set<Facility> facilities) {
         this.facilities = facilities;
+    }
+
+    public void addFacilities(Collection<Facility> facilities){
+        this.facilities.addAll(facilities);
     }
 
 }
