@@ -6,6 +6,8 @@ import org.nhsrc.domain.State;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class StateCreator {
     public static State create(Row row) {
@@ -24,5 +26,15 @@ public class StateCreator {
         } catch (NullPointerException ne) {
             return false;
         }
+    }
+
+    public static String toSQL(State state) {
+        state.setUuid(UUID.randomUUID());
+        return String.format("INSERT INTO state (name, uuid) values ('%s', '%s'::UUID) ON CONFLICT (name) DO NOTHING;\n", state.getName(), state.getUuid().toString())
+                .concat(state
+                        .getDistricts()
+                        .stream()
+                        .map(district -> DistrictCreator.toSQL(state, district))
+                        .collect(Collectors.joining("\n")));
     }
 }

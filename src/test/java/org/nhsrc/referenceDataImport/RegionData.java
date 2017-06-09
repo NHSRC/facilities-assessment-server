@@ -4,6 +4,7 @@ import org.nhsrc.domain.State;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RegionData {
     private Map<String, State> states;
@@ -21,5 +22,9 @@ public class RegionData {
 
     public Map<String, State> getStates() {
         return states;
+    }
+
+    public String toSQL() {
+        return this.states.values().stream().map(StateCreator::toSQL).collect(Collectors.joining("\n"));
     }
 }
