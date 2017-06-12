@@ -31,10 +31,15 @@ public class JSSDataCreator {
 //        checklistCreator.performImport("Community Hospital (CH)", "nqas", chFile, 0, nqasCGCHCData);
 //        checklistCreator.generate(nqasCGCHCData, new File(jssCGInputDir, "output.sql"));
 
-        File chFile = new File(jssCGInputDir, "CG-NQAS-CHC-BSU-English.xlsx");
-        AssessmentChecklistData nqasCGCHCBSUData = new AssessmentChecklistData();
-        checklistCreator.performImport("Community Hospital (CH)", "nqas", chFile, 0, nqasCGCHCBSUData);
-        checklistCreator.generate(nqasCGCHCBSUData, new File(jssCGInputDir, "output-bsu.sql"), true);
+//        File chFile = new File(jssCGInputDir, "CG-NQAS-CHC-BSU-English.xlsx");
+//        AssessmentChecklistData nqasCGCHCBSUData = new AssessmentChecklistData();
+//        checklistCreator.performImport("Community Hospital (CH)", "nqas", chFile, 0, nqasCGCHCBSUData);
+//        checklistCreator.generate(nqasCGCHCBSUData, new File(jssCGInputDir, "output-bsu.sql"), true);
+
+        File chFile = new File(jssCGInputDir, "CG-NQAS-CHC-BSU-AOCInputs-English.xlsx");
+        AssessmentChecklistData nqasCGCHCBSUInputsData = new AssessmentChecklistData();
+        checklistCreator.performImport("Community Hospital (CH)", "nqas", chFile, 0, nqasCGCHCBSUInputsData);
+        checklistCreator.generate(nqasCGCHCBSUInputsData, new File(jssCGInputDir, "output-bsu-inputs.sql"), true);
     }
 
     @Test
