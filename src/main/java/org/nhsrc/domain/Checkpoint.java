@@ -52,6 +52,10 @@ public class Checkpoint extends AbstractEntity {
     @NotNull
     private Boolean assessmentMethodRecordReview = false;
 
+    @Column(name = "sort_order")
+    @NotNull
+    private Integer sortOrder = 0;
+
     public String getName() {
         return name;
     }
@@ -130,5 +134,13 @@ public class Checkpoint extends AbstractEntity {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

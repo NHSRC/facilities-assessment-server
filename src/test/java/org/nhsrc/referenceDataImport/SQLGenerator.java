@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SQLGenerator {
     public void generate(AssessmentChecklistData data, File file, StringBuffer stringBuffer, boolean assessmentToolExists) throws IOException {
@@ -43,9 +44,11 @@ public class SQLGenerator {
                     String existingMECheck = assessmentToolExists ? String.format(" where not exists (select measurable_element.id from assessment_tool, measurable_element where assessment_tool.name = '%s' and measurable_element.reference = '%s' and measurable_element.assessment_tool_id = assessment_tool.id)", assessmentToolName, me.getReference()) : "";
                     stringBuffer.append(String.format("insert into measurable_element (name, reference, standard_id, assessment_tool_id) select '%s', '%s', (select standard.id from standard, assessment_tool where standard.reference = '%s' and standard.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from assessment_tool where name = '%s')%s;\n", me.getName().replace("'", "''"), me.getReference(), standard.getReference(), assessmentToolName, assessmentToolName, existingMECheck));
 
+                    AtomicInteger sortOrder = new AtomicInteger(0);
+
                     me.getCheckpoints().forEach(checkpoint -> {
                         String mov = checkpoint.getMeansOfVerification() == null ? "" : checkpoint.getMeansOfVerification().replace("'", "''");
-                        stringBuffer.append(String.format("insert into checkpoint (name, means_of_verification, measurable_element_id, checklist_id, is_default, am_observation, am_staff_interview, am_patient_interview, am_record_review) values ('%s', '%s', (select measurable_element.id from measurable_element, assessment_tool where measurable_element.reference = '%s' and measurable_element.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from checklist where name = '%s' and assessment_tool_id = (select id from assessment_tool where name = '%s')), %b, %b, %b, %b, %b);\n", checkpoint.getName().replace("'", "''"), mov, me.getReference(), assessmentToolName, checkpoint.getChecklist().getName(), data.getAssessmentTool().getName(), checkpoint.getDefault(), checkpoint.getAssessmentMethodObservation(), checkpoint.getAssessmentMethodStaffInterview(), checkpoint.getAssessmentMethodPatientInterview(), checkpoint.getAssessmentMethodRecordReview()));
+                        stringBuffer.append(String.format("insert into checkpoint (name, means_of_verification, measurable_element_id, checklist_id, is_default, am_observation, am_staff_interview, am_patient_interview, am_record_review, sort_order) values ('%s', '%s', (select measurable_element.id from measurable_element, assessment_tool where measurable_element.reference = '%s' and measurable_element.assessment_tool_id = assessment_tool.id and assessment_tool.name = '%s'), (select id from checklist where name = '%s' and assessment_tool_id = (select id from assessment_tool where name = '%s')), %b, %b, %b, %b, %b, %d);\n", checkpoint.getName().replace("'", "''"), mov, me.getReference(), assessmentToolName, checkpoint.getChecklist().getName(), data.getAssessmentTool().getName(), checkpoint.getDefault(), checkpoint.getAssessmentMethodObservation(), checkpoint.getAssessmentMethodStaffInterview(), checkpoint.getAssessmentMethodPatientInterview(), checkpoint.getAssessmentMethodRecordReview(), sortOrder.getAndIncrement()));
                     });
                 });
             });
