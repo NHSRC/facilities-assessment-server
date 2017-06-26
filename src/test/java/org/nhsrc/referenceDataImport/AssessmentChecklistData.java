@@ -9,8 +9,9 @@ public class AssessmentChecklistData {
     private List<Checklist> checklists = new ArrayList<>();
     private List<Department> departments = new ArrayList<>();
     private List<AreaOfConcern> areaOfConcerns = new ArrayList<>();
+    private List<CheckpointScore> checkpointScores = new ArrayList<>();
     private AssessmentTool assessmentTool;
-    private State state;
+    private FacilityAssessment assessment;
 
     public void addDepartment(Department department) {
         this.departments.add(department);
@@ -46,5 +47,21 @@ public class AssessmentChecklistData {
 
     public List<AreaOfConcern> getAreaOfConcerns() {
         return areaOfConcerns;
+    }
+
+    public void addScore(CheckpointScore checkpointScore) {
+        checkpointScores.add(checkpointScore);
+    }
+
+    public void setAssessment(FacilityAssessment assessment) {
+        this.assessment = assessment;
+    }
+
+    public List<CheckpointScore> getCheckpointScores() {
+        return checkpointScores;
+    }
+
+    public FacilityAssessment getAssessment() {
+        return assessment;
     }
 }

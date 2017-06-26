@@ -18,4 +18,11 @@ public class FacilityType extends AbstractEntity {
     public void setName(String name) {
         this.name = name;
     }
+
+    public FacilityType() {
+    }
+
+    public FacilityType(String name) {
+        this.name = name;
+    }
 }

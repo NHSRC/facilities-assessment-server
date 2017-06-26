@@ -16,14 +16,15 @@ public class ExcelImporter {
         this.data = data;
     }
 
-    public void importFile(File file, AssessmentTool assessmentTool, int startingSheet) throws Exception {
+    public void importFile(File file, AssessmentTool assessmentTool, int startingSheet, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
         FileInputStream inputStream = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         try {
             int numberOfSheets = workbook.getNumberOfSheets();
             for (int i = startingSheet; i < numberOfSheets; i++) {
                 XSSFSheet sheet = workbook.getSheetAt(i);
-                this.sheetImport(sheet, assessmentTool);
+                System.out.println("READING SHEET: " + sheet.getSheetName());
+                this.sheetImport(sheet, assessmentTool, hasScores, facilityAssessment);
                 System.out.println("COMPLETED SHEET: " + sheet.getSheetName());
             }
         } finally {
@@ -32,7 +33,7 @@ public class ExcelImporter {
         }
     }
 
-    public Checklist sheetImport(XSSFSheet sheet, AssessmentTool assessmentTool) throws Exception {
+    public Checklist sheetImport(XSSFSheet sheet, AssessmentTool assessmentTool, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
         Department department = makeDepartment(sheet.getSheetName().trim());
         data.addDepartment(department);
 
@@ -48,8 +49,14 @@ public class ExcelImporter {
         Iterator<Row> iterator = sheet.iterator();
         while (iterator.hasNext()) {
 //            System.out.println(sheet.getSheetName() + ", Processing row " + i++);
-            sheetImporter.importRow(iterator.next(), checklist);
+            boolean completed = sheetImporter.importRow(iterator.next(), checklist, hasScores, facilityAssessment);
+            if (completed) {
+                System.out.println(String.format("Sheet completed at line number:%d on encountering score row", i));
+                break;
+            }
+            i++;
         }
+        System.out.println(String.format("Sheet completed at line number:%d", i));
 
 //        System.out.println(checklist.toSummary());
         return checklist;

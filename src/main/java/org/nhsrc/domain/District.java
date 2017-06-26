@@ -14,6 +14,11 @@ public class District extends AbstractEntity {
     public District() {
     }
 
+    public District(String name, State state) {
+        this.name = name;
+        this.state = state;
+    }
+
     @Column(name = "name", nullable = false)
     private String name;
 

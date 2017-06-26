@@ -39,7 +39,7 @@ public class SheetRowImporter {
         return getCleanedRef(cell, standardPattern, "Standard");
     }
 
-    public void importRow(Row currentRow, Checklist checklist) {
+    public boolean importRow(Row currentRow, Checklist checklist, boolean hasScores, FacilityAssessment facilityAssessment) {
         if (isEmpty(currentRow, 0) && isEmpty(currentRow, 1) && isEmpty(currentRow, 2)) {
         } else if (!isAreaOfConcernRow(currentRow) && currAOC == null) {
         } else if (isAreaOfConcernRow(currentRow)) {
@@ -48,12 +48,16 @@ public class SheetRowImporter {
             this.standard(getText(currentRow, 0), getText(currentRow, 1));
         } else if (getText(currentRow, 0).startsWith("ME") && isEmpty(currentRow, 2)) {
         } else if (getText(currentRow, 0).startsWith("ME")) {
-            this.me(currentRow, checklist);
+            this.me(currentRow, checklist, hasScores, facilityAssessment);
         } else if (getText(currentRow, 0).replace(" ", "").startsWith(this.currStandard.getReference()) && checklist.getName().equals("Kayakalp")) {
             this.kayakalpME(currentRow, checklist);
         } else if (!isEmpty(currentRow, 2) && !checklist.getName().equals("Kayakalp")) {
-            this.checkpoint(currentRow, checklist);
+            this.checkpoint(currentRow, checklist, hasScores, facilityAssessment);
+        } else if (getText(currentRow, 0).toLowerCase().contains("score") || getText(currentRow, 1).toLowerCase().contains("score")) {
+            System.out.println(String.format("Found row containing text as score, assuming it to be end of file. %s      %s", getText(currentRow, 0), getText(currentRow, 1)));
+            return true;
         }
+        return false;
     }
 
     private int getAreaOfConcernCellNum(Row currentRow) {
@@ -119,7 +123,7 @@ public class SheetRowImporter {
         return stringCellValue.trim().replaceAll(" +", " ");
     }
 
-    private void checkpoint(Row row, Checklist checklist) {
+    private void checkpoint(Row row, Checklist checklist, boolean hasScores, FacilityAssessment facilityAssessment) {
         Checkpoint checkpoint = new Checkpoint();
         checkpoint.setName(getText(row, 2));
         String am = getText(row, 4);
@@ -132,11 +136,24 @@ public class SheetRowImporter {
         if (!getText(row, 5).equals("")) {
             checkpoint.setMeansOfVerification(getText(row, 5));
         }
+        if (!getText(row, 3).equals("") && hasScores) {
+            try {
+                CheckpointScore score = new CheckpointScore();
+                score.setCheckpoint(checkpoint);
+                score.setChecklist(checklist);
+                score.setRemarks(getText(row, 6));
+                score.setScore(((int) Double.parseDouble(getText(row, 3))));
+                score.setFacilityAssessment(facilityAssessment);
+                this.data.addScore(score);
+            } catch (NumberFormatException e) {
+                System.out.println(String.format("(ErrorInSheet) Found non-number in score column: %s", getText(row, 3)));
+            }
+        }
         currME.addCheckpoint(checkpoint);
         checklist.addCheckpoint(checkpoint);
     }
 
-    private void me(Row row, Checklist checklist) {
+    private void me(Row row, Checklist checklist, boolean hasScores, FacilityAssessment facilityAssessment) {
         String ref = getMERef(getText(row, 0));
         String name = getText(row, 1).trim().replaceAll(" +", " ");
         MeasurableElement me = currStandard.getMeasurableElement(ref);
@@ -147,7 +164,7 @@ public class SheetRowImporter {
             currStandard.addMeasurableElement(me);
         }
         currME = me;
-        checkpoint(row, checklist);
+        checkpoint(row, checklist, hasScores, facilityAssessment);
     }
 
     private void standard(String standardRefCellText, String standardNameCellText) {

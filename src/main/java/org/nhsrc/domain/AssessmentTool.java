@@ -11,6 +11,14 @@ import java.util.Set;
 @Entity
 @Table(name = "assessment_tool")
 public class AssessmentTool extends AbstractEntity {
+    public AssessmentTool() {
+    }
+
+    public AssessmentTool(String name, String mode) {
+        this.name = name;
+        this.mode = mode;
+    }
+
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
