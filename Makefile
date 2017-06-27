@@ -49,3 +49,6 @@ restore-database:
 	-psql postgres -c 'drop database facilities_assessment';
 	-psql postgres -c 'create database facilities_assessment with owner nhsrc';
 	-psql facilities_assessment < $(dump)
+
+clear_responses:
+	rm responses/*.json

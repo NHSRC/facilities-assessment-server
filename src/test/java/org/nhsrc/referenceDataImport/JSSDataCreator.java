@@ -1,5 +1,7 @@
 package org.nhsrc.referenceDataImport;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.excel.ExcelDirectory;
@@ -10,6 +12,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class JSSDataCreator {
+    private File checklistsProjectDirectory;
+
+    @Before
+    public void init() {
+        checklistsProjectDirectory = new File("../checklists");
+    }
+
     @Test
     public void generateCGSQL() throws Exception {
         String jssCGInputDir = "../checklists/jss/cg";
@@ -47,7 +56,6 @@ public class JSSDataCreator {
 
     @Test
     public void generate_MP_CHC_Checklist_SQL() throws Exception {
-        File checklistsProjectDirectory = new File("../checklists");
         File inputDirectory = new File(checklistsProjectDirectory,"jss/mp");
         File chFile = new File(inputDirectory, "CHC_CHC.xlsx");
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
@@ -56,6 +64,26 @@ public class JSSDataCreator {
         ChecklistCreator checklistCreator = new ChecklistCreator();
         checklistCreator.performImport(chFile, 0, assessmentChecklistData);
         checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory, "CHC_CHC.sql"), true);
+    }
+
+    @Test
+    public void generateNHSRC_NQAS_DH() throws Exception {
+        File checklistFile = new File(checklistsProjectDirectory, "nhsrc/Checklist_DH_New_Revised May 2016.xlsx");
+        AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
+        assessmentChecklistData.set(new AssessmentTool("District Hospital (DH)", "nqas"));
+        ChecklistCreator checklistCreator = new ChecklistCreator();
+        checklistCreator.performImport(checklistFile, 0, assessmentChecklistData);
+        checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory, "NHSRC_NQAS_DH.sql"), true);
+    }
+
+    @Test
+    public void generateNHSRC_KK_DH_SDH_CHC() throws Exception {
+        File checklistFile = new File(checklistsProjectDirectory, "nhsrc/DH,SDH & CHC Kayakalp 28 July 2016.xlsx");
+        AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
+        assessmentChecklistData.set(new AssessmentTool("Kayakalp", "Kayakalp"));
+        ChecklistCreator checklistCreator = new ChecklistCreator();
+        checklistCreator.performImport(checklistFile, 0, assessmentChecklistData);
+        checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory,"NHSRC_KK_DH_SDH_CHC.sql"), true);
     }
 
     private Integer getFileNumber(File file) {
