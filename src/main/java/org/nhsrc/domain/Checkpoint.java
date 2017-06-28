@@ -15,19 +15,19 @@ public class Checkpoint extends AbstractEntity {
     private String meansOfVerification;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = MeasurableElement.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = MeasurableElement.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "measurable_element_id")
     @NotNull
     private MeasurableElement measurableElement;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = Checklist.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = Checklist.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "checklist_id")
     @NotNull
     private Checklist checklist;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "state_id")
     @NotNull
     private State state;

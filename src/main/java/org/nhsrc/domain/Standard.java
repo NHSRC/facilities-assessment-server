@@ -22,7 +22,7 @@ public class Standard extends AbstractEntity {
     private Set<MeasurableElement> measurableElements = new HashSet<>();
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = AreaOfConcern.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = AreaOfConcern.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "area_of_concern_id")
     @NotNull
     private AreaOfConcern areaOfConcern;

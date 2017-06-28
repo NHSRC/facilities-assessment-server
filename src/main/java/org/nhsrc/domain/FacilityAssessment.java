@@ -25,12 +25,12 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     @Column(name = "start_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private java.util.Date startDate;
 
     @Column(name = "end_date", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private java.util.Date endDate;
 
     public Facility getFacility() {

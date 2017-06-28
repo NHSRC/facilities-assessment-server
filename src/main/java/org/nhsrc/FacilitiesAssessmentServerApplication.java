@@ -3,6 +3,8 @@ package org.nhsrc;
 import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
 import org.nhsrc.domain.*;
+import org.nhsrc.repository.AssessmentTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 @Import({RestConfiguration.class, DatabaseConfiguration.class})
 @EnableJpaAuditing
 public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapter {
+    @Autowired
+    private AssessmentTypeRepository assessmentTypeRepository;
 
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Calcutta"));
@@ -112,6 +116,39 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 resource.add(new Link(checklist.getDepartment().getUuid().toString(), "departmentUUID"));
                 resource.add(new Link(checklist.getAssessmentTool().getUuid().toString(), "assessmentToolUUID"));
                 resource.add(checklist.getAreasOfConcern().stream().map(aoc -> new Link(aoc.getUuid().toString(), "areasOfConcernUUIDs")).collect(Collectors.toList()));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    public ResourceProcessor<Resource<FacilityAssessment>> facilityAssessmentProcessor() {
+        return new ResourceProcessor<Resource<FacilityAssessment>>() {
+            @Override
+            public Resource<FacilityAssessment> process(Resource<FacilityAssessment> resource) {
+                FacilityAssessment facilityAssessment = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(facilityAssessment.getFacility().getUuid().toString(), "facilityUUID"));
+                resource.add(new Link(facilityAssessment.getAssessmentTool().getUuid().toString(), "assessmentToolUUID"));
+                AssessmentType assessmentType = assessmentTypeRepository.findByName(AssessmentType.EXTERNAL);
+                resource.add(new Link(assessmentType.getUuid().toString(), "assessmentTypeUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    public ResourceProcessor<Resource<CheckpointScore>> checkpointScoreProcessor() {
+        return new ResourceProcessor<Resource<CheckpointScore>>() {
+            @Override
+            public Resource<CheckpointScore> process(Resource<CheckpointScore> resource) {
+                CheckpointScore checkpointScore = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(checkpointScore.getFacilityAssessment().getUuid().toString(), "facilityAssessmentUUID"));
+                resource.add(new Link(checkpointScore.getChecklist().getUuid().toString(), "checklistUUID"));
+                resource.add(new Link(checkpointScore.getCheckpoint().getUuid().toString(), "checkpointUUID"));
+                resource.add(new Link(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getUuid().toString(), "areaOfConcernUUID"));
+                resource.add(new Link(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getUuid().toString(), "standardUUID"));
                 return resource;
             }
         };

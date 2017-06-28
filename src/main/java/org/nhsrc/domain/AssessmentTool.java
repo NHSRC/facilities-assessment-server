@@ -26,7 +26,7 @@ public class AssessmentTool extends AbstractEntity {
     private String mode;
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "assessmentTool")
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "assessmentTool")
     private Set<Checklist> checklists = new HashSet<>();
 
     public String getName() {

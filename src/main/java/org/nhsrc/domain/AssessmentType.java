@@ -7,6 +7,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "assessment_type")
 public class AssessmentType extends AbstractEntity {
+    public static String EXTERNAL = "External";
+
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 

@@ -23,7 +23,7 @@ public class MeasurableElement extends AbstractEntity {
     private Set<Checkpoint> checkpoints = new HashSet<>();
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = Standard.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = Standard.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "standard_id")
     @NotNull
     private Standard standard;

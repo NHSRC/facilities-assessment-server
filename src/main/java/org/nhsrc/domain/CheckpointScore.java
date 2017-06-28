@@ -11,7 +11,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "checkpoint_score")
 public class CheckpointScore extends AbstractScoreEntity {
-
     public CheckpointScore() {
     }
 
@@ -25,7 +24,7 @@ public class CheckpointScore extends AbstractScoreEntity {
     }
 
     @JsonIgnore
-    @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_assessment_id", referencedColumnName = "id")
     @NotNull
     private FacilityAssessment facilityAssessment;

@@ -1,5 +1,6 @@
 package org.nhsrc.web;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -16,6 +17,9 @@ public class ResponseLogger implements Filter {
     private static List<String> stringsToRemove = new ArrayList<>();
     private static String[] resources = new String[] {"facilityType", "checkpoint", "checklist", "measurableElement", "standard", "areaOfConcern", "assessmentType", "tag", "department", "assessmentTool", "facility", "district", "state", "assessmentType"};
 
+    @Value("${fa.recording.enabled}")
+    private boolean recordingEnabled;
+
     static {
         responsesDir.mkdir();
         for (String resource : resources) {
@@ -26,6 +30,11 @@ public class ResponseLogger implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if (!recordingEnabled) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         HttpServletResponseCopier responseCopier = new HttpServletResponseCopier((HttpServletResponse) response);
         FileWriter fileWriter = null;
         try {

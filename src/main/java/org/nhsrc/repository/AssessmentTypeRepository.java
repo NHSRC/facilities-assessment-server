@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.UUID;
 
 import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 
@@ -20,4 +21,6 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 public interface AssessmentTypeRepository extends BaseRepository<AssessmentType> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<AssessmentType> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
+
+    AssessmentType findByName(String name);
 }
