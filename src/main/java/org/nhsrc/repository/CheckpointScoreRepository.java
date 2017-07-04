@@ -1,7 +1,6 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.CheckpointScore;
-import org.nhsrc.domain.Facility;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;

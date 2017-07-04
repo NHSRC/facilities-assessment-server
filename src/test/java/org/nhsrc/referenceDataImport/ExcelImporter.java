@@ -64,6 +64,9 @@ public class ExcelImporter {
 
     private Department makeDepartment(String name) {
         Department department = new Department();
+        if (name.contains(".")) {
+            System.err.println(String.format("Department name doesn't look right: %s", name));
+        }
         department.setName(name);
         return department;
     }

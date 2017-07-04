@@ -46,6 +46,11 @@ public abstract class AbstractScoreEntity implements Persistable<UUID> {
         return uuid;
     }
 
+    @JsonIgnore
+    public Integer getDBId() {
+        return id;
+    }
+
     public java.util.Date getCreatedDate() {
         return createdDate;
     }

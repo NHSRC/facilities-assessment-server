@@ -66,15 +66,7 @@ public class JSSDataCreator {
         checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory, "CHC_CHC.sql"), true);
     }
 
-    @Test
-    public void generateNHSRC_NQAS_DH() throws Exception {
-        File checklistFile = new File(checklistsProjectDirectory, "nhsrc/Checklist_DH_New_Revised May 2016.xlsx");
-        AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
-        assessmentChecklistData.set(new AssessmentTool("District Hospital (DH)", "nqas"));
-        ChecklistCreator checklistCreator = new ChecklistCreator();
-        checklistCreator.performImport(checklistFile, 0, assessmentChecklistData);
-        checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory, "NHSRC_NQAS_DH.sql"), true);
-    }
+
 
     @Test
     public void generateNHSRC_KK_DH_SDH_CHC() throws Exception {

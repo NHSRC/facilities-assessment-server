@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -21,4 +22,5 @@ public interface FacilityAssessmentRepository extends BaseRepository<FacilityAss
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<FacilityAssessment> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
     FacilityAssessment findByFacilityAndAssessmentToolAndStartDateBeforeAndStartDateAfter(Facility facility, AssessmentTool assessmentTool, Date startDateBefore, Date startDateAfter);
+    List<FacilityAssessment> findByLastModifiedDateGreaterThan(Date lastModifiedDateTime);
 }

@@ -1,6 +1,7 @@
 package org.nhsrc.referenceDataImport;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.nhsrc.domain.*;
@@ -40,12 +41,16 @@ public class SheetRowImporter {
     }
 
     public boolean importRow(Row currentRow, Checklist checklist, boolean hasScores, FacilityAssessment facilityAssessment) {
+        if (currentRow.getZeroHeight()) {
+            return false;
+        }
+
         if (isEmpty(currentRow, 0) && isEmpty(currentRow, 1) && isEmpty(currentRow, 2)) {
         } else if (!isAreaOfConcernRow(currentRow) && currAOC == null) {
         } else if (isAreaOfConcernRow(currentRow)) {
             this.aoc(currentRow, checklist, getAreaOfConcernCellNum(currentRow));
         } else if (getText(currentRow, 0).startsWith("Standard ") && getText(currentRow, 0).length() <= 15) {
-            this.standard(getText(currentRow, 0), getText(currentRow, 1));
+            this.standard(getText(currentRow, 0), getText(currentRow, 1), checklist);
         } else if (getText(currentRow, 0).startsWith("ME") && isEmpty(currentRow, 2)) {
         } else if (getText(currentRow, 0).startsWith("ME")) {
             this.me(currentRow, checklist, hasScores, facilityAssessment);
@@ -84,6 +89,9 @@ public class SheetRowImporter {
             me.setReference(ref);
             currStandard.addMeasurableElement(me);
         }
+        if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2))) {
+            System.err.println(String.format("FOUND MeasurableElement WITH NAME %s under standard=%s, in checklist:%s", me.getReference(), currStandard.getReference(), checklist.getName()));
+        }
         currME = me;
 
         Checkpoint checkpoint = new Checkpoint();
@@ -93,6 +101,7 @@ public class SheetRowImporter {
         checkpoint.setAssessmentMethodPatientInterview(am.toLowerCase().contains("pi"));
         checkpoint.setAssessmentMethodRecordReview(am.toLowerCase().contains("rr"));
         checkpoint.setAssessmentMethodStaffInterview(am.toLowerCase().contains("si"));
+        checkpoint.setMeansOfVerification(getText(currentRow, 4));
         checkpoint.setDefault(true);
         checkpoint.setMeasurableElement(currME);
         currME.addCheckpoint(checkpoint);
@@ -163,11 +172,14 @@ public class SheetRowImporter {
             me.setReference(ref);
             currStandard.addMeasurableElement(me);
         }
+        if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2))) {
+            System.err.println(String.format("FOUND MEASURABLEELEMENT WITH NAME %s under standard=%s, in checklist:%s", me.getReference(), currStandard.getReference(), checklist.getName()));
+        }
         currME = me;
         checkpoint(row, checklist, hasScores, facilityAssessment);
     }
 
-    private void standard(String standardRefCellText, String standardNameCellText) {
+    private void standard(String standardRefCellText, String standardNameCellText, Checklist checklist) {
         String ref = getStandardRef(standardRefCellText);
 
         Standard standard = currAOC.getStandard(ref);
@@ -176,6 +188,9 @@ public class SheetRowImporter {
             standard.setReference(ref);
             standard.setName(standardNameCellText);
             currAOC.addStandard(standard);
+        }
+        if (!currAOC.getReference().substring(0, 1).equals(standard.getReference().substring(0, 1))) {
+            System.err.println(String.format("FOUND Standard WITH NAME %s under AOC=%s, in checklist:%s", standard.getReference(), currAOC.getReference(), checklist.getName()));
         }
         currStandard = standard;
     }
