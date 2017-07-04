@@ -3,26 +3,16 @@ package org.nhsrc.referenceDataImport;
 import org.apache.poi.ss.usermodel.Row;
 
 public class FacilityRow {
-    private Integer facilityId;
     private String facilityName;
     private String facilityType;
     private String stateName;
     private String districtName;
 
     public FacilityRow(Row facilityRow) {
-        facilityId = (int) facilityRow.getCell(0).getNumericCellValue();
-        facilityName = facilityRow.getCell(1).getStringCellValue();
+        stateName = facilityRow.getCell(0).getStringCellValue();
+        districtName = facilityRow.getCell(1).getStringCellValue();
         facilityType = facilityRow.getCell(2).getStringCellValue();
-        stateName = facilityRow.getCell(4).getStringCellValue();
-        districtName = facilityRow.getCell(5).getStringCellValue();
-    }
-
-    public Integer getFacilityId() {
-        return facilityId;
-    }
-
-    public void setFacilityId(Integer facilityId) {
-        this.facilityId = facilityId;
+        facilityName = facilityRow.getCell(3).getStringCellValue();
     }
 
     public String getFacilityName() {
@@ -55,5 +45,15 @@ public class FacilityRow {
 
     public void setDistrictName(String districtName) {
         this.districtName = districtName;
+    }
+
+    @Override
+    public String toString() {
+        return "FacilityRow{" +
+                "facilityName='" + facilityName + '\'' +
+                ", facilityType='" + facilityType + '\'' +
+                ", stateName='" + stateName + '\'' +
+                ", districtName='" + districtName + '\'' +
+                '}';
     }
 }

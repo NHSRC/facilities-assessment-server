@@ -19,16 +19,8 @@ public class StateCreator {
         return state;
     }
 
-    public static boolean facilityTypeFilter(Row row) {
-        try {
-            FacilityRow facilityRow = new FacilityRow(row);
-            return !facilityRow.getFacilityType().toLowerCase().equalsIgnoreCase("Sub Centres") && facilityRow.getFacilityId() != null;
-        } catch (NullPointerException ne) {
-            return false;
-        }
-    }
-
     public static String toSQL(State state) {
+        if (state.getName().trim().equals("")) return "";
         state.setUuid(UUID.randomUUID());
         return String.format("INSERT INTO state (name, uuid) values ('%s', '%s'::UUID) ON CONFLICT (name) DO NOTHING;\n", state.getName(), state.getUuid().toString())
                 .concat(state
