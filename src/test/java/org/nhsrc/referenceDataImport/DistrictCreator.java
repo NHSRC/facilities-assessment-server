@@ -19,11 +19,11 @@ public class DistrictCreator {
 
     public static String toSQL(State state, District district) {
         district.setUuid(UUID.randomUUID());
-        return String.format("INSERT INTO district (name, uuid, state_id) values ('%s', '%s'::UUID, (SELECT id FROM state WHERE name='%s')) ON CONFLICT (name) DO NOTHING;\n", district.getName(), district.getUuid().toString(), state.getName())
+        return String.format("INSERT INTO district (name, uuid, state_id) values ('%s', '%s'::UUID, (SELECT id FROM state WHERE name='%s')) ON CONFLICT (state_id, name) DO NOTHING;\n", district.getName(), district.getUuid().toString(), state.getName())
                 .concat(district
                         .getFacilities()
                         .stream()
-                        .map(facility -> FacilityCreator.toSQL(district, facility))
+                        .map(facility -> FacilityCreator.toSQL(district, facility, state))
                         .collect(Collectors.joining("\n")));
     }
 }

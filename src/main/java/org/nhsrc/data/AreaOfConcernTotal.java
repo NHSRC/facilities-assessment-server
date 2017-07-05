@@ -42,4 +42,13 @@ public class AreaOfConcernTotal {
     public void setTotal(int total) {
         this.total = total;
     }
+
+    @Override
+    public String toString() {
+        return "AreaOfConcernTotal{" +
+                "checklistUUID='" + checklistUUID + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", total=" + total +
+                '}';
+    }
 }

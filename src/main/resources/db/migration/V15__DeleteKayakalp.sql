@@ -1,0 +1,1 @@
+DELETE from assessment_tool where name = 'Kayakalp' and mode = 'Kayakalp';

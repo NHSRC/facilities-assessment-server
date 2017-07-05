@@ -127,6 +127,7 @@ public class FacilityAssessmentProgressController {
             });
 
             facilityAssessmentsProgress.add(assessmentProgress);
+            System.out.println(String.format("ChecklistProgressCount: %d; AOCProgressCount: %d; StandardProgressCount: %d", assessmentProgress.getChecklistsProgress().size(), assessmentProgress.getAreaOfConcernsProgress().size(), assessmentProgress.getStandardsProgress().size()));
         });
         return ResponseEntity.ok(facilityAssessmentsProgress);
     }

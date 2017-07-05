@@ -70,4 +70,14 @@ public class AreaOfConcernProgressDTO {
         result = 31 * result + checklistUUID.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "AreaOfConcernProgressDTO{" +
+                "checklistUUID='" + checklistUUID + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", completed=" + completed +
+                ", total=" + total +
+                '}';
+    }
 }

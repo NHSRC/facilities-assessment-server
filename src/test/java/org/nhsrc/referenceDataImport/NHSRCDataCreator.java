@@ -11,7 +11,7 @@ public class NHSRCDataCreator {
 
     @Before
     public void init() {
-        checklistsProjectDirectory = new File("../checklists/nhsrc");
+        checklistsProjectDirectory = new File("../reference-data/nhsrc");
     }
 
     @Test

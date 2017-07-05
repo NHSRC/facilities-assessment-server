@@ -60,4 +60,12 @@ public class AssessmentTool extends AbstractEntity {
     public void addChecklists(ArrayList<Checklist> checklists) {
         this.checklists.addAll(checklists);
     }
+
+    @Override
+    public String toString() {
+        return "AssessmentTool{" +
+                "name='" + name + '\'' +
+                ", mode='" + mode + '\'' +
+                '}';
+    }
 }

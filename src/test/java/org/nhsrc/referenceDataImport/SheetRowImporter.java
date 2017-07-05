@@ -89,7 +89,7 @@ public class SheetRowImporter {
             me.setReference(ref);
             currStandard.addMeasurableElement(me);
         }
-        if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2))) {
+        if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2)) || me.getReference().length() < 4) {
             System.err.println(String.format("FOUND MeasurableElement WITH NAME %s under standard=%s, in checklist:%s", me.getReference(), currStandard.getReference(), checklist.getName()));
         }
         currME = me;
@@ -172,7 +172,7 @@ public class SheetRowImporter {
             me.setReference(ref);
             currStandard.addMeasurableElement(me);
         }
-        if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2))) {
+        if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2)) || me.getReference().length() < 4) {
             System.err.println(String.format("FOUND MEASURABLEELEMENT WITH NAME %s under standard=%s, in checklist:%s", me.getReference(), currStandard.getReference(), checklist.getName()));
         }
         currME = me;
@@ -189,7 +189,7 @@ public class SheetRowImporter {
             standard.setName(standardNameCellText);
             currAOC.addStandard(standard);
         }
-        if (!currAOC.getReference().substring(0, 1).equals(standard.getReference().substring(0, 1))) {
+        if (!currAOC.getReference().substring(0, 1).equals(standard.getReference().substring(0, 1)) || standard.getReference().length() < 2) {
             System.err.println(String.format("FOUND Standard WITH NAME %s under AOC=%s, in checklist:%s", standard.getReference(), currAOC.getReference(), checklist.getName()));
         }
         currStandard = standard;

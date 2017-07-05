@@ -56,6 +56,9 @@ public class ExcelImporter {
             }
             i++;
         }
+        if (checklist.getAreasOfConcern().size() == 0 || checklist.getCheckpoints().size() == 0) {
+            System.err.println(String.format("AssessmentTool: %s, Checklist: %s, created with #AOC=%d and #Checkpoints=%d", assessmentTool.toString(), checklist.getName(), checklist.getAreasOfConcern().size(), checklist.getCheckpoints().size()));
+        }
         System.out.println(String.format("Sheet completed at line number:%d", i));
 
 //        System.out.println(checklist.toSummary());
