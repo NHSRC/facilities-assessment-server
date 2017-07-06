@@ -2,9 +2,10 @@ package org.nhsrc.data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 @Entity
-public class AreaOfConcernTotal {
+public class AreaOfConcernTotal implements Serializable {
     private String checklistUUID;
     private String uuid;
     private int total;
@@ -18,6 +19,7 @@ public class AreaOfConcernTotal {
     public AreaOfConcernTotal() {
     }
 
+    @Id
     public String getChecklistUUID() {
         return checklistUUID;
     }

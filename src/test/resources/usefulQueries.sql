@@ -51,5 +51,8 @@ select aoc.uuid, cl.uuid, count(aoc.id) from checkpoint cp, area_of_concern aoc,
 select cl.uuid, count(cl.id) from checkpoint_score cps, facility_assessment fa, checklist cl where cps.facility_assessment_id = fa.id and fa.id = 1 and cps.checklist_id = cl.id GROUP BY cl.id;
 select cl.uuid, count(cl.id) from checkpoint cp, assessment_tool at, checklist cl where cp.checklist_id = cl.id and cl.assessment_tool_id = at.id and at.id = 1 GROUP BY cl.id;
 
+-- Assessments Filled Summary
+SELECT DISTINCT (fa.id, f.name, cl.name) from facility_assessment fa, facility f, checklist cl, checkpoint_score cps WHERE cps.facility_assessment_id = fa.id AND cps.checklist_id = cl.id and fa.facility_id = f.id;
+
 -- Kayakalp
 SELECT cp.means_of_verification from checkpoint cp, checklist cl WHERE cp.checklist_id = cl.id and cl.name = 'Kayakalp';

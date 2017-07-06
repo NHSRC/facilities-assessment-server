@@ -2,9 +2,10 @@ package org.nhsrc.dto;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 @Entity
-public class StandardProgressDTO {
+public class StandardProgressDTO implements Serializable {
     private String aocUUID;
     private String checklistUUID;
     protected String uuid;
@@ -22,6 +23,7 @@ public class StandardProgressDTO {
     public StandardProgressDTO() {
     }
 
+    @Id
     public String getAocUUID() {
         return aocUUID;
     }
@@ -30,6 +32,7 @@ public class StandardProgressDTO {
         this.aocUUID = aocUUID;
     }
 
+    @Id
     public String getChecklistUUID() {
         return checklistUUID;
     }
@@ -61,5 +64,25 @@ public class StandardProgressDTO {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StandardProgressDTO that = (StandardProgressDTO) o;
+
+        if (!aocUUID.equals(that.aocUUID)) return false;
+        if (!checklistUUID.equals(that.checklistUUID)) return false;
+        return uuid.equals(that.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = aocUUID.hashCode();
+        result = 31 * result + checklistUUID.hashCode();
+        result = 31 * result + uuid.hashCode();
+        return result;
     }
 }

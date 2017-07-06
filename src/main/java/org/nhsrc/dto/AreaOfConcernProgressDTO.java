@@ -2,9 +2,10 @@ package org.nhsrc.dto;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 @Entity
-public class AreaOfConcernProgressDTO {
+public class AreaOfConcernProgressDTO implements Serializable {
     private String checklistUUID;
     protected String uuid;
     private int completed;
@@ -20,6 +21,7 @@ public class AreaOfConcernProgressDTO {
     public AreaOfConcernProgressDTO() {
     }
 
+    @Id
     public String getChecklistUUID() {
         return checklistUUID;
     }
@@ -57,10 +59,8 @@ public class AreaOfConcernProgressDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
 
         AreaOfConcernProgressDTO that = (AreaOfConcernProgressDTO) o;
-
         return checklistUUID.equals(that.checklistUUID) && uuid.equals(that.uuid);
     }
 
