@@ -13,12 +13,12 @@ import java.util.Date;
 @SelectBeforeUpdate
 @Table(name = "facility_assessment")
 public class FacilityAssessment extends AbstractScoreEntity {
-    @OneToOne(cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_id")
     @NotNull
     private Facility facility;
 
-    @OneToOne(cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_id")
     @NotNull
     private AssessmentTool assessmentTool;

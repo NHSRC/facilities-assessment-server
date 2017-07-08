@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "facility")
 public class Facility extends AbstractEntity {
-
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -18,7 +17,7 @@ public class Facility extends AbstractEntity {
     @NotNull
     private District district;
 
-    @OneToOne(targetEntity = FacilityType.class, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_type_id", nullable = false)
     private FacilityType facilityType;
 

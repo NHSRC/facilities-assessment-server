@@ -17,7 +17,6 @@ public abstract class AbstractEntity extends AbstractTransactionalEntity {
     @Column(name = "uuid", updatable = false, unique = true, nullable = false)
     private UUID uuid;
 
-
     @Column(name = "inactive", nullable = false)
     private Boolean inactive = false;
 

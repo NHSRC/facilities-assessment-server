@@ -61,7 +61,7 @@ public class FacilityAssessmentProgressController {
             List totalResultList = totalQuery.getResultList();
 
             Query progressQuery = entityManager.createNativeQuery(checklistScoreCountInAssessment, ChecklistProgressDTO.class);
-            progressQuery.setParameter("id", facilityAssessment.getDBId());
+            progressQuery.setParameter("id", facilityAssessment.getId());
             final List checklistProgressList = progressQuery.getResultList();
 
             totalResultList.forEach(checklistEntityTotal -> {
@@ -84,7 +84,7 @@ public class FacilityAssessmentProgressController {
             totalResultList = totalQuery.getResultList();
 
             progressQuery = entityManager.createNativeQuery(aocScoreCountInAssessment, AreaOfConcernProgressDTO.class);
-            progressQuery.setParameter("id", facilityAssessment.getDBId());
+            progressQuery.setParameter("id", facilityAssessment.getId());
             final List aocProgressList = progressQuery.getResultList();
 
             totalResultList.forEach(totalResultItem -> {
@@ -108,7 +108,7 @@ public class FacilityAssessmentProgressController {
             totalResultList = totalQuery.getResultList();
 
             progressQuery = entityManager.createNativeQuery(standardsScoreCountInAssessment, StandardProgressDTO.class);
-            progressQuery.setParameter("id", facilityAssessment.getDBId());
+            progressQuery.setParameter("id", facilityAssessment.getId());
             final List standardProgressList = progressQuery.getResultList();
 
             totalResultList.forEach(totalResultItem -> {

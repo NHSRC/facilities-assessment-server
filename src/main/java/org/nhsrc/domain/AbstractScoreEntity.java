@@ -15,13 +15,13 @@ import java.util.UUID;
 
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
-public abstract class AbstractScoreEntity implements Persistable<UUID> {
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", updatable = false, insertable = false, nullable = false, columnDefinition = "serial")
+public abstract class AbstractScoreEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private Integer id;
 
-    @Id
-    @Column(name = "uuid", updatable = false, unique = true)
+    @Column(name = "uuid")
     @NotNull
     private UUID uuid;
 
@@ -37,18 +37,12 @@ public abstract class AbstractScoreEntity implements Persistable<UUID> {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Calcutta")
     private java.util.Date lastModifiedDate;
 
-    public void setId(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    @Override
-    public UUID getId() {
-        return uuid;
-    }
-
-    @JsonIgnore
-    public Integer getDBId() {
+    public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public java.util.Date getCreatedDate() {

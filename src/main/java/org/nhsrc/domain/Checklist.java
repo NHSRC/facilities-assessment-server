@@ -21,7 +21,7 @@ public class Checklist extends AbstractEntity {
     @NotNull
     private AssessmentTool assessmentTool;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
     @NotNull
     private Department department;

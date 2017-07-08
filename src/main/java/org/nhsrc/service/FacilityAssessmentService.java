@@ -2,7 +2,6 @@ package org.nhsrc.service;
 
 import org.nhsrc.domain.*;
 import org.nhsrc.dto.ChecklistDTO;
-import org.nhsrc.dto.CheckpointScoreDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.mapper.FacilityAssessmentMapper;
 import org.nhsrc.repository.*;
@@ -10,9 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -53,29 +51,26 @@ public class FacilityAssessmentService {
 
     public List<CheckpointScore> saveChecklist(ChecklistDTO checklistDTO) {
         Checklist checklist = checklistRepository.findByUuid(checklistDTO.getUuid());
-        FacilityAssessment facilityAssessment = facilityAssessmentRepository
-                .findByUuid(checklistDTO.getFacilityAssessment());
-        Function<? super CheckpointScoreDTO, CheckpointScore> saveCheckpointScore =
-                this.saveCheckpointScoreFactory(checklist, facilityAssessment);
-        return checklistDTO.getCheckpointScores()
-                .parallelStream()
-                .map(saveCheckpointScore)
-                .collect(Collectors.toList());
-    }
-
-    private Function<? super CheckpointScoreDTO, CheckpointScore> saveCheckpointScoreFactory(
-            Checklist checklist,
-            FacilityAssessment facilityAssessment) {
-        return (checkpointScoreDTO) -> {
-            Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
-            CheckpointScore checkpointScore = new CheckpointScore(
-                    facilityAssessment,
-                    checklist,
-                    checkpoint,
-                    checkpointScoreDTO.getScore(),
-                    checkpointScoreDTO.getRemarks(),
-                    checkpointScoreDTO.getUuid());
-            return checkpointScoreRepository.save(checkpointScore);
-        };
+        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(checklistDTO.getFacilityAssessment());
+        List<CheckpointScore> checkpointScores = new ArrayList<>();
+        checklistDTO.getCheckpointScores().stream().forEach(checkpointScoreDTO -> {
+            try {
+                Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
+                CheckpointScore checkpointScore = checkpointScoreRepository.findByUuid(checkpointScoreDTO.getUuid());
+                if (checkpointScore == null) {
+                    checkpointScore = new CheckpointScore();
+                    checkpointScore.setFacilityAssessment(facilityAssessment);
+                    checkpointScore.setChecklist(checklist);
+                    checkpointScore.setCheckpoint(checkpoint);
+                    checkpointScore.setUuid(checkpointScoreDTO.getUuid());
+                }
+                checkpointScore.setScore(checkpointScoreDTO.getScore());
+                checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
+                checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return checkpointScores;
     }
 }

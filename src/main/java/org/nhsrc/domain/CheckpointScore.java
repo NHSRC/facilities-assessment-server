@@ -24,19 +24,19 @@ public class CheckpointScore extends AbstractScoreEntity {
     }
 
     @JsonIgnore
-    @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "facility_assessment_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "facility_assessment_id")
     @NotNull
     private FacilityAssessment facilityAssessment;
 
     @JsonIgnore
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "checklist_id")
     @NotNull
     private Checklist checklist;
 
     @JsonIgnore
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "checkpoint_id")
     @NotNull
     private Checkpoint checkpoint;
