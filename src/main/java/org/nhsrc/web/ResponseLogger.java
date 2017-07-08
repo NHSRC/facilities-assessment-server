@@ -1,6 +1,9 @@
 package org.nhsrc.web;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.nhsrc.config.DeploymentConfiguration;
+import org.nhsrc.repository.DeploymentConfigurationRepository;
+import org.nhsrc.service.DeploymentConfigurationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -16,9 +19,12 @@ public class ResponseLogger implements Filter {
     private static File responsesDir = new File("responses");
     private static List<String> stringsToRemove = new ArrayList<>();
     private static String[] resources = new String[] {"facilityType", "checkpoint", "checklist", "measurableElement", "standard", "areaOfConcern", "assessmentType", "tag", "department", "assessmentTool", "facility", "district", "state", "assessmentType"};
+    private DeploymentConfigurationService deploymentConfigurationService;
 
-    @Value("${fa.recording.enabled}")
-    private boolean recordingEnabled;
+    @Autowired
+    public ResponseLogger(DeploymentConfigurationService deploymentConfigurationService) {
+        this.deploymentConfigurationService = deploymentConfigurationService;
+    }
 
     static {
         responsesDir.mkdir();
@@ -30,7 +36,8 @@ public class ResponseLogger implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (!recordingEnabled) {
+        DeploymentConfiguration configuration = deploymentConfigurationService.getConfiguration();
+        if (!configuration.isRecordingMode()) {
             chain.doFilter(request, response);
             return;
         }
