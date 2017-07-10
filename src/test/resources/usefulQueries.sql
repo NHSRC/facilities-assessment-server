@@ -223,9 +223,47 @@ FROM crosstab(
           LEFT OUTER JOIN facility ON fa.facility_id = facility.id
         WHERE facility.name = ''CHC Lormi''
         GROUP BY d.name, AreaOfConcern
-       )) as foo order by department, areaofconcern',
+       ) UNION (SELECT
+            ''Total'' AS Department,
+            ''Total''  AS AreaOfConcern,
+            round(((sum(ad.dscore) :: FLOAT) / (count(ad.dscore))) :: NUMERIC, 1) AS Score
+          FROM
+            (
+              SELECT
+                d.name                                                                            AS Department,
+                (sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100 :: FLOAT) AS dscore,
+                max(fa.start_date)
+              FROM checkpoint_score cs
+                INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+                LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id
+                LEFT OUTER JOIN department d ON d.id = cl.department_id
+                LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+                LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+              WHERE facility.name = ''CHC Lormi''
+              GROUP BY d.name
+  ) AS ad)) as foo order by department, areaofconcern',
        'select * from ((SELECT distinct name from area_of_concern) union (SELECT ''Total'' as name)) as bar order by name')
   AS ctx(department VARCHAR(255), "Inputs" TEXT, "Patient Rights" TEXT, "Support Services" TEXT, "Infection Control" TEXT, "Quality  Management" TEXT, "Service Provision" TEXT, "Quality Management" TEXT, "Clinical Services" TEXT, "Outcome" TEXT, "Total" TEXT);
+
+SELECT
+  'Total'                                               AS Department,
+  'Total'                                               AS AreaOfConcern,
+  round(((sum(ad.dscore) :: FLOAT) / (count(ad.dscore))) :: NUMERIC, 1) AS Score
+FROM
+  (
+    SELECT
+      d.name                                                                            AS Department,
+      (sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100 :: FLOAT) AS dscore,
+      max(fa.start_date)
+    FROM checkpoint_score cs
+      INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+      LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id
+      LEFT OUTER JOIN department d ON d.id = cl.department_id
+      LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+      LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+    WHERE facility.name = 'CHC Lormi'
+    GROUP BY d.name
+  ) AS ad;
 
 SELECT
   d.name                                                                                        AS Department,
