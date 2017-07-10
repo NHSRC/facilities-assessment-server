@@ -56,3 +56,154 @@ SELECT DISTINCT (fa.id, f.name, cl.name) from facility_assessment fa, facility f
 
 -- Kayakalp
 SELECT cp.means_of_verification from checkpoint cp, checklist cl WHERE cp.checklist_id = cl.id and cl.name = 'Kayakalp';
+
+
+
+-- Assessment SCORE BY CHECKLIST AND Department
+
+SELECT * from crosstab(
+'SELECT
+  d.name                                         AS Department,
+  aoc.name                                       AS AreaOfConcern,
+  round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS Score
+FROM checkpoint_score cs
+  INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+  LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id and c.checklist_id = cl.id
+  LEFT OUTER JOIN measurable_element me on me.id = c.measurable_element_id
+  LEFT OUTER JOIN standard s on s.id = me.standard_id
+  LEFT OUTER JOIN area_of_concern aoc on aoc.id = s.area_of_concern_id
+  LEFT OUTER JOIN department d ON d.id = cl.department_id
+  LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+  LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+WHERE facility.name = ''Mungeli District Hospital''
+GROUP BY d.name, aoc.name ORDER BY d.name, aoc.name',
+  'SELECT distinct name from area_of_concern'
+              ) AS ct(Department VARCHAR(255), "Inputs" text, "Patient Rights" text, "Support Services" text, "Infection Control" text, "Quality  Management" text, "Service Provision" text, "Quality Management" text, "Clinical Services" text, "Outcome" text);
+
+
+
+SELECT * from crosstab(
+                'SELECT * from ((SELECT
+                  d.name                         AS Department,
+                  aoc.name                       AS AreaOfConcern,
+                  round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS Score
+                FROM checkpoint_score cs
+                  INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+                  LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id and c.checklist_id = cl.id
+                  LEFT OUTER JOIN measurable_element me on me.id = c.measurable_element_id
+                  LEFT OUTER JOIN standard s on s.id = me.standard_id
+                  LEFT OUTER JOIN area_of_concern aoc on aoc.id = s.area_of_concern_id
+                  LEFT OUTER JOIN department d ON d.id = cl.department_id
+                  LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+                  LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+                WHERE facility.name = ''CHC Lormi''
+                GROUP BY d.name, aoc.name)
+                UNION
+                (SELECT
+                   d.name                                                                            AS Department,
+                   ''Total'' as AreaOfConcern,
+                   round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS Score
+                 FROM checkpoint_score cs
+                   INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+                   LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id and c.checklist_id = cl.id
+                   LEFT OUTER JOIN measurable_element me on me.id = c.measurable_element_id
+                   LEFT OUTER JOIN standard s on s.id = me.standard_id
+                   LEFT OUTER JOIN area_of_concern aoc on aoc.id = s.area_of_concern_id
+                   LEFT OUTER JOIN department d ON d.id = cl.department_id
+                   LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+                   LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+                 WHERE facility.name = ''CHC Lormi''
+                 GROUP BY d.name, AreaOfConcern
+                )) as foo order by department, areaofconcern', 'select * from ((SELECT distinct name from area_of_concern) union (SELECT ''Total'' as name)) as bar order by name')
+  AS ctx(department VARCHAR(255), "Inputs" text, "Patient Rights" text, "Support Services" text, "Infection Control" text, "Quality  Management" text, "Service Provision" text, "Quality Management" text, "Clinical Services" text, "Outcome" text, "Total" text);
+
+select * from ((SELECT distinct name from area_of_concern) union (SELECT 'Total' as name)) as bar;
+
+SELECT * from ((SELECT
+                  d.name                         AS Department,
+                  aoc.name                       AS AreaOfConcern,
+                  round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS Score
+                FROM checkpoint_score cs
+                  INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+                  LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id and c.checklist_id = cl.id
+                  LEFT OUTER JOIN measurable_element me on me.id = c.measurable_element_id
+                  LEFT OUTER JOIN standard s on s.id = me.standard_id
+                  LEFT OUTER JOIN area_of_concern aoc on aoc.id = s.area_of_concern_id
+                  LEFT OUTER JOIN department d ON d.id = cl.department_id
+                  LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+                  LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+                WHERE facility.name = 'CHC Lormi'
+                GROUP BY d.name, aoc.name)
+               UNION
+               (SELECT
+                  d.name                                                                            AS Department,
+                  'Total' as AreaOfConcern,
+                  round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS Score
+                FROM checkpoint_score cs
+                  INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+                  LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id and c.checklist_id = cl.id
+                  LEFT OUTER JOIN measurable_element me on me.id = c.measurable_element_id
+                  LEFT OUTER JOIN standard s on s.id = me.standard_id
+                  LEFT OUTER JOIN area_of_concern aoc on aoc.id = s.area_of_concern_id
+                  LEFT OUTER JOIN department d ON d.id = cl.department_id
+                  LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+                  LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+                WHERE facility.name = 'CHC Lormi'
+                GROUP BY d.name, AreaOfConcern
+               )) as foo order by department, areaofconcern;
+
+select * from ((SELECT distinct name from area_of_concern) union (SELECT 'Total' as name)) as bar
+
+
+(SELECT
+  d.name                                                                            AS Department,
+  aoc.name                                                          AS AreaOfConcern,
+  round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS Score
+FROM checkpoint_score cs
+  INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+  LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id and c.checklist_id = cl.id
+  LEFT OUTER JOIN measurable_element me on me.id = c.measurable_element_id
+  LEFT OUTER JOIN standard s on s.id = me.standard_id
+  LEFT OUTER JOIN area_of_concern aoc on aoc.id = s.area_of_concern_id
+  LEFT OUTER JOIN department d ON d.id = cl.department_id
+  LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+  LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+WHERE facility.name = 'Mungeli District Hospital'
+GROUP BY d.name, aoc.name ORDER BY d.name, aoc.name)
+UNION
+(SELECT
+   d.name                                                                            AS Department,
+   'Total' as AreaOfConcern,
+   (sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100 :: FLOAT) AS score
+ FROM checkpoint_score cs
+   INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+   LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id and c.checklist_id = cl.id
+   LEFT OUTER JOIN measurable_element me on me.id = c.measurable_element_id
+   LEFT OUTER JOIN standard s on s.id = me.standard_id
+   LEFT OUTER JOIN area_of_concern aoc on aoc.id = s.area_of_concern_id
+   LEFT OUTER JOIN department d ON d.id = cl.department_id
+   LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+   LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+ WHERE facility.name = 'Mungeli District Hospital'
+ GROUP BY d.name ORDER BY d.name
+);
+
+
+SELECT * from facility;
+
+
+SELECT
+  d.name                                                                            AS Department,
+  aoc.reference                                                          AS AreaOfConcern,
+  sum(cs.score) :: FLOAT AS Score
+FROM checkpoint_score cs
+  INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+  LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id and c.checklist_id = cl.id
+  LEFT OUTER JOIN measurable_element me on me.id = c.measurable_element_id
+  LEFT OUTER JOIN standard s on s.id = me.standard_id
+  LEFT OUTER JOIN area_of_concern aoc on aoc.id = s.area_of_concern_id
+  LEFT OUTER JOIN department d ON d.id = cl.department_id
+  LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+  LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+WHERE facility.name = 'CHC Lormi'
+GROUP BY d.name, aoc.reference ORDER BY d.name, aoc.reference
