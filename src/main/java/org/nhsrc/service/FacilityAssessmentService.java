@@ -54,22 +54,18 @@ public class FacilityAssessmentService {
         FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(checklistDTO.getFacilityAssessment());
         List<CheckpointScore> checkpointScores = new ArrayList<>();
         checklistDTO.getCheckpointScores().stream().forEach(checkpointScoreDTO -> {
-            try {
-                Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
-                CheckpointScore checkpointScore = checkpointScoreRepository.findByUuid(checkpointScoreDTO.getUuid());
-                if (checkpointScore == null) {
-                    checkpointScore = new CheckpointScore();
-                    checkpointScore.setFacilityAssessment(facilityAssessment);
-                    checkpointScore.setChecklist(checklist);
-                    checkpointScore.setCheckpoint(checkpoint);
-                    checkpointScore.setUuid(checkpointScoreDTO.getUuid());
-                }
-                checkpointScore.setScore(checkpointScoreDTO.getScore());
-                checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
-                checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
-            } catch (Exception e) {
-                e.printStackTrace();
+            Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
+            CheckpointScore checkpointScore = checkpointScoreRepository.findByUuid(checkpointScoreDTO.getUuid());
+            if (checkpointScore == null) {
+                checkpointScore = new CheckpointScore();
+                checkpointScore.setFacilityAssessment(facilityAssessment);
+                checkpointScore.setChecklist(checklist);
+                checkpointScore.setCheckpoint(checkpoint);
+                checkpointScore.setUuid(checkpointScoreDTO.getUuid());
             }
+            checkpointScore.setScore(checkpointScoreDTO.getScore());
+            checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
+            checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
         });
         return checkpointScores;
     }
