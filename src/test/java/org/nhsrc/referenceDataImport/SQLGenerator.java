@@ -1,5 +1,6 @@
 package org.nhsrc.referenceDataImport;
 
+import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.Department;
 
@@ -12,6 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SQLGenerator {
     public void generate(AssessmentChecklistData data, File file, StringBuffer stringBuffer, boolean assessmentToolExists) throws IOException {
+        if (!assessmentToolExists)
+            generateAssessmentTool(data, stringBuffer);
         generateDepartment(data, stringBuffer);
         generateChecklist(data, stringBuffer, assessmentToolExists);
         generateAreaOfConcern(data, stringBuffer, assessmentToolExists);
@@ -20,6 +23,11 @@ public class SQLGenerator {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
             bufferedWriter.write(stringBuffer.toString());
         }
+    }
+
+    private void generateAssessmentTool(AssessmentChecklistData data, StringBuffer stringBuffer) {
+        AssessmentTool assessmentTool = data.getAssessmentTool();
+        stringBuffer.append(String.format("insert into assessment_tool (name, mode) values ('%s', '%s');\n", assessmentTool.getName(), assessmentTool.getMode()));
     }
 
     private void generateChecklistAreaOfConcernMapping(AssessmentChecklistData data, StringBuffer stringBuffer) {
