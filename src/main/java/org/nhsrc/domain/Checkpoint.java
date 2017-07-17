@@ -56,6 +56,14 @@ public class Checkpoint extends AbstractEntity {
     @NotNull
     private Integer sortOrder = 0;
 
+    @Column(name = "is_optional")
+    @NotNull
+    private boolean isOptional;
+
+    @Column(name = "score_levels")
+    @NotNull
+    private Integer scoreLevels;
+
     public String getName() {
         return name;
     }
@@ -142,5 +150,21 @@ public class Checkpoint extends AbstractEntity {
 
     public void setSortOrder(Integer sortOrder) {
         this.sortOrder = sortOrder;
+    }
+
+    public boolean isOptional() {
+        return isOptional;
+    }
+
+    public void setOptional(boolean optional) {
+        isOptional = optional;
+    }
+
+    public Integer getScoreLevels() {
+        return scoreLevels;
+    }
+
+    public void setScoreLevels(Integer scoreLevels) {
+        this.scoreLevels = scoreLevels;
     }
 }

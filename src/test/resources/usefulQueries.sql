@@ -72,7 +72,7 @@ SELECT
   substr(cp.name, 0, 20) AS Checkpoint
 FROM checklist c, area_of_concern aoc, checklist_area_of_concern caoc, standard s, measurable_element me, checkpoint cp, assessment_tool at
 WHERE cp.checklist_id = c.id AND caoc.checklist_id = c.id AND aoc.id = caoc.area_of_concern_id AND s.area_of_concern_id = aoc.id AND me.standard_id = s.id AND
-      cp.measurable_element_id = me.id AND c.assessment_tool_id = at.id
+      cp.measurable_element_id = me.id AND c.assessment_tool_id = at.id and at.name = 'Dakshata'
 ORDER BY AssessmentMode, AssessmentTool, Checklist, AOC, Standard, ME, Checkpoint;
 -- Verify the hierarchy visually by running the following query for a particular case
 SELECT

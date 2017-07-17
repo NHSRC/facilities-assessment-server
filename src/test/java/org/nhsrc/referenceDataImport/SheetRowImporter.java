@@ -136,6 +136,10 @@ public class SheetRowImporter {
         Checkpoint checkpoint = new Checkpoint();
         checkpoint.setName(getText(row, 2));
         String am = getText(row, 4);
+        String scoreLevels = getText(row, 7);
+        String isOptional = getText(row, 8);
+        checkpoint.setScoreLevels(scoreLevels != null && scoreLevels.length() != 0 ? (int) Double.parseDouble(scoreLevels) : 3);
+        checkpoint.setOptional(isOptional != null && isOptional.equalsIgnoreCase("yes"));
         checkpoint.setAssessmentMethodObservation(am.toLowerCase().contains("ob"));
         checkpoint.setAssessmentMethodPatientInterview(am.toLowerCase().contains("pi"));
         checkpoint.setAssessmentMethodRecordReview(am.toLowerCase().contains("rr"));
