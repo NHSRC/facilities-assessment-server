@@ -5,6 +5,10 @@ reset-db:
 	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment -schemas=public clean
 	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
 
+migrate:
+	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment -schemas=public clean
+	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
+
 reset-test-db:
 	-psql postgres -c 'drop database facilities_assessment_test';
 	-psql postgres -c 'create database facilities_assessment_test with owner nhsrc';
