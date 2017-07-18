@@ -15,6 +15,7 @@ public class FacilityAssessmentMapper {
         facilityAssessment.setUuid(facilityAssessmentDTO.getUuid());
         facilityAssessment.setStartDate(facilityAssessmentDTO.getStartDate());
         facilityAssessment.setEndDate(facilityAssessmentDTO.getEndDate());
+        facilityAssessment.setSeriesName(facilityAssessmentDTO.getSeriesName());
         return facilityAssessment;
     }
 }

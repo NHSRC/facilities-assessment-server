@@ -33,6 +33,9 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private java.util.Date endDate;
 
+    @Column(name = "series_name", nullable = true)
+    private String seriesName;
+
     public Facility getFacility() {
         return facility;
     }
@@ -63,5 +66,13 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     public void setAssessmentTool(AssessmentTool assessmentTool) {
         this.assessmentTool = assessmentTool;
+    }
+
+    public String getSeriesName() {
+        return seriesName;
+    }
+
+    public void setSeriesName(String seriesName) {
+        this.seriesName = seriesName;
     }
 }

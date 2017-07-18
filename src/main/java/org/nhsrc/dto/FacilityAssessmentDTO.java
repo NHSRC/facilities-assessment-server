@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 
-
 public class FacilityAssessmentDTO implements Serializable {
     private UUID uuid;
 
@@ -21,6 +20,8 @@ public class FacilityAssessmentDTO implements Serializable {
 
     @JsonFormat(pattern = DATE_TIME_FORMAT_STRING)
     private Date endDate;
+
+    private String seriesName;
 
     public UUID getUuid() {
         return uuid;
@@ -60,5 +61,13 @@ public class FacilityAssessmentDTO implements Serializable {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getSeriesName() {
+        return seriesName;
+    }
+
+    public void setSeriesName(String seriesName) {
+        this.seriesName = seriesName;
     }
 }
