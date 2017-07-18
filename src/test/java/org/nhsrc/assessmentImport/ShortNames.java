@@ -11,7 +11,7 @@ public class ShortNames {
     private static Map<String, FacilityType> facilityTypes = new HashMap<>();
     static {
         assessmentTools.put("DH", new AssessmentTool("District Hospital (DH)", "nqas"));
-        assessmentTools.put("CH", new AssessmentTool("Community Hospital (CH)", "nqas"));
+        assessmentTools.put("CHC", new AssessmentTool("Community Health Center", "nqas"));
         assessmentTools.put("PHC", new AssessmentTool("Primary Health Center (PHC)", "nqas"));
         assessmentTools.put("UPHC", new AssessmentTool("Urban Primary Health Center (PHC)", "nqas"));
         assessmentTools.put("Kayakalp", new AssessmentTool("Kayakalp", "Kayakalp"));

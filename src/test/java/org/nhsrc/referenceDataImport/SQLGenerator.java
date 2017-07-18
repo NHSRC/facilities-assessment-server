@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SQLGenerator {
-    public void generate(AssessmentChecklistData data, File file, StringBuffer stringBuffer, boolean assessmentToolExists) throws IOException {
+    public void generateChecklist(AssessmentChecklistData data, File file, boolean assessmentToolExists) throws IOException {
+        StringBuffer stringBuffer = new StringBuffer();
         if (!assessmentToolExists)
             generateAssessmentTool(data, stringBuffer);
         generateDepartment(data, stringBuffer);

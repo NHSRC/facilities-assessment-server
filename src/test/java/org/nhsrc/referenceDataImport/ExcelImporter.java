@@ -48,7 +48,6 @@ public class ExcelImporter {
         int i = 1;
         Iterator<Row> iterator = sheet.iterator();
         while (iterator.hasNext()) {
-//            System.out.println(sheet.getSheetName() + ", Processing row " + i++);
             boolean completed = sheetImporter.importRow(iterator.next(), checklist, hasScores, facilityAssessment);
             if (completed) {
                 System.out.println(String.format("Sheet completed at line number:%d on encountering score row", i));
@@ -56,19 +55,18 @@ public class ExcelImporter {
             }
             i++;
         }
-        if (checklist.getAreasOfConcern().size() == 0 || checklist.getCheckpoints().size() == 0) {
-            System.err.println(String.format("AssessmentTool: %s, Checklist: %s, created with #AOC=%d and #Checkpoints=%d", assessmentTool.toString(), checklist.getName(), checklist.getAreasOfConcern().size(), checklist.getCheckpoints().size()));
+        if (checklist.getAreasOfConcern().size() == 0) {
+            System.err.println(String.format("[ERROR] No area of concern were created for the sheet=%s. Ensure that the sheet is right. That is it has area of concerns and standards defined correctly.", checklist.getName()));
+        } else if (checklist.getCheckpoints().size() == 0) {
+            System.err.println(String.format("[ERROR] No checkpoints were created for the sheet=%s. Ensure that the sheet is right. That is it has area of concerns and standards defined correctly.", checklist.getName()));
         }
-        System.out.println(String.format("Sheet completed at line number:%d", i));
-
-//        System.out.println(checklist.toSummary());
         return checklist;
     }
 
     private Department makeDepartment(String name) {
         Department department = new Department();
-        if (name.contains(".")) {
-            System.err.println(String.format("Department name doesn't look right: %s", name));
+        if (name.contains(".") || name.contains("-") || name.contains("_")) {
+            System.err.println(String.format("[ERROR] Department name=%s doesn't look right. Department name should not contain . - _ characters", name));
         }
         department.setName(name);
         return department;

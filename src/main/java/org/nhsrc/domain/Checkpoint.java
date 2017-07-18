@@ -167,4 +167,12 @@ public class Checkpoint extends AbstractEntity {
     public void setScoreLevels(Integer scoreLevels) {
         this.scoreLevels = scoreLevels;
     }
+
+    @Override
+    public String toString() {
+        return "Checkpoint{" +
+                "name='" + name + '\'' +
+                ", checklist=" + checklist +
+                '}';
+    }
 }

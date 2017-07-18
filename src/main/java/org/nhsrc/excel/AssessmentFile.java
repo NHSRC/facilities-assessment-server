@@ -12,15 +12,13 @@ import java.util.StringTokenizer;
 public class AssessmentFile {
     private final String facilityName;
     private final String facilityTypeShortName;
-    private final State state;
-    private final District district;
     private final LocalDate startDate;
     private final LocalDate endDate;
     private File file;
     private String assessmentToolShortName;
     private static DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("dd-MM-yyyy");
 
-    public AssessmentFile(File assessmentFile, String state, String district) {
+    public AssessmentFile(File assessmentFile) {
         this.file = assessmentFile;
         StringTokenizer stringTokenizer = new StringTokenizer(this.file.getName(), "_.");
         this.assessmentToolShortName = stringTokenizer.nextToken();
@@ -28,8 +26,6 @@ public class AssessmentFile {
         this.facilityName = stringTokenizer.nextToken();
         this.startDate = LocalDate.parse(stringTokenizer.nextToken(), dateTimeFormat);
         this.endDate = LocalDate.parse(stringTokenizer.nextToken(), dateTimeFormat);
-        this.state = new State(state);
-        this.district = new District(district, this.state);
     }
 
     public File getFile() {
@@ -46,14 +42,6 @@ public class AssessmentFile {
 
     public String getFacilityTypeShortName() {
         return facilityTypeShortName;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public District getDistrict() {
-        return district;
     }
 
     public LocalDate getStartDate() {

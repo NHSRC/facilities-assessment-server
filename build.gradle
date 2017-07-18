@@ -51,3 +51,7 @@ dependencies {
 bootRun {
     classpath = sourceSets.main.runtimeClasspath + configurations.dev
 }
+
+task packageTests(type: Jar) {
+    from sourceSets.test.output
+}

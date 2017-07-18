@@ -90,7 +90,7 @@ public class SheetRowImporter {
             currStandard.addMeasurableElement(me);
         }
         if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2)) || me.getReference().length() < 4) {
-            System.err.println(String.format("FOUND MeasurableElement WITH NAME %s under standard=%s, in checklist:%s", me.getReference(), currStandard.getReference(), checklist.getName()));
+            System.err.println(String.format("[ERROR] Found Measurable element with name=%s under standard=%s, in checklist=%s", me.getReference(), currStandard.getReference(), checklist.getName()));
         }
         currME = me;
 
@@ -135,10 +135,15 @@ public class SheetRowImporter {
     private void checkpoint(Row row, Checklist checklist, boolean hasScores, FacilityAssessment facilityAssessment) {
         Checkpoint checkpoint = new Checkpoint();
         checkpoint.setName(getText(row, 2));
+        checklist.addCheckpoint(checkpoint);
         String am = getText(row, 4);
         String scoreLevels = getText(row, 7);
         String isOptional = getText(row, 8);
-        checkpoint.setScoreLevels(scoreLevels != null && scoreLevels.length() != 0 ? (int) Double.parseDouble(scoreLevels) : 3);
+        try {
+            checkpoint.setScoreLevels(scoreLevels != null && scoreLevels.length() != 0 ? (int) Double.parseDouble(scoreLevels) : 3);
+        } catch (NumberFormatException e) {
+            checkpoint.setScoreLevels(3);
+        }
         checkpoint.setOptional(isOptional != null && isOptional.equalsIgnoreCase("yes"));
         checkpoint.setAssessmentMethodObservation(am.toLowerCase().contains("ob"));
         checkpoint.setAssessmentMethodPatientInterview(am.toLowerCase().contains("pi"));
@@ -159,11 +164,14 @@ public class SheetRowImporter {
                 score.setFacilityAssessment(facilityAssessment);
                 this.data.addScore(score);
             } catch (NumberFormatException e) {
-                System.out.println(String.format("(ErrorInSheet) Found non-number in score column: %s", getText(row, 3)));
+                System.err.println(String.format("[ERROR] Found a non-number=%s in the score column, for=%s", getText(row, 3), checkpoint.toString()));
             }
         }
-        currME.addCheckpoint(checkpoint);
-        checklist.addCheckpoint(checkpoint);
+        if (currME == null) {
+            System.err.println(String.format("[ERROR] No measurable element created yet for checkpoint=%s", checkpoint.toString()));
+        } else {
+            currME.addCheckpoint(checkpoint);
+        }
     }
 
     private void me(Row row, Checklist checklist, boolean hasScores, FacilityAssessment facilityAssessment) {
@@ -177,7 +185,7 @@ public class SheetRowImporter {
             currStandard.addMeasurableElement(me);
         }
         if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2)) || me.getReference().length() < 4) {
-            System.err.println(String.format("FOUND MEASURABLEELEMENT WITH NAME %s under standard=%s, in checklist:%s", me.getReference(), currStandard.getReference(), checklist.getName()));
+            System.err.println(String.format("[ERROR] Found MeasurableElement with name=%s under standard=%s, in checklist=%s, but their prefix do not match. Most likely the standard was not defined with correct format e.g. --> Standard A4", me.getReference(), currStandard.getReference(), checklist.getName()));
         }
         currME = me;
         checkpoint(row, checklist, hasScores, facilityAssessment);
@@ -194,7 +202,7 @@ public class SheetRowImporter {
             currAOC.addStandard(standard);
         }
         if (!currAOC.getReference().substring(0, 1).equals(standard.getReference().substring(0, 1)) || standard.getReference().length() < 2) {
-            System.err.println(String.format("FOUND Standard WITH NAME %s under AOC=%s, in checklist:%s", standard.getReference(), currAOC.getReference(), checklist.getName()));
+            System.err.println(String.format("[ERROR] Found Standard with name=%s under Area of Concern=%s, in Checklist=%s but their prefix do not match. Quite likely that the area concern was not defined with right format which is ---> Area of Concern - <NAME>", standard.getReference(), currAOC.getReference(), checklist.getName()));
         }
         currStandard = standard;
     }

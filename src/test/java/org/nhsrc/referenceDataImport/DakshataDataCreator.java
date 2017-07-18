@@ -21,7 +21,7 @@ public class DakshataDataCreator {
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
         assessmentChecklistData.set(assessmentTool);
         ChecklistCreator checklistCreator = new ChecklistCreator();
-        checklistCreator.performImport(checklistFile, 0, assessmentChecklistData);
+        checklistCreator.performImport(checklistFile, assessmentChecklistData);
         File outputFile = new File(checklistsProjectDirectory, String.format("output/%s", "forms.sql"));
         checklistCreator.generate(assessmentChecklistData, outputFile, false);
     }

@@ -1,13 +1,10 @@
 package org.nhsrc.referenceDataImport;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.nhsrc.domain.AssessmentTool;
-import org.nhsrc.excel.ExcelDirectory;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,7 +47,7 @@ public class JSSDataCreator {
         File chFile = new File(jssCGInputDir, "CG-NQAS-CHC-BSU-AOCInputs-English.xlsx");
         AssessmentChecklistData nqasCGCHCBSUInputsData = new AssessmentChecklistData();
         nqasCGCHCBSUInputsData.set(new AssessmentTool("Community Hospital (CH)", "nqas"));
-        checklistCreator.performImport(chFile, 0, nqasCGCHCBSUInputsData);
+        checklistCreator.performImport(chFile, nqasCGCHCBSUInputsData);
         checklistCreator.generate(nqasCGCHCBSUInputsData, new File(jssCGInputDir, "output-bsu-inputs.sql"), true);
     }
 
@@ -62,7 +59,7 @@ public class JSSDataCreator {
         assessmentChecklistData.set(new AssessmentTool("Community Hospital (CH)", "nqas"));
 
         ChecklistCreator checklistCreator = new ChecklistCreator();
-        checklistCreator.performImport(chFile, 0, assessmentChecklistData);
+        checklistCreator.performImport(chFile, assessmentChecklistData);
         checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory, "CHC_CHC.sql"), true);
     }
 
@@ -74,7 +71,7 @@ public class JSSDataCreator {
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
         assessmentChecklistData.set(new AssessmentTool("Kayakalp", "Kayakalp"));
         ChecklistCreator checklistCreator = new ChecklistCreator();
-        checklistCreator.performImport(checklistFile, 0, assessmentChecklistData);
+        checklistCreator.performImport(checklistFile, assessmentChecklistData);
         checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory,"NHSRC_KK_DH_SDH_CHC.sql"), true);
     }
 
