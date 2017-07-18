@@ -59,8 +59,11 @@ jss-cg-assessment-tools: reset-db
 	psql -v ON_ERROR_STOP=1 --echo-all -Unhsrc facilities_assessment < ../checklists/jss/cg/output-bsu.sql
 	psql -v ON_ERROR_STOP=1 --echo-all -Unhsrc facilities_assessment < ../checklists/jss/cg/output-bsu-inputs.sql
 
+clean:
+	./gradlew clean
+
 binary:
-	./gradlew clean build -x test
+	./gradlew build -x test
 
 restore-database:
 	-psql postgres -c 'drop database facilities_assessment';
