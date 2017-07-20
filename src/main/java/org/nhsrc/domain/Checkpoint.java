@@ -58,11 +58,11 @@ public class Checkpoint extends AbstractEntity {
 
     @Column(name = "is_optional")
     @NotNull
-    private boolean isOptional;
+    private boolean isOptional = false;
 
     @Column(name = "score_levels")
     @NotNull
-    private Integer scoreLevels;
+    private Integer scoreLevels = 3;
 
     public String getName() {
         return name;
