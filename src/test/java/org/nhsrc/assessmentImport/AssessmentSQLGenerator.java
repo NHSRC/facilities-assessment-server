@@ -45,7 +45,7 @@ public class AssessmentSQLGenerator {
         StringBuffer stringBuffer = new StringBuffer();
         List<CheckpointScore> checkpointScores = assessmentChecklistData.getCheckpointScores();
         checkpointScores.forEach(checkpointScore -> {
-            stringBuffer.append(String.format("select verify_checklist('%s', '%s', '%s')", checkpointScore.getChecklist().getAssessmentTool().getName(), checkpointScore.getChecklist().getName(), checkpointScore.getCheckpoint().getName()));
+            stringBuffer.append(String.format("select verify_checkpoint('%s', '%s', '%s', '%s');\n", checkpointScore.getChecklist().getAssessmentTool().getName(), checkpointScore.getChecklist().getName(), checkpointScore.getCheckpoint().getMeasurableElement().getReference(), checkpointScore.getCheckpoint().getName().replace("'", "''")));
         });
         writeToFile(verifySQLFile, stringBuffer);
     }
@@ -54,7 +54,7 @@ public class AssessmentSQLGenerator {
         StringBuffer stringBuffer = new StringBuffer();
         List<Checklist> checklists = assessmentChecklistData.getChecklists();
         checklists.forEach(checklist -> {
-            stringBuffer.append(String.format("select verify_checklist('%s', '%s')", checklist.getAssessmentTool().getName(), checklist.getName()));
+            stringBuffer.append(String.format("select verify_checklist('%s', '%s');\n", checklist.getAssessmentTool().getName(), checklist.getName()));
         });
         writeToFile(outputFile, stringBuffer);
     }

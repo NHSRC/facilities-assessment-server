@@ -10,10 +10,8 @@ BEGIN
   FROM checklist, assessment_tool
   WHERE checklist.assessment_tool_id = assessment_tool.id AND assessment_tool.name = assessment_tool_name AND checklist.name = checklist_name;
 
-  IF checklist_id > 0
-  THEN
-  ELSE
-    RAISE NOTICE 'Checklist: % and Assessment Tool: %s', checklist_name, assessment_tool_name;
+  IF checklist_id IS NULL THEN
+    RAISE NOTICE 'UNVERIFIED: Checklist=% and Assessment Tool=% and CHECKLIST_ID=%', checklist_name, assessment_tool_name, checklist_id;
   END IF;
 END;
 $$ LANGUAGE plpgsql;

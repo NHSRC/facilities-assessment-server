@@ -68,15 +68,20 @@ public class SheetRowImporter {
     private int getAreaOfConcernCellNum(Row currentRow) {
         String cell0Text = getText(currentRow, 0);
         String cell1Text = getText(currentRow, 1);
+        String cell2Text = getText(currentRow, 2);
         if (cell1Text.startsWith("Area of Concern -") || cell1Text.startsWith("Area of Concern –")) return 1;
         else if (cell0Text.startsWith("Area of Concern -") || cell0Text.startsWith("Area of Concern –")) return 0;
+        else if (cell2Text.startsWith("Area of Concern -") || cell2Text.startsWith("Area of Concern –")) return 2;
         throw new RuntimeException("Could not find AOC in the row");
     }
 
     private boolean isAreaOfConcernRow(Row currentRow) {
         String cell0Text = getText(currentRow, 0);
         String cell1Text = getText(currentRow, 1);
-        return cell1Text.startsWith("Area of Concern -") || cell1Text.startsWith("Area of Concern –") || cell0Text.startsWith("Area of Concern -") || cell0Text.startsWith("Area of Concern –");
+        String cell2Text = getText(currentRow, 2);
+        return cell1Text.startsWith("Area of Concern -") || cell1Text.startsWith("Area of Concern –") ||
+                cell0Text.startsWith("Area of Concern -") || cell0Text.startsWith("Area of Concern –") ||
+                cell2Text.startsWith("Area of Concern -") || cell2Text.startsWith("Area of Concern –");
     }
 
     private void kayakalpME(Row currentRow, Checklist checklist) {

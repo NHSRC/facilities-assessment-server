@@ -221,3 +221,6 @@ UPDATE checkpoint_score SET facility_assessment_id = 1 WHERE facility_assessment
 DELETE from facility_assessment where id in (5,6);
 
 CREATE OR REPLACE VIEW CHC_Department AS SELECT department.name FROM department, checklist, assessment_tool where checklist.department_id = department.id and assessment_tool.id = checklist.assessment_tool_id and assessment_tool.name = 'Community Hospital (CH)';
+
+SELECT measurable_element.reference from checkpoint, measurable_element WHERE checkpoint.measurable_element_id = measurable_element.id and checkpoint.name = 'Provision of blood donation camps';
+
