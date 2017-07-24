@@ -11,6 +11,8 @@ public class CheckpointScoreDTO {
 
     private String remarks;
 
+    private Boolean na;
+
     public UUID getUuid() {
         return uuid;
     }
@@ -41,5 +43,13 @@ public class CheckpointScoreDTO {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public Boolean getNa() {
+        return na;
+    }
+
+    public void setNa(Boolean na) {
+        this.na = na;
     }
 }

@@ -44,11 +44,13 @@ public class CheckpointScore extends AbstractScoreEntity {
     @Column(name = "score")
     @Min(value = 0)
     @Max(value = 2)
-    @NotNull
     private Integer score;
 
     @Column(name = "remarks")
     private String remarks;
+
+    @Column(name = "na")
+    private Boolean na = false;
 
     public FacilityAssessment getFacilityAssessment() {
         return facilityAssessment;
@@ -88,5 +90,13 @@ public class CheckpointScore extends AbstractScoreEntity {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public Boolean getNa() {
+        return na;
+    }
+
+    public void setNa(Boolean na) {
+        this.na = na;
     }
 }

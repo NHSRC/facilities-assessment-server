@@ -53,7 +53,7 @@ public class FacilityAssessmentService {
         Checklist checklist = checklistRepository.findByUuid(checklistDTO.getUuid());
         FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(checklistDTO.getFacilityAssessment());
         List<CheckpointScore> checkpointScores = new ArrayList<>();
-        checklistDTO.getCheckpointScores().stream().forEach(checkpointScoreDTO -> {
+        checklistDTO.getCheckpointScores().forEach(checkpointScoreDTO -> {
             Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
             CheckpointScore checkpointScore = checkpointScoreRepository.findByUuid(checkpointScoreDTO.getUuid());
             if (checkpointScore == null) {
@@ -62,8 +62,10 @@ public class FacilityAssessmentService {
                 checkpointScore.setChecklist(checklist);
                 checkpointScore.setCheckpoint(checkpoint);
                 checkpointScore.setUuid(checkpointScoreDTO.getUuid());
+
             }
             checkpointScore.setScore(checkpointScoreDTO.getScore());
+            checkpointScore.setNa(checkpointScoreDTO.getNa());
             checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
             checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
         });
