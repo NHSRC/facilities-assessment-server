@@ -61,7 +61,7 @@ public class FacilityAssessmentProgressController {
             "GROUP BY ch.id, aoc.id";
 
     private static final String checklistTotalForAssessmentTool = "SELECT\n" +
-            "  ch.uuid              AS checklistUUID,\n" +
+            "  ch.uuid              AS uuid,\n" +
             "  count(distinct aoc.id) AS total,\n" +
             "  0                    AS completed\n" +
             "FROM checkpoint c\n" +
