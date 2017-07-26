@@ -6,7 +6,7 @@ import org.nhsrc.domain.AssessmentTool;
 
 import java.io.File;
 
-public class DakshataDataCreator {
+public class DakshataChecklistCreator {
     private File checklistsProjectDirectory;
 
     @Before
@@ -16,7 +16,7 @@ public class DakshataDataCreator {
 
     @Test
     public void generate_Forms() throws Exception {
-        AssessmentTool assessmentTool = new AssessmentTool("Dakshata", "nqas");
+        AssessmentTool assessmentTool = new AssessmentTool("Dakshata", "dakshata");
         File checklistFile = new File(checklistsProjectDirectory, "Forms.xlsx");
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
         assessmentChecklistData.set(assessmentTool);

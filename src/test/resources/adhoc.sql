@@ -19,3 +19,15 @@ SELECT * FROM checkpoint WHERE name = 'Blood bank services available 24X7';
 SELECT * from checklist WHERE name = 'Blood Bank';
 
 SELECT * from checkpoint_score WHERE checklist_id = 20;
+
+
+set SEARCH_PATH TO mp;
+
+SELECT facility.id, facility.name, state.name, district.name from facility, district, state where district.state_id = state.id AND facility.district_id = district.id;
+SELECT f.name, d.id, f.facility_type_id from mp.facility f, public.district d WHERE f.district_id = d.self_id;
+SELECT f.name, f.facility_type_id from mp.facility f;
+SELECT * from public.district;
+SELECT name, id from mp.state;
+SELECT d.name, s.id from mp.district d, public.state s WHERE d.state_id = s.self_id;
+
+SELECT state_id, assessment_tool_id, name from public.checklist order by state_id, assessment_tool_id, name;

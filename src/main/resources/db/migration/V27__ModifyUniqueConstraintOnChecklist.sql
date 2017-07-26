@@ -1,0 +1,2 @@
+ALTER TABLE checklist DROP CONSTRAINT checklist_name_assessment_tool_id_key;
+ALTER TABLE checklist ADD UNIQUE (name, assessment_tool_id, state_id);

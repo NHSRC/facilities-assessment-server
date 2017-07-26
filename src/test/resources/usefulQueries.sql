@@ -224,3 +224,20 @@ CREATE OR REPLACE VIEW CHC_Department AS SELECT department.name FROM department,
 
 SELECT measurable_element.reference from checkpoint, measurable_element WHERE checkpoint.measurable_element_id = measurable_element.id and checkpoint.name = 'Provision of blood donation camps';
 
+--------- COPY DATABASE ---------------
+ALTER TABLE public.state ADD COLUMN self_id INT DEFAULT 0;
+INSERT INTO public.state (name, self_id) SELECT name, id from mp.state;
+
+ALTER TABLE public.district ADD COLUMN self_id INT DEFAULT 0;
+INSERT INTO public.district (name, state_id, self_id) SELECT d.name, s.id, d.id from mp.district d, public.state s WHERE d.state_id = s.self_id;
+
+ALTER TABLE public.facility ADD COLUMN self_id INT DEFAULT 0;
+INSERT INTO public.facility (name, district_id, facility_type_id) SELECT f.name, d.id, f.facility_type_id from mp.facility f, public.district d WHERE f.district_id = d.self_id;
+
+ALTER TABLE public.assessment_tool ADD COLUMN self_id INT DEFAULT 0;
+INSERT INTO public.assessment_tool (name, mode, self_id) SELECT f.name, d.id, f.facility_type_id from mp.facility f, public.district d WHERE f.district_id = d.self_id;
+
+
+INSERT INTO public.state (name) SELECT name FROM mp.state;
+INSERT INTO district (name, state_id) SELECT ;
+INSERT INTO checkpoint_score (facility_assessment_id, checkpoint_id, checklist_id, score, remarks) SELECT ;
