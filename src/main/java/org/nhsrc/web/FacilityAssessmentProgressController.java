@@ -120,9 +120,9 @@ public class FacilityAssessmentProgressController {
         areaOfConcernProgressForAssessment.setParameter("id", facilityAssessment.getAssessmentTool().getId());
         List<AreaOfConcernProgressDTO> areasOfConcernProgress = (List<AreaOfConcernProgressDTO>) areaOfConcernProgressForAssessment.getResultList();
 
-        Map<String, List<StandardProgressDTO>> standardProgressByAOC = standardsProgressDTO.stream().collect(Collectors.groupingBy(StandardProgressDTO::getAocUUID));
+        Map<String, List<StandardProgressDTO>> standardProgressByAOC = standardsProgressDTO.stream().collect(Collectors.groupingBy(standardProgressDTO -> standardProgressDTO.getAocUUID() + standardProgressDTO.getChecklistUUID()));
 
-        return areasOfConcernProgress.parallelStream().peek(areaOfConcernProgressDTO -> areaOfConcernProgressDTO.setCompleted((int) standardProgressByAOC.get(areaOfConcernProgressDTO.getUuid()).stream().filter(standardProgressDTO -> standardProgressDTO.getTotal() == standardProgressDTO.getCompleted()).count())).collect(Collectors.toList());
+        return areasOfConcernProgress.parallelStream().peek(areaOfConcernProgressDTO -> areaOfConcernProgressDTO.setCompleted((int) standardProgressByAOC.get(areaOfConcernProgressDTO.getUuid() + areaOfConcernProgressDTO.getChecklistUUID()).stream().filter(standardProgressDTO -> standardProgressDTO.getTotal() == standardProgressDTO.getCompleted()).count())).collect(Collectors.toList());
     }
 
     private List<ChecklistProgressDTO> getChecklistProgress(FacilityAssessment facilityAssessment, List<AreaOfConcernProgressDTO> areasOfConcernProgressDTO) {
