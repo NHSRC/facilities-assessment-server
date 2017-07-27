@@ -15,6 +15,9 @@ public class Standard extends AbstractEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
+    @Column(name = "short_name", nullable = true)
+    private String shortName;
+
     @Column(name = "reference", unique = true, nullable = false)
     private String reference;
 
@@ -59,6 +62,14 @@ public class Standard extends AbstractEntity {
         this.measurableElements = measurableElements;
     }
 
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
     public void addMeasurableElement(MeasurableElement measurableElement) {
         if (this.measurableElements.stream().noneMatch(std -> std.getReference().equals(measurableElement.getReference()))) {
             this.measurableElements.add(measurableElement);
@@ -82,7 +93,8 @@ public class Standard extends AbstractEntity {
 
     public int estimatedCount() {
         int count = measurableElements.size();
-        for (MeasurableElement measurableElement : measurableElements) count = count + measurableElement.estimatedCount();
+        for (MeasurableElement measurableElement : measurableElements)
+            count = count + measurableElement.estimatedCount();
         return count;
     }
 

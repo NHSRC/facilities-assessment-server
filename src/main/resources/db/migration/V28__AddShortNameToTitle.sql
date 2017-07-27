@@ -1,0 +1,1 @@
+ALTER TABLE standard ADD COLUMN short_name VARCHAR(1024);
