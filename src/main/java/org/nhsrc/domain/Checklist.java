@@ -26,6 +26,11 @@ public class Checklist extends AbstractEntity {
     @NotNull
     private Department department;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "state_id")
+    @NotNull
+    private State state;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "checklist_area_of_concern", inverseJoinColumns = @JoinColumn(name = "area_of_concern_id", referencedColumnName = "id"), joinColumns = @JoinColumn(name = "checklist_id", referencedColumnName = "id"))
     private Set<AreaOfConcern> areasOfConcern = new HashSet<>();
@@ -73,6 +78,14 @@ public class Checklist extends AbstractEntity {
         this.checkpoints = checkpoints;
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
     public String toSummary() {
         StringBuffer stringBuffer = new StringBuffer();
         areasOfConcern.stream().sorted((o1, o2) -> o1.getReference().compareTo(o2.getReference())).forEach(areaOfConcern -> stringBuffer.append(areaOfConcern.toSummary()).append("\n\t"));
@@ -104,6 +117,7 @@ public class Checklist extends AbstractEntity {
         checkpoints.add(checkpoint);
         checkpoint.setChecklist(this);
     }
+
 
     @Override
     public String toString() {
