@@ -1,34 +1,37 @@
--- TOTAL SCORE OF FACILITY
+-- ASSESSMENT TOOLS AND CHECKLIST
+SELECT at.name, cl.name from assessment_tool at, checklist cl WHERE cl.assessment_tool_id = at.id ORDER BY at.name, cl.name;
 
-select facility_district.district, facility_district.facility, facility_score.score from
-(SELECT
-      facility.id AS facility_id,
-      round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS score
-    FROM checkpoint_score cs
-      INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
-      LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id
-      LEFT OUTER JOIN department d ON d.id = cl.department_id
-      LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
-      LEFT OUTER JOIN facility ON fa.facility_id = facility.id
-      LEFT OUTER JOIN district ON facility.district_id = district.id
-    GROUP BY facility.id ORDER BY facility.id
-  ) as facility_score,
-  (SELECT facility.id id, district.name district, facility.name facility from facility, district WHERE facility.district_id = district.id order BY facility.id) as facility_district
+-- TOTAL SCORE OF FACILITY
+SELECT
+  facility_district.district,
+  facility_district.facility,
+  facility_score.score
+FROM
+  (SELECT
+     facility.id                                                                                   AS facility_id,
+     round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS score
+   FROM checkpoint_score cs
+     INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+     LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id
+     LEFT OUTER JOIN department d ON d.id = cl.department_id
+     LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+     LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+     LEFT OUTER JOIN district ON facility.district_id = district.id
+   GROUP BY facility.id
+   ORDER BY facility.id
+  ) AS facility_score,
+  (SELECT
+     facility.id   id,
+     district.name district,
+     facility.name facility
+   FROM facility, district
+   WHERE facility.district_id = district.id
+   ORDER BY facility.id) AS facility_district
 WHERE facility_district.id = facility_score.facility_id;
 
 
-SELECT
-  aoc.reference AS AOC,
-  s.reference   AS Standard,
-  me.reference  AS ME
-FROM area_of_concern aoc, standard s, measurable_element me
-WHERE s.area_of_concern_id = aoc.id AND me.standard_id = s.id AND aoc.assessment_tool_id = (SELECT id
-                                                                                            FROM assessment_tool
-                                                                                            WHERE name = 'Community Hospital (CH)')
-ORDER BY AOC, Standard, ME;
-
-
-SELECT * FROM pg_stat_activity
+SELECT *
+FROM pg_stat_activity
 WHERE pg_stat_activity.datname = 'facilities_assessment_cg'
       AND pid <> pg_backend_pid();
 
@@ -39,9 +42,6 @@ FROM checkpoint
 GROUP BY last_modified_date
 ORDER BY Count DESC;
 
-SELECT DISTINCT checklist.name
-FROM checkpoint_score, checklist
-WHERE checkpoint_score.checklist_id = checklist.id;
 
 SELECT
   cl.assessment_tool_id,
@@ -61,6 +61,7 @@ SELECT
 FROM checkpoint c INNER JOIN checklist cl ON c.checklist_id = cl.id
 GROUP BY cl.name, cl.id
 ORDER BY cl.id;
+
 -- Verify the hierarchy visually by running the following query
 SELECT
   at.mode                AS AssessmentMode,
@@ -72,8 +73,9 @@ SELECT
   substr(cp.name, 0, 20) AS Checkpoint
 FROM checklist c, area_of_concern aoc, checklist_area_of_concern caoc, standard s, measurable_element me, checkpoint cp, assessment_tool at
 WHERE cp.checklist_id = c.id AND caoc.checklist_id = c.id AND aoc.id = caoc.area_of_concern_id AND s.area_of_concern_id = aoc.id AND me.standard_id = s.id AND
-      cp.measurable_element_id = me.id AND c.assessment_tool_id = at.id and at.name = 'Dakshata'
+      cp.measurable_element_id = me.id AND c.assessment_tool_id = at.id AND at.name = 'Dakshata'
 ORDER BY AssessmentMode, AssessmentTool, Checklist, AOC, Standard, ME, Checkpoint;
+
 -- Verify the hierarchy visually by running the following query for a particular case
 SELECT
   c.name        AS Checklist,
@@ -86,6 +88,7 @@ WHERE cp.checklist_id = c.id AND caoc.checklist_id = c.id AND aoc.id = caoc.area
       cp.measurable_element_id = me.id
       AND c.name = 'Blood Storage Unit'
 ORDER BY Checklist, AOC, Standard, ME, Checkpoint;
+
 -- Check any cases where me and standard are under the wrong parent
 SELECT
   at.mode AS   AssessmentMode,
@@ -201,43 +204,20 @@ FROM crosstab(
 -- 3	Labour Room
 -- 4	Maternity Ward
 -- 9 PP Unit
+SELECT DISTINCT
+  facility.name  facility,
+  facility_assessment.id,
+  checklist.id   checklistId,
+  checklist.name checklist
+FROM facility, facility_assessment, checklist, checkpoint_score
+WHERE facility_assessment.facility_id = facility.id AND checkpoint_score.checklist_id = checklist.id AND checkpoint_score.checklist_id = checklist.id AND
+      checkpoint_score.facility_assessment_id = facility_assessment.id
+ORDER BY facility.name, facility_assessment.id, checklist;
 
-SELECT DISTINCT facility.name facility, facility_assessment.id, checklist.id checklistId, checklist.name checklist from facility, facility_assessment, checklist, checkpoint_score WHERE facility_assessment.facility_id = facility.id and checkpoint_score.checklist_id = checklist.id AND checkpoint_score.checklist_id = checklist.id AND checkpoint_score.facility_assessment_id = facility_assessment.id ORDER BY facility.name, facility_assessment.id, checklist;
+SELECT count(*)
+FROM checkpoint_score;
 
-SELECT count(*) from checkpoint_score;
-
-SELECT count(*) from checkpoint_score where facility_assessment_id = 1 and checklist_id in (3);
-SELECT count(*) from checkpoint_score where facility_assessment_id = 1 and checklist_id in (9);
-SELECT count(*) from checkpoint_score where facility_assessment_id = 1 and checklist_id in (4);
-SELECT count(*) from checkpoint_score where facility_assessment_id in (5, 6) and checklist_id in (3);
-SELECT count(*) from checkpoint_score where facility_assessment_id in (5, 6) and checklist_id in (9);
-SELECT count(*) from checkpoint_score where facility_assessment_id in (5, 6) and checklist_id in (4);
-SELECT count(*) from checkpoint_score where facility_assessment_id in (5, 6);
-SELECT DISTINCT checklist_id from checkpoint_score WHERE facility_assessment_id in (5,6);
-
-
-DELETE from checkpoint_score WHERE checklist_id in (3, 9, 4) and facility_assessment_id = 1;
-UPDATE checkpoint_score SET facility_assessment_id = 1 WHERE facility_assessment_id in (5,6);
-DELETE from facility_assessment where id in (5,6);
-
-CREATE OR REPLACE VIEW CHC_Department AS SELECT department.name FROM department, checklist, assessment_tool where checklist.department_id = department.id and assessment_tool.id = checklist.assessment_tool_id and assessment_tool.name = 'Community Hospital (CH)';
-
-SELECT measurable_element.reference from checkpoint, measurable_element WHERE checkpoint.measurable_element_id = measurable_element.id and checkpoint.name = 'Provision of blood donation camps';
-
---------- COPY DATABASE ---------------
-ALTER TABLE public.state ADD COLUMN self_id INT DEFAULT 0;
-INSERT INTO public.state (name, self_id) SELECT name, id from mp.state;
-
-ALTER TABLE public.district ADD COLUMN self_id INT DEFAULT 0;
-INSERT INTO public.district (name, state_id, self_id) SELECT d.name, s.id, d.id from mp.district d, public.state s WHERE d.state_id = s.self_id;
-
-ALTER TABLE public.facility ADD COLUMN self_id INT DEFAULT 0;
-INSERT INTO public.facility (name, district_id, facility_type_id) SELECT f.name, d.id, f.facility_type_id from mp.facility f, public.district d WHERE f.district_id = d.self_id;
-
-ALTER TABLE public.assessment_tool ADD COLUMN self_id INT DEFAULT 0;
-INSERT INTO public.assessment_tool (name, mode, self_id) SELECT f.name, d.id, f.facility_type_id from mp.facility f, public.district d WHERE f.district_id = d.self_id;
-
-
-INSERT INTO public.state (name) SELECT name FROM mp.state;
-INSERT INTO district (name, state_id) SELECT ;
-INSERT INTO checkpoint_score (facility_assessment_id, checkpoint_id, checklist_id, score, remarks) SELECT ;
+CREATE OR REPLACE VIEW CHC_Department AS
+  SELECT department.name
+  FROM department, checklist, assessment_tool
+  WHERE checklist.department_id = department.id AND assessment_tool.id = checklist.assessment_tool_id AND assessment_tool.name = 'Community Hospital (CH)';

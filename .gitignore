@@ -28,3 +28,4 @@ classes/
 /*.sql
 responses
 responses.zip
+**/adhoc.sql

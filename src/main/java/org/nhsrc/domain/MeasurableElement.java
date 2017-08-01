@@ -80,4 +80,15 @@ public class MeasurableElement extends AbstractEntity {
                 "reference='" + reference + '\'' +
                 '}';
     }
+
+    public boolean containsCheckpoint(Checkpoint checkpoint) {
+        Checklist checklist = checkpoint.getChecklist();
+        return findCheckpoint(checkpoint.getName(), checkpoint.getChecklist()) != null;
+    }
+
+    public Checkpoint findCheckpoint(String name, Checklist checklist) {
+        return checkpoints.stream().filter(checkpoint1 -> {{
+            return checkpoint1.getName().equals(name) && checkpoint1.getChecklist().getName().equals(checklist.getName());
+        }}).findAny().orElse(null);
+    }
 }

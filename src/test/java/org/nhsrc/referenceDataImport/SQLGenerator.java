@@ -24,6 +24,8 @@ public class SQLGenerator {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
             bufferedWriter.write(stringBuffer.toString());
         }
+
+        System.out.println("Created file: " + file.getAbsolutePath());
     }
 
     private void generateAssessmentTool(AssessmentChecklistData data, StringBuffer stringBuffer) {

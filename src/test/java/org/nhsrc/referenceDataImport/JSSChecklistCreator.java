@@ -7,23 +7,32 @@ import org.nhsrc.domain.AssessmentTool;
 import java.io.File;
 
 public class JSSChecklistCreator {
-    private File projectDirectory;
+    private File checklistDirectory;
+    private ChecklistCreator checklistCreator;
 
     @Before
     public void init() {
-        projectDirectory = new File("../reference-data");
+        File projectDirectory = new File("../reference-data");
+        checklistDirectory = new File(projectDirectory,"jss/mp/checklists");
+        checklistCreator = new ChecklistCreator();
     }
 
     @Test
     public void generate_MP_CHC_Checklist_SQL() throws Exception {
-        File inputDirectory = new File(projectDirectory,"jss/mp/checklists");
-        File outputDirectory = new File(projectDirectory,"jss/mp/checklists");
-        File chFile = new File(inputDirectory, "CHC.xlsx");
-        AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
-        assessmentChecklistData.set(new AssessmentTool("Community Health Center (CHC)", "nqas"));
+        createChecklist("CHC.xlsx", "CHC.sql", "Community Health Center (CHC)");
+    }
 
-        ChecklistCreator checklistCreator = new ChecklistCreator();
+    @Test
+    public void generate_MP_DH_Checklist_SQL() throws Exception {
+        createChecklist("DH.xlsx", "DH.sql", "District Hospital (DH)");
+    }
+
+    private void createChecklist(String checklistFile, String outputFileName, String checklistName) throws Exception {
+        File chFile = new File(checklistDirectory, checklistFile);
+        AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
+        assessmentChecklistData.set(new AssessmentTool(checklistName, "nqas"));
+
         checklistCreator.performImport(chFile, assessmentChecklistData);
-        checklistCreator.generate(assessmentChecklistData, new File(outputDirectory, "CHC.sql"), true);
+        checklistCreator.generate(assessmentChecklistData, new File(checklistDirectory, outputFileName), true);
     }
 }

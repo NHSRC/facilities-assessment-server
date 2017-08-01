@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Facility;
 import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.State;
 import org.nhsrc.excel.AssessmentFile;
 import org.nhsrc.excel.AssessmentsDirectory;
 import org.nhsrc.referenceDataImport.AssessmentChecklistData;
@@ -21,6 +22,7 @@ public class AssessmentImport {
             System.out.println();
             System.out.println(String.format("PROCESSING FILE: %s", assessmentFile.getFile().getName()));
             AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
+            assessmentChecklistData.setState(new State("Madhya Pradesh"));
             AssessmentTool assessmentTool = ShortNames.getAssessmentTool(assessmentFile.getAssessmentToolShortName());
             assessmentChecklistData.set(assessmentTool);
 

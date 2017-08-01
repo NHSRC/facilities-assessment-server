@@ -174,6 +174,13 @@ public class SheetRowImporter {
         }
         if (currME == null) {
             System.err.println(String.format("[ERROR] No measurable element created yet for checkpoint=%s", checkpoint.toString()));
+        } else if (currME.containsCheckpoint(checkpoint)) {
+            System.err.println(String.format("[WARN] Another checkpoint with the same name=%s in this ME exists. Skipping this one.", checkpoint.toString()));
+            String meansOfVerification = checkpoint.getMeansOfVerification();
+            if (meansOfVerification != null && !meansOfVerification.isEmpty()) {
+                Checkpoint otherCheckpoint = currME.findCheckpoint(checkpoint.getName(), checklist);
+                otherCheckpoint.setMeansOfVerification(meansOfVerification);
+            }
         } else {
             currME.addCheckpoint(checkpoint);
         }

@@ -172,7 +172,8 @@ public class Checkpoint extends AbstractEntity {
     public String toString() {
         return "Checkpoint{" +
                 "name='" + name + '\'' +
-                ", checklist=" + checklist +
+                ", " + checklist + '\'' +
+                ", " + measurableElement +
                 '}';
     }
 }
