@@ -21,6 +21,10 @@ import java.util.List;
 public interface FacilityAssessmentRepository extends BaseRepository<FacilityAssessment> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<FacilityAssessment> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
     FacilityAssessment findByFacilityAndAssessmentToolAndStartDateBeforeAndStartDateAfter(Facility facility, AssessmentTool assessmentTool, Date startDateBefore, Date startDateAfter);
+
     List<FacilityAssessment> findByLastModifiedDateGreaterThan(Date lastModifiedDateTime);
+
+    FacilityAssessment findByFacilityAndAssessmentToolAndSeriesName(Facility facility, AssessmentTool assessmentTool, String seriesName);
 }
