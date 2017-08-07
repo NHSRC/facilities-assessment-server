@@ -34,16 +34,16 @@ public class FacilityAssessmentProgressController {
             "  aoc.uuid           aocUUID,\n" +
             "  ch.uuid            checklistUUID,\n" +
             "  count(c.id)     AS total,\n" +
-            "  sum(CASE WHEN cs.id IS NULL\n" +
+            "  sum(CASE WHEN cs.score IS NULL\n" +
             "    THEN 0\n" +
             "      ELSE 1 END) AS completed\n" +
             "FROM checkpoint c\n" +
-            "  LEFT OUTER JOIN checkpoint_score cs ON cs.checkpoint_id = c.id\n" +
+            "  LEFT OUTER JOIN checkpoint_score cs ON cs.checkpoint_id = c.id and cs.facility_assessment_id=:id\n" +
+            "  LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id AND fa.id = :id\n" +
             "  INNER JOIN measurable_element me ON c.measurable_element_id = me.id\n" +
             "  INNER JOIN standard s ON me.standard_id = s.id\n" +
             "  INNER JOIN area_of_concern aoc ON s.area_of_concern_id = aoc.id\n" +
             "  INNER JOIN checklist ch ON c.checklist_id = ch.id\n" +
-            "  LEFT OUTER JOIN facility_assessment fa on cs.facility_assessment_id=fa.id and fa.id=:id \n" +
             "GROUP BY s.id, ch.id, aoc.id";
 
     private static final String areaOfConcernTotalForAssessmentTool = "SELECT\n" +
