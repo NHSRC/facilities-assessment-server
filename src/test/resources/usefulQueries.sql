@@ -1,34 +1,5 @@
 -- ASSESSMENT TOOLS AND CHECKLIST
-SELECT at.name, cl.name from assessment_tool at, checklist cl WHERE cl.assessment_tool_id = at.id ORDER BY at.name, cl.name;
-
--- TOTAL SCORE OF FACILITY
-SELECT
-  facility_district.district,
-  facility_district.facility,
-  facility_score.score
-FROM
-  (SELECT
-     facility.id                                                                                   AS facility_id,
-     round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS score
-   FROM checkpoint_score cs
-     INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
-     LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id
-     LEFT OUTER JOIN department d ON d.id = cl.department_id
-     LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
-     LEFT OUTER JOIN facility ON fa.facility_id = facility.id
-     LEFT OUTER JOIN district ON facility.district_id = district.id
-   GROUP BY facility.id
-   ORDER BY facility.id
-  ) AS facility_score,
-  (SELECT
-     facility.id   id,
-     district.name district,
-     facility.name facility
-   FROM facility, district
-   WHERE facility.district_id = district.id
-   ORDER BY facility.id) AS facility_district
-WHERE facility_district.id = facility_score.facility_id;
-
+SELECT s.name State, at.name AssessmentTool, cl.name Checklist from assessment_tool at, checklist cl, state s WHERE cl.assessment_tool_id = at.id and cl.state_id = s.id ORDER BY s.name, at.name, cl.name;
 
 SELECT *
 FROM pg_stat_activity
@@ -100,6 +71,7 @@ SELECT
 FROM measurable_element me, standard s, area_of_concern aoc, checklist c, assessment_tool at, checklist_area_of_concern caoc
 WHERE me.standard_id = s.id AND substr(me.reference, 1, 1) != substr(s.reference, 1, 1) AND s.area_of_concern_id = aoc.id AND c.assessment_tool_id = at.id AND
       c.id = caoc.checklist_id AND aoc.id = caoc.area_of_concern_id;
+
 -- Any checkpoints which are from garbage row
 SELECT
   at.mode AS   AssessmentMode,
@@ -155,30 +127,6 @@ WHERE
   cp.measurable_element_id = me.id AND me.standard_id = s.id AND cp.checklist_id = cl.id AND cl.assessment_tool_id = at.id AND aoc.id = s.area_of_concern_id AND at.id = 1
 GROUP BY (cl.id, aoc.id);
 
--- COUNT OF CHECKLIST SCORE FILLED
-SELECT
-  cl.name,
-  count(cl.id)
-FROM checkpoint_score cps, facility_assessment fa, checklist cl
-WHERE cps.facility_assessment_id = fa.id AND fa.id = 4 AND cps.checklist_id = cl.id
-GROUP BY cl.id;
-SELECT
-  cl.uuid,
-  count(cl.id)
-FROM checkpoint cp, assessment_tool at, checklist cl, facility_assessment fa
-WHERE cp.checklist_id = cl.id AND cl.assessment_tool_id = at.id AND at.id = 1
-GROUP BY cl.id;
-
--- Assessments Filled Summary
-SELECT DISTINCT (fa.id, f.name, cl.name)
-FROM facility_assessment fa, facility f, checklist cl, checkpoint_score cps
-WHERE cps.facility_assessment_id = fa.id AND cps.checklist_id = cl.id AND fa.facility_id = f.id;
-
--- Kayakalp
-SELECT cp.means_of_verification
-FROM checkpoint cp, checklist cl
-WHERE cp.checklist_id = cl.id AND cl.name = 'Kayakalp';
-
 -- CROSS TAB EXAMPLE
 SELECT *
 FROM crosstab(
@@ -201,21 +149,29 @@ FROM crosstab(
      ) AS ct(Department VARCHAR(255), "Inputs" TEXT, "Patient Rights" TEXT, "Support Services" TEXT, "Infection Control" TEXT, "Quality  Management" TEXT, "Service Provision" TEXT, "Quality Management" TEXT, "Clinical Services" TEXT, "Outcome" TEXT);
 
 -- GET facility, checklist and assessments
--- 3	Labour Room
--- 4	Maternity Ward
--- 9 PP Unit
 SELECT DISTINCT
+  state.name state,
+  facility.id  facilityId,
   facility.name  facility,
-  facility_assessment.id,
+  facility_assessment.id assessmentId,
   checklist.id   checklistId,
   checklist.name checklist
-FROM facility, facility_assessment, checklist, checkpoint_score
+FROM facility, facility_assessment, checklist, checkpoint_score, state
 WHERE facility_assessment.facility_id = facility.id AND checkpoint_score.checklist_id = checklist.id AND checkpoint_score.checklist_id = checklist.id AND
-      checkpoint_score.facility_assessment_id = facility_assessment.id
+      checkpoint_score.facility_assessment_id = facility_assessment.id and state.id = checklist.state_id
 ORDER BY facility.name, facility_assessment.id, checklist;
 
-SELECT count(*)
-FROM checkpoint_score;
+-- GET all assessments for facilities
+SELECT DISTINCT
+  state.name state,
+  facility.name facility,
+  assessment_tool.name assessment_tool,
+  facility_assessment.id assessmentId,
+  facility.id facilityId
+FROM facility, facility_assessment, state, district, assessment_tool
+WHERE facility_assessment.facility_id = facility.id AND facility.district_id = district.id AND district.state_id = state.id AND facility_assessment.assessment_tool_id = assessment_tool.id
+ORDER BY facility.name, facility_assessment.id;
+
 
 CREATE OR REPLACE VIEW CHC_Department AS
   SELECT department.name

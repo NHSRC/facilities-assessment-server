@@ -13,10 +13,11 @@ import java.util.List;
 public class AssessmentSQLGenerator {
     private static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-    public static void generate(AssessmentChecklistData assessmentChecklistData, File outputFile) throws IOException {
+    public static void generate(AssessmentChecklistData assessmentChecklistData, File outputFile, boolean generateFacilityAssessmentSQL) throws IOException {
         StringBuffer stringBuffer = new StringBuffer();
         FacilityAssessment assessment = assessmentChecklistData.getAssessment();
-        generateFacilityAssessmentSQL(assessment, stringBuffer);
+        if (generateFacilityAssessmentSQL)
+            generateFacilityAssessmentSQL(assessment, stringBuffer);
         generateCheckpointScoreSQL(assessmentChecklistData, stringBuffer);
 
         writeToFile(outputFile, stringBuffer);
@@ -48,9 +49,8 @@ public class AssessmentSQLGenerator {
                 /*9*/checklistName,
                 /*10*/stateName);
 
-            stringBuffer.append(String.format("insert into checkpoint_score (facility_assessment_id, checkpoint_id, checklist_id, score, remarks) select (select id from facility_assessment where assessment_tool_id = (select id from assessment_tool where name = '%s') and start_date = '%s' and facility_id = (select id from facility where name = '%s')), (%s), (select id from checklist where name = '%s' and state_id = (select id from state where name = '%s') and assessment_tool_id = (select id from assessment_tool where name = '%s')), %d, '%s' where exists (%s);\n",
+            stringBuffer.append(String.format("insert into checkpoint_score (facility_assessment_id, checkpoint_id, checklist_id, score, remarks) select (select id from facility_assessment where assessment_tool_id = (select id from assessment_tool where name = '%s') and facility_id = (select id from facility where name = '%s')), (%s), (select id from checklist where name = '%s' and state_id = (select id from state where name = '%s') and assessment_tool_id = (select id from assessment_tool where name = '%s')), %d, '%s' where exists (%s);\n",
                 /*1*/assessmentToolName,
-                /*2*/dateFormatter.format(assessment.getStartDate()),
                 /*3*/assessment.getFacility().getName(),
                 /*4*/filledQuery,
                 /*5*/checklistName,

@@ -16,11 +16,11 @@ public class ExcelImporter {
         this.data = data;
     }
 
-    public void importFile(File file, AssessmentTool assessmentTool, int startingSheet, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
+    public void importFile(File file, AssessmentTool assessmentTool, int startingSheet, int numberOfSheetsToImport, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
         FileInputStream inputStream = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         try {
-            int numberOfSheets = workbook.getNumberOfSheets();
+            int numberOfSheets = numberOfSheetsToImport == -1 ? workbook.getNumberOfSheets() : numberOfSheetsToImport;
             for (int i = startingSheet; i < numberOfSheets; i++) {
                 XSSFSheet sheet = workbook.getSheetAt(i);
                 System.out.println("READING SHEET: " + sheet.getSheetName());
