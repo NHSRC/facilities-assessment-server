@@ -1,5 +1,11 @@
 -- ASSESSMENT TOOLS AND CHECKLIST
-SELECT s.name State, at.name AssessmentTool, cl.name Checklist from assessment_tool at, checklist cl, state s WHERE cl.assessment_tool_id = at.id and cl.state_id = s.id ORDER BY s.name, at.name, cl.name;
+SELECT
+  s.name  State,
+  at.name AssessmentTool,
+  cl.name Checklist
+FROM assessment_tool at, checklist cl, state s
+WHERE cl.assessment_tool_id = at.id AND cl.state_id = s.id
+ORDER BY s.name, at.name, cl.name;
 
 SELECT *
 FROM pg_stat_activity
@@ -150,26 +156,27 @@ FROM crosstab(
 
 -- GET facility, checklist and assessments
 SELECT DISTINCT
-  state.name state,
-  facility.id  facilityId,
-  facility.name  facility,
+  state.name             state,
+  facility.id            facilityId,
+  facility.name          facility,
   facility_assessment.id assessmentId,
-  checklist.id   checklistId,
-  checklist.name checklist
+  checklist.id           checklistId,
+  checklist.name         checklist
 FROM facility, facility_assessment, checklist, checkpoint_score, state
 WHERE facility_assessment.facility_id = facility.id AND checkpoint_score.checklist_id = checklist.id AND checkpoint_score.checklist_id = checklist.id AND
-      checkpoint_score.facility_assessment_id = facility_assessment.id and state.id = checklist.state_id
+      checkpoint_score.facility_assessment_id = facility_assessment.id AND state.id = checklist.state_id
 ORDER BY facility.name, facility_assessment.id, checklist;
 
 -- GET all assessments for facilities
 SELECT DISTINCT
-  state.name state,
-  facility.name facility,
-  assessment_tool.name assessment_tool,
+  state.name             state,
+  facility.name          facility,
+  assessment_tool.name   assessment_tool,
   facility_assessment.id assessmentId,
-  facility.id facilityId
+  facility.id            facilityId
 FROM facility, facility_assessment, state, district, assessment_tool
-WHERE facility_assessment.facility_id = facility.id AND facility.district_id = district.id AND district.state_id = state.id AND facility_assessment.assessment_tool_id = assessment_tool.id
+WHERE facility_assessment.facility_id = facility.id AND facility.district_id = district.id AND district.state_id = state.id AND
+      facility_assessment.assessment_tool_id = assessment_tool.id
 ORDER BY facility.name, facility_assessment.id;
 
 
@@ -177,3 +184,212 @@ CREATE OR REPLACE VIEW CHC_Department AS
   SELECT department.name
   FROM department, checklist, assessment_tool
   WHERE checklist.department_id = department.id AND assessment_tool.id = checklist.assessment_tool_id AND assessment_tool.name = 'Community Hospital (CH)';
+
+
+SELECT *
+FROM facility_assessment
+WHERE uuid = 'e6182a54-6b97-4b58-9ebe-82e1b961f115';
+SELECT *
+FROM facility
+WHERE id = 6;
+
+
+SELECT *
+FROM checklist
+WHERE uuid = 'e78106ec-a215-4507-830b-180390ffd98a';
+SELECT *
+FROM checklist
+WHERE uuid = '04065dd8-aeb4-4049-9030-5358acd58f8e';
+
+SELECT *
+FROM area_of_concern
+WHERE uuid = 'f9a846ed-bd7e-465f-897e-08db054709c4';
+SELECT *
+FROM area_of_concern
+WHERE uuid = 'f05ffa5d-9b55-48e0-a9f4-bf5ba8aa21e3';
+
+SELECT *
+FROM standard
+WHERE uuid = '884c1d77-22b1-43b2-9b09-30ed6fe7c44d';
+SELECT *
+FROM standard
+WHERE uuid = '275bc1bb-fabf-4275-ba36-e139a88f19d3';
+
+
+SELECT *
+FROM checklist;
+
+SELECT ch.assessment_tool_id
+FROM checkpoint c INNER JOIN checkpoint_score cs ON c.id = cs.checkpoint_id
+  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.name = 'Auxillary services'
+WHERE c.name LIKE '%AMC including preventive%' AND cs.facility_assessment_id = 12;
+
+
+SELECT
+  s.uuid             uuid,
+  aoc.uuid           aocUUID,
+  ch.uuid            checklistUUID,
+  count(c.id)     AS total,
+  sum(CASE WHEN cs.score IS NULL
+    THEN 0
+      ELSE 1 END) AS completed
+FROM checkpoint c
+  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
+  INNER JOIN standard s ON me.standard_id = s.id
+  INNER JOIN area_of_concern aoc ON s.area_of_concern_id = aoc.id
+  INNER JOIN facility f ON fa.facility_id = f.id
+  INNER JOIN district d ON f.district_id = d.id
+  INNER JOIN state st ON d.state_id = st.id
+  INNER JOIN checklist ch ON c.checklist_id = ch.id AND st.id = ch.state_id AND fa.assessment_tool_id = ch.assessment_tool_id
+GROUP BY s.id, ch.id, aoc.id;
+
+
+select sum(k.total) - sum(k.completed) from (
+SELECT
+  std.uuid           uuid,
+  aoc.uuid           aocUUID,
+  ch.uuid            checklistUUID,
+  count(c.id)     AS total,
+  sum(CASE WHEN cs.checkpoint_id IS NULL
+    THEN 0
+      ELSE 1 END) AS completed
+FROM checkpoint c
+  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
+  INNER JOIN standard std ON me.standard_id = std.id
+  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id
+  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = 1 AND ch.state_id = 2
+  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id
+                   FROM checkpoint_score
+                   WHERE checkpoint_score.facility_assessment_id = 12) AS cs ON c.id = cs.checkpoint_id
+GROUP BY std.id, ch.id, aoc.id) as k where k.total - k.completed > 0;
+
+
+SELECT
+  std.uuid           uuid,
+  aoc.uuid           aocUUID,
+  ch.uuid            checklistUUID,
+  count(c.id)     AS total,
+  sum(CASE WHEN cs.checkpoint_id IS NULL
+    THEN 0
+      ELSE 1 END) AS completed
+FROM checkpoint c
+  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
+  INNER JOIN standard std ON me.standard_id = std.id
+  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id
+  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = :atid AND ch.state_id = :stid
+  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id
+                   FROM checkpoint_score
+                   WHERE checkpoint_score.facility_assessment_id = :faid) AS cs ON c.id = cs.checkpoint_id
+GROUP BY std.id, ch.id, aoc.id;
+
+
+SELECT *
+FROM checkpoint_score
+WHERE facility_assessment_id = 12 AND checkpoint_id NOT IN (
+  SELECT c.id
+  FROM checkpoint c
+    INNER JOIN measurable_element me ON c.measurable_element_id = me.id
+    INNER JOIN standard std ON me.standard_id = std.id
+    INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id
+    INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = 1 AND ch.state_id = 2);
+
+SELECT count(DISTINCT checkpoint_id)
+FROM checkpoint_score
+WHERE facility_assessment_id = 12;
+
+
+SELECT *
+FROM checkpoint
+WHERE id IN (SELECT k.cid
+             FROM (SELECT
+                     count(id)     AS t,
+                     checkpoint_id AS cid
+                   FROM checkpoint_score
+                   WHERE facility_assessment_id = 12
+                   GROUP BY checkpoint_id) AS k
+             WHERE k.t > 1);
+
+
+SELECT *
+FROM checkpoint_score
+WHERE checkpoint_id IN (26754, 22511, 25202) AND facility_assessment_id = 12;
+
+
+SELECT count(c.id)
+FROM checkpoint c
+  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
+  INNER JOIN standard std ON me.standard_id = std.id
+  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id
+  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = 1 AND ch.state_id = 2
+WHERE c.id NOT IN (SELECT checkpoint_id
+                   FROM checkpoint_score
+                   WHERE facility_assessment_id = 12);
+
+
+SELECT *
+FROM assessment_tool;
+SELECT *
+FROM state;
+SELECT *
+FROM facility;
+
+SELECT *
+FROM facility_assessment
+WHERE id = 12;
+
+
+SELECT *
+FROM district;
+
+SELECT *
+FROM checkpoint_score
+WHERE facility_assessment_id = 12 AND checkpoint_id IN (SELECT id
+                                                        FROM checkpoint);
+
+
+SELECT count(*)
+FROM checkpoint c
+  LEFT OUTER JOIN checkpoint_score cs ON cs.checkpoint_id = c.id
+  LEFT OUTER JOIN facility_assessment fa ON fa.id = cs.facility_assessment_id AND fa.id = 12;
+
+SELECT count(*)
+FROM checkpoint_score cs
+  INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
+  INNER JOIN standard s ON me.standard_id = s.id
+WHERE cs.facility_assessment_id = 12
+GROUP BY s.id;
+
+
+SELECT *
+FROM area_of_concern
+WHERE assessment_tool_id IS NULL;
+SELECT *
+FROM measurable_element
+WHERE assessment_tool_id IS NULL;
+SELECT *
+FROM standard
+WHERE assessment_tool_id IS NULL;
+SELECT *
+FROM checklist
+WHERE assessment_tool_id IS NULL;
+
+
+SELECT
+  f.name,
+  fa.id
+FROM facility_assessment fa INNER JOIN facility f ON fa.facility_id = f.id;
+
+SELECT *
+FROM state;
+
+SELECT count(*)
+FROM checkpoint_score
+WHERE facility_assessment_id = 12;
+
+
+SELECT count(*)
+FROM checkpoint
+WHERE checklist_id IN (SELECT id
+                       FROM checklist
+                       WHERE assessment_tool_id = 1 AND checklist.state_id = 2);

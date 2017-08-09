@@ -30,47 +30,48 @@ public class FacilityAssessmentProgressController {
     private EntityManager entityManager;
 
     private static final String standardProgressPerAssessment = "SELECT\n" +
-            "  s.uuid             uuid,\n" +
+            "  std.uuid           uuid,\n" +
             "  aoc.uuid           aocUUID,\n" +
             "  ch.uuid            checklistUUID,\n" +
             "  count(c.id)     AS total,\n" +
-            "  sum(CASE WHEN cs.score IS NULL\n" +
+            "  sum(CASE WHEN cs.checkpoint_id IS NULL\n" +
             "    THEN 0\n" +
             "      ELSE 1 END) AS completed\n" +
             "FROM checkpoint c\n" +
-            "  LEFT OUTER JOIN checkpoint_score cs ON cs.checkpoint_id = c.id and cs.facility_assessment_id=:id\n" +
-            "  LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id AND fa.id = :id\n" +
             "  INNER JOIN measurable_element me ON c.measurable_element_id = me.id\n" +
-            "  INNER JOIN standard s ON me.standard_id = s.id\n" +
-            "  INNER JOIN area_of_concern aoc ON s.area_of_concern_id = aoc.id\n" +
-            "  INNER JOIN checklist ch ON c.checklist_id = ch.id\n" +
-            "GROUP BY s.id, ch.id, aoc.id";
+            "  INNER JOIN standard std ON me.standard_id = std.id\n" +
+            "  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id\n" +
+            "  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = :atid AND ch.state_id = :stid\n" +
+            "  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id\n" +
+            "                   FROM checkpoint_score\n" +
+            "                   WHERE checkpoint_score.facility_assessment_id = :faid) AS cs ON c.id = cs.checkpoint_id\n" +
+            "GROUP BY std.id, ch.id, aoc.id";
 
     private static final String areaOfConcernTotalForAssessmentTool = "SELECT\n" +
             "  ch.uuid              AS checklistUUID,\n" +
             "  aoc.uuid             AS uuid,\n" +
-            "  count(distinct s.id) AS total,\n" +
+            "  count(DISTINCT s.id) AS total,\n" +
             "  0                    AS completed\n" +
             "FROM checkpoint c\n" +
             "  INNER JOIN measurable_element me ON c.measurable_element_id = me.id\n" +
             "  INNER JOIN standard s ON me.standard_id = s.id\n" +
             "  INNER JOIN area_of_concern aoc ON s.area_of_concern_id = aoc.id\n" +
             "  INNER JOIN assessment_tool at ON s.assessment_tool_id = at.id\n" +
-            "  INNER JOIN checklist ch ON ch.id=c.checklist_id\n" +
-            "  where at.id=:id and c.id is not null\n" +
+            "  INNER JOIN checklist ch ON ch.id=c.checklist_id AND ch.state_id=:stid\n" +
+            "  WHERE at.id=:id AND c.id IS NOT NULL\n" +
             "GROUP BY ch.id, aoc.id";
 
     private static final String checklistTotalForAssessmentTool = "SELECT\n" +
             "  ch.uuid              AS uuid,\n" +
-            "  count(distinct aoc.id) AS total,\n" +
+            "  count(DISTINCT aoc.id) AS total,\n" +
             "  0                    AS completed\n" +
             "FROM checkpoint c\n" +
             "  INNER JOIN measurable_element me ON c.measurable_element_id = me.id\n" +
             "  INNER JOIN standard s ON me.standard_id = s.id\n" +
             "  INNER JOIN area_of_concern aoc ON s.area_of_concern_id = aoc.id\n" +
             "  INNER JOIN assessment_tool at ON s.assessment_tool_id = at.id\n" +
-            "  INNER JOIN checklist ch ON ch.id=c.checklist_id\n" +
-            "where at.id=:id and c.id is not null\n" +
+            "  INNER JOIN checklist ch ON ch.id=c.checklist_id AND ch.state_id=:stid\n" +
+            "WHERE at.id=:id AND c.id IS NOT NULL\n" +
             "GROUP BY ch.id";
 
     @Autowired
@@ -111,13 +112,16 @@ public class FacilityAssessmentProgressController {
 
     private List<StandardProgressDTO> getStandardProgressDTO(FacilityAssessment facilityAssessment) {
         Query standardProgressForAssessment = entityManager.createNativeQuery(standardProgressPerAssessment, StandardProgressDTO.class);
-        standardProgressForAssessment.setParameter("id", facilityAssessment.getId());
+        standardProgressForAssessment.setParameter("faid", facilityAssessment.getId());
+        standardProgressForAssessment.setParameter("stid", facilityAssessment.getFacility().getDistrict().getState().getId());
+        standardProgressForAssessment.setParameter("atid", facilityAssessment.getAssessmentTool().getId());
         return (List<StandardProgressDTO>) standardProgressForAssessment.getResultList();
     }
 
     private List<AreaOfConcernProgressDTO> getAreaOfConcernProgressDTO(FacilityAssessment facilityAssessment, List<StandardProgressDTO> standardsProgressDTO) {
         Query areaOfConcernProgressForAssessment = entityManager.createNativeQuery(areaOfConcernTotalForAssessmentTool, AreaOfConcernProgressDTO.class);
         areaOfConcernProgressForAssessment.setParameter("id", facilityAssessment.getAssessmentTool().getId());
+        areaOfConcernProgressForAssessment.setParameter("stid", facilityAssessment.getFacility().getDistrict().getState().getId());
         List<AreaOfConcernProgressDTO> areasOfConcernProgress = (List<AreaOfConcernProgressDTO>) areaOfConcernProgressForAssessment.getResultList();
 
         Map<String, List<StandardProgressDTO>> standardProgressByAOC = standardsProgressDTO.stream().collect(Collectors.groupingBy(standardProgressDTO -> standardProgressDTO.getAocUUID() + standardProgressDTO.getChecklistUUID()));
@@ -128,6 +132,7 @@ public class FacilityAssessmentProgressController {
     private List<ChecklistProgressDTO> getChecklistProgress(FacilityAssessment facilityAssessment, List<AreaOfConcernProgressDTO> areasOfConcernProgressDTO) {
         Query checklistProgressForAssessmentTool = entityManager.createNativeQuery(checklistTotalForAssessmentTool, ChecklistProgressDTO.class);
         checklistProgressForAssessmentTool.setParameter("id", facilityAssessment.getAssessmentTool().getId());
+        checklistProgressForAssessmentTool.setParameter("stid", facilityAssessment.getFacility().getDistrict().getState().getId());
         List<ChecklistProgressDTO> checklistProgressDTOS = (List<ChecklistProgressDTO>) checklistProgressForAssessmentTool.getResultList();
 
         Map<String, List<AreaOfConcernProgressDTO>> aocProgressByChecklist = areasOfConcernProgressDTO.stream().collect(Collectors.groupingBy(AreaOfConcernProgressDTO::getChecklistUUID));
