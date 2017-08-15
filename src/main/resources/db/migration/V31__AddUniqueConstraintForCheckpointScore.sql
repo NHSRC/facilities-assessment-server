@@ -1,0 +1,1 @@
+ALTER TABLE checkpoint_score ADD UNIQUE (facility_assessment_id, checkpoint_id);

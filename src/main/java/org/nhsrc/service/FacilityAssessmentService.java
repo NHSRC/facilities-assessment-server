@@ -55,14 +55,13 @@ public class FacilityAssessmentService {
         List<CheckpointScore> checkpointScores = new ArrayList<>();
         checklistDTO.getCheckpointScores().forEach(checkpointScoreDTO -> {
             Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
-            CheckpointScore checkpointScore = checkpointScoreRepository.findByUuid(checkpointScoreDTO.getUuid());
+            CheckpointScore checkpointScore = checkpointScoreRepository.findByCheckpointAndFacilityAssessmentAndChecklist(checkpoint, facilityAssessment, checklist);
             if (checkpointScore == null) {
                 checkpointScore = new CheckpointScore();
                 checkpointScore.setFacilityAssessment(facilityAssessment);
                 checkpointScore.setChecklist(checklist);
                 checkpointScore.setCheckpoint(checkpoint);
                 checkpointScore.setUuid(checkpointScoreDTO.getUuid());
-
             }
             checkpointScore.setScore(checkpointScoreDTO.getScore());
             checkpointScore.setNa(checkpointScoreDTO.getNa());
