@@ -1,8 +1,10 @@
 package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,14 +18,17 @@ public class AssessmentTool extends AbstractEntity {
 
     public AssessmentTool(String name, String mode) {
         this.name = name;
-        this.mode = mode;
+        this.assessmentToolMode = new AssessmentToolMode(mode);
     }
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "mode", nullable = false, unique = true)
-    private String mode;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne(targetEntity = AssessmentToolMode.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @JoinColumn(name = "assessment_tool_mode_id")
+    @NotNull
+    private AssessmentToolMode assessmentToolMode;
 
     @JsonIgnore
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "assessmentTool")
@@ -45,14 +50,6 @@ public class AssessmentTool extends AbstractEntity {
         this.checklists = checklists;
     }
 
-    public String getMode() {
-        return mode;
-    }
-
-    public void setMode(String mode) {
-        this.mode = mode;
-    }
-
     public void addChecklist(Checklist checklist) {
         this.checklists.add(checklist);
     }
@@ -61,11 +58,14 @@ public class AssessmentTool extends AbstractEntity {
         this.checklists.addAll(checklists);
     }
 
+    public String getMode() {
+        return assessmentToolMode.getName();
+    }
+
     @Override
     public String toString() {
         return "AssessmentTool{" +
                 "name='" + name + '\'' +
-                ", mode='" + mode + '\'' +
                 '}';
     }
 }

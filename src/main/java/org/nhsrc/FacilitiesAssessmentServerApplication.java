@@ -154,5 +154,4 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
             }
         };
     }
-
 }

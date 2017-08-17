@@ -1,0 +1,1 @@
+ALTER TABLE assessment_tool_mode ADD COLUMN inactive BOOLEAN DEFAULT FALSE NOT NULL;
