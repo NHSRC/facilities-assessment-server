@@ -32,8 +32,8 @@ ORDER BY cl.assessment_tool_id;
 -- After importing checklist
 -- To find out whether all the checklists have checkpoints in them. Match it with number of checklists (0s are not shown)
 SELECT
-  s.name State,
-  at.name AssessmentTool,
+  s.name         State,
+  at.name        AssessmentTool,
   cl.name        Checklist,
   count(c.id) AS NumCheckpoints
 FROM checkpoint c
@@ -182,3 +182,52 @@ FROM facility, facility_assessment, state, district, assessment_tool
 WHERE facility_assessment.facility_id = facility.id AND facility.district_id = district.id AND district.state_id = state.id AND
       facility_assessment.assessment_tool_id = assessment_tool.id
 ORDER BY facility.name, facility_assessment.id;
+
+SELECT format('%s (%s)', aoc.name, aoc.reference) AS foo
+FROM area_of_concern aoc;
+
+
+SELECT
+  x.Department AS Department,
+  x.Score      AS Score
+FROM
+  (SELECT
+     dws.Department AS Department,
+     dws.Score      AS Score
+   FROM
+     (SELECT
+        d.name                                                                            AS Department,
+        (sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100 :: FLOAT) AS Score,
+        max(fa.start_date)
+      FROM checkpoint_score cs
+        INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+        LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id
+        LEFT OUTER JOIN department d ON d.id = cl.department_id
+        LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+        LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+        LEFT OUTER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
+        LEFT OUTER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id
+      WHERE {{Facility}} AND fa.series_name = {{Series}} AND {{AssessmentMode}}
+      GROUP BY D.name ORDER BY Score) AS dws
+   UNION
+   SELECT
+     'OVERALL'                                               AS Department,
+     (sum(ad.dscore) :: FLOAT) / (count(ad.dscore)) :: FLOAT AS Score
+   FROM
+     (
+       SELECT
+         d.name                                                                            AS Department,
+         (sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100 :: FLOAT) AS dscore,
+         max(fa.start_date)
+       FROM checkpoint_score cs
+         INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+         LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id
+         LEFT OUTER JOIN department d ON d.id = cl.department_id
+         LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+         LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+         LEFT OUTER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
+         LEFT OUTER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id
+       WHERE {{Facility}} AND fa.series_name = {{Series}} AND {{AssessmentMode}}
+       GROUP BY D.name
+     ) AS ad) AS x
+ORDER BY x.Score
