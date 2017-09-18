@@ -45,17 +45,16 @@ ORDER BY s.name, at.name, cl.name;
 
 -- Verify the hierarchy visually by running the following query
 SELECT
-  at.mode                AS AssessmentMode,
-  at.name                AS AssessmentTool,
-  c.name                 AS Checklist,
-  aoc.reference          AS AOC,
-  s.reference            AS Standard,
-  me.reference           AS ME,
-  substr(cp.name, 0, 20) AS Checkpoint
+  at.mode       AS AssessmentMode,
+  at.name       AS AssessmentTool,
+  c.name        AS Checklist,
+  aoc.reference AS AOC,
+  s.reference   AS Standard,
+  me.reference  AS ME
 FROM checklist c, area_of_concern aoc, checklist_area_of_concern caoc, standard s, measurable_element me, checkpoint cp, assessment_tool at
 WHERE cp.checklist_id = c.id AND caoc.checklist_id = c.id AND aoc.id = caoc.area_of_concern_id AND s.area_of_concern_id = aoc.id AND me.standard_id = s.id AND
-      cp.measurable_element_id = me.id AND c.assessment_tool_id = at.id AND at.name = 'Dakshata'
-ORDER BY AssessmentMode, AssessmentTool, Checklist, AOC, Standard, ME, Checkpoint;
+      cp.measurable_element_id = me.id AND c.assessment_tool_id = at.id AND at.name = 'nqas'
+ORDER BY AssessmentMode, AssessmentTool, Checklist, AOC, Standard, ME;
 
 -- Verify the hierarchy visually by running the following query for a particular case
 SELECT
@@ -231,3 +230,106 @@ FROM
        GROUP BY D.name
      ) AS ad) AS x
 ORDER BY x.Score
+
+
+SELECT *
+FROM facility_assessment;
+UPDATE facility_assessment
+SET last_modified_date = current_timestamp
+WHERE id = 47;
+SELECT *
+FROM assessment_tool;
+SELECT *
+FROM state;
+SELECT DISTINCT checklist.name
+FROM checklist
+ORDER BY checklist.name;
+
+SELECT
+  s.uuid   standard_uuid,
+  aoc.uuid area_of_concern_uuid,
+  ch.uuid  checklist_uuid
+FROM standard s
+  INNER JOIN area_of_concern aoc ON s.area_of_concern_id = aoc.id
+  INNER JOIN checklist_area_of_concern caoc ON aoc.id = caoc.area_of_concern_id
+  INNER JOIN checklist ch ON caoc.checklist_id = ch.id
+  INNER JOIN assessment_tool at ON ch.assessment_tool_id = at.id
+  INNER JOIN state st ON ch.state_id = st.id
+WHERE st.name = 'Chhattisgarh' AND ch.name = 'Lab' AND aoc.name = 'Inputs' AND s.reference = 'C2';
+
+
+SELECT
+  std.uuid           standard_uuid,
+  aoc.uuid           aocUUID,
+  ch.uuid            checklistUUID,
+  count(c.id)     AS total,
+  sum(CASE WHEN cs.checkpoint_id IS NULL
+    THEN 0
+      ELSE 1 END) AS completed
+FROM checkpoint c
+  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
+  INNER JOIN standard std ON me.standard_id = std.id
+  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id
+  INNER JOIN checklist ch ON c.checklist_id = ch.id
+  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id
+                   FROM checkpoint_score WHERE checkpoint_score.facility_assessment_id = 47) AS cs ON c.id = cs.checkpoint_id
+  WHERE ch.assessment_tool_id = 1 AND ch.state_id = 1 AND std.reference = 'C1' AND ch.name = 'Lab'
+GROUP BY std.id, ch.id, aoc.id;
+
+
+
+
+SELECT
+  std.uuid           uuid,
+  aoc.uuid           aocUUID,
+  ch.uuid            checklistUUID,
+  count(c.id)     AS total,
+  sum(CASE WHEN cs.checkpoint_id IS NULL
+    THEN 0
+      ELSE 1 END) AS completed
+FROM checkpoint c
+  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
+  INNER JOIN standard std ON me.standard_id = std.id
+  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id
+  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = 1 AND ch.state_id = 1
+  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id
+                   FROM checkpoint_score
+                   WHERE checkpoint_score.facility_assessment_id = 47) AS cs ON c.id = cs.checkpoint_id
+--   WHERE std.uuid = 'f9dd5ee1-8c7d-468f-8357-7f4a70f8992f' and ch.uuid = '956db2ed-d5dc-41b5-8c9e-45bec30daf00'
+GROUP BY std.id, ch.id, aoc.id;
+
+SELECT standard_id from measurable_element WHERE reference like '%..%';
+
+SELECT * from facility_assessment WHERE id = 47;
+
+DELETE from checkpoint_score where facility_assessment_id != 47;
+DELETE from facility_assessment where id != 47;
+
+
+
+
+
+
+
+
+
+
+SELECT
+  fa.id as facilityAssessmentId,
+  std.uuid           uuid,
+  aoc.uuid           aocUUID,
+  ch.uuid            checklistUUID,
+  count(c.id)     AS total,
+  sum(CASE WHEN cs.checkpoint_id IS NULL
+    THEN 0
+      ELSE 1 END) AS completed
+FROM checkpoint c
+  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
+  INNER JOIN standard std ON me.standard_id = std.id
+  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id
+  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = 1 AND ch.state_id = 1
+  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id
+                   FROM checkpoint_score
+                   WHERE checkpoint_score.facility_assessment_id = 47) AS cs ON c.id = cs.checkpoint_id
+  LEFT OUTER JOIN facility_assessment fa ON fa.id = 47
+GROUP BY std.id, ch.id, aoc.id, facilityAssessmentId;

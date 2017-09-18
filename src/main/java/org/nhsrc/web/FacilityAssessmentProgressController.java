@@ -30,6 +30,7 @@ public class FacilityAssessmentProgressController {
     private EntityManager entityManager;
 
     private static final String standardProgressPerAssessment = "SELECT\n" +
+            "  fa.id as facility_assessment_id,\n" +
             "  std.uuid           uuid,\n" +
             "  aoc.uuid           aocUUID,\n" +
             "  ch.uuid            checklistUUID,\n" +
@@ -45,7 +46,8 @@ public class FacilityAssessmentProgressController {
             "  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id\n" +
             "                   FROM checkpoint_score\n" +
             "                   WHERE checkpoint_score.facility_assessment_id = :faid) AS cs ON c.id = cs.checkpoint_id\n" +
-            "GROUP BY std.id, ch.id, aoc.id";
+            "  LEFT OUTER JOIN facility_assessment fa ON fa.id = :faid\n" +
+            "GROUP BY std.id, ch.id, aoc.id, fa.id";
 
     private static final String areaOfConcernTotalForAssessmentTool = "SELECT\n" +
             "  ch.uuid              AS checklistUUID,\n" +
