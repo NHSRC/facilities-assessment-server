@@ -28,7 +28,6 @@ public class Checklist extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id")
-    @NotNull
     private State state;
 
     @ManyToMany(cascade = CascadeType.ALL)

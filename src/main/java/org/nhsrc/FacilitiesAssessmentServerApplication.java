@@ -114,7 +114,8 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 Checklist checklist = resource.getContent();
                 resource.removeLinks();
                 resource.add(new Link(checklist.getDepartment().getUuid().toString(), "departmentUUID"));
-                resource.add(new Link(checklist.getState().getUuid().toString(), "stateUUID"));
+                if (checklist.getState() != null)
+                    resource.add(new Link(checklist.getState().getUuid().toString(), "stateUUID"));
                 resource.add(new Link(checklist.getAssessmentTool().getUuid().toString(), "assessmentToolUUID"));
                 resource.add(checklist.getAreasOfConcern().stream().map(aoc -> new Link(aoc.getUuid().toString(), "areasOfConcernUUIDs")).collect(Collectors.toList()));
                 return resource;

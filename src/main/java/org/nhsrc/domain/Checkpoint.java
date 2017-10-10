@@ -29,7 +29,6 @@ public class Checkpoint extends AbstractEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "state_id")
-    @NotNull
     private State state;
 
     @Column(name = "is_default")
