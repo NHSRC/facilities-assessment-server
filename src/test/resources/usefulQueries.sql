@@ -258,78 +258,146 @@ FROM standard s
 WHERE st.name = 'Chhattisgarh' AND ch.name = 'Lab' AND aoc.name = 'Inputs' AND s.reference = 'C2';
 
 
+SELECT *
+FROM (((SELECT
+          d.name                                                                                        AS Department,
+          format('%s (%s)', aoc.reference, aoc.name)                                                    AS AreaOfConcern,
+          round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS Score
+        FROM checkpoint_score cs
+          INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+          LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id AND c.checklist_id = cl.id
+          LEFT OUTER JOIN measurable_element me ON me.id = c.measurable_element_id
+          LEFT OUTER JOIN standard s ON s.id = me.standard_id
+          LEFT OUTER JOIN area_of_concern aoc ON aoc.id = s.area_of_concern_id
+          LEFT OUTER JOIN department d ON d.id = cl.department_id
+          LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+          LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+          LEFT OUTER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
+          LEFT OUTER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id
+        WHERE facility.name = 'District Hospital Bilaspur' AND fa.series_name = '1' AND assessment_tool_mode.name = 'nqas'
+        GROUP BY d.name, aoc.reference, AreaOfConcern
+        ORDER BY aoc.reference)
+       UNION (SELECT
+                'Total'                                                                                       AS Department,
+                format('%s (%s)', aoc.reference, aoc.name)                                                    AS AreaOfConcern,
+                round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS Score
+              FROM checkpoint_score cs
+                INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+                LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id
+                LEFT OUTER JOIN department d ON cl.department_id = d.id
+                LEFT OUTER JOIN measurable_element me ON me.id = c.measurable_element_id
+                LEFT OUTER JOIN standard s ON s.id = me.standard_id
+                LEFT OUTER JOIN area_of_concern aoc ON aoc.id = s.area_of_concern_id
+                LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+                LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+                LEFT OUTER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
+                LEFT OUTER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id
+              WHERE facility.name = 'District Hospital Bilaspur' AND fa.series_name = '1' AND assessment_tool_mode.name = 'nqas'
+              GROUP BY aoc.name, aoc.reference
+              ORDER BY aoc.reference))
+      UNION
+      (SELECT
+         d.name                                                                                        AS Department,
+         'Total'                                                                                       AS AreaOfConcern,
+         round((sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100) :: NUMERIC, 1) AS Score
+       FROM checkpoint_score cs
+         INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+         LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id AND c.checklist_id = cl.id
+         LEFT OUTER JOIN measurable_element me ON me.id = c.measurable_element_id
+         LEFT OUTER JOIN standard s ON s.id = me.standard_id
+         LEFT OUTER JOIN area_of_concern aoc ON aoc.id = s.area_of_concern_id
+         LEFT OUTER JOIN department d ON d.id = cl.department_id
+         LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+         LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+         LEFT OUTER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
+         LEFT OUTER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id
+       WHERE facility.name = 'District Hospital Bilaspur' AND fa.series_name = '1' AND assessment_tool_mode.name = 'nqas'
+       GROUP BY d.name
+       ORDER BY d.name
+      )
+      UNION (SELECT
+               'Total'                                                               AS Department,
+               'Total'                                                               AS AreaOfConcern,
+               round(((sum(ad.dscore) :: FLOAT) / (count(ad.dscore))) :: NUMERIC, 1) AS Score
+             FROM
+               (
+                 SELECT
+                   d.name                                                                            AS Department,
+                   (sum(cs.score) :: FLOAT / (2 * count(cs.score) :: FLOAT) :: FLOAT * 100 :: FLOAT) AS dscore,
+                   max(fa.start_date)
+                 FROM checkpoint_score cs
+                   INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
+                   LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id
+                   LEFT OUTER JOIN department d ON d.id = cl.department_id
+                   LEFT OUTER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+                   LEFT OUTER JOIN facility ON fa.facility_id = facility.id
+                   LEFT OUTER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
+                   LEFT OUTER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id
+                 WHERE facility.name = 'District Hospital Bilaspur' AND fa.series_name = '1' AND assessment_tool_mode.name = 'nqas'
+                 GROUP BY d.name
+               ) AS ad)) AS foo
+ORDER BY department, areaofconcern;
+
+
 SELECT
-  std.uuid           standard_uuid,
-  aoc.uuid           aocUUID,
-  ch.uuid            checklistUUID,
-  count(c.id)     AS total,
-  sum(CASE WHEN cs.checkpoint_id IS NULL
-    THEN 0
-      ELSE 1 END) AS completed
-FROM checkpoint c
-  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
-  INNER JOIN standard std ON me.standard_id = std.id
-  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id
-  INNER JOIN checklist ch ON c.checklist_id = ch.id
-  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id
-                   FROM checkpoint_score WHERE checkpoint_score.facility_assessment_id = 47) AS cs ON c.id = cs.checkpoint_id
-  WHERE ch.assessment_tool_id = 1 AND ch.state_id = 1 AND std.reference = 'C1' AND ch.name = 'Lab'
-GROUP BY std.id, ch.id, aoc.id;
+  area_of_concern.name,
+  area_of_concern.reference,
+  standard.name,
+  standard.reference
+FROM area_of_concern, standard
+WHERE standard.area_of_concern_id = area_of_concern.id and standard.name like '%drugs%' ORDER BY standard.name;
+--       AND standard.name like '%consum%';
+
+SELECT DISTINCT name, reference
+FROM area_of_concern;
+
+SELECT reference from measurable_element WHERE measurable_element.reference like 'C4%' ORDER BY reference;
+
+SELECT DISTINCT reference from standard WHERE reference like 'G%';
+
+SELECT DISTINCT
+  name,
+  reference
+FROM standard
+WHERE name LIKE '%quipment%';
 
 
 
+SELECT id, district.name FROM district WHERE district.state_id = 1;
 
-SELECT
-  std.uuid           uuid,
-  aoc.uuid           aocUUID,
-  ch.uuid            checklistUUID,
-  count(c.id)     AS total,
-  sum(CASE WHEN cs.checkpoint_id IS NULL
-    THEN 0
-      ELSE 1 END) AS completed
-FROM checkpoint c
-  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
-  INNER JOIN standard std ON me.standard_id = std.id
-  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id
-  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = 1 AND ch.state_id = 1
-  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id
-                   FROM checkpoint_score
-                   WHERE checkpoint_score.facility_assessment_id = 47) AS cs ON c.id = cs.checkpoint_id
---   WHERE std.uuid = 'f9dd5ee1-8c7d-468f-8357-7f4a70f8992f' and ch.uuid = '956db2ed-d5dc-41b5-8c9e-45bec30daf00'
-GROUP BY std.id, ch.id, aoc.id;
-
-SELECT standard_id from measurable_element WHERE reference like '%..%';
-
-SELECT * from facility_assessment WHERE id = 47;
-
-DELETE from checkpoint_score where facility_assessment_id != 47;
-DELETE from facility_assessment where id != 47;
-
-
-
-
-
-
-
-
+SELECT * from facility WHERE district_id = (SELECT id from district where name = 'Kota');
 
 
 SELECT
-  fa.id as facilityAssessmentId,
-  std.uuid           uuid,
-  aoc.uuid           aocUUID,
-  ch.uuid            checklistUUID,
-  count(c.id)     AS total,
-  sum(CASE WHEN cs.checkpoint_id IS NULL
-    THEN 0
-      ELSE 1 END) AS completed
-FROM checkpoint c
-  INNER JOIN measurable_element me ON c.measurable_element_id = me.id
-  INNER JOIN standard std ON me.standard_id = std.id
-  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id
-  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = 1 AND ch.state_id = 1
-  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id
-                   FROM checkpoint_score
-                   WHERE checkpoint_score.facility_assessment_id = 47) AS cs ON c.id = cs.checkpoint_id
-  LEFT OUTER JOIN facility_assessment fa ON fa.id = 47
-GROUP BY std.id, ch.id, aoc.id, facilityAssessmentId;
+  Checklist,
+  Checkpoints.CheckpointName
+FROM
+  (SELECT
+     checklist.name Checklist,
+     checkpoint.name  CheckpointName,
+     checkpoint.id  CheckpointId
+   FROM checkpoint, assessment_tool, checklist, state, assessment_tool_mode
+   WHERE
+     assessment_tool.id = checklist.assessment_tool_id
+     AND checkpoint.checklist_id = checklist.id AND (state.id = checklist.state_id OR checklist.state_id is NULL)
+     AND assessment_tool.assessment_tool_mode_id = assessment_tool_mode.id AND assessment_tool_mode.name = 'nqas'
+                                                                                AND state.name = 'Chhattisgarh' AND checklist.id in (
+  SELECT DISTINCT checklist_id FROM checkpoint_score WHERE facility_assessment_id = (SELECT facility_assessment.id
+                                                                                     FROM facility_assessment, assessment_tool, assessment_tool_mode, facility, state
+                                                                                                                                                      WHERE facility_assessment.assessment_tool_id = assessment_tool.id AND assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id
+  AND facility_assessment.facility_id = facility.id
+  AND facility_assessment.series_name = '1' AND assessment_tool_mode.name = 'nqas' AND state.name = 'Chhattisgarh' AND facility.name = 'CHC Kota')
+                                                                                                                  )) AS Checkpoints
+  LEFT OUTER JOIN
+  (SELECT
+     checkpoint_score.checklist_id,
+     checkpoint_score.checkpoint_id
+   FROM checkpoint_score, facility, facility_assessment, assessment_tool, checklist, state, district, assessment_tool_mode
+   WHERE
+     facility.id = facility_assessment.facility_id AND facility_assessment.assessment_tool_id = assessment_tool.id AND assessment_tool.id = checklist.assessment_tool_id
+     AND checkpoint_score.checklist_id = checklist.id AND checkpoint_score.facility_assessment_id = facility_assessment.id
+     AND (state.id = checklist.state_id OR checklist.state_id is NULL) AND facility.district_id = district.id AND district.state_id = state.id
+     AND assessment_tool.assessment_tool_mode_id = assessment_tool_mode.id AND assessment_tool_mode.name = 'nqas'
+                                                                                AND facility_assessment.series_name = '1'AND state.name = 'Chhattisgarh' AND facility.name = 'CHC Kota') AS CheckpointScores
+    ON Checkpoints.CheckpointId = CheckpointScores.checkpoint_id
+WHERE CheckpointScores.checkpoint_id IS NULL;

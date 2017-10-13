@@ -30,7 +30,7 @@ public class SQLGenerator {
 
     private void generateAssessmentTool(AssessmentChecklistData data, StringBuffer stringBuffer) {
         AssessmentTool assessmentTool = data.getAssessmentTool();
-        stringBuffer.append(String.format("insert into assessment_tool (name, mode) values ('%s', '%s');\n", assessmentTool.getName(), assessmentTool.getMode()));
+        stringBuffer.append(String.format("insert into assessment_tool (name, assessment_tool_mode_id) values ('%s', (select id from assessment_tool_mode where name = '%s'));\n", assessmentTool.getName(), assessmentTool.getMode()));
     }
 
     private void generateChecklistAreaOfConcernMapping(AssessmentChecklistData data, StringBuffer stringBuffer) {

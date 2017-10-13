@@ -1,7 +1,6 @@
 package org.nhsrc.referenceDataImport;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.nhsrc.domain.*;
@@ -51,11 +50,13 @@ public class SheetRowImporter {
             this.aoc(currentRow, checklist, getAreaOfConcernCellNum(currentRow));
         } else if (getText(currentRow, 0).startsWith("Standard ") && getText(currentRow, 0).length() <= 15) {
             this.standard(getText(currentRow, 0), getText(currentRow, 1), checklist);
-        } else if (getText(currentRow, 0).startsWith("ME") && isEmpty(currentRow, 2)) {
+        } else if (getText(currentRow, 0).startsWith("ME") && isEmpty(currentRow, 2) && !getText(currentRow, 1).equals(getText(currentRow, 2))) {
+        } else if (getText(currentRow, 0).startsWith("ME") && getText(currentRow, 1).equals(getText(currentRow, 2))) {
+            this.meWithSameCheckpointName(currentRow, checklist);
         } else if (getText(currentRow, 0).startsWith("ME")) {
             this.me(currentRow, checklist, hasScores, facilityAssessment);
         } else if (getText(currentRow, 0).replace(" ", "").startsWith(this.currStandard.getReference()) && checklist.getName().equals("Kayakalp")) {
-            this.kayakalpME(currentRow, checklist);
+            this.meWithSameCheckpointName(currentRow, checklist);
         } else if (!isEmpty(currentRow, 2) && !checklist.getName().equals("Kayakalp")) {
             this.checkpoint(currentRow, checklist, hasScores, facilityAssessment);
         } else if (getText(currentRow, 0).toLowerCase().contains("score") || getText(currentRow, 1).toLowerCase().contains("score")) {
@@ -84,34 +85,7 @@ public class SheetRowImporter {
                 cell2Text.startsWith("Area of Concern -") || cell2Text.startsWith("Area of Concern –");
     }
 
-    private void kayakalpME(Row currentRow, Checklist checklist) {
-        String ref = getText(currentRow, 0).replace(" ", "");
-        String name = getText(currentRow, 1).trim().replaceAll(" +", " ");
-        MeasurableElement me = currStandard.getMeasurableElement(ref);
-        if (me == null) {
-            me = new MeasurableElement();
-            me.setName(name);
-            me.setReference(ref);
-            currStandard.addMeasurableElement(me);
-        }
-        if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2)) || me.getReference().length() < 4) {
-            System.err.println(String.format("[ERROR] Found Measurable element with name=%s under standard=%s, in checklist=%s", me.getReference(), currStandard.getReference(), checklist.getName()));
-        }
-        currME = me;
 
-        Checkpoint checkpoint = new Checkpoint();
-        checkpoint.setName(name);
-        String am = getText(currentRow, 3);
-        checkpoint.setAssessmentMethodObservation(am.toLowerCase().contains("ob"));
-        checkpoint.setAssessmentMethodPatientInterview(am.toLowerCase().contains("pi"));
-        checkpoint.setAssessmentMethodRecordReview(am.toLowerCase().contains("rr"));
-        checkpoint.setAssessmentMethodStaffInterview(am.toLowerCase().contains("si"));
-        checkpoint.setMeansOfVerification(getText(currentRow, 4));
-        checkpoint.setDefault(true);
-        checkpoint.setMeasurableElement(currME);
-        currME.addCheckpoint(checkpoint);
-        checklist.addCheckpoint(checkpoint);
-    }
 
     private String getCellValue(Cell cell) {
         CellType cellType = cell.getCellTypeEnum();
@@ -184,6 +158,35 @@ public class SheetRowImporter {
         } else {
             currME.addCheckpoint(checkpoint);
         }
+    }
+
+    private void meWithSameCheckpointName(Row currentRow, Checklist checklist) {
+        String ref = getMERef(getText(currentRow, 0));
+        String name = getText(currentRow, 1).trim().replaceAll(" +", " ");
+        MeasurableElement me = currStandard.getMeasurableElement(ref);
+        if (me == null) {
+            me = new MeasurableElement();
+            me.setName(name);
+            me.setReference(ref);
+            currStandard.addMeasurableElement(me);
+        }
+        if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2)) || me.getReference().length() < 4) {
+            System.err.println(String.format("[ERROR] Found Measurable element with name=%s under standard=%s, in checklist=%s", me.getReference(), currStandard.getReference(), checklist.getName()));
+        }
+        currME = me;
+
+        Checkpoint checkpoint = new Checkpoint();
+        checkpoint.setName(name);
+        String am = getText(currentRow, 3);
+        checkpoint.setAssessmentMethodObservation(am.toLowerCase().contains("ob"));
+        checkpoint.setAssessmentMethodPatientInterview(am.toLowerCase().contains("pi"));
+        checkpoint.setAssessmentMethodRecordReview(am.toLowerCase().contains("rr"));
+        checkpoint.setAssessmentMethodStaffInterview(am.toLowerCase().contains("si"));
+        checkpoint.setMeansOfVerification(getText(currentRow, 4));
+        checkpoint.setDefault(true);
+        checkpoint.setMeasurableElement(currME);
+        currME.addCheckpoint(checkpoint);
+        checklist.addCheckpoint(checkpoint);
     }
 
     private void me(Row row, Checklist checklist, boolean hasScores, FacilityAssessment facilityAssessment) {
