@@ -401,3 +401,37 @@ FROM
                                                                                 AND facility_assessment.series_name = '1'AND state.name = 'Chhattisgarh' AND facility.name = 'CHC Kota') AS CheckpointScores
     ON Checkpoints.CheckpointId = CheckpointScores.checkpoint_id
 WHERE CheckpointScores.checkpoint_id IS NULL;
+
+CREATE INDEX facility_assessment_series ON facility_assessment(series_name);
+
+
+
+
+select
+  format('%s, Series=%s', facility.name, main.assessment_number) AS Assessment,
+  main.area_of_concern AreaOfConcern,
+  sum(main.score) * 50 / count(*) AS Score,
+  main.assessment_number Assessment_Number
+from checkpoint_scores_aoc main
+  inner join facility on main.facility = facility.id
+  inner join assessment_tool_mode on assessment_tool_mode.id = main.assessment_type
+inner join state on state.id = main.state
+inner join facility_type on facility_type.id = main.facility_type
+where main.assessment_number = '1'
+group by facility.id, main.assessment_number, main.area_of_concern
+order by Assessment;
+
+
+select
+  format('%s, Series=%s', facility.name, main.assessment_number) AS Assessment,
+  main.area_of_concern AreaOfConcern,
+  sum(main.score) * 50 / count(*) AS Score,
+  main.assessment_number an
+from checkpoint_scores_aoc main
+  inner join facility on main.facility = facility.id
+  inner join assessment_tool_mode on assessment_tool_mode.id = assessment_type
+  inner join state on state.id = main.state
+  inner join facility_type on facility_type.id = main.facility_type
+WHERE main.assessment_number = '1'
+group by facility.id, main.assessment_number, main.area_of_concern
+order by Assessment;

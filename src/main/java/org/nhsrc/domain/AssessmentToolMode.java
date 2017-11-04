@@ -6,7 +6,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "assessment_tool_mode")
-public class AssessmentToolMode extends AbstractTransactionalEntity {
+public class AssessmentToolMode extends AbstractEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 

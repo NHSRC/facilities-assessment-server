@@ -62,6 +62,10 @@ public class AssessmentTool extends AbstractEntity {
         return assessmentToolMode.getName();
     }
 
+    public void setAssessmentToolMode(AssessmentToolMode assessmentToolMode) {
+        this.assessmentToolMode = assessmentToolMode;
+    }
+
     @Override
     public String toString() {
         return "AssessmentTool{" +

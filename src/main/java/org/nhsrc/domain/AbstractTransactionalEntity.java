@@ -13,7 +13,7 @@ import java.sql.Date;
 @EntityListeners({AuditingEntityListener.class})
 public abstract class AbstractTransactionalEntity implements Persistable<Integer> {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Integer id;
 
