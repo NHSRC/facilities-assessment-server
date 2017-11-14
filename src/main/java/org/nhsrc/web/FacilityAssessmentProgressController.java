@@ -30,7 +30,7 @@ public class FacilityAssessmentProgressController {
     private EntityManager entityManager;
 
     private static final String standardProgressPerAssessment = "SELECT\n" +
-            "  fa.id as facility_assessment_id,\n" +
+            "  fa.id AS facility_assessment_id,\n" +
             "  std.uuid           uuid,\n" +
             "  aoc.uuid           aocUUID,\n" +
             "  ch.uuid            checklistUUID,\n" +
@@ -83,12 +83,16 @@ public class FacilityAssessmentProgressController {
     }
 
     @RequestMapping(value = "search/lastModified", method = RequestMethod.GET)
-    public ResponseEntity<List<FacilityAssessmentProgressDTO>> getFacilityAssessmentProgress(@RequestParam String lastModifiedDate) throws ParseException {
+    public ResponseEntity<List<FacilityAssessmentProgressDTO>> getFacilityAssessmentProgress(@RequestParam String lastModifiedDate, @RequestParam String deviceId) throws ParseException {
         Date result = DateUtils.ISO_8601_DATE_FORMAT.parse(lastModifiedDate);
-        List<FacilityAssessment> facilityAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThan(result);
+        List<FacilityAssessment> facilityAssessments;
+        if (deviceId == null || deviceId.trim().isEmpty())
+            facilityAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThan(result);
+        else
+            facilityAssessments = facilityAssessmentRepository.findByDeviceIdAndLastModifiedDateGreaterThan(deviceId, result);
+
         List<FacilityAssessmentProgressDTO> facilityAssessmentsProgress = new ArrayList<>();
         facilityAssessments.forEach(facilityAssessment -> {
-
             FacilityAssessmentProgressDTO assessmentProgress = new FacilityAssessmentProgressDTO();
             assessmentProgress.setUuid(facilityAssessment.getUuid().toString());
 

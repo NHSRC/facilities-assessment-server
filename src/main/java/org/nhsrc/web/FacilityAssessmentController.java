@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/facility-assessment")
 public class FacilityAssessmentController {
-
     private final FacilityAssessmentService facilityAssessmentService;
 
     @Autowired

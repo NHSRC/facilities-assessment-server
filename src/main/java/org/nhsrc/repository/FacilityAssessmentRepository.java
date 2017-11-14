@@ -22,9 +22,14 @@ public interface FacilityAssessmentRepository extends BaseRepository<FacilityAss
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<FacilityAssessment> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
+    @RestResource(path = "lastModifiedByDeviceId", rel = "lastModifiedByDeviceId")
+    Page<FacilityAssessment> findByDeviceIdAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("deviceId") String deviceId, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
     FacilityAssessment findByFacilityAndAssessmentToolAndStartDateBeforeAndStartDateAfter(Facility facility, AssessmentTool assessmentTool, Date startDateBefore, Date startDateAfter);
 
     List<FacilityAssessment> findByLastModifiedDateGreaterThan(Date lastModifiedDateTime);
+
+        List<FacilityAssessment> findByDeviceIdAndLastModifiedDateGreaterThan(String deviceId, Date lastModifiedDateTime);
 
     FacilityAssessment findByFacilityAndAssessmentToolAndSeriesName(Facility facility, AssessmentTool assessmentTool, String seriesName);
 }
