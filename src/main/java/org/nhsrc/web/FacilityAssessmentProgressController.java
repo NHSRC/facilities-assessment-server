@@ -82,7 +82,7 @@ public class FacilityAssessmentProgressController {
         this.entityManager = entityManager;
     }
 
-    @RequestMapping(value = "search/lastModified", method = RequestMethod.GET)
+    @RequestMapping(value = "search/lastModifiedByDeviceId", method = RequestMethod.GET)
     public ResponseEntity<List<FacilityAssessmentProgressDTO>> getFacilityAssessmentProgress(@RequestParam String lastModifiedDate, @RequestParam String deviceId) throws ParseException {
         Date result = DateUtils.ISO_8601_DATE_FORMAT.parse(lastModifiedDate);
         List<FacilityAssessment> facilityAssessments;
@@ -114,6 +114,11 @@ public class FacilityAssessmentProgressController {
             facilityAssessmentsProgress.add(assessmentProgress);
         });
         return ResponseEntity.ok(facilityAssessmentsProgress);
+    }
+
+    @RequestMapping(value = "search/lastModified", method = RequestMethod.GET)
+    public ResponseEntity<List<FacilityAssessmentProgressDTO>> getFacilityAssessmentProgress(@RequestParam String lastModifiedDate) throws ParseException {
+        return getFacilityAssessmentProgress(lastModifiedDate, null);
     }
 
     private List<StandardProgressDTO> getStandardProgressDTO(FacilityAssessment facilityAssessment) {
