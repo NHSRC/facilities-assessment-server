@@ -29,7 +29,7 @@ public interface FacilityAssessmentRepository extends BaseRepository<FacilityAss
 
     List<FacilityAssessment> findByLastModifiedDateGreaterThan(Date lastModifiedDateTime);
 
-        List<FacilityAssessment> findByDeviceIdAndLastModifiedDateGreaterThan(String deviceId, Date lastModifiedDateTime);
+    List<FacilityAssessment> findByDeviceIdAndLastModifiedDateGreaterThan(String deviceId, Date lastModifiedDateTime);
 
     FacilityAssessment findByFacilityAndAssessmentToolAndSeriesName(Facility facility, AssessmentTool assessmentTool, String seriesName);
 }
