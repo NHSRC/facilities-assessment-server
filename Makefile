@@ -66,6 +66,9 @@ run_server:
 
 run_server_nhsrc: binary
 	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_nhsrc --server.port=6001
+
+run_server_jss: binary
+	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_cg --server.port=6001
 # </server>
 
 

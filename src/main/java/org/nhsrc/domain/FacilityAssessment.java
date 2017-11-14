@@ -36,6 +36,9 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @Column(name = "series_name", nullable = true)
     private String seriesName;
 
+    @Column(name = "device_id", nullable = true)
+    private String deviceId;
+
     public Facility getFacility() {
         return facility;
     }
@@ -74,5 +77,13 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     public void setSeriesName(String seriesName) {
         this.seriesName = seriesName;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 }
