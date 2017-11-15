@@ -46,6 +46,7 @@ public class FacilityAssessmentService {
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
         FacilityAssessment facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool);
         FacilityAssessment matchingAssessment = this.assessmentMatchingService.findMatching(facilityAssessment);
+        matchingAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
         return facilityAssessmentRepository.save(matchingAssessment);
     }
 

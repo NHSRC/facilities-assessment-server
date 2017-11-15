@@ -7,6 +7,9 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @DynamicUpdate
@@ -36,8 +39,8 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @Column(name = "series_name", nullable = true)
     private String seriesName;
 
-    @Column(name = "device_id", nullable = true)
-    private String deviceId;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "facilityAssessment")
+    private Set<FacilityAssessmentDevice> facilityAssessmentDevices = new HashSet<>();
 
     public Facility getFacility() {
         return facility;
@@ -79,11 +82,21 @@ public class FacilityAssessment extends AbstractScoreEntity {
         this.seriesName = seriesName;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    public Set<FacilityAssessmentDevice> getFacilityAssessmentDevices() {
+        return facilityAssessmentDevices;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setFacilityAssessmentDevices(Set<FacilityAssessmentDevice> facilityAssessmentDevices) {
+        this.facilityAssessmentDevices = facilityAssessmentDevices;
+    }
+
+    public void incorporateDevice(String deviceId) {
+        if (deviceId != null && !deviceId.isEmpty() && facilityAssessmentDevices.stream().noneMatch(facilityAssessmentDevice -> facilityAssessmentDevice.getDeviceId().equals(deviceId))) {
+            FacilityAssessmentDevice facilityAssessmentDevice = new FacilityAssessmentDevice();
+            facilityAssessmentDevice.setUuid(UUID.randomUUID());
+            facilityAssessmentDevice.setDeviceId(deviceId);
+            facilityAssessmentDevice.setFacilityAssessment(this);
+            facilityAssessmentDevices.add(facilityAssessmentDevice);
+        }
     }
 }

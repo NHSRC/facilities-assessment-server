@@ -435,3 +435,7 @@ from checkpoint_scores_aoc main
 WHERE main.assessment_number = '1'
 group by facility.id, main.assessment_number, main.area_of_concern
 order by Assessment;
+
+SELECT * from facility_assessment ORDER BY id DESC ;
+SELECT * from facility_assessment_device;
+SELECT * from checkpoint_score WHERE facility_assessment_id = 85;

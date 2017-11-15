@@ -89,7 +89,7 @@ public class FacilityAssessmentProgressController {
         if (deviceId == null || deviceId.trim().isEmpty())
             facilityAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThan(result);
         else
-            facilityAssessments = facilityAssessmentRepository.findByDeviceIdAndLastModifiedDateGreaterThan(deviceId, result);
+            facilityAssessments = facilityAssessmentRepository.findByFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThan(deviceId, result);
 
         List<FacilityAssessmentProgressDTO> facilityAssessmentsProgress = new ArrayList<>();
         facilityAssessments.forEach(facilityAssessment -> {
