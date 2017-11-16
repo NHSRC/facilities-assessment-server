@@ -1,6 +1,7 @@
 package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
@@ -39,6 +40,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @Column(name = "series_name", nullable = true)
     private String seriesName;
 
+    @JsonIgnore
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "facilityAssessment")
     private Set<FacilityAssessmentDevice> facilityAssessmentDevices = new HashSet<>();
 
