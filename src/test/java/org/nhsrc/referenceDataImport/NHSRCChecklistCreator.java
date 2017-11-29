@@ -16,16 +16,16 @@ public class NHSRCChecklistCreator {
 
     @Before
     public void init() {
-        checklistsProjectDirectory = new File("../checklists");
+        checklistsProjectDirectory = new File("../reference-data");
     }
 
     @Test
-    public void generateNHSRC_KK_DH_SDH_CHC() throws Exception {
-        File checklistFile = new File(checklistsProjectDirectory, "nhsrc/DH,SDH & CHC Kayakalp 28 July 2016.xlsx");
+    public void generateNHSRC_LAQSHYA() throws Exception {
+        File checklistFile = new File(checklistsProjectDirectory, "nhsrc/laqshya/LAQSHYA-DH-May-2016.xlsx");
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
-        assessmentChecklistData.set(new AssessmentTool("Kayakalp", "Kayakalp"));
+        assessmentChecklistData.set(new AssessmentTool("LAQSHYA", "LAQSHYA"));
         ChecklistCreator checklistCreator = new ChecklistCreator();
         checklistCreator.performImport(checklistFile, assessmentChecklistData);
-        checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory,"NHSRC_KK_DH_SDH_CHC.sql"), true);
+        checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory,"nhsrc/output/LAQSHYA.sql"), false);
     }
 }

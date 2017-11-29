@@ -76,6 +76,8 @@ run_server_jss: binary
 create_empty_db_nhsrc:
 	make reset_db database=$(nhsrc_db)
 	psql -Unhsrc $(nhsrc_db) < src/test/resources/deleteDefaultData.sql
+
+start_in_record_mode: clear_responses run_server_nhsrc
 # </scenario>
 
 clean:
