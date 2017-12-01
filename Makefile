@@ -9,8 +9,8 @@ help: ## This help dialog.
 	    printf "%-30s %s\n" $$help_command $$help_info ; \
 	done
 
-nhsrc_db := facilities_assessment_nhsrc
-jss_db := facilities_assessment_cg
+database := facilities_assessment_$(db)
+rr_version := 3
 
 # <db>
 init_db:
@@ -61,27 +61,32 @@ schema_migrate: ## Requires argument - db
 binary:
 	./gradlew build -x test
 
-run_server:
-	./gradlew bootRun
-
-run_server_nhsrc: binary
-	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_nhsrc --server.port=6001
-
-run_server_jss: binary
-	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_cg --server.port=6001
+run_server: binary
+	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=$(database) --server.port=6001
 # </server>
 
 
 # <scenario>
-create_empty_db_nhsrc:
-	make reset_db database=$(nhsrc_db)
-	psql -Unhsrc $(nhsrc_db) < src/test/resources/deleteDefaultData.sql
+clear_responses:
+	-rm responses/*.json
 
-start_in_record_mode: clear_responses run_server_nhsrc
+publish_responses:
+	cp responses/*.json ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)/
+# </scenario>
+
+
+# <scenario>
+create_empty_db_nhsrc:
+	make reset_db database=$(database)
+	psql -Unhsrc $(database) < src/test/resources/deleteDefaultData.sql
+
+start_in_record_mode: clear_responses
+	psql $(database) -c 'UPDATE deployment_configuration SET recording_mode = true'
+	make run_server
+	psql $(database) -c 'UPDATE deployment_configuration SET recording_mode = false'
 # </scenario>
 
 clean:
 	./gradlew clean
 
-clear_responses:
-	rm responses/*.json
+
