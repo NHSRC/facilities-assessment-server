@@ -36,6 +36,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile("org.springframework.boot:spring-boot-starter-data-rest")
+    compile("org.springframework.boot:spring-boot-starter-security:1.4.1.RELEASE")
     compile("org.flywaydb:flyway-core:4.0.3")
     compile('joda-time:joda-time')
     compile group: 'org.apache.poi', name: 'poi', version: '3.16-beta2'
@@ -45,7 +46,6 @@ dependencies {
     runtime('com.zaxxer:HikariCP:2.5.1')
     dev("org.springframework.boot:spring-boot-devtools")
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
 
 bootRun {
