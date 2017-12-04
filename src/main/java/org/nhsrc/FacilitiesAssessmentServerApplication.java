@@ -2,6 +2,7 @@ package org.nhsrc;
 
 import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
+import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.*;
 import org.nhsrc.repository.AssessmentTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceProcessor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -21,7 +23,7 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
-@Import({RestConfiguration.class, DatabaseConfiguration.class})
+@Import({RestConfiguration.class, DatabaseConfiguration.class, SecurityConfiguration.class})
 @EnableJpaAuditing
 public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapter {
     @Autowired

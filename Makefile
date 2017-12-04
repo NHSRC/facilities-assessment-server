@@ -11,6 +11,7 @@ help: ## This help dialog.
 
 database := facilities_assessment_$(db)
 rr_version := 3
+response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
 
 # <db>
 init_db:
@@ -71,7 +72,8 @@ clear_responses:
 	-rm responses/*.json
 
 publish_responses:
-	cp responses/*.json ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)/
+	rm $(response_folder)/*.*
+	cp responses/*.json $(response_folder)/
 # </scenario>
 
 
@@ -88,5 +90,3 @@ start_in_record_mode: clear_responses
 
 clean:
 	./gradlew clean
-
-

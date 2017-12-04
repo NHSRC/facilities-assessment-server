@@ -24,13 +24,13 @@ public class UserController {
     @Transactional
     public void createNewUser(@RequestBody UserRequest userRequest) {
         User user = userService.findUserByEmail(userRequest.getEmail());
-        if (user != null) {
+        if (user == null) {
             user = new User();
             user.setEmail(userRequest.getEmail());
         }
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
-        user.setPassword(user.getPassword());
+        user.setPassword(userRequest.getPassword());
 
         userService.saveUser(user);
     }
