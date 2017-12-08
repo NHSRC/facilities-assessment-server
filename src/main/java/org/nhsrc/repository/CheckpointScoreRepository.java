@@ -1,9 +1,6 @@
 package org.nhsrc.repository;
 
-import org.nhsrc.domain.Checklist;
-import org.nhsrc.domain.Checkpoint;
-import org.nhsrc.domain.CheckpointScore;
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +24,6 @@ public interface CheckpointScoreRepository extends BaseRepository<CheckpointScor
     Page<CheckpointScore> findByFacilityAssessmentFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("deviceId") String deviceId, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     CheckpointScore findByCheckpointAndFacilityAssessmentAndChecklist(Checkpoint checkpoint, FacilityAssessment facilityAssessment, Checklist checklist);
+
+    Page<CheckpointScore> findByFacilityAssessmentFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(State state, Date lastModifiedDateTime, Pageable pageable);
 }

@@ -31,7 +31,15 @@ public class UserController {
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setPassword(userRequest.getPassword());
+        user.setInactive(false);
+        user.setUserType(userRequest.getUserType());
+        user.setUserTypeReferenceId(userRequest.getUserTypeReferenceId());
 
         userService.saveUser(user);
+    }
+
+    @RequestMapping(value = "/loginSuccess", method = RequestMethod.GET)
+    public String loginSuccess() {
+        return "Successful Login";
     }
 }

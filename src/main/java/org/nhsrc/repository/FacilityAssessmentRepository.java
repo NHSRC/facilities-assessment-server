@@ -1,8 +1,6 @@
 package org.nhsrc.repository;
 
-import org.nhsrc.domain.AssessmentTool;
-import org.nhsrc.domain.Facility;
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -32,4 +30,6 @@ public interface FacilityAssessmentRepository extends BaseRepository<FacilityAss
     List<FacilityAssessment> findByFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThan(String deviceId, Date lastModifiedDateTime);
 
     FacilityAssessment findByFacilityAndAssessmentToolAndSeriesName(Facility facility, AssessmentTool assessmentTool, String seriesName);
+
+    Page<FacilityAssessment> findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(State state, Date lastModifiedDateTime, Pageable pageable);
 }

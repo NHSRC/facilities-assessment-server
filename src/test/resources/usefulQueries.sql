@@ -5,6 +5,21 @@ SELECT * from deployment_configuration;
 UPDATE deployment_configuration SET recording_mode = true;
 UPDATE deployment_configuration SET recording_mode = false;
 
-SELECT * from users;
-SELECT * from user_role;
+
+
 SELECT * FROM role;
+
+UPDATE users set inactive = true;
+
+select u.email, r.name from users u inner join user_role ur on (u.id = ur.user_id) inner join role r on(ur.role_id = r.id) where u.email='petmongrels@gmail.com';
+
+select email, password, inactive from users where email='petmongrels@gmail.com';
+
+
+
+SELECT * from user_role;
+
+select email, password, NOT inactive as active from users;
+
+DELETE from user_role;
+DELETE from users;

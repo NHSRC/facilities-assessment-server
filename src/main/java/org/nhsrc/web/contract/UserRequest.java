@@ -5,6 +5,8 @@ public class UserRequest {
     private String lastName;
     private String email;
     private String password;
+    private String userType;
+    private int userTypeReferenceId;
 
     public String getFirstName() {
         return firstName;
@@ -36,5 +38,21 @@ public class UserRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public int getUserTypeReferenceId() {
+        return userTypeReferenceId;
+    }
+
+    public void setUserTypeReferenceId(int userTypeReferenceId) {
+        this.userTypeReferenceId = userTypeReferenceId;
     }
 }

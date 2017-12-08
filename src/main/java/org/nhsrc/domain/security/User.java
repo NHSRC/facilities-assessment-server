@@ -7,6 +7,7 @@ import org.nhsrc.domain.AbstractEntity;
 import org.springframework.data.annotation.Transient;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -34,6 +35,13 @@ public class User extends AbstractEntity {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
+    @Column(name = "user_type")
+    @NotNull
+    private String userType;
+
+    @Column(name = "user_type_reference_id")
+    private int userTypeReferenceId;
 
     public String getPassword() {
         return password;
@@ -73,5 +81,21 @@ public class User extends AbstractEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public int getUserTypeReferenceId() {
+        return userTypeReferenceId;
+    }
+
+    public void setUserTypeReferenceId(int userTypeReferenceId) {
+        this.userTypeReferenceId = userTypeReferenceId;
     }
 }

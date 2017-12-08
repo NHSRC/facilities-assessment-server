@@ -15,6 +15,8 @@ import org.springframework.security.config.annotation.web.configurers.Expression
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -55,27 +57,52 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/registration").permitAll();
+                .antMatchers("/registration").permitAll()
+                .antMatchers("/api/facility-assessment").permitAll();
+        if (isSecure) {
+            registry.antMatchers("/loginSuccess").hasAuthority("USER");
+            permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state"}, registry);
+            String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress"};
+            permittedResourcesForOneDevice(semiProtectedResources, registry);
+            permittedResourcesWithAuthority(semiProtectedResources, registry);
 
-        if (isSecure)
             registry
-                .antMatchers("/api/**").hasAuthority("USER").anyRequest()
-                .authenticated().and().csrf().disable().formLogin()
-                .loginPage("/login")
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .and().logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .and().exceptionHandling();
-        else
+                    .anyRequest().authenticated().and().csrf().disable()
+                    .formLogin().loginPage("/login").successForwardUrl("/loginSuccess").successHandler((request, response, authentication) -> {
+                System.out.println("Login Successful");
+            }).failureHandler((request, response, exception) -> {
+                System.out.println("Login Failed");
+            })
+                    .usernameParameter("email")
+                    .passwordParameter("password")
+                    .and().logout()
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .and().exceptionHandling();
+        } else
             registry.antMatchers("/api/**").permitAll();
+    }
+
+    private void permittedResourcesWithAuthority(String[] patterns, ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
+        Arrays.stream(patterns).forEach(s -> {
+            registry.antMatchers(String.format("/api/%s", s)).hasAuthority("USER");
+        });
+    }
+
+    private void permittedResourcesForOneDevice(String[] patterns, ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
+        Arrays.stream(patterns).forEach(s -> {
+            registry.antMatchers(String.format("/api/%s/search/lastModifiedByDeviceId", s)).permitAll();
+        });
+    }
+
+    private void permittedResources(String[] patterns, ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
+        Arrays.stream(patterns).forEach(s -> {
+            registry.antMatchers(String.format("/api/%s/**", s)).permitAll();
+        });
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web
-                .ignoring()
-                .antMatchers("/ext/**");
+        web.ignoring().antMatchers("/ext/**");
     }
 
 }
