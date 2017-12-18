@@ -18,4 +18,7 @@ import java.util.Date;
 public interface DistrictRepository extends BaseRepository<District> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<District> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
+    @RestResource(path = "lastModifiedByState", rel = "lastModifiedByState")
+    Page<District> findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 }
