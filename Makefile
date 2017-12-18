@@ -12,6 +12,12 @@ help: ## This help dialog.
 database := facilities_assessment_$(db)
 rr_version := 3
 response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
+port := 6001
+
+define _run_server
+	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=$(port) --recording.mode=$2
+endef
+
 
 # <db>
 init_db:
@@ -59,17 +65,17 @@ schema_migrate: ## Requires argument - db
 # </schema>
 
 # <server>
-binary:
+build_server:
 	./gradlew build -x test
 
-run_server: binary
-	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=$(database) --server.port=6001
+run_server: build_server
+	$(call _run_server,nhsrc,false)
 # </server>
 
 
 # <scenario>
 clear_responses:
-	-rm responses/*.json
+	-rm -rf responses
 
 publish_responses:
 	rm $(response_folder)/*.*
@@ -82,10 +88,8 @@ create_empty_db_nhsrc:
 	make reset_db database=$(database)
 	psql -Unhsrc $(database) < src/test/resources/deleteDefaultData.sql
 
-start_in_record_mode: clear_responses
-	psql $(database) -c 'UPDATE deployment_configuration SET recording_mode = true'
-	make run_server
-	psql $(database) -c 'UPDATE deployment_configuration SET recording_mode = false'
+start_in_record_mode: clear_responses build_server
+	$(call _run_server,$(db),true)
 # </scenario>
 
 clean:

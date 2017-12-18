@@ -1,49 +1,49 @@
 package org.nhsrc.web;
 
-import org.nhsrc.config.DeploymentConfiguration;
-import org.nhsrc.repository.DeploymentConfigurationRepository;
-import org.nhsrc.service.DeploymentConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class ResponseLogger implements Filter {
     private static int requestCount;
+    private static Map<String, Integer> map = new HashMap<>();
     private static File responsesDir = new File("responses");
     private static List<String> stringsToRemove = new ArrayList<>();
     private static String[] resources = new String[] {"facilityType", "checkpoint", "checklist", "measurableElement", "standard", "areaOfConcern", "assessmentType", "tag", "department", "assessmentTool", "facility", "district", "state", "assessmentType"};
-    private DeploymentConfigurationService deploymentConfigurationService;
 
-    @Autowired
-    public ResponseLogger(DeploymentConfigurationService deploymentConfigurationService) {
-        this.deploymentConfigurationService = deploymentConfigurationService;
-    }
-
+    @Value("${recording.mode}")
+    private boolean recordingMode;
+    
     static {
         responsesDir.mkdir();
         for (String resource : resources) {
-            stringsToRemove.add(String.format("http://192.168.73.1:5000/api/%s/search/lastModified?lastModifiedDate=", resource));
-            stringsToRemove.add(String.format("http://192.168.73.1:5000/api/%s", resource));
+            stringsToRemove.add(String.format("http://192.168.73.1:6001/api/%s/search/lastModified?lastModifiedDate=", resource));
+            stringsToRemove.add(String.format("http://192.168.73.1:6001/api/%s", resource));
         }
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        DeploymentConfiguration configuration = deploymentConfigurationService.getConfiguration();
-        if (!configuration.isRecordingMode()) {
+        if (!recordingMode) {
             chain.doFilter(request, response);
             return;
         }
 
         HttpServletResponseCopier responseCopier = new HttpServletResponseCopier((HttpServletResponse) response);
         FileWriter fileWriter = null;
+        boolean isStateSpecificRequest = ((HttpServletRequest) request).getRequestURI().endsWith("ByState");
+
         try {
             chain.doFilter(request, responseCopier);
             responseCopier.flushBuffer();
@@ -52,7 +52,23 @@ public class ResponseLogger implements Filter {
             for (String s : stringsToRemove) {
                 str = str.replace(s, "");
             }
-            fileWriter = new FileWriter(new File(responsesDir, String.format("%d.json", requestCount++)));
+            File file;
+            if (isStateSpecificRequest) {
+                String stateName = request.getParameter("name");
+                File stateResponseDir = new File(responsesDir, stateName);
+                stateResponseDir.mkdir();
+                if (map.containsKey(stateName)) {
+                    Integer stateSpecificRequestCount = map.get(stateName);
+                    map.put(stateName, stateSpecificRequestCount + 1);
+                } else {
+                    map.put(stateName, 0);
+                }
+                file = new File(stateResponseDir, String.format("%d.json", map.get(stateName)));
+            } else {
+                file = new File(responsesDir, String.format("%d.json", requestCount++));
+            }
+
+            fileWriter = new FileWriter(file);
             fileWriter.write(str);
         } finally {
             if (fileWriter != null)
