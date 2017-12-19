@@ -24,7 +24,7 @@ public class ResponseLogger implements Filter {
 
     @Value("${recording.mode}")
     private boolean recordingMode;
-    
+
     static {
         responsesDir.mkdir();
         for (String resource : resources) {
@@ -55,7 +55,8 @@ public class ResponseLogger implements Filter {
             File file;
             if (isStateSpecificRequest) {
                 String stateName = request.getParameter("name");
-                File stateResponseDir = new File(responsesDir, stateName);
+                String stateDirectoryName = stateName.replace(" ", "");
+                File stateResponseDir = new File(responsesDir, stateDirectoryName);
                 stateResponseDir.mkdir();
                 if (map.containsKey(stateName)) {
                     Integer stateSpecificRequestCount = map.get(stateName);
