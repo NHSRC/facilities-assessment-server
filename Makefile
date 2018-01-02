@@ -10,7 +10,7 @@ help: ## This help dialog.
 	done
 
 database := facilities_assessment_$(db)
-rr_version := 3
+rr_version := 4
 response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
 port := 6001
 
@@ -78,8 +78,9 @@ clear_responses:
 	-rm -rf responses
 
 publish_responses:
-	rm $(response_folder)/*.*
-	cp responses/*.json $(response_folder)/
+	-rm -rf $(response_folder)
+	-mkdir $(response_folder)
+	cp -R responses/* $(response_folder)/
 # </scenario>
 
 

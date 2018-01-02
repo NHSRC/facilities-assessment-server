@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -57,8 +58,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/registration").permitAll()
-                .antMatchers("/api/facility-assessment").permitAll();
+                .antMatchers("/registration").permitAll();
         if (isSecure) {
             registry.antMatchers("/loginSuccess").hasAuthority("USER");
             permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state"}, registry);
@@ -78,8 +78,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .and().logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                     .and().exceptionHandling();
-        } else
-            registry.antMatchers("/api/**").permitAll();
+        } else {
+            registry.antMatchers(HttpMethod.POST,"/api/facility-assessment/**").permitAll();
+            registry.antMatchers(HttpMethod.POST,"/api/facility-assessment").permitAll();
+            registry.antMatchers("/api/**").permitAll().and().csrf().disable();
+        }
     }
 
     private void permittedResourcesWithAuthority(String[] patterns, ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
