@@ -15,9 +15,6 @@ public class AssessmentMatchingService {
         this.facilityAssessmentRepository = facilityAssessmentRepository;
     }
 
-    @Value("${fa.submission.window}")
-    private int submissionWindow;
-
     public FacilityAssessment findMatching(FacilityAssessment facilityAssessment) {
         FacilityAssessment matchingAssessment =
                 this.facilityAssessmentRepository
