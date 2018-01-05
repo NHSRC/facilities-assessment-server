@@ -70,6 +70,9 @@ build_server:
 
 run_server: build_server
 	$(call _run_server,nhsrc,false)
+
+test_server: reset_test_db
+	./gradlew build
 # </server>
 
 

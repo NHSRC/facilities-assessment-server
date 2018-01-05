@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class V30__DeleteDuplicateScores implements SpringJdbcMigration {
-    @Override
+public class V30__DeleteDuplicateScores/* implements SpringJdbcMigration*/ {
+//    @Override
     public void migrate(JdbcTemplate jdbcTemplate) throws Exception {
         String queryString = "SELECT a.facility_assessment_id AS facilityAssessmentId, a.checklist_id AS checklistId, a.checkpoint_id AS checkpointId, a.id AS checkpointScoreId FROM checkpoint_score a, checkpoint_score b\n" +
                 "  WHERE a.checkpoint_id = b.checkpoint_id AND a.facility_assessment_id = b.facility_assessment_id AND a.checklist_id = b.checklist_id\n" +

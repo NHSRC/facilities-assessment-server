@@ -25,6 +25,8 @@ public class FacilityAssessmentDTO implements Serializable {
 
     private String deviceId;
 
+    private UUID assessmentTypeUUID;
+
     public UUID getUuid() {
         return uuid;
     }
@@ -79,5 +81,13 @@ public class FacilityAssessmentDTO implements Serializable {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public UUID getAssessmentTypeUUID() {
+        return assessmentTypeUUID;
+    }
+
+    public void setAssessmentTypeUUID(UUID assessmentTypeUUID) {
+        this.assessmentTypeUUID = assessmentTypeUUID;
     }
 }

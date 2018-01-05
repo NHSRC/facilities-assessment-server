@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +19,8 @@ import java.util.UUID;
 @SelectBeforeUpdate
 @Table(name = "facility_assessment")
 public class FacilityAssessment extends AbstractScoreEntity {
+    private static SimpleDateFormat dateFormatter = new SimpleDateFormat("ddMMyyyy");
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_id")
     @NotNull
@@ -39,6 +43,22 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     @Column(name = "series_name", nullable = true)
     private String seriesName;
+
+    @Column(name = "assessment_code")
+    private String assessmentCode;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "assessment_type_id")
+    @NotNull
+    private AssessmentType assessmentType;
+
+    public String getAssessmentCode() {
+        return assessmentCode;
+    }
+
+    public void setAssessmentCode(String assessmentCode) {
+        this.assessmentCode = assessmentCode;
+    }
 
     @JsonIgnore
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "facilityAssessment")
@@ -100,5 +120,19 @@ public class FacilityAssessment extends AbstractScoreEntity {
             facilityAssessmentDevice.setFacilityAssessment(this);
             facilityAssessmentDevices.add(facilityAssessmentDevice);
         }
+    }
+
+    public void setupCode() {
+        //N-Ex-KL-DH-412636-01012018
+        this.assessmentCode = String.format("%s-%s-%s-%s-%s", this.assessmentTool.getAssessmentToolMode().getShortName(), this.getAssessmentType().getShortName(), this.getFacility().getDistrict().getState().getShortName(), this.getFacility().getHmisCode(), dateFormatter.format(new Date()));
+    }
+
+    @JsonIgnore
+    public AssessmentType getAssessmentType() {
+        return assessmentType;
+    }
+
+    public void setAssessmentType(AssessmentType assessmentType) {
+        this.assessmentType = assessmentType;
     }
 }

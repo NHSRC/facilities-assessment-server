@@ -1,5 +1,6 @@
 package org.nhsrc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -20,6 +21,18 @@ public class Facility extends AbstractEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_type_id", nullable = false)
     private FacilityType facilityType;
+
+    @Column(name = "hmis_code")
+    private String hmisCode;
+
+    @JsonIgnore
+    public String getHmisCode() {
+        return hmisCode;
+    }
+
+    public void setHmisCode(String hmisCode) {
+        this.hmisCode = hmisCode;
+    }
 
     public String getName() {
         return name;

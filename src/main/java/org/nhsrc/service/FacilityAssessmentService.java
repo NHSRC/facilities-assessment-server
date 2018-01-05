@@ -23,6 +23,7 @@ public class FacilityAssessmentService {
     private final CheckpointScoreRepository checkpointScoreRepository;
     private final CheckpointRepository checkpointRepository;
     private final AssessmentMatchingService assessmentMatchingService;
+    private AssessmentTypeRepository assessmentTypeRepository;
 
     @Autowired
     public FacilityAssessmentService(FacilityRepository facilityRepository,
@@ -31,7 +32,8 @@ public class FacilityAssessmentService {
                                      ChecklistRepository checklistRepository,
                                      CheckpointScoreRepository checkpointScoreRepository,
                                      CheckpointRepository checkpointRepository,
-                                     AssessmentMatchingService assessmentMatchingService) {
+                                     AssessmentMatchingService assessmentMatchingService,
+                                     AssessmentTypeRepository assessmentTypeRepository) {
         this.facilityRepository = facilityRepository;
         this.assessmentToolRepository = assessmentToolRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
@@ -39,14 +41,19 @@ public class FacilityAssessmentService {
         this.checkpointScoreRepository = checkpointScoreRepository;
         this.checkpointRepository = checkpointRepository;
         this.assessmentMatchingService = assessmentMatchingService;
+        this.assessmentTypeRepository = assessmentTypeRepository;
     }
 
     public FacilityAssessment save(FacilityAssessmentDTO facilityAssessmentDTO) {
         Facility facility = facilityRepository.findByUuid(facilityAssessmentDTO.getFacility());
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
-        FacilityAssessment facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool);
+        AssessmentType assessmentType = assessmentTypeRepository.findByUuid(facilityAssessmentDTO.getAssessmentTypeUUID());
+        FacilityAssessment facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool, assessmentType);
         FacilityAssessment matchingAssessment = this.assessmentMatchingService.findMatching(facilityAssessment);
         matchingAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
+        if (matchingAssessment.getAssessmentCode() == null) {
+            matchingAssessment.setupCode();
+        }
         return facilityAssessmentRepository.save(matchingAssessment);
     }
 

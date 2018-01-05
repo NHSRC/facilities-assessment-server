@@ -66,6 +66,11 @@ public class AssessmentTool extends AbstractEntity {
         this.assessmentToolMode = assessmentToolMode;
     }
 
+    @JsonIgnore
+    public AssessmentToolMode getAssessmentToolMode() {
+        return assessmentToolMode;
+    }
+
     @Override
     public String toString() {
         return "AssessmentTool{" +

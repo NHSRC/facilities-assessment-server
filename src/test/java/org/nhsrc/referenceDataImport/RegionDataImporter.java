@@ -17,12 +17,6 @@ import java.util.List;
 
 public class RegionDataImporter {
     @Test
-    public void generateJSSRegionDataSQL() throws Exception {
-        File regionInputDir = new File("../reference-data/jss/regions");
-        generateRegionData(regionInputDir, "../reference-data/jss/regions/regionData.sql");
-    }
-
-    @Test
     public void generateNHSRCRegionData() throws IOException {
         File regionInputDir = new File("../reference-data/nhsrc/regions/ANIslands.xlsx");
         generateRegionData(regionInputDir, "../reference-data/nhsrc/regions/andaman-nicobar.sql");

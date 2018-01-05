@@ -134,8 +134,7 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 resource.removeLinks();
                 resource.add(new Link(facilityAssessment.getFacility().getUuid().toString(), "facilityUUID"));
                 resource.add(new Link(facilityAssessment.getAssessmentTool().getUuid().toString(), "assessmentToolUUID"));
-                AssessmentType assessmentType = assessmentTypeRepository.findByName(AssessmentType.EXTERNAL);
-                resource.add(new Link(assessmentType.getUuid().toString(), "assessmentTypeUUID"));
+                resource.add(new Link(facilityAssessment.getAssessmentType().getUuid().toString(), "assessmentTypeUUID"));
                 return resource;
             }
         };
