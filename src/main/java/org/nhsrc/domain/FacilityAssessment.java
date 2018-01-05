@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -134,5 +136,11 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     public void setAssessmentType(AssessmentType assessmentType) {
         this.assessmentType = assessmentType;
+    }
+
+    public void updateEndDate(Date endDate) {
+        if (new LocalDateTime(this.endDate).isBefore(new LocalDateTime(endDate))) {
+            this.endDate = endDate;
+        }
     }
 }

@@ -48,13 +48,18 @@ public class FacilityAssessmentService {
         Facility facility = facilityRepository.findByUuid(facilityAssessmentDTO.getFacility());
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
         AssessmentType assessmentType = assessmentTypeRepository.findByUuid(facilityAssessmentDTO.getAssessmentTypeUUID());
-        FacilityAssessment facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool, assessmentType);
-        FacilityAssessment matchingAssessment = this.assessmentMatchingService.findMatching(facilityAssessment);
-        matchingAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
-        if (matchingAssessment.getAssessmentCode() == null) {
-            matchingAssessment.setupCode();
+
+        FacilityAssessment facilityAssessment = this.assessmentMatchingService.findExistingAssessment(facilityAssessmentDTO.getSeriesName(), facilityAssessmentDTO.getUuid(), facility, assessmentTool);
+        if (facilityAssessment == null)
+            facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool, assessmentType);
+        else {
+            facilityAssessment.updateEndDate(facilityAssessmentDTO.getEndDate());
         }
-        return facilityAssessmentRepository.save(matchingAssessment);
+        facilityAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
+        if (facilityAssessment.getAssessmentCode() == null) {
+            facilityAssessment.setupCode();
+        }
+        return facilityAssessmentRepository.save(facilityAssessment);
     }
 
     public List<CheckpointScore> saveChecklist(ChecklistDTO checklistDTO) {

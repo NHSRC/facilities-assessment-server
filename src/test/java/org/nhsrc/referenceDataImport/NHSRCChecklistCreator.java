@@ -5,11 +5,6 @@ import org.junit.Test;
 import org.nhsrc.domain.AssessmentTool;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
 
 public class NHSRCChecklistCreator {
     private File checklistsProjectDirectory;
@@ -21,11 +16,16 @@ public class NHSRCChecklistCreator {
 
     @Test
     public void generateNHSRC_LAQSHYA() throws Exception {
-        File checklistFile = new File(checklistsProjectDirectory, "nhsrc/laqshya/LAQSHYA-DH-May-2016.xlsx");
+        generate("nhsrc/laqshya/LabourRoom15Dec.xlsx", "NQAS", "LAQSHYA", "nhsrc/output/LAQSHYA-NQAS-LR.sql", false);
+        generate("nhsrc/laqshya/OT15Dec.xlsx", "NQAS", "LAQSHYA", "nhsrc/output/LAQSHYA-NQAS-OT.sql", true);
+    }
+
+    private void generate(String inputFile, String assessmentToolName, String assessmentToolModeName, String outputFileName, boolean assessmentToolExists) throws Exception {
+        File checklistFile = new File(checklistsProjectDirectory, inputFile);
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
-        assessmentChecklistData.set(new AssessmentTool("LAQSHYA", "LAQSHYA"));
+        assessmentChecklistData.set(new AssessmentTool(assessmentToolName, assessmentToolModeName));
         ChecklistCreator checklistCreator = new ChecklistCreator();
         checklistCreator.performImport(checklistFile, assessmentChecklistData);
-        checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory,"nhsrc/output/LAQSHYA.sql"), false);
+        checklistCreator.generate(assessmentChecklistData, new File(checklistsProjectDirectory, outputFileName), assessmentToolExists);
     }
 }
