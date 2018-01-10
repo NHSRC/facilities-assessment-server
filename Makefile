@@ -93,7 +93,7 @@ create_empty_db_nhsrc:
 	psql -Unhsrc $(database) < src/test/resources/deleteDefaultData.sql
 
 start_in_record_mode: clear_responses build_server
-	$(call _run_server,$(db),true)
+	$(call _run_server,nhsrc,true)
 # </scenario>
 
 clean:

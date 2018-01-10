@@ -24,7 +24,7 @@ public class AssessmentMatchingService {
             return facilityAssessmentRepository.findByUuid(facilityAssessmentUUID);
 
         if (seriesName != null && !seriesName.isEmpty())
-            return facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName);
+            return facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName.trim());
 
         return null;
     }

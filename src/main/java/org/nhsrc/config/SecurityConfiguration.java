@@ -65,6 +65,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress"};
             permittedResourcesForOneDevice(semiProtectedResources, registry);
             permittedResourcesWithAuthority(semiProtectedResources, registry);
+            registry.antMatchers(HttpMethod.POST,"/api/facility-assessment/**").permitAll();
+            registry.antMatchers(HttpMethod.POST,"/api/facility-assessment").permitAll();
 
             registry
                     .anyRequest().authenticated().and().csrf().disable()
