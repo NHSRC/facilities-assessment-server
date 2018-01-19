@@ -58,6 +58,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/api/ping").permitAll()
                 .antMatchers("/registration").permitAll();
         if (isSecure) {
             registry.antMatchers("/loginSuccess").hasAuthority("USER");
