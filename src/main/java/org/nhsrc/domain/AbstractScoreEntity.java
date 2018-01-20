@@ -65,6 +65,10 @@ public abstract class AbstractScoreEntity {
         return uuid;
     }
 
+    public String getUuidString() {
+        return uuid.toString();
+    }
+
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }

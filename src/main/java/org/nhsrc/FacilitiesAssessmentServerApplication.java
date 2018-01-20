@@ -4,8 +4,6 @@ import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
 import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.*;
-import org.nhsrc.repository.AssessmentTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +12,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceProcessor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -26,9 +23,6 @@ import java.util.stream.Collectors;
 @Import({RestConfiguration.class, DatabaseConfiguration.class, SecurityConfiguration.class})
 @EnableJpaAuditing
 public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapter {
-    @Autowired
-    private AssessmentTypeRepository assessmentTypeRepository;
-
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Calcutta"));
         SpringApplication.run(FacilitiesAssessmentServerApplication.class, args);
@@ -147,11 +141,25 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
             public Resource<CheckpointScore> process(Resource<CheckpointScore> resource) {
                 CheckpointScore checkpointScore = resource.getContent();
                 resource.removeLinks();
-                resource.add(new Link(checkpointScore.getFacilityAssessment().getUuid().toString(), "facilityAssessmentUUID"));
+                resource.add(new Link(checkpointScore.getFacilityAssessment().getUuidString(), "facilityAssessmentUUID"));
                 resource.add(new Link(checkpointScore.getChecklist().getUuid().toString(), "checklistUUID"));
                 resource.add(new Link(checkpointScore.getCheckpoint().getUuid().toString(), "checkpointUUID"));
                 resource.add(new Link(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getUuid().toString(), "areaOfConcernUUID"));
                 resource.add(new Link(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getUuid().toString(), "standardUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    public ResourceProcessor<Resource<Indicator>> IndicatorProcessor() {
+        return new ResourceProcessor<Resource<Indicator>>() {
+            @Override
+            public Resource<Indicator> process(Resource<Indicator> resource) {
+                Indicator indicator = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(indicator.getFacilityAssessment().getUuidString(), "facilityAssessmentUUID"));
+                resource.add(new Link(indicator.getIndicatorDefinition().getUuid().toString(), "indicatorUUID"));
                 return resource;
             }
         };
