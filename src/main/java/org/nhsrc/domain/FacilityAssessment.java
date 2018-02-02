@@ -126,7 +126,11 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     public void setupCode() {
         //N-Ex-KL-DH-412636-01012018
-        this.assessmentCode = String.format("%s-%s-%s-%s-%s", this.assessmentTool.getAssessmentToolMode().getShortName(), this.getAssessmentType().getShortName(), this.getFacility().getDistrict().getState().getShortName(), this.getFacility().getHmisCode(), dateFormatter.format(new Date()));
+        try {
+            this.assessmentCode = String.format("%s-%s-%s-%s-%s", this.assessmentTool.getAssessmentToolMode().getShortName(), this.getAssessmentType().getShortName(), this.getFacility().getDistrict().getState().getShortName(), this.getFacility().getHmisCode(), dateFormatter.format(new Date()));
+        } catch (NullPointerException ignored) {
+            //not sure why older versions are throwing this exception. cannot reason from code. too difficult to remote debug.
+        }
     }
 
     @JsonIgnore
