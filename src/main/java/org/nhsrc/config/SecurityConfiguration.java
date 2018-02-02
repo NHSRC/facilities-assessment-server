@@ -1,5 +1,7 @@
 package org.nhsrc.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +36,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Value("${fa.secure}")
     private boolean isSecure;
+
+    private static Logger logger = LoggerFactory.getLogger(SecurityConfiguration.class);
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -71,9 +75,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             registry
                     .anyRequest().authenticated().and().csrf().disable()
                     .formLogin().loginPage("/login").successForwardUrl("/loginSuccess").successHandler((request, response, authentication) -> {
-                System.out.println("Login Successful");
+                logger.info("Login Successful");
             }).failureHandler((request, response, exception) -> {
-                System.out.println("Login Failed");
+                logger.info("Login Failed");
             })
                     .usernameParameter("email")
                     .passwordParameter("password")
@@ -106,7 +110,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/ext/**");
     }
 

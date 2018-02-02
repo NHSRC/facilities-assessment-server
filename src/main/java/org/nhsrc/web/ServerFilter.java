@@ -1,6 +1,7 @@
 package org.nhsrc.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,12 +16,14 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class ResponseLogger implements Filter {
+public class ServerFilter implements Filter {
     private static int requestCount;
     private static Map<String, Integer> map = new HashMap<>();
     private static File responsesDir = new File("responses");
     private static List<String> stringsToRemove = new ArrayList<>();
     private static String[] resources = new String[] {"facilityType", "checkpoint", "checklist", "measurableElement", "standard", "areaOfConcern", "assessmentType", "tag", "department", "assessmentTool", "facility", "district", "state", "assessmentType"};
+
+    private static Logger logger = LoggerFactory.getLogger(ServerFilter.class);
 
     @Value("${recording.mode}")
     private boolean recordingMode;
@@ -36,7 +39,12 @@ public class ResponseLogger implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (!recordingMode) {
-            chain.doFilter(request, response);
+            try {
+                chain.doFilter(request, response);
+            } catch (Exception e) {
+                logger.error("Uncaught exception", e);
+                throw e;
+            }
             return;
         }
 
