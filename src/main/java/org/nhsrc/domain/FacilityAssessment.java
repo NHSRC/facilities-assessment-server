@@ -7,9 +7,13 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.nhsrc.config.SecurityConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -22,6 +26,7 @@ import java.util.UUID;
 @Table(name = "facility_assessment")
 public class FacilityAssessment extends AbstractScoreEntity {
     private static SimpleDateFormat dateFormatter = new SimpleDateFormat("ddMMyyyy");
+    private static Logger logger = LoggerFactory.getLogger(FacilityAssessment.class);
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_id")
@@ -126,7 +131,20 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     public void setupCode() {
         //N-Ex-KL-DH-412636-01012018
-        this.assessmentCode = String.format("%s-%s-%s-%s-%s", this.assessmentTool.getAssessmentToolMode().getShortName(), this.getAssessmentType().getShortName(), this.getFacility().getDistrict().getState().getShortName(), this.getFacility().getHmisCode(), dateFormatter.format(new Date()));
+        try {
+            AssessmentToolMode assessmentToolMode = this.assessmentTool.getAssessmentToolMode();
+            AssessmentType assessmentType = this.getAssessmentType();
+            Facility facility = this.getFacility();
+            District district = facility.getDistrict();
+            State state = district.getState();
+            String assessmentToolModeShortName = assessmentToolMode.getShortName();
+            String stateShortName = state.getShortName();
+            String hmisCode = facility.getHmisCode();
+            String assessmentTypeShortName = assessmentType.getShortName();
+            this.assessmentCode = String.format("%s-%s-%s-%s-%s", assessmentToolModeShortName, assessmentTypeShortName, stateShortName, hmisCode, dateFormatter.format(new Date()));
+        } catch (NullPointerException ignored) {
+            logger.error("Error happened in setting up code", ignored);
+        }
     }
 
     @JsonIgnore
