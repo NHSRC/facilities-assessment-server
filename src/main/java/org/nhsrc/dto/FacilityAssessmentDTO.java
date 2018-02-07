@@ -90,4 +90,9 @@ public class FacilityAssessmentDTO implements Serializable {
     public void setAssessmentTypeUUID(UUID assessmentTypeUUID) {
         this.assessmentTypeUUID = assessmentTypeUUID;
     }
+
+    @Override
+    public String toString() {
+        return String.format("{uuid=%s, facility=%s, assessmentTool=%s, seriesName='%s', deviceId='%s', assessmentTypeUUID=%s}", uuid, facility, assessmentTool, seriesName, deviceId, assessmentTypeUUID);
+    }
 }

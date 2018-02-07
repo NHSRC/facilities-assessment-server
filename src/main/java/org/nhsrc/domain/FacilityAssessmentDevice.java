@@ -1,7 +1,5 @@
 package org.nhsrc.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -19,8 +17,7 @@ public class FacilityAssessmentDevice extends AbstractEntity {
         this.deviceId = deviceId;
     }
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = AreaOfConcern.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_assessment_id")
     @NotNull
     private FacilityAssessment facilityAssessment;

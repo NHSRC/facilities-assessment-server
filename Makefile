@@ -15,7 +15,7 @@ response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_v
 port := 6001
 
 define _run_server
-	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=$(port) --recording.mode=$2
+	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
 endef
 
 
@@ -68,8 +68,14 @@ schema_migrate: ## Requires argument - db
 build_server:
 	./gradlew build -x test
 
-run_server: build_server
-	$(call _run_server,nhsrc,false)
+run_server_nhsrc: build_server
+	$(call _run_server,nhsrc,false,true)
+
+run_server_jss: build_server
+	$(call _run_server,cg,false,false)
+
+run_server_nhsrc_in_recording: clear_responses build_server
+	$(call _run_server,nhsrc,true,true)
 
 test_server: reset_test_db
 	./gradlew build
@@ -91,9 +97,6 @@ publish_responses:
 create_empty_db_nhsrc:
 	make reset_db database=$(database)
 	psql -Unhsrc $(database) < src/test/resources/deleteDefaultData.sql
-
-start_in_record_mode: clear_responses build_server
-	$(call _run_server,nhsrc,true)
 # </scenario>
 
 clean:

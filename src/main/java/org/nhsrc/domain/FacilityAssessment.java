@@ -63,7 +63,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
     }
 
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "facilityAssessment")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "facilityAssessment")
     private Set<FacilityAssessmentDevice> facilityAssessmentDevices = new HashSet<>();
 
     public Facility getFacility() {

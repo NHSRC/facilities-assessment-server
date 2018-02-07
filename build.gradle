@@ -27,10 +27,12 @@ repositories {
 
 configurations {
     dev
+    all*.exclude module: 'spring-boot-starter-logging'
 }
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile "org.apache.logging.log4j:log4j-web:2.7"
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile("org.springframework.boot:spring-boot-starter-data-rest")
     compile("org.springframework.boot:spring-boot-starter-security:1.4.1.RELEASE")
