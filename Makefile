@@ -66,7 +66,7 @@ schema_migrate: ## Requires argument - db
 
 # <server>
 build_server:
-	./gradlew build -x test
+	./gradlew clean build -x test
 
 run_server_nhsrc: build_server
 	$(call _run_server,nhsrc,false,true)
@@ -80,6 +80,11 @@ run_server_nhsrc_in_recording: clear_responses build_server
 test_server: reset_test_db
 	./gradlew build
 # </server>
+
+# <jar>
+publish_jar:
+	cp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar ~/Dropbox/Public/Gunak/dev/jss/
+# </jar>
 
 
 # <scenario>

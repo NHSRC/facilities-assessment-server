@@ -22,15 +22,18 @@ public class AssessmentMatchingService {
     }
 
     public FacilityAssessment findExistingAssessment(String seriesName, UUID facilityAssessmentUUID, Facility facility, AssessmentTool assessmentTool) {
+        FacilityAssessment facilityAssessment = null;
         if (facilityAssessmentUUID != null) {
-            FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(facilityAssessmentUUID);
+            facilityAssessment = facilityAssessmentRepository.findByUuid(facilityAssessmentUUID);
             logger.info(String.format("%s assessment based on UUID=%s", facilityAssessment == null ? "Not found" : "Found", facilityAssessmentUUID));
-            return facilityAssessment;
         }
 
+        if (facilityAssessment != null) return facilityAssessment;
+
         if (seriesName != null && !seriesName.isEmpty()) {
-            FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName.trim());
+            facilityAssessment = facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName.trim());
             logger.info(String.format("%s assessment based on Series=%s", facilityAssessment == null ? "Not found" : "Found", seriesName));
+            return facilityAssessment;
         }
 
         logger.debug("No matching assessment found");
