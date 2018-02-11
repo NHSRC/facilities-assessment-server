@@ -44,6 +44,14 @@ public class AssessmentMatchingServiceTest {
     }
 
     @Test
+    public void doNotFindExistingAssessmentWhenSameSeriesIsProvidedButIsSubmittedForFirstTime() {
+        when(facilityAssessmentRepository.findByUuid(facilityAssessmentUUID)).thenReturn(null);
+        when(facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName)).thenReturn(null);
+        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, facility, assessmentTool);
+        Assert.assertEquals(null, existingAssessment);
+    }
+
+    @Test
     public void findExistingAssessmentByUUID() {
         when(facilityAssessmentRepository.findByUuid(facilityAssessmentUUID)).thenReturn(new FacilityAssessment());
         FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, facility, assessmentTool);

@@ -15,7 +15,6 @@ import java.util.List;
 @Service
 @Transactional
 public class FacilityAssessmentService {
-
     private final FacilityRepository facilityRepository;
     private final AssessmentToolRepository assessmentToolRepository;
     private final FacilityAssessmentRepository facilityAssessmentRepository;
