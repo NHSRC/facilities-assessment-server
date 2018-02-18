@@ -22,6 +22,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+//    With constructor approach of auto-wiring it doesn't work
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -65,8 +66,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/registration").permitAll();
         if (isSecure) {
             registry.antMatchers("/loginSuccess").hasAuthority("USER");
-            permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state"}, registry);
-            String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress"};
+            permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
+            String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator"};
             permittedResourcesForOneDevice(semiProtectedResources, registry);
             permittedResourcesWithAuthority(semiProtectedResources, registry);
             registry.antMatchers(HttpMethod.POST,"/api/facility-assessment/**").permitAll();

@@ -2,18 +2,19 @@ package org.nhsrc.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @Table(name = "indicator")
 public class Indicator extends AbstractEntity {
-    @Column(name = "numerator_value")
-    private Integer numeratorValue;
+    @Column(name = "numeric_value")
+    private Integer numericValue;
 
-    @Column(name = "denominator_value")
-    private Integer denominatorValue;
+    @Column(name = "date_value")
+    private Date dateValue;
 
-    @Column(name = "indicator_value")
-    private Integer indicatorValue;
+    @Column(name = "bool_value")
+    private boolean boolValue;
 
     @ManyToOne(targetEntity = IndicatorDefinition.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "indicator_definition_id")
@@ -25,28 +26,28 @@ public class Indicator extends AbstractEntity {
     @NotNull
     private FacilityAssessment facilityAssessment;
 
-    public Integer getNumeratorValue() {
-        return numeratorValue;
+    public Integer getNumericValue() {
+        return numericValue;
     }
 
-    public void setNumeratorValue(Integer numeratorValue) {
-        this.numeratorValue = numeratorValue;
+    public void setNumericValue(Integer numericValue) {
+        this.numericValue = numericValue;
     }
 
-    public Integer getDenominatorValue() {
-        return denominatorValue;
+    public Date getDateValue() {
+        return dateValue;
     }
 
-    public void setDenominatorValue(Integer denominatorValue) {
-        this.denominatorValue = denominatorValue;
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
     }
 
-    public Integer getIndicatorValue() {
-        return indicatorValue;
+    public boolean isBoolValue() {
+        return boolValue;
     }
 
-    public void setIndicatorValue(Integer indicatorValue) {
-        this.indicatorValue = indicatorValue;
+    public void setBoolValue(boolean boolValue) {
+        this.boolValue = boolValue;
     }
 
     public IndicatorDefinition getIndicatorDefinition() {

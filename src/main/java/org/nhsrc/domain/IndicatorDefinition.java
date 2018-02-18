@@ -10,28 +10,22 @@ public class IndicatorDefinition extends AbstractEntity {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "numerator")
-    private String numerator;
-
-    @Column(name = "denominator")
-    private String denominator;
-
-    @Column(name = "formula")
-    private String formula;
+    @Column(name = "data_type")
+    private IndicatorDataType dataType;
 
     public String getName() {
         return name;
     }
 
-    public String getNumerator() {
-        return numerator;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getDenominator() {
-        return denominator;
+    public IndicatorDataType getDataType() {
+        return dataType;
     }
 
-    public String getFormula() {
-        return formula;
+    public void setDataType(IndicatorDataType dataType) {
+        this.dataType = dataType;
     }
 }
