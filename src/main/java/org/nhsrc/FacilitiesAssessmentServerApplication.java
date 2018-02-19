@@ -152,7 +152,20 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
     }
 
     @Bean
-    public ResourceProcessor<Resource<Indicator>> IndicatorProcessor() {
+    public ResourceProcessor<Resource<IndicatorDefinition>> indicatorDefinitionProcessor() {
+        return new ResourceProcessor<Resource<IndicatorDefinition>>() {
+            @Override
+            public Resource<IndicatorDefinition> process(Resource<IndicatorDefinition> resource) {
+                IndicatorDefinition indicatorDefinition = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(indicatorDefinition.getAssessmentTool().getUuid().toString(), "assessmentToolUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    public ResourceProcessor<Resource<Indicator>> indicatorProcessor() {
         return new ResourceProcessor<Resource<Indicator>>() {
             @Override
             public Resource<Indicator> process(Resource<Indicator> resource) {

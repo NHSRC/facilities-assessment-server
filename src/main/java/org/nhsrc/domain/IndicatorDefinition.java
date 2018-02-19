@@ -1,8 +1,7 @@
 package org.nhsrc.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "indicator_definition")
@@ -11,7 +10,13 @@ public class IndicatorDefinition extends AbstractEntity {
     private String name;
 
     @Column(name = "data_type")
+    @Enumerated(EnumType.STRING)
     private IndicatorDataType dataType;
+
+    @NotNull
+    @ManyToOne(targetEntity = AssessmentTool.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "assessment_tool_id")
+    private AssessmentTool assessmentTool;
 
     public String getName() {
         return name;
@@ -27,5 +32,13 @@ public class IndicatorDefinition extends AbstractEntity {
 
     public void setDataType(IndicatorDataType dataType) {
         this.dataType = dataType;
+    }
+
+    public AssessmentTool getAssessmentTool() {
+        return assessmentTool;
+    }
+
+    public void setAssessmentTool(AssessmentTool assessmentTool) {
+        this.assessmentTool = assessmentTool;
     }
 }
