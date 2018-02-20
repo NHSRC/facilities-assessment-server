@@ -34,6 +34,10 @@ public class AssessmentTool extends AbstractEntity {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "assessmentTool")
     private Set<Checklist> checklists = new HashSet<>();
 
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private AssessmentToolType assessmentToolType;
+
     public String getName() {
         return name;
     }
@@ -64,6 +68,14 @@ public class AssessmentTool extends AbstractEntity {
 
     public void setAssessmentToolMode(AssessmentToolMode assessmentToolMode) {
         this.assessmentToolMode = assessmentToolMode;
+    }
+
+    public AssessmentToolType getAssessmentToolType() {
+        return assessmentToolType;
+    }
+
+    public void setAssessmentToolType(AssessmentToolType assessmentToolType) {
+        this.assessmentToolType = assessmentToolType;
     }
 
     @JsonIgnore
