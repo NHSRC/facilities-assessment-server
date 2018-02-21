@@ -21,7 +21,7 @@ public class AssessmentMatchingService {
         this.facilityAssessmentRepository = facilityAssessmentRepository;
     }
 
-    public FacilityAssessment findExistingAssessment(String seriesName, UUID facilityAssessmentUUID, Facility facility, AssessmentTool assessmentTool) {
+    public FacilityAssessment findExistingAssessment(String seriesName, UUID facilityAssessmentUUID, Facility facility, String facilityName, AssessmentTool assessmentTool) {
         FacilityAssessment facilityAssessment = null;
         if (facilityAssessmentUUID != null) {
             facilityAssessment = facilityAssessmentRepository.findByUuid(facilityAssessmentUUID);
@@ -31,7 +31,10 @@ public class AssessmentMatchingService {
         if (facilityAssessment != null) return facilityAssessment;
 
         if (seriesName != null && !seriesName.isEmpty()) {
-            facilityAssessment = facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName.trim());
+            if (facility == null)
+                facilityAssessment = facilityAssessmentRepository.findByFacilityNameAndAssessmentToolAndSeriesName(facilityName, assessmentTool, seriesName.trim());
+            else
+                facilityAssessment = facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName.trim());
             logger.info(String.format("%s assessment based on Series=%s", facilityAssessment == null ? "Not found" : "Found", seriesName));
             return facilityAssessment;
         }
