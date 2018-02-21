@@ -39,7 +39,7 @@ public class AssessmentMatchingServiceTest {
     public void findExistingAssessmentWhenSameSeriesExistsButIsSubmittedForFirstTime() {
         when(facilityAssessmentRepository.findByUuid(facilityAssessmentUUID)).thenReturn(null);
         when(facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName)).thenReturn(new FacilityAssessment());
-        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, facility, assessmentTool);
+        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, facility, null, assessmentTool);
         Assert.assertNotEquals(null, existingAssessment);
     }
 
@@ -47,14 +47,14 @@ public class AssessmentMatchingServiceTest {
     public void doNotFindExistingAssessmentWhenSameSeriesIsProvidedButIsSubmittedForFirstTime() {
         when(facilityAssessmentRepository.findByUuid(facilityAssessmentUUID)).thenReturn(null);
         when(facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName)).thenReturn(null);
-        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, facility, assessmentTool);
+        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, facility, null, assessmentTool);
         Assert.assertEquals(null, existingAssessment);
     }
 
     @Test
     public void findExistingAssessmentByUUID() {
         when(facilityAssessmentRepository.findByUuid(facilityAssessmentUUID)).thenReturn(new FacilityAssessment());
-        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, facility, assessmentTool);
+        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, facility, null, assessmentTool);
         Assert.assertNotEquals(null, existingAssessment);
     }
 
@@ -62,8 +62,26 @@ public class AssessmentMatchingServiceTest {
     public void noAssessmentExists() {
         when(facilityAssessmentRepository.findByUuid(facilityAssessmentUUID)).thenReturn(null);
         when(facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName)).thenReturn(null);
-        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, facility, assessmentTool);
+        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, facility, null, assessmentTool);
         Assert.assertEquals(null, existingAssessment);
+    }
+
+    @Test
+    public void doNotFindExistingAssessmentWhenSameSeriesIsProvidedButFacilityIsNullAndFacilityNameIsDifferent() {
+        when(facilityAssessmentRepository.findByUuid(facilityAssessmentUUID)).thenReturn(null);
+        when(facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(null, assessmentTool, seriesName)).thenReturn(new FacilityAssessment());
+        when(facilityAssessmentRepository.findByFacilityNameAndAssessmentToolAndSeriesName("test", assessmentTool, seriesName)).thenReturn(null);
+        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, null, "test2", assessmentTool);
+        Assert.assertEquals(null, existingAssessment);
+    }
+
+    @Test
+    public void findExistingAssessmentWhenSameSeriesIsProvidedButFacilityIsNullAndFacilityNameIsSame() {
+        when(facilityAssessmentRepository.findByUuid(facilityAssessmentUUID)).thenReturn(null);
+        when(facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(null, assessmentTool, seriesName)).thenReturn(null);
+        when(facilityAssessmentRepository.findByFacilityNameAndAssessmentToolAndSeriesName("test", assessmentTool, seriesName)).thenReturn(new FacilityAssessment());
+        FacilityAssessment existingAssessment = assessmentMatchingService.findExistingAssessment(seriesName, facilityAssessmentUUID, null, "test", assessmentTool);
+        Assert.assertNotEquals(null, existingAssessment);
     }
 
     private AssessmentTool createAssessmentTool(int id) {

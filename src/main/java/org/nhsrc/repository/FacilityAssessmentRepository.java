@@ -31,5 +31,7 @@ public interface FacilityAssessmentRepository extends BaseRepository<FacilityAss
 
     FacilityAssessment findByFacilityAndAssessmentToolAndSeriesName(Facility facility, AssessmentTool assessmentTool, String seriesName);
 
+    FacilityAssessment findByFacilityNameAndAssessmentToolAndSeriesName(String facilityName, AssessmentTool assessmentTool, String seriesName);
+
     Page<FacilityAssessment> findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(State state, Date lastModifiedDateTime, Pageable pageable);
 }

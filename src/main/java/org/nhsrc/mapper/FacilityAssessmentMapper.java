@@ -12,6 +12,7 @@ public class FacilityAssessmentMapper {
                                              AssessmentTool assessmentTool, AssessmentType assessmentType) {
         FacilityAssessment facilityAssessment = new FacilityAssessment();
         facilityAssessment.setFacility(facility);
+        facilityAssessment.setFacilityName(facilityAssessmentDTO.getFacilityName());
         facilityAssessment.setAssessmentTool(assessmentTool);
         facilityAssessment.setUuid(facilityAssessmentDTO.getUuid());
         facilityAssessment.setStartDate(facilityAssessmentDTO.getStartDate());

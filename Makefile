@@ -82,8 +82,11 @@ test_server: reset_test_db
 # </server>
 
 # <jar>
-publish_jar:
+publish_jar_dropbox_jss:
 	cp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar ~/Dropbox/Public/Gunak/dev/jss/
+
+publish_jar_prod_nhsrc:
+	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar gunak-main:/home/nhsrc1/downloads/
 # </jar>
 
 

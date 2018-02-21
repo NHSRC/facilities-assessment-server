@@ -30,8 +30,10 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_id")
-    @NotNull
     private Facility facility;
+
+    @Column(name = "facility_name")
+    private String facilityName;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_id")
@@ -119,6 +121,14 @@ public class FacilityAssessment extends AbstractScoreEntity {
         this.facilityAssessmentDevices = facilityAssessmentDevices;
     }
 
+    public String getFacilityName() {
+        return facilityName;
+    }
+
+    public void setFacilityName(String facilityName) {
+        this.facilityName = facilityName;
+    }
+
     public void incorporateDevice(String deviceId) {
         if (deviceId != null && !deviceId.isEmpty() && facilityAssessmentDevices.stream().noneMatch(facilityAssessmentDevice -> facilityAssessmentDevice.getDeviceId().equals(deviceId))) {
             FacilityAssessmentDevice facilityAssessmentDevice = new FacilityAssessmentDevice();
@@ -132,9 +142,11 @@ public class FacilityAssessment extends AbstractScoreEntity {
     public void setupCode() {
         //N-Ex-KL-DH-412636-01012018
         try {
+            Facility facility = this.getFacility();
+            if (facility == null) return;
+
             AssessmentToolMode assessmentToolMode = this.assessmentTool.getAssessmentToolMode();
             AssessmentType assessmentType = this.getAssessmentType();
-            Facility facility = this.getFacility();
             District district = facility.getDistrict();
             State state = district.getState();
             String assessmentToolModeShortName = assessmentToolMode.getShortName();

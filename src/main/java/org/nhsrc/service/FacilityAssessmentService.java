@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,15 +46,18 @@ public class FacilityAssessmentService {
 
     public FacilityAssessment save(FacilityAssessmentDTO facilityAssessmentDTO) {
         Facility facility = facilityRepository.findByUuid(facilityAssessmentDTO.getFacility());
+        if (facility == null && (facilityAssessmentDTO.getFacilityName() == null || facilityAssessmentDTO.getFacilityName().isEmpty()))
+            throw new ValidationException("Facility not found and facility name is also empty");
+
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
         AssessmentType assessmentType = assessmentTypeRepository.findByUuid(facilityAssessmentDTO.getAssessmentTypeUUID());
 
-        FacilityAssessment facilityAssessment = this.assessmentMatchingService.findExistingAssessment(facilityAssessmentDTO.getSeriesName(), facilityAssessmentDTO.getUuid(), facility, assessmentTool);
+        FacilityAssessment facilityAssessment = this.assessmentMatchingService.findExistingAssessment(facilityAssessmentDTO.getSeriesName(), facilityAssessmentDTO.getUuid(), facility, facilityAssessmentDTO.getFacilityName(), assessmentTool);
         if (facilityAssessment == null)
             facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool, assessmentType);
-        else {
+        else
             facilityAssessment.updateEndDate(facilityAssessmentDTO.getEndDate());
-        }
+
         facilityAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
         if (facilityAssessment.getAssessmentCode() == null) {
             facilityAssessment.setupCode();
