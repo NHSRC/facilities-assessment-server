@@ -31,8 +31,8 @@ public class ServerFilter implements Filter {
     static {
         responsesDir.mkdir();
         for (String resource : resources) {
-            stringsToRemove.add(String.format("http://192.168.73.1:6001/api/%s/search/lastModified?lastModifiedDate=", resource));
-            stringsToRemove.add(String.format("http://192.168.73.1:6001/api/%s", resource));
+            stringsToRemove.add(String.format("http://dev.gunak.org:6001/api/%s/search/lastModified?lastModifiedDate=", resource));
+            stringsToRemove.add(String.format("http://dev.gunak.org:6001/api/%s", resource));
         }
     }
 

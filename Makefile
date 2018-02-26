@@ -10,7 +10,7 @@ help: ## This help dialog.
 	done
 
 database := facilities_assessment_$(db)
-rr_version := 5
+rr_version := 6
 response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
 port := 6001
 
