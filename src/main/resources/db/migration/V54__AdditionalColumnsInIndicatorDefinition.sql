@@ -1,0 +1,4 @@
+ALTER TABLE indicator_definition ADD COLUMN output BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE indicator_definition ADD COLUMN calculated BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE indicator_definition ADD COLUMN symbol VARCHAR(255) NULL;
+ALTER TABLE indicator_definition ADD COLUMN formula VARCHAR(255) NULL;
