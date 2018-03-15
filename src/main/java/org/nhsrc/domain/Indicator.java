@@ -13,8 +13,8 @@ public class Indicator extends AbstractEntity {
     @Column(name = "date_value")
     private Date dateValue;
 
-    @Column(name = "bool_value")
-    private boolean boolValue;
+    @Column(name = "coded_value")
+    private String codedValue;
 
     @ManyToOne(targetEntity = IndicatorDefinition.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "indicator_definition_id")
@@ -42,14 +42,6 @@ public class Indicator extends AbstractEntity {
         this.dateValue = dateValue;
     }
 
-    public boolean isBoolValue() {
-        return boolValue;
-    }
-
-    public void setBoolValue(boolean boolValue) {
-        this.boolValue = boolValue;
-    }
-
     public IndicatorDefinition getIndicatorDefinition() {
         return indicatorDefinition;
     }
@@ -64,5 +56,13 @@ public class Indicator extends AbstractEntity {
 
     public void setFacilityAssessment(FacilityAssessment facilityAssessment) {
         this.facilityAssessment = facilityAssessment;
+    }
+
+    public String getCodedValue() {
+        return codedValue;
+    }
+
+    public void setCodedValue(String codedValue) {
+        this.codedValue = codedValue;
     }
 }

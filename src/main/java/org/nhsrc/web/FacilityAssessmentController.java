@@ -6,6 +6,8 @@ import org.nhsrc.domain.State;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
+import org.nhsrc.dto.IndicatorDTO;
+import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.repository.security.UserRepository;
@@ -52,6 +54,12 @@ public class FacilityAssessmentController {
     public ResponseEntity<List<CheckpointScore>> syncFacilityAssessment(@RequestBody ChecklistDTO checklist) {
         List<CheckpointScore> checkpointScores = this.facilityAssessmentService.saveChecklist(checklist);
         return new ResponseEntity<>(checkpointScores, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "facility-assessment/indicator", method = RequestMethod.POST)
+    public ResponseEntity<Object> syncFacilityAssessment(@RequestBody IndicatorListDTO indicatorListDTO) {
+        this.facilityAssessmentService.saveIndicatorList(indicatorListDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "facilityAssessment", method = RequestMethod.GET)

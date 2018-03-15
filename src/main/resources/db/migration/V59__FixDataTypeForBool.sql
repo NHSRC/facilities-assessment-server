@@ -1,0 +1,2 @@
+ALTER TABLE indicator DROP COLUMN date_value;
+ALTER TABLE indicator ADD COLUMN date_value TIMESTAMP WITHOUT TIME ZONE;

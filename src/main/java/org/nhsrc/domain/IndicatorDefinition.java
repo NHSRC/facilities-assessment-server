@@ -21,9 +21,6 @@ public class IndicatorDefinition extends AbstractEntity {
     @Column(name = "formula")
     private String formula;
 
-    @Column(name = "calculated")
-    private boolean calculated;
-
     @Column(name = "output")
     private boolean output;
 
@@ -34,7 +31,7 @@ public class IndicatorDefinition extends AbstractEntity {
     private int sortOrder;
 
     @Column(name = "coded_values")
-    private String codeValues;
+    private String codedValues;
 
     public String getName() {
         return name;
@@ -68,14 +65,6 @@ public class IndicatorDefinition extends AbstractEntity {
         this.formula = formula;
     }
 
-    public boolean isCalculated() {
-        return calculated;
-    }
-
-    public void setCalculated(boolean calculated) {
-        this.calculated = calculated;
-    }
-
     public void setOutput(boolean output) {
         this.output = output;
     }
@@ -100,11 +89,11 @@ public class IndicatorDefinition extends AbstractEntity {
         this.sortOrder = sortOrder;
     }
 
-    public String getCodeValues() {
-        return codeValues;
+    public String getCodedValues() {
+        return codedValues;
     }
 
-    public void setCodeValues(String codeValues) {
-        this.codeValues = codeValues;
+    public void setCodedValues(String codedValues) {
+        this.codedValues = codedValues;
     }
 }

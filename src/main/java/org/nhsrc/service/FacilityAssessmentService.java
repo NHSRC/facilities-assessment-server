@@ -3,6 +3,7 @@ package org.nhsrc.service;
 import org.nhsrc.domain.*;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
+import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.mapper.FacilityAssessmentMapper;
 import org.nhsrc.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class FacilityAssessmentService {
     private final CheckpointRepository checkpointRepository;
     private final AssessmentMatchingService assessmentMatchingService;
     private AssessmentTypeRepository assessmentTypeRepository;
+    private IndicatorDefinitionRepository indicatorDefinitionRepository;
+    private IndicatorRepository indicatorRepository;
 
     @Autowired
     public FacilityAssessmentService(FacilityRepository facilityRepository,
@@ -33,7 +36,9 @@ public class FacilityAssessmentService {
                                      CheckpointScoreRepository checkpointScoreRepository,
                                      CheckpointRepository checkpointRepository,
                                      AssessmentMatchingService assessmentMatchingService,
-                                     AssessmentTypeRepository assessmentTypeRepository) {
+                                     AssessmentTypeRepository assessmentTypeRepository,
+                                     IndicatorDefinitionRepository indicatorDefinitionRepository,
+                                     IndicatorRepository indicatorRepository) {
         this.facilityRepository = facilityRepository;
         this.assessmentToolRepository = assessmentToolRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
@@ -42,6 +47,8 @@ public class FacilityAssessmentService {
         this.checkpointRepository = checkpointRepository;
         this.assessmentMatchingService = assessmentMatchingService;
         this.assessmentTypeRepository = assessmentTypeRepository;
+        this.indicatorDefinitionRepository = indicatorDefinitionRepository;
+        this.indicatorRepository = indicatorRepository;
     }
 
     public FacilityAssessment save(FacilityAssessmentDTO facilityAssessmentDTO) {
@@ -88,5 +95,32 @@ public class FacilityAssessmentService {
             checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
         });
         return checkpointScores;
+    }
+
+    public void saveIndicatorList(IndicatorListDTO indicatorListDTO) {
+        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(indicatorListDTO.getFacilityAssessment());
+        List<Indicator> indicators = new ArrayList<>();
+        indicatorListDTO.getIndicators().forEach(indicatorDTO -> {
+            Indicator indicator = indicatorRepository.findByUuid(indicatorDTO.getUuid());
+            IndicatorDefinition indicatorDefinition = indicatorDefinitionRepository.findByUuid(indicatorDTO.getIndicatorDefinition());
+            if (indicator == null)
+                indicator = indicatorRepository.findByIndicatorDefinitionAndFacilityAssessment(indicatorDefinition, facilityAssessment);
+
+            if (indicator == null) {
+                indicator = new Indicator();
+                indicator.setFacilityAssessment(facilityAssessment);
+                indicator.setIndicatorDefinition(indicatorDefinition);
+                indicator.setUuid(indicatorDTO.getUuid());
+            }
+            if (indicatorDefinition.getDataType().equals(IndicatorDataType.Coded))
+                indicator.setCodedValue(indicatorDTO.getCodedValue());
+            else if (indicatorDefinition.getDataType().equals(IndicatorDataType.Date) || indicatorDefinition.getDataType().equals(IndicatorDataType.Month))
+                indicator.setDateValue(indicatorDTO.getDateValue());
+            else
+                indicator.setNumericValue(indicatorDTO.getNumericValue());
+
+            indicators.add(indicator);
+        });
+        indicatorRepository.save(indicators);
     }
 }
