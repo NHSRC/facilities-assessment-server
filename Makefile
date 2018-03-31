@@ -79,6 +79,9 @@ run_server_nhsrc_in_recording: clear_responses build_server
 
 test_server: reset_test_db
 	./gradlew build
+
+open_test_results:
+	build/reports/tests/index.html
 # </server>
 
 # <jar>

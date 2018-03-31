@@ -44,7 +44,7 @@ CREATE OR REPLACE VIEW checkpoint_scores_aoc AS
     LEFT OUTER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
     LEFT OUTER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id;
 
-drop VIEW checkpoint_denormalised;
+drop VIEW IF EXISTS checkpoint_denormalised;
 CREATE OR REPLACE VIEW checkpoint_denormalised AS
   SELECT
     checkpoint.id           checkpoint_id,
