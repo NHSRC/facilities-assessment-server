@@ -27,12 +27,12 @@ public class AssessmentScoringJob implements Job {
     }
 
     @Bean(name = "jobWithCronTriggerBean")
-    public JobDetailFactoryBean sampleJob() {
-        return QuartzConfiguration.createJobDetail(this.getClass());
+    public JobDetailFactoryBean createJob() {
+        return QuartzConfiguration.createJobDetailFactory(this.getClass());
     }
 
     @Bean(name = "jobWithCronTriggerBeanTrigger")
-    public CronTriggerFactoryBean sampleJobTrigger(@Qualifier("jobWithCronTriggerBean") JobDetail jobDetail) {
+    public CronTriggerFactoryBean createJobTriggerFactory(@Qualifier("jobWithCronTriggerBean") JobDetail jobDetail) {
         return QuartzConfiguration.createCronTrigger(jobDetail, cronExpression);
     }
 }

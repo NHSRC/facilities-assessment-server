@@ -65,7 +65,7 @@ public class QuartzConfiguration {
         return factoryBean;
     }
 
-    static JobDetailFactoryBean createJobDetail(Class jobClass) {
+    static JobDetailFactoryBean createJobDetailFactory(Class jobClass) {
         JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
         factoryBean.setJobClass(jobClass);
         return factoryBean;
