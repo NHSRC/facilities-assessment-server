@@ -25,7 +25,7 @@ public interface FacilityAssessmentRepository extends BaseRepository<FacilityAss
 
     FacilityAssessment findByFacilityAndAssessmentToolAndStartDateBeforeAndStartDateAfter(Facility facility, AssessmentTool assessmentTool, Date startDateBefore, Date startDateAfter);
 
-    List<FacilityAssessment> findByLastModifiedDateGreaterThan(Date lastModifiedDateTime);
+    List<FacilityAssessment> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(Date lastModifiedDateTime);
 
     List<FacilityAssessment> findByFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThan(String deviceId, Date lastModifiedDateTime);
 

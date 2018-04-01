@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.nhsrc.service.ScoringSQLs.*;
@@ -28,21 +29,24 @@ public class ScoringService {
 
     public void scoreAssessments() {
         ScoringProcessDetail scoringProcessDetail = scoringProcessDetailRepository.findByUuid(ScoringProcessDetail.Fixed_UUID);
-        List<FacilityAssessment> unscoredAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThan(scoringProcessDetail.getSafeLastScoredUntilTime());
+        List<FacilityAssessment> unscoredAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(scoringProcessDetail.getSafeLastScoredUntilTime());
         unscoredAssessments.forEach(facilityAssessment -> {
-            scoreAssessment(facilityAssessment.getId());
+            scoreAssessment(facilityAssessment, scoringProcessDetail);
         });
     }
 
     @Transactional
-    public void scoreAssessment(int assessmentId) {
-        deleteScore(assessmentId, Delete_Checklist_Scores);
-        deleteScore(assessmentId, Delete_Standard_Scores);
-        deleteScore(assessmentId, Delete_AreaOfConcern_Scores);
+    public void scoreAssessment(FacilityAssessment facilityAssessment, ScoringProcessDetail scoringProcessDetail) {
+        deleteScore(facilityAssessment.getId(), Delete_Checklist_Scores);
+        deleteScore(facilityAssessment.getId(), Delete_Standard_Scores);
+        deleteScore(facilityAssessment.getId(), Delete_AreaOfConcern_Scores);
 
-        createScore(assessmentId, Create_Checklist_Scores);
-        createScore(assessmentId, Create_Standard_Scores);
-        createScore(assessmentId, Create_AreaOfConcern_Scores);
+        createScore(facilityAssessment.getId(), Create_Checklist_Scores);
+        createScore(facilityAssessment.getId(), Create_Standard_Scores);
+        createScore(facilityAssessment.getId(), Create_AreaOfConcern_Scores);
+
+        scoringProcessDetail.setLastScoredUntil(facilityAssessment.getLastModifiedDate());
+        scoringProcessDetailRepository.save(scoringProcessDetail);
     }
 
     private void createScore(int assessmentId, String create_checklist_scores) {

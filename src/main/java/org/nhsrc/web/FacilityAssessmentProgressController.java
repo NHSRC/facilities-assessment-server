@@ -138,7 +138,7 @@ public class FacilityAssessmentProgressController {
     @RequestMapping(value = "search/lastModified", method = RequestMethod.GET)
     public ResponseEntity<List<FacilityAssessmentProgressDTO>> getFacilityAssessmentProgress(@RequestParam String lastModifiedDate) throws ParseException {
         Date result = DateUtils.ISO_8601_DATE_FORMAT.parse(lastModifiedDate);
-        List<FacilityAssessment> facilityAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThan(result);
+        List<FacilityAssessment> facilityAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(result);
         return getProgressFor(facilityAssessments);
     }
 
