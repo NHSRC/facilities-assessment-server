@@ -99,4 +99,12 @@ public class CheckpointScore extends AbstractScoreEntity {
     public void setNa(Boolean na) {
         this.na = na;
     }
+
+    public int getScoreNumerator() {
+        return na ? 0 : score;
+    }
+
+    public int getScoreDenominator() {
+        return na ? 0 : 2;
+    }
 }

@@ -4,6 +4,9 @@ import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
 import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.*;
+import org.nhsrc.web.ServerFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +26,11 @@ import java.util.stream.Collectors;
 @Import({RestConfiguration.class, DatabaseConfiguration.class, SecurityConfiguration.class})
 @EnableJpaAuditing
 public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapter {
+    private static Logger logger = LoggerFactory.getLogger(FacilitiesAssessmentServerApplication.class);
+
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Calcutta"));
+        logger.info("Server Starting...");
         SpringApplication.run(FacilitiesAssessmentServerApplication.class, args);
     }
 

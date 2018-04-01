@@ -94,6 +94,10 @@ public class FacilityAssessmentService {
             checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
             checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
         });
+        checkpointScores.forEach(checkpointScore -> {
+            checkpointScore.getScoreNumerator();
+            checkpointScore.getScoreDenominator();
+        });
         return checkpointScores;
     }
 
