@@ -9,7 +9,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@Sql({"/setup.sql"})
 public abstract class AbstractWebIntegrationTest {
     @Autowired
     private TestRestTemplate testRestTemplate;

@@ -7,6 +7,7 @@ import org.nhsrc.domain.CheckpointScore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,7 @@ public class ScoringServiceTest {
     private ScoringService scoreService;
 
     @Test
+    @Transactional
     public void noop() {
         scoreService.scoreAssessments();
     }

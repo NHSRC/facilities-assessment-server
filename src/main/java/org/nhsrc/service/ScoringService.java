@@ -6,10 +6,9 @@ import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.scores.ScoringProcessDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.nhsrc.service.ScoringSQLs.*;
@@ -49,11 +48,11 @@ public class ScoringService {
         scoringProcessDetailRepository.save(scoringProcessDetail);
     }
 
-    private void createScore(int assessmentId, String create_checklist_scores) {
-        entityManager.createNativeQuery(create_checklist_scores).setParameter(FacilityId_Param, assessmentId).executeUpdate();
+    private void createScore(int assessmentId, String sql) {
+        entityManager.createNativeQuery(sql).setParameter(AssessmentId_Param, assessmentId).executeUpdate();
     }
 
     private void deleteScore(int assessmentId, String query) {
-        entityManager.createNativeQuery(query).setParameter(FacilityId_Param, assessmentId).executeUpdate();
+        entityManager.createNativeQuery(query).setParameter(AssessmentId_Param, assessmentId).executeUpdate();
     }
 }
