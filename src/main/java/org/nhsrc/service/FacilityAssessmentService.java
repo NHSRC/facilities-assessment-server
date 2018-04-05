@@ -59,17 +59,20 @@ public class FacilityAssessmentService {
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
         AssessmentType assessmentType = assessmentTypeRepository.findByUuid(facilityAssessmentDTO.getAssessmentTypeUUID());
 
-        FacilityAssessment facilityAssessment = this.assessmentMatchingService.findExistingAssessment(facilityAssessmentDTO.getSeriesName(), facilityAssessmentDTO.getUuid(), facility, facilityAssessmentDTO.getFacilityName(), assessmentTool);
-        if (facilityAssessment == null)
-            facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool, assessmentType);
-        else
-            facilityAssessment.updateEndDate(facilityAssessmentDTO.getEndDate());
+        String lockString = String.format("%s-%d", facility == null ? facilityAssessmentDTO.getFacilityName() : facility.getId(), assessmentTool.getId());
+        synchronized (lockString.intern()) {
+            FacilityAssessment facilityAssessment = this.assessmentMatchingService.findExistingAssessment(facilityAssessmentDTO.getSeriesName(), facilityAssessmentDTO.getUuid(), facility, facilityAssessmentDTO.getFacilityName(), assessmentTool);
+            if (facilityAssessment == null)
+                facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool, assessmentType);
+            else
+                facilityAssessment.updateEndDate(facilityAssessmentDTO.getEndDate());
 
-        facilityAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
-        if (facilityAssessment.getAssessmentCode() == null) {
-            facilityAssessment.setupCode();
+            facilityAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
+            if (facilityAssessment.getAssessmentCode() == null) {
+                facilityAssessment.setupCode();
+            }
+            return facilityAssessmentRepository.save(facilityAssessment);
         }
-        return facilityAssessmentRepository.save(facilityAssessment);
     }
 
     public List<CheckpointScore> saveChecklist(ChecklistDTO checklistDTO) {

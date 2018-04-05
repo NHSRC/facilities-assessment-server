@@ -17,6 +17,6 @@ import java.util.Date;
 @RepositoryRestResource(collectionResourceRel = "areaOfConcern", path = "areaOfConcern")
 public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<AreaOfConcern> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
+    Page<AreaOfConcern> findByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
     AreaOfConcern findByReference(String reference);
 }

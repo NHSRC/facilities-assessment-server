@@ -17,5 +17,5 @@ import java.util.Date;
 @RepositoryRestResource(collectionResourceRel = "checklist", path = "checklist")
 public interface ChecklistRepository extends BaseRepository<Checklist> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<Checklist> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<Checklist> findByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 }

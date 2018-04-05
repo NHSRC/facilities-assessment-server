@@ -22,7 +22,7 @@ class ScoringSQLs {
             "    LEFT OUTER JOIN standard ON standard.id = measurable_element.standard_id\n" +
             "    LEFT OUTER JOIN area_of_concern ON area_of_concern.id = standard.area_of_concern_id\n" +
             "    LEFT OUTER JOIN facility_assessment ON checkpoint_score.facility_assessment_id = facility_assessment.id\n" +
-            "    WHERE facility_assessment.id = :assessmentId and checkpoint_score.na = false\n" +
+            "    WHERE facility_assessment.id = :assessmentId and checkpoint_score.na = false and checkpoint.inactive = false\n" +
             "    GROUP BY facility_assessment.id, checklist.id, area_of_concern.id, standard.id order by checklist.id;\n";
 
     static final String Create_Standard_Scores = "insert into standard_score (standard_id, facility_assessment_id, score)\n" +
@@ -36,7 +36,7 @@ class ScoringSQLs {
             "    LEFT OUTER JOIN measurable_element ON measurable_element.id = checkpoint.measurable_element_id\n" +
             "    LEFT OUTER JOIN standard ON standard.id = measurable_element.standard_id\n" +
             "    LEFT OUTER JOIN facility_assessment ON checkpoint_score.facility_assessment_id = facility_assessment.id\n" +
-            "  WHERE facility_assessment.id = :assessmentId and checkpoint_score.na = false\n" +
+            "  WHERE facility_assessment.id = :assessmentId and checkpoint_score.na = false and checkpoint.inactive = false\n" +
             "  GROUP BY facility_assessment.id, standard.id;\n";
 
     static final String Create_AreaOfConcern_Scores = "insert into area_of_concern_score (area_of_concern_id, facility_assessment_id, score)\n" +
@@ -51,6 +51,6 @@ class ScoringSQLs {
             "  LEFT OUTER JOIN standard ON standard.id = measurable_element.standard_id\n" +
             "  LEFT OUTER JOIN area_of_concern ON area_of_concern.id = standard.area_of_concern_id\n" +
             "  LEFT OUTER JOIN facility_assessment ON checkpoint_score.facility_assessment_id = facility_assessment.id\n" +
-            "where facility_assessment.id = :assessmentId and checkpoint_score.na = false\n" +
+            "where facility_assessment.id = :assessmentId and checkpoint_score.na = false and checkpoint.inactive = false\n" +
             "GROUP BY facility_assessment.id, area_of_concern.id";
 }
