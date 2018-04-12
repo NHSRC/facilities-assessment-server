@@ -31,15 +31,15 @@ For using the API of Gunak you need to be registered as an active user in the sy
 * All Gunak API works over https. The unsecured resources also work over http.
 * The response type for the API call is JSON.
 * The response is paginated when the number of resources returned are more than 1000.
- * The response page size can also be controlled by query paramerter - "size".
- * When the response is paginated then the pagination details are included in the page.
-  * size = maximum number of elements in a page
-  * totalElements = actual number of elements in current page
-  * totalPages = Total number of pages
-  * number = Current page's number (zero based)
- * 
-* The date parameter should be passed in ISO format
-* All entities are identified a UUID in string format
+  * The response page size can also be controlled by query paramerter - "size".
+  * When the response is paginated then the pagination details are included in the page.
+    * size = maximum number of elements in a page
+    * totalElements = actual number of elements in current page
+    * totalPages = Total number of pages
+    * number = Current page's number (zero based)
+  * Wherever applicable API can be invoked by using a lastModifiedDate parameter. When this parameter is passed the results will contain resources which have been changed after this time.
+* The date parameter should be passed in ISO format like 1900-01-01T00:00:00.001Z
+* All entities are identified a UUID in string format like 4dc48f20-da72-43d4-b5db-ba7a0ddc342a
 * The format for each API is as follows:
   * The on-wire format
   * Explanation of the API
@@ -68,11 +68,26 @@ Cache-Control: no-cache
 #### Description
 This API provides a complete list of Assessment Tools.
 
-### Get checklists for your assessment tool
+### Get checklists for assessment tool
 #### Format
 ```
 GET /api/checklist/search/forAssessmentTool?assessmentToolUuid=4ccad794-b011-4dda-8157-0083d23a7b89&amp;lastModifiedDate=1900-01-01T00:00:00.001Z&amp;size=200&amp;page=0 HTTP/1.1
 Host: SERVER:PORT
 Cache-Control: no-cache
 ```
-#### Description
+
+### Get area of concern for checklist
+#### Format
+```
+GET /api/areaOfConcern/search/forChecklist?checklistUuid=UUID&amp;lastModifiedDate=1900-01-01T00:00:00.001Z&amp;size=200&amp;page=0 HTTP/1.1
+Host: SERVER:PORT
+Cache-Control: no-cache
+```
+
+### Get standard for area of concern
+#### Format
+```
+GET /api/standard/search/forAreaOfConcern?areaOfConcernUuid=UUID&amp;lastModifiedDate=1900-01-01T00:00:00.001Z&amp;size=200&amp;page=0 HTTP/1.1
+Host: SERVER:PORT
+Cache-Control: no-cache
+```
