@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.UUID;
 
 @Transactional
 @Repository
@@ -19,4 +20,6 @@ public interface StandardRepository extends BaseRepository<Standard> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<Standard> findByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
     Standard findByReference(String reference);
+    @RestResource(path = "forAreaOfConcern", rel = "forAreaOfConcern")
+    Page<Standard> findByAreaOfConcernUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("areaOfConcernUuid") UUID areaOfConcernUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 }

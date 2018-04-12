@@ -31,10 +31,11 @@ public class UserController {
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setPassword(userRequest.getPassword());
-        user.setInactive(false);
-        user.setUserType(userRequest.getUserType());
-        user.setUserTypeReferenceId(userRequest.getUserTypeReferenceId());
+        user.setInactive(true);
 
+        user.setUserType(userRequest.getUserType());
+        int userTypeId = userService.findIdForUserType(userRequest.getUserType(), userRequest.getUserTypeName());
+        user.setUserTypeReferenceId(userTypeId);
         userService.saveUser(user);
     }
 

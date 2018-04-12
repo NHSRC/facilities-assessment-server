@@ -11,8 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.Date;
-
-import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
+import java.util.UUID;
 
 @Transactional
 @Repository
@@ -22,4 +21,7 @@ public interface MeasurableElementRepository extends BaseRepository<MeasurableEl
     Page<MeasurableElement> findByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     MeasurableElement findByReference(String reference);
+
+    @RestResource(path = "forMeasurableElement", rel = "forMeasurableElement")
+    Page<MeasurableElement> findByStandardUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("measurableElementUuid") UUID measurableElementUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 }

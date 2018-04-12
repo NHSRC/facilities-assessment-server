@@ -1,7 +1,12 @@
 package org.nhsrc.service;
 
+import org.nhsrc.domain.AbstractEntity;
 import org.nhsrc.domain.security.Role;
 import org.nhsrc.domain.security.User;
+import org.nhsrc.domain.security.UserType;
+import org.nhsrc.repository.AssessmentToolModeRepository;
+import org.nhsrc.repository.AssessmentToolRepository;
+import org.nhsrc.repository.StateRepository;
 import org.nhsrc.repository.security.RoleRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private AssessmentToolModeRepository assessmentToolModeRepository;
+
+    @Autowired
+    private StateRepository stateRepository;
+
     @Override
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -31,5 +42,16 @@ public class UserServiceImpl implements UserService {
         Role userRole = roleRepository.findByRole("USER");
         user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
         userRepository.save(user);
+    }
+
+    @Override
+    public int findIdForUserType(String userTypeName, String userTypeReferenceName) {
+        UserType userType = UserType.valueOf(userTypeName);
+        AbstractEntity entity;
+        if (UserType.State.equals(userType))
+            entity = stateRepository.findByName(userTypeReferenceName);
+        else
+            entity = assessmentToolModeRepository.findByName(userTypeReferenceName);
+        return entity.getId();
     }
 }

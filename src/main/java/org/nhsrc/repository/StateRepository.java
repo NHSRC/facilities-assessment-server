@@ -18,4 +18,5 @@ import java.util.Date;
 public interface StateRepository extends BaseRepository<State> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<State> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    State findByName(String name);
 }
