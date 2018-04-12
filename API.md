@@ -43,6 +43,7 @@ For using the API of Gunak you need to be registered as an active user in the sy
 * The format for each API is as follows:
   * The on-wire format
   * Explanation of the API
+* If you use Postman app for managing testing web apis, then you can use this https://www.getpostman.com/collections/d3c85d05ea0624ca1dca to get started for Gunak. Please note that, you would need to define your environment variables in Postman. Postman could also help you with generating code in many languages for using the API.
 
 ## API
 ### Register user
