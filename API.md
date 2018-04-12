@@ -123,13 +123,13 @@ Note that in this call you also need to pass the checklist uuid along with measu
 ### Create or Update Facility Assessment
 #### Format
 ```
-POST /registration HTTP/1.1
+POST /api/facility-assessment HTTP/1.1
 Host: SERVER:PORT
 Content-Type: application/json
 Cache-Control: no-cache
 
 {
-	"uuid": "UUID",
+	"uuid": "UUID_OF_FACILITY_ASSESSMENT",
 	"facility": "FACILITY_UUID",
 	"facilityName": "FACILITY_NAME",
 	"assessmentTool": "ASSESSMENT_TOOL_UUID",
@@ -140,5 +140,35 @@ Cache-Control: no-cache
 }
 ```
 #### Description
-* Provide either the facility or facilityName
+* UUID_OF_FACILITY_ASSESSMENT should be the new uuid to be provided by the caller
+* Provide either the facility or facilityName. The facility name should be used only if the facility is not found in the Gunak database.
 * Assessment Type UUID can be found from the response of the API for getting the Assessment Type (descibed above).
+
+### Create or Update Checkpoint Scores
+#### Format
+```
+POST /api/facility-assessment/checklist HTTP/1.1
+Host: SERVER:PORT
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+	"uuid": "CHECKLIST_UUID",
+	"facilityAssessment": "FACILITY_ASSESSMENT_UUID",
+	"checkpointScores" : [
+		{
+			"uuid": "UUID_OF_CHECKPOINT_SCORE",
+			"uuid": "CHECKPOINT_UUID",
+			"score": SCORE,
+			"remarks": "REMARKS",
+			"na": NA
+		},...
+	]
+}
+```
+#### Description
+* CHECKLIST_UUID and UUID_OF_CHECKPOINT_SCORE(s) should be the new uuid to be provided by the caller
+* SCORE is either 0, 1 or 2
+* REMARKS if any provided by the assessor when filling the score
+* NA is the boolean value of true or false (default is false). It is true when the user has marked this checkpoint as not applicable instead of providing a score.
+* Note that checkpoint score is an array.
