@@ -45,6 +45,28 @@ For using the API of Gunak you need to be registered as an active user in the sy
   * Explanation of the API
 
 ## API
+### Register user
+#### Format
+```
+POST /registration HTTP/1.1
+Host: SERVER:PORT
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+	"firstName": "FIRST_NAME",
+	"lastName": "LAST_NAME",
+	"email": "EMAIL",
+	"password": "PASSWORD",
+	"userType": "USER_TYPE",
+	"userTypeName": "USER_TYPE_NAME"
+}
+```
+#### Description
+* User type should be one of these values - State, Program. State implies access to the state level data and Program implies access to program (NQAS, Kayakalp etc) level data.
+* User type name is the name for chosen user type. For State it should be the name of the state and in case of Program it should be program name.
+* Note that this creates a user inactive mode. You need to contact the system administartor to enable the user to be able to login.
+
 ### Login
 #### Format
 ```
