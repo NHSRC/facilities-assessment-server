@@ -36,7 +36,7 @@ For using the API of Gunak you need to be registered as an active user in the sy
     * size = maximum number of elements in a page
     * totalElements = actual number of elements in current page
     * totalPages = Total number of pages
-    * number = Current page's number (zero based)
+    * number = Current page's number (zero based). When you call it for the first time this will be equal to 0.
   * Wherever applicable API can be invoked by using a lastModifiedDate parameter. When this parameter is passed the results will contain resources which have been changed after this time.
 * The date parameter should be passed in ISO format like 1900-01-01T00:00:00.001Z
 * All entities are identified a UUID in string format like 4dc48f20-da72-43d4-b5db-ba7a0ddc342a
@@ -58,6 +58,16 @@ email=EMAIL&password=PASSWORD
 #### Description
 When the post is successful in your response you would get cookie by name JSESSIONID. This indicates a successful session being established.
 
+### Get all assessment types
+#### Format
+```
+GET /api/assessmentType HTTP/1.1
+Host: SERVER:PORT
+Cache-Control: no-cache
+```
+#### Description
+This API provides a complete list of Assessment Types. Currently there are three types: Internal, External and Peer. This is required when submitting the assessment.
+
 ### Get all assessment tools
 #### Format
 ```
@@ -71,7 +81,7 @@ This API provides a complete list of Assessment Tools.
 ### Get checklists for assessment tool
 #### Format
 ```
-GET /api/checklist/search/forAssessmentTool?assessmentToolUuid=4ccad794-b011-4dda-8157-0083d23a7b89&amp;lastModifiedDate=1900-01-01T00:00:00.001Z&amp;size=200&amp;page=0 HTTP/1.1
+GET /api/checklist/search/forAssessmentTool?assessmentToolUuid=UUID&amp;lastModifiedDate=DATETIME&amp;size=SIZE&amp;page=PAGE HTTP/1.1
 Host: SERVER:PORT
 Cache-Control: no-cache
 ```
@@ -79,7 +89,7 @@ Cache-Control: no-cache
 ### Get area of concern for checklist
 #### Format
 ```
-GET /api/areaOfConcern/search/forChecklist?checklistUuid=UUID&amp;lastModifiedDate=1900-01-01T00:00:00.001Z&amp;size=200&amp;page=0 HTTP/1.1
+GET /api/areaOfConcern/search/forChecklist?checklistUuid=UUID&amp;lastModifiedDate=DATETIME&amp;size=SIZE&amp;page=PAGE HTTP/1.1
 Host: SERVER:PORT
 Cache-Control: no-cache
 ```
@@ -87,7 +97,48 @@ Cache-Control: no-cache
 ### Get standard for area of concern
 #### Format
 ```
-GET /api/standard/search/forAreaOfConcern?areaOfConcernUuid=UUID&amp;lastModifiedDate=1900-01-01T00:00:00.001Z&amp;size=200&amp;page=0 HTTP/1.1
+GET /api/standard/search/forAreaOfConcern?areaOfConcernUuid=UUID&amp;lastModifiedDate=DATETIME&amp;size=SIZE&amp;page=PAGE HTTP/1.1
 Host: SERVER:PORT
 Cache-Control: no-cache
 ```
+
+### Get measurable element for standard
+#### Format
+```
+GET /api/measurableElement/search/forStandard?standardUuid=UUID&amp;lastModifiedDate=DATETIME&amp;size=SIZE&amp;page=PAGE HTTP/1.1
+Host: SERVER:PORT
+Cache-Control: no-cache
+```
+
+### Get checkpoint for measurableElement
+#### Format
+```
+GET /api/checkpoint/search/forMeasurableElement?measurableElementUuid=MEUUID&amp;checklistUuid=CLUUID&amp;lastModifiedDate=DATETIME&amp;size=SIZE&amp;page=PAGE HTTP/1.1
+Host: SERVER:PORT
+Cache-Control: no-cache
+```
+#### Description
+Note that in this call you also need to pass the checklist uuid along with measurable element uuid.
+
+### Create or Update Facility Assessment
+#### Format
+```
+POST /registration HTTP/1.1
+Host: SERVER:PORT
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+	"uuid": "UUID",
+	"facility": "FACILITY_UUID",
+	"facilityName": "FACILITY_NAME",
+	"assessmentTool": "ASSESSMENT_TOOL_UUID",
+	"startDate": "START_DATE_OF_ASSESSMENT",
+	"endDate": "END_DATE_OF_ASSESSMENT",
+	"seriesName": "ASSESSMENT_SERIES_NAME",
+	"assessmentTypeUUID": "ASSESSMENT_TYPE_UUID"
+}
+```
+#### Description
+* Provide either the facility or facilityName
+* Assessment Type UUID can be found from the response of the API for getting the Assessment Type (descibed above).
