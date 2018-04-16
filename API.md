@@ -38,7 +38,7 @@ For using the API of Gunak you need to be registered as an active user in the sy
     * totalPages = Total number of pages
     * number = Current page's number (zero based). When you call it for the first time this will be equal to 0.
   * Wherever applicable API can be invoked by using a lastModifiedDate parameter. When this parameter is passed the results will contain resources which have been changed after this time.
-* The date parameter should be passed in ISO format like 1900-01-01T00:00:00.001Z
+* The date parameter should be passed in ISO format like 1900-01-01 00:00:00.001Z
 * All entities are identified a UUID in string format like 4dc48f20-da72-43d4-b5db-ba7a0ddc342a
 * The format for each API is as follows:
   * The on-wire format
