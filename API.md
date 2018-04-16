@@ -64,8 +64,8 @@ Cache-Control: no-cache
 }
 ```
 #### Description
-* User type should be one of these values - State, Program. State implies access to the state level data and Program implies access to program (NQAS, Kayakalp etc) level data.
-* User type name is the name for chosen user type. For State it should be the name of the state and in case of Program it should be program name.
+* User type should be one of these values - State, AssessmentToolMode. State implies access to the state level data and Program implies access to program (NQAS, Kayakalp etc) level data.
+* User type name is the name for chosen user type. For State it should be the name of the state and in case of AssessmentToolMode it should be program name.
 * Note that this creates a user inactive mode. You need to contact the system administartor to enable the user to be able to login.
 
 ### Login
