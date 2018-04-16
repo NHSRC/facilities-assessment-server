@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.nhsrc.config.SecurityConfiguration;
+import org.nhsrc.domain.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,11 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @JoinColumn(name = "assessment_type_id")
     @NotNull
     private AssessmentType assessmentType;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    @NotNull
+    private User user;
 
     public String getAssessmentCode() {
         return assessmentCode;
@@ -173,5 +179,9 @@ public class FacilityAssessment extends AbstractScoreEntity {
         if (new LocalDateTime(this.endDate).isBefore(new LocalDateTime(endDate))) {
             this.endDate = endDate;
         }
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

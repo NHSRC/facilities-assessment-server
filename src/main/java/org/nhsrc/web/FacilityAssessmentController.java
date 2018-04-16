@@ -12,6 +12,7 @@ import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.FacilityAssessmentService;
+import org.nhsrc.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,20 +34,23 @@ public class FacilityAssessmentController {
     private final UserRepository userRepository;
     private final StateRepository stateRepository;
     private FacilityAssessmentRepository facilityAssessmentRepository;
+    private UserService userService;
     private static Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
 
     @Autowired
-    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository) {
+    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
         this.stateRepository = stateRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
+        this.userService = userService;
     }
 
     @RequestMapping(value = "facility-assessment", method = RequestMethod.POST)
-    public ResponseEntity<FacilityAssessment> syncFacilityAssessment(@RequestBody FacilityAssessmentDTO facilityAssessmentDTO) {
+    public ResponseEntity<FacilityAssessment> syncFacilityAssessment(Principal principal, @RequestBody FacilityAssessmentDTO facilityAssessmentDTO) {
         logger.info(facilityAssessmentDTO.toString());
-        FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO);
+        User user = userService.findSubmissionUser(principal == null ? null : principal.getName());
+        FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO, user);
         return new ResponseEntity<>(facilityAssessment, HttpStatus.CREATED);
     }
 

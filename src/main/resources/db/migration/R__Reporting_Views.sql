@@ -103,3 +103,79 @@ CREATE OR REPLACE VIEW assessment_denormalised AS
     INNER JOIN district ON facility.district_id = district.id
     INNER JOIN state ON district.state_id = state.id
     INNER JOIN facility_type ON facility.facility_type_id = facility_type.id;
+
+DROP VIEW if exists checklist_score_view;
+CREATE VIEW checklist_score_view AS
+  SELECT
+    assessment_tool_mode.id                                  AS program,
+    fa.assessment_code                                       AS assessment_code,
+    fa.series_name                                           AS assessment_number,
+    facility.id                                              AS facility,
+    assessment_type.id                                       AS assessment_type,
+    facility_type.id                                         AS facility_type,
+    aoc.id                                                   AS area_of_concern,
+    format('%s (%s)', aoc.reference, aoc.name)               AS area_of_concern_display,
+    cl.id                                                    AS checklist,
+    cl.name                                                  AS checklist_name,
+    cs.numerator                                             AS numerator,
+    cs.denominator                                           AS denominator,
+    s.id                                                     AS standard,
+    s.reference                                              AS standard_reference,
+    s.name                                                   AS standard_name,
+    format('[%s, %s] - %s', aoc.reference, aoc.name, s.name) AS standard_description,
+    state.id                                                 AS state
+  FROM checklist_score cs
+    INNER JOIN checklist cl ON cl.id = cs.checklist_id
+    INNER JOIN standard s ON s.id = cs.standard_id
+    INNER JOIN area_of_concern aoc ON aoc.id = cs.area_of_concern_id
+    INNER JOIN facility_assessment fa ON cs.facility_assessment_id = fa.id
+    INNER JOIN facility ON fa.facility_id = facility.id
+    INNER JOIN facility_type ON facility.facility_type_id = facility_type.id
+    INNER JOIN district ON facility.district_id = district.id
+    INNER JOIN state ON district.state_id = state.id
+    INNER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
+    INNER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id
+    INNER JOIN assessment_type ON assessment_type.id = fa.assessment_type_id;
+
+DROP VIEW if exists area_of_concern_score_view;
+CREATE VIEW area_of_concern_score_view AS
+  SELECT
+    assessment_tool_mode.id                    AS assessment_type,
+    fa.assessment_code                         AS assessment_code,
+    fa.series_name                             AS assessment_number,
+    facility.id                                AS facility,
+    format('%s (%s)', aoc.reference, aoc.name) AS area_of_concern,
+    aocs.score                                 AS score,
+    state.id                                   AS state,
+    facility_type.id                           AS facility_type
+  FROM area_of_concern_score aocs
+    INNER JOIN area_of_concern aoc ON aoc.id = aocs.area_of_concern_id
+    INNER JOIN facility_assessment fa ON aocs.facility_assessment_id = fa.id
+    INNER JOIN facility ON fa.facility_id = facility.id
+    INNER JOIN facility_type ON facility.facility_type_id = facility_type.id
+    INNER JOIN district ON facility.district_id = district.id
+    INNER JOIN state ON district.state_id = state.id
+    INNER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
+    INNER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id;
+
+DROP VIEW if exists standard_score_view;
+CREATE VIEW standard_score_view AS
+  SELECT
+    assessment_tool_mode.id AS assessment_type,
+    fa.assessment_code      AS assessment_code,
+    fa.series_name          AS assessment_number,
+    facility.id             AS facility,
+    s.reference             AS standard,
+    s.name                  AS standard_name,
+    ss.score                AS score,
+    state.id                AS state,
+    facility_type.id        AS facility_type
+  FROM standard_score ss
+    INNER JOIN standard s ON s.id = ss.standard_id
+    INNER JOIN facility_assessment fa ON ss.facility_assessment_id = fa.id
+    INNER JOIN facility ON fa.facility_id = facility.id
+    INNER JOIN facility_type ON facility.facility_type_id = facility_type.id
+    INNER JOIN district ON facility.district_id = district.id
+    INNER JOIN state ON district.state_id = state.id
+    INNER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
+    INNER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id;

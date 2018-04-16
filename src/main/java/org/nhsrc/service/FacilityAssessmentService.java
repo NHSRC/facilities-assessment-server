@@ -1,6 +1,7 @@
 package org.nhsrc.service;
 
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorListDTO;
@@ -51,7 +52,7 @@ public class FacilityAssessmentService {
         this.indicatorRepository = indicatorRepository;
     }
 
-    public FacilityAssessment save(FacilityAssessmentDTO facilityAssessmentDTO) {
+    public FacilityAssessment save(FacilityAssessmentDTO facilityAssessmentDTO, User user) {
         Facility facility = facilityRepository.findByUuid(facilityAssessmentDTO.getFacility());
         if (facility == null && (facilityAssessmentDTO.getFacilityName() == null || facilityAssessmentDTO.getFacilityName().isEmpty()))
             throw new ValidationException("Facility not found and facility name is also empty");
@@ -68,6 +69,7 @@ public class FacilityAssessmentService {
                 facilityAssessment.updateEndDate(facilityAssessmentDTO.getEndDate());
 
             facilityAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
+            facilityAssessment.setUser(user);
             if (facilityAssessment.getAssessmentCode() == null) {
                 facilityAssessment.setupCode();
             }

@@ -5,7 +5,6 @@ import org.nhsrc.domain.security.Role;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.domain.security.UserType;
 import org.nhsrc.repository.AssessmentToolModeRepository;
-import org.nhsrc.repository.AssessmentToolRepository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.repository.security.RoleRepository;
 import org.nhsrc.repository.security.UserRepository;
@@ -37,6 +36,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findSubmissionUser(String email) {
+        if (email == null) {
+            return userRepository.findByUserType(UserType.AnonymousAssessor.toString());
+        } else {
+            User loggedInUser = this.findUserByEmail(email);
+            if (loggedInUser == null)
+                return userRepository.findByUserType(UserType.AnonymousAssessor.toString());
+            return loggedInUser;
+        }
+    }
+
+    @Override
     public void saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         Role userRole = roleRepository.findByRole("USER");
@@ -50,8 +61,10 @@ public class UserServiceImpl implements UserService {
         AbstractEntity entity;
         if (UserType.State.equals(userType))
             entity = stateRepository.findByName(userTypeReferenceName);
-        else
+        else if (UserType.AssessmentToolMode.equals(userType))
             entity = assessmentToolModeRepository.findByName(userTypeReferenceName);
+        else
+            throw new RuntimeException("User of type anonymous cannot be created");
         return entity.getId();
     }
 }

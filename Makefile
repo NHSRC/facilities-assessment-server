@@ -9,7 +9,7 @@ help: ## This help dialog.
 	    printf "%-30s %s\n" $$help_command $$help_info ; \
 	done
 
-database := facilities_assessment_$(db)
+database := facilities_assessment_$(dbSuffix)
 rr_version := 7
 response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
 port := 6001
@@ -61,7 +61,7 @@ schema_clean:
 	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment -schemas=public clean
 
 schema_migrate: ## Requires argument - db
-	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/$(db) -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
+	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/$(database) -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
 # </schema>
 
 # <server>
@@ -89,7 +89,7 @@ publish_jar_dropbox_jss:
 	cp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar ~/Dropbox/Public/Gunak/dev/jss/
 
 publish_jar_prod_nhsrc:
-	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar gunak-main:/home/nhsrc1/downloads/
+	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar gunak-main:/home/nhsrc1/facilities-assessment-host/downloads/
 # </jar>
 
 
