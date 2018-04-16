@@ -196,3 +196,14 @@ Cache-Control: no-cache
 * REMARKS if any provided by the assessor when filling the score
 * NA is the boolean value of true or false (default is false). It is true when the user has marked this checkpoint as not applicable instead of providing a score.
 * Note that checkpoint score is an array.
+
+
+## API Cookbook
+The above explains the individual APIs. This part of documentation deals with dealing with specific use cases.
+### Save Assessment and Scores
+For saving Facility Assessment and the scores corresponding to that assessment you need two narrow down on the key resource UUIDs. Those are:
+* Facility
+* Assessment Tool
+* Assessment Type
+* Checkpoints (with which the scores are associated)
+IN PROGRESS......
