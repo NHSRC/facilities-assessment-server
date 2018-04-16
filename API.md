@@ -166,6 +166,7 @@ Cache-Control: no-cache
 * UUID_OF_FACILITY_ASSESSMENT should be the new uuid to be provided by the caller
 * Provide either the facility or facilityName. The facility name should be used only if the facility is not found in the Gunak database.
 * Assessment Type UUID can be found from the response of the API for getting the Assessment Type (descibed above).
+* Each facility goes through multiple assessments of same type. Hence to differentiate between them, a series name should be used. This has to be unique for that type of assessment.
 
 ### Create or Update Checkpoint Scores
 #### Format
