@@ -1,0 +1,2 @@
+alter table certification_standard add column goal int not null default 60;
+update certification_standard set goal = 70 where assessment_tool_id = (select id from assessment_tool where name = 'District Hospital (DH)');
