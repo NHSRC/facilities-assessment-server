@@ -20,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import java.io.File;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
@@ -132,7 +133,9 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
             public Resource<FacilityAssessment> process(Resource<FacilityAssessment> resource) {
                 FacilityAssessment facilityAssessment = resource.getContent();
                 resource.removeLinks();
-                resource.add(new Link(facilityAssessment.getFacility().getUuid().toString(), "facilityUUID"));
+                Facility facility = facilityAssessment.getFacility();
+                String facilityUUID = facility == null ? UUID.randomUUID().toString() : facility.getUuid().toString();
+                resource.add(new Link(facilityUUID, "facilityUUID"));
                 resource.add(new Link(facilityAssessment.getAssessmentTool().getUuid().toString(), "assessmentToolUUID"));
                 resource.add(new Link(facilityAssessment.getAssessmentType().getUuid().toString(), "assessmentTypeUUID"));
                 return resource;

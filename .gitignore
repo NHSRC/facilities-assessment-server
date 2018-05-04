@@ -30,3 +30,4 @@ responses
 responses.zip
 **/adhoc.sql
 keystore.*
+metabase-migration/node_modules/*

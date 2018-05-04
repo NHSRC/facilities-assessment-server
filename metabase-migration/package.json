@@ -1,0 +1,20 @@
+{
+  "name": "gunak-metabase-migration",
+  "description": "Gunak Metabase Migration",
+  "version": "0.0.1",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NHSRC/facilities-assessment-server"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "metabase-as-code": "0.0.23",
+    "babel-core": "6.26.0",
+    "babel-preset-es2015": "6.24.1",
+    "babel-polyfill": "6.26.0"
+  }
+}

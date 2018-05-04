@@ -71,6 +71,9 @@ build_server:
 run_server_nhsrc: build_server
 	$(call _run_server,nhsrc,false,true)
 
+run_server_nhsrc_insecure: build_server
+	$(call _run_server,nhsrc,false,false)
+
 run_server_jss: build_server
 	$(call _run_server,cg,false,false)
 

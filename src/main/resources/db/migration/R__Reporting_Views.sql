@@ -1,3 +1,13 @@
+DROP VIEW if exists recent_facility_assessment_view;
+DROP VIEW if exists checkpoint_scores;
+DROP VIEW if exists checkpoint_scores_aoc;
+drop VIEW IF EXISTS checkpoint_denormalised;
+DROP view if exists checkpoint_score_denormalised;
+DROP view if exists assessment_denormalised;
+DROP VIEW if exists checklist_score_view;
+DROP VIEW if exists area_of_concern_score_view;
+DROP VIEW if exists standard_score_view;
+
 CREATE OR REPLACE VIEW checkpoint_scores AS
   SELECT
     assessment_tool_mode.id AS assessment_type,
@@ -15,7 +25,7 @@ CREATE OR REPLACE VIEW checkpoint_scores AS
     LEFT OUTER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
     LEFT OUTER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id;
 
-CREATE OR REPLACE VIEW checkpoint_scores_aoc AS
+CREATE VIEW checkpoint_scores_aoc AS
   SELECT
     assessment_tool_mode.id                                  AS assessment_type,
     fa.series_name                                           AS assessment_number,
@@ -44,7 +54,6 @@ CREATE OR REPLACE VIEW checkpoint_scores_aoc AS
     LEFT OUTER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
     LEFT OUTER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id;
 
-drop VIEW IF EXISTS checkpoint_denormalised;
 CREATE OR REPLACE VIEW checkpoint_denormalised AS
   SELECT
     checkpoint.id           checkpoint_id,
@@ -62,7 +71,7 @@ CREATE OR REPLACE VIEW checkpoint_denormalised AS
     INNER JOIN assessment_tool ON checklist.assessment_tool_id = assessment_tool.id
     INNER JOIN assessment_tool_mode ON assessment_tool.assessment_tool_mode_id = assessment_tool_mode.id;
 
-CREATE OR REPLACE VIEW checkpoint_score_denormalised AS
+CREATE VIEW checkpoint_score_denormalised AS
   SELECT
     checkpoint_score.id     checkpoint_score_id,
     facility_assessment.id  facility_assessment_id,
@@ -86,7 +95,7 @@ CREATE OR REPLACE VIEW checkpoint_score_denormalised AS
     INNER JOIN district ON facility.district_id = district.id
     INNER JOIN state ON district.state_id = state.id AND checklist.state_id = state.id;
 
-CREATE OR REPLACE VIEW assessment_denormalised AS
+CREATE VIEW assessment_denormalised AS
   SELECT
     facility_assessment.id          facility_assessment,
     assessment_tool.id              assessment_tool,
@@ -104,10 +113,11 @@ CREATE OR REPLACE VIEW assessment_denormalised AS
     INNER JOIN state ON district.state_id = state.id
     INNER JOIN facility_type ON facility.facility_type_id = facility_type.id;
 
-DROP VIEW if exists checklist_score_view;
 CREATE VIEW checklist_score_view AS
   SELECT
+    cs.id                                                    AS id,
     assessment_tool_mode.id                                  AS program,
+    fa.id                                                    AS facility_assessment_id,
     fa.assessment_code                                       AS assessment_code,
     fa.series_name                                           AS assessment_number,
     facility.id                                              AS facility,
@@ -137,14 +147,16 @@ CREATE VIEW checklist_score_view AS
     INNER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id
     INNER JOIN assessment_type ON assessment_type.id = fa.assessment_type_id;
 
-DROP VIEW if exists area_of_concern_score_view;
 CREATE VIEW area_of_concern_score_view AS
   SELECT
+    aocs.id                                    as id,
     assessment_tool_mode.id                    AS assessment_type,
+    fa.id                                      AS facility_assessment_id,
     fa.assessment_code                         AS assessment_code,
     fa.series_name                             AS assessment_number,
     facility.id                                AS facility,
     format('%s (%s)', aoc.reference, aoc.name) AS area_of_concern,
+    aoc.reference                              AS area_of_concern_reference,
     aocs.score                                 AS score,
     state.id                                   AS state,
     facility_type.id                           AS facility_type
@@ -158,10 +170,11 @@ CREATE VIEW area_of_concern_score_view AS
     INNER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
     INNER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id;
 
-DROP VIEW if exists standard_score_view;
 CREATE VIEW standard_score_view AS
   SELECT
+    ss.id                   as id,
     assessment_tool_mode.id AS assessment_type,
+    fa.id                   AS facility_assessment_id,
     fa.assessment_code      AS assessment_code,
     fa.series_name          AS assessment_number,
     facility.id             AS facility,
@@ -179,3 +192,22 @@ CREATE VIEW standard_score_view AS
     INNER JOIN state ON district.state_id = state.id
     INNER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
     INNER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id;
+
+
+CREATE VIEW recent_facility_assessment_view AS
+  select
+    facility_assessment_id recent_facility_assessment_id,
+    district.name district,
+    facility.name facility_name,
+    facility_assessment.end_date,
+    assessment_tool.name assessment_tool_name,
+    assessment_tool_mode.name assessment_tool_mode_name,
+    state.name state_name
+  from
+    (select max(facility_assessment.id) facility_assessment_id from facility_assessment group by facility_id) as recent_facility_facility
+    inner join facility_assessment on facility_assessment.id = recent_facility_facility.facility_assessment_id
+  inner join facility on facility_assessment.facility_id = facility.id
+  inner join district on district.id = facility.district_id
+  inner join state on state.id = district.state_id
+  inner join assessment_tool on facility_assessment.assessment_tool_id = assessment_tool.id
+  inner join assessment_tool_mode on assessment_tool.assessment_tool_mode_id = assessment_tool_mode.id;
