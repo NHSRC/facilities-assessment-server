@@ -10,7 +10,7 @@ help: ## This help dialog.
 	done
 
 database := facilities_assessment_$(dbSuffix)
-rr_version := 7
+rr_version := 8
 response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
 port := 6001
 

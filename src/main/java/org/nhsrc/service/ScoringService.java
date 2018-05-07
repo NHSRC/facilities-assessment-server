@@ -1,14 +1,21 @@
 package org.nhsrc.service;
 
+import org.nhsrc.config.quartz.AssessmentScoringJob;
 import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.scores.ScoringProcessDetail;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.scores.ScoringProcessDetailRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import java.util.Date;
 import java.util.List;
 
 import static org.nhsrc.service.ScoringSQLs.*;
@@ -17,42 +24,53 @@ import static org.nhsrc.service.ScoringSQLs.*;
 public class ScoringService {
     private ScoringProcessDetailRepository scoringProcessDetailRepository;
     private FacilityAssessmentRepository facilityAssessmentRepository;
-    private EntityManager entityManager;
+    private EntityManagerFactory entityManagerFactory;
+    private static Logger logger = LoggerFactory.getLogger(ScoringService.class);
 
     @Autowired
-    public ScoringService(ScoringProcessDetailRepository scoringProcessDetailRepository, FacilityAssessmentRepository facilityAssessmentRepository, EntityManager entityManager) {
+    public ScoringService(ScoringProcessDetailRepository scoringProcessDetailRepository, FacilityAssessmentRepository facilityAssessmentRepository, EntityManagerFactory entityManagerFactory) {
         this.scoringProcessDetailRepository = scoringProcessDetailRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
-        this.entityManager = entityManager;
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     public void scoreAssessments() {
         ScoringProcessDetail scoringProcessDetail = scoringProcessDetailRepository.findByUuid(ScoringProcessDetail.Fixed_UUID);
-        List<FacilityAssessment> unscoredAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(scoringProcessDetail.getSafeLastScoredUntilTime());
+        Date safeLastScoredUntilTime = scoringProcessDetail.getSafeLastScoredUntilTime();
+        logger.info(String.format("Loading assessments done after: %s", safeLastScoredUntilTime.toString()));
+        List<FacilityAssessment> unscoredAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(safeLastScoredUntilTime);
+        logger.info(String.format("Found %d assessments, to be scored", unscoredAssessments.size()));
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         unscoredAssessments.forEach(facilityAssessment -> {
-            scoreAssessment(facilityAssessment, scoringProcessDetail);
+            scoreAssessment(facilityAssessment, scoringProcessDetail, entityManager);
         });
     }
 
-    @Transactional
-    public void scoreAssessment(FacilityAssessment facilityAssessment, ScoringProcessDetail scoringProcessDetail) {
-        deleteScore(facilityAssessment.getId(), Delete_Checklist_Scores);
-        deleteScore(facilityAssessment.getId(), Delete_Standard_Scores);
-        deleteScore(facilityAssessment.getId(), Delete_AreaOfConcern_Scores);
+    private void scoreAssessment(FacilityAssessment facilityAssessment, ScoringProcessDetail scoringProcessDetail, EntityManager entityManager) {
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        try {
+            deleteScore(facilityAssessment.getId(), Delete_Checklist_Scores, entityManager);
+            deleteScore(facilityAssessment.getId(), Delete_Standard_Scores, entityManager);
+            deleteScore(facilityAssessment.getId(), Delete_AreaOfConcern_Scores, entityManager);
 
-        createScore(facilityAssessment.getId(), Create_Checklist_Scores);
-        createScore(facilityAssessment.getId(), Create_Standard_Scores);
-        createScore(facilityAssessment.getId(), Create_AreaOfConcern_Scores);
+            createScore(facilityAssessment.getId(), Create_Checklist_Scores, entityManager);
+            createScore(facilityAssessment.getId(), Create_Standard_Scores, entityManager);
+            createScore(facilityAssessment.getId(), Create_AreaOfConcern_Scores, entityManager);
 
-        scoringProcessDetail.setLastScoredUntil(facilityAssessment.getLastModifiedDate());
-        scoringProcessDetailRepository.save(scoringProcessDetail);
+            scoringProcessDetail.setLastScoredUntil(facilityAssessment.getLastModifiedDate());
+            scoringProcessDetailRepository.save(scoringProcessDetail);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        }
     }
 
-    private void createScore(int assessmentId, String sql) {
+    private void createScore(int assessmentId, String sql, EntityManager entityManager) {
         entityManager.createNativeQuery(sql).setParameter(AssessmentId_Param, assessmentId).executeUpdate();
     }
 
-    private void deleteScore(int assessmentId, String query) {
+    private void deleteScore(int assessmentId, String query, EntityManager entityManager) {
         entityManager.createNativeQuery(query).setParameter(AssessmentId_Param, assessmentId).executeUpdate();
     }
 }

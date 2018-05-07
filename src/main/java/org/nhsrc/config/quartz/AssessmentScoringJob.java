@@ -18,20 +18,17 @@ import org.springframework.stereotype.Component;
 @Component
 @DisallowConcurrentExecution
 public class AssessmentScoringJob implements Job {
-    private final ScoringService scoringService;
+    @Autowired
+    private ScoringService scoringService;
+    @Value("${cron.assessmentScoring}")
     private String cronExpression;
     private static Logger logger = LoggerFactory.getLogger(AssessmentScoringJob.class);
-
-    @Autowired
-    public AssessmentScoringJob(@Value("${cron.assessmentScoring}") String cronExpression, ScoringService scoringService) {
-        this.cronExpression = cronExpression;
-        this.scoringService = scoringService;
-    }
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
         logger.info("Starting job.", cronExpression);
         scoringService.scoreAssessments();
+        logger.info("Completed Scoring");
     }
 
     @Bean(name = "jobWithCronTriggerBean")
