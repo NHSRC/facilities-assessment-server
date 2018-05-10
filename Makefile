@@ -60,7 +60,7 @@ seed_test_db:
 schema_clean:
 	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment -schemas=public clean
 
-schema_migrate: ## Requires argument - db
+schema_migrate:
 	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/$(database) -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
 # </schema>
 

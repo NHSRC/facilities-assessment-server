@@ -196,18 +196,24 @@ CREATE VIEW standard_score_view AS
 
 CREATE VIEW recent_facility_assessment_view AS
   select
-    facility_assessment_id recent_facility_assessment_id,
-    district.name district,
-    facility.name facility_name,
+    facility_assessment_id    recent_facility_assessment_id,
+    assessment_type.id        assessment_type_id,
+    assessment_type.name      assessment_type,
+    district.id               district_id,
+    district.name             district,
+    facility.name             facility_name,
     facility_assessment.end_date,
-    assessment_tool.name assessment_tool_name,
+    assessment_tool.name      assessment_tool_name,
     assessment_tool_mode.name assessment_tool_mode_name,
-    state.name state_name
+    state.name                state_name
   from
-    (select max(facility_assessment.id) facility_assessment_id from facility_assessment group by facility_id) as recent_facility_facility
+    (select max(facility_assessment.id) facility_assessment_id
+     from facility_assessment
+     group by facility_id) as recent_facility_facility
     inner join facility_assessment on facility_assessment.id = recent_facility_facility.facility_assessment_id
-  inner join facility on facility_assessment.facility_id = facility.id
-  inner join district on district.id = facility.district_id
-  inner join state on state.id = district.state_id
-  inner join assessment_tool on facility_assessment.assessment_tool_id = assessment_tool.id
-  inner join assessment_tool_mode on assessment_tool.assessment_tool_mode_id = assessment_tool_mode.id;
+    inner join facility on facility_assessment.facility_id = facility.id
+    inner join district on district.id = facility.district_id
+    inner join state on state.id = district.state_id
+    inner join assessment_tool on facility_assessment.assessment_tool_id = assessment_tool.id
+    inner join assessment_tool_mode on assessment_tool.assessment_tool_mode_id = assessment_tool_mode.id
+    inner join assessment_type on facility_assessment.assessment_type_id = assessment_type.id;
