@@ -52,7 +52,7 @@ public class FacilityAssessmentProgressController {
             "  INNER JOIN measurable_element me ON c.measurable_element_id = me.id\n" +
             "  INNER JOIN standard std ON me.standard_id = std.id\n" +
             "  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id\n" +
-            "  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = :atid AND ch.state_id = :stid\n" +
+            "  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = :atid AND (ch.state_id=:stid OR ch.state_id is NULL)\n" +
             "  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id\n" +
             "                   FROM checkpoint_score\n" +
             "                   WHERE checkpoint_score.facility_assessment_id = :faid) AS cs ON c.id = cs.checkpoint_id\n" +
@@ -68,8 +68,9 @@ public class FacilityAssessmentProgressController {
             "  INNER JOIN measurable_element me ON c.measurable_element_id = me.id\n" +
             "  INNER JOIN standard s ON me.standard_id = s.id\n" +
             "  INNER JOIN area_of_concern aoc ON s.area_of_concern_id = aoc.id\n" +
-            "  INNER JOIN assessment_tool at ON s.assessment_tool_id = at.id\n" +
-            "  INNER JOIN checklist ch ON ch.id=c.checklist_id AND ch.state_id=:stid\n" +
+            "  INNER JOIN checklist_area_of_concern caoc ON caoc.area_of_concern_id = aoc.id\n" +
+            "  INNER JOIN checklist ch ON ch.id=c.checklist_id AND (ch.state_id=:stid OR ch.state_id is NULL) AND ch.id = caoc.checklist_id\n" +
+            "  INNER JOIN assessment_tool at ON ch.assessment_tool_id = at.id\n" +
             "  WHERE at.id=:id AND c.id IS NOT NULL\n" +
             "GROUP BY ch.id, aoc.id";
 
@@ -81,8 +82,9 @@ public class FacilityAssessmentProgressController {
             "  INNER JOIN measurable_element me ON c.measurable_element_id = me.id\n" +
             "  INNER JOIN standard s ON me.standard_id = s.id\n" +
             "  INNER JOIN area_of_concern aoc ON s.area_of_concern_id = aoc.id\n" +
-            "  INNER JOIN assessment_tool at ON s.assessment_tool_id = at.id\n" +
-            "  INNER JOIN checklist ch ON ch.id=c.checklist_id AND ch.state_id=:stid\n" +
+            "  INNER JOIN checklist_area_of_concern caoc ON caoc.area_of_concern_id = aoc.id\n" +
+            "  INNER JOIN checklist ch ON ch.id=c.checklist_id AND (ch.state_id=:stid OR ch.state_id is NULL) AND ch.id = caoc.checklist_id\n" +
+            "  INNER JOIN assessment_tool at ON ch.assessment_tool_id = at.id\n" +
             "WHERE at.id=:id AND c.id IS NOT NULL\n" +
             "GROUP BY ch.id";
 
@@ -98,6 +100,13 @@ public class FacilityAssessmentProgressController {
     public ResponseEntity<List<FacilityAssessmentProgressDTO>> getFacilityAssessmentProgress(@RequestParam String lastModifiedDate, @RequestParam String deviceId) throws ParseException {
         Date result = DateUtils.ISO_8601_DATE_FORMAT.parse(lastModifiedDate);
         List<FacilityAssessment> facilityAssessments = facilityAssessmentRepository.findByFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThan(deviceId, result);
+        return getProgressFor(facilityAssessments);
+    }
+
+    @RequestMapping(value = "search/byAssessmentId", method = RequestMethod.GET)
+    public ResponseEntity<List<FacilityAssessmentProgressDTO>> getFacilityAssessmentProgress(@RequestParam int assessmentId) {
+        List<FacilityAssessment> facilityAssessments = new ArrayList<>();
+        facilityAssessments.add(facilityAssessmentRepository.findById(assessmentId));
         return getProgressFor(facilityAssessments);
     }
 

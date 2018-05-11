@@ -34,4 +34,9 @@ public interface FacilityAssessmentRepository extends BaseRepository<FacilityAss
     FacilityAssessment findByFacilityNameAndAssessmentToolAndSeriesName(String facilityName, AssessmentTool assessmentTool, String seriesName);
 
     Page<FacilityAssessment> findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(State state, Date lastModifiedDateTime, Pageable pageable);
+
+    @RestResource(path = "byAssessmentId", rel = "byAssessmentId")
+    Page<FacilityAssessment> findById(@Param("assessmentId") int assessmentId, Pageable pageable);
+
+    FacilityAssessment findById(int assessmentId);
 }

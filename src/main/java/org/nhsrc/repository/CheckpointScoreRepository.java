@@ -26,4 +26,7 @@ public interface CheckpointScoreRepository extends BaseRepository<CheckpointScor
     CheckpointScore findByCheckpointAndFacilityAssessmentAndChecklist(Checkpoint checkpoint, FacilityAssessment facilityAssessment, Checklist checklist);
 
     Page<CheckpointScore> findByFacilityAssessmentFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(State state, Date lastModifiedDateTime, Pageable pageable);
+
+    @RestResource(path = "byAssessmentId", rel = "byAssessmentId")
+    Page<CheckpointScore> findByFacilityAssessmentId(@Param("assessmentId") int assessmentId, Pageable pageable);
 }

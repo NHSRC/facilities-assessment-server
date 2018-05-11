@@ -19,5 +19,11 @@ public interface IndicatorRepository extends BaseRepository<Indicator> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<Indicator> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
+    @RestResource(path = "lastModifiedByDeviceId", rel = "lastModifiedByDeviceId")
+    Page<Indicator> findByFacilityAssessmentFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("deviceId") String deviceId, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
     Indicator findByIndicatorDefinitionAndFacilityAssessment(IndicatorDefinition indicatorDefinition, FacilityAssessment facilityAssessment);
+
+    @RestResource(path = "byAssessmentId", rel = "byAssessmentId")
+    Page<Indicator> findByFacilityAssessmentId(@Param("assessmentId") int assessmentId, Pageable pageable);
 }
