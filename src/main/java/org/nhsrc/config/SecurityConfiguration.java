@@ -63,7 +63,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/api/ping").permitAll()
-                .antMatchers("/registration").permitAll();
+                .antMatchers("/registration").permitAll()
+                .antMatchers("/app/**").permitAll();
         if (isSecure) {
             registry.antMatchers("/loginSuccess").hasAuthority("USER");
             permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
