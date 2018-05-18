@@ -21,4 +21,7 @@ public interface DistrictRepository extends BaseRepository<District> {
 
     @RestResource(path = "lastModifiedByState", rel = "lastModifiedByState")
     Page<District> findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
+    @RestResource(path = "byState", rel = "byState")
+    Page<District> findByStateNameOrderByName(@Param("stateName") String stateName, Pageable pageable);
 }
