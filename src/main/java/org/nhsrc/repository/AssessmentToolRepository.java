@@ -27,5 +27,8 @@ public interface AssessmentToolRepository extends BaseRepository<AssessmentTool>
     @RestResource(path = "forAssessmentToolMode", rel = "forAssessmentToolMode")
     Page<AssessmentTool> findByAssessmentToolModeUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("assessmentToolModeUuid") UUID assessmentToolModeUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
+    @RestResource(path = "byAssessmentToolMode", rel = "byAssessmentToolMode")
+    Page<AssessmentTool> findByAssessmentToolModeNameOrderByNameAsc(@Param("assessmentToolModeName") String assessmentToolModeName, Pageable pageable);
+
     AssessmentTool findByName(String name);
 }
