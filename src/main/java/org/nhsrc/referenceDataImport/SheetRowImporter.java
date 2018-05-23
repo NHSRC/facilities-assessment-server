@@ -3,6 +3,7 @@ package org.nhsrc.referenceDataImport;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.nhsrc.config.excelMetaDataError.AssessmentExcelMetaDataErrors;
 import org.nhsrc.domain.*;
 
 import java.util.regex.Matcher;
@@ -48,8 +49,8 @@ public class SheetRowImporter {
         } else if (!isAreaOfConcernRow(currentRow) && currAOC == null) {
         } else if (isAreaOfConcernRow(currentRow)) {
             this.aoc(currentRow, checklist, getAreaOfConcernCellNum(currentRow));
-        } else if (getText(currentRow, 0).startsWith("Standard ") && getText(currentRow, 0).length() <= 15) {
-            this.standard(getText(currentRow, 0), getText(currentRow, 1), checklist);
+        } else if (AssessmentExcelMetaDataErrors.getRealString(getText(currentRow, 0)).startsWith("Standard ") && AssessmentExcelMetaDataErrors.getRealString(getText(currentRow, 0)).length() <= 15) {
+            this.standard(AssessmentExcelMetaDataErrors.getRealString(getText(currentRow, 0)), getText(currentRow, 1), checklist);
         } else if (getText(currentRow, 0).startsWith("ME") && isEmpty(currentRow, 2) && !getText(currentRow, 1).equals(getText(currentRow, 2))) {
         } else if (getText(currentRow, 0).startsWith("ME") && getText(currentRow, 1).equals(getText(currentRow, 2))) {
             this.meWithSameCheckpointName(currentRow, checklist);
@@ -99,7 +100,7 @@ public class SheetRowImporter {
         if (cell == null) return true;
 
         String stringCellValue = getCellValue(cell);
-        if (stringCellValue == null || stringCellValue.trim().equals("") || stringCellValue.trim().equals(".")) return true;
+        if (stringCellValue == null || stringCellValue.trim().equals("") || stringCellValue.trim().equals(".") || "Maximum".equals(stringCellValue)) return true;
 
         return false;
     }
@@ -190,7 +191,7 @@ public class SheetRowImporter {
     }
 
     private void me(Row row, Checklist checklist, boolean hasScores, FacilityAssessment facilityAssessment) {
-        String ref = getMERef(getText(row, 0));
+        String ref = getMERef(AssessmentExcelMetaDataErrors.getRealString(getText(row, 0)));
         String name = getText(row, 1).trim().replaceAll(" +", " ");
         MeasurableElement me = currStandard.getMeasurableElement(ref);
         if (me == null) {

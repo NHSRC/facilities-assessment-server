@@ -25,7 +25,7 @@ public class ExcelImportService {
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
         ExcelImporter excelImporter = new ExcelImporter(assessmentChecklistData);
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
-        excelImporter.importFile(inputStream, assessmentTool, 1, 1, true, facilityAssessment);
+        excelImporter.importFile(inputStream, assessmentTool, 0, 1, true, facilityAssessment);
         return assessmentChecklistData;
     }
 }

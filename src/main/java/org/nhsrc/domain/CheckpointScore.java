@@ -107,4 +107,14 @@ public class CheckpointScore extends AbstractScoreEntity {
     public int getScoreDenominator() {
         return na ? 0 : 2;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "checkpoint=" + checkpoint +
+                ", score=" + score +
+                ", remarks='" + remarks + '\'' +
+                ", na=" + na +
+                '}';
+    }
 }

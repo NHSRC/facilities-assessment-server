@@ -90,6 +90,7 @@ public class FacilityAssessmentController {
         facilityAssessmentDTO.setAssessmentTypeUUID(assessmentTypeUuid);
         facilityAssessmentDTO.setAssessmentTool(assessmentToolUuid);
         facilityAssessmentDTO.setFacility(facilityUuid);
+        facilityAssessmentDTO.setUuid(UUID.randomUUID());
         Date date = new Date();
         facilityAssessmentDTO.setStartDate(date);
         facilityAssessmentDTO.setEndDate(date);
