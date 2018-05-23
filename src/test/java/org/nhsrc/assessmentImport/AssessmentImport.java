@@ -23,33 +23,36 @@ public class AssessmentImport {
         AssessmentsDirectory assessmentsDirectory = new AssessmentsDirectory("../reference-data/jss/mp/assessments");
         List<AssessmentFile> assessmentFiles = assessmentsDirectory.getAssessmentFiles();
         for (AssessmentFile assessmentFile : assessmentFiles) {
-            System.out.println();
             System.out.println(String.format("PROCESSING FILE: %s", assessmentFile.getFile().getName()));
-            AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
-            assessmentChecklistData.setState(new State("Madhya Pradesh"));
-            AssessmentTool assessmentTool = ShortNames.getAssessmentTool(assessmentFile.getAssessmentToolShortName());
-            assessmentChecklistData.set(assessmentTool);
-
-            FacilityAssessment facilityAssessment = new FacilityAssessment();
-            facilityAssessment.setAssessmentTool(assessmentTool);
-
-            Facility facility = createFacility(assessmentFile);
-            facilityAssessment.setFacility(facility);
-            facilityAssessment.setStartDate(assessmentFile.getStartDate().toDate());
-            facilityAssessment.setEndDate(assessmentFile.getEndDate().toDate());
-            assessmentChecklistData.setAssessment(facilityAssessment);
-
-            ExcelImporter excelImporter = new ExcelImporter(assessmentChecklistData);
-            excelImporter.importFile(assessmentFile.getFile(), assessmentTool, startingSheet, numberOfSheetsToImport, true, facilityAssessment);
-
-            if (generateVerify) {
-                AssessmentSQLGenerator.generateVerifyChecklistSQL(assessmentChecklistData, new File(assessmentsDirectory.toDirectory(), String.format("output/%s_verify_checklists.sql", facility.getName())));
-                AssessmentSQLGenerator.generateVerifyCheckpointSQL(assessmentChecklistData, new File(assessmentsDirectory.toDirectory(), String.format("output/%s_verify_checkpoints.sql", facility.getName())));
-            }
-
-            String fileName = assessmentFile.getFile().getName().replaceFirst("[.][^.]+$", "");
-            AssessmentSQLGenerator.generate(assessmentChecklistData, new File(assessmentsDirectory.toDirectory(), String.format(outputFilePattern, fileName)), generateFacilityAssessmentSQL);
+            importAssessmentFromFile(startingSheet, numberOfSheetsToImport, generateVerify, outputFilePattern, generateFacilityAssessmentSQL, assessmentsDirectory, assessmentFile);
         }
+    }
+
+    public void importAssessmentFromFile(int startingSheet, int numberOfSheetsToImport, boolean generateVerify, String outputFilePattern, boolean generateFacilityAssessmentSQL, AssessmentsDirectory assessmentsDirectory, AssessmentFile assessmentFile) throws Exception {
+        AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
+        assessmentChecklistData.setState(new State("Madhya Pradesh"));
+        AssessmentTool assessmentTool = ShortNames.getAssessmentTool(assessmentFile.getAssessmentToolShortName());
+        assessmentChecklistData.set(assessmentTool);
+
+        FacilityAssessment facilityAssessment = new FacilityAssessment();
+        facilityAssessment.setAssessmentTool(assessmentTool);
+
+        Facility facility = createFacility(assessmentFile);
+        facilityAssessment.setFacility(facility);
+        facilityAssessment.setStartDate(assessmentFile.getStartDate().toDate());
+        facilityAssessment.setEndDate(assessmentFile.getEndDate().toDate());
+        assessmentChecklistData.setAssessment(facilityAssessment);
+
+        ExcelImporter excelImporter = new ExcelImporter(assessmentChecklistData);
+        excelImporter.importFile(assessmentFile.getFile(), assessmentTool, startingSheet, numberOfSheetsToImport, true, facilityAssessment);
+
+        if (generateVerify) {
+            AssessmentSQLGenerator.generateVerifyChecklistSQL(assessmentChecklistData, new File(assessmentsDirectory.toDirectory(), String.format("output/%s_verify_checklists.sql", facility.getName())));
+            AssessmentSQLGenerator.generateVerifyCheckpointSQL(assessmentChecklistData, new File(assessmentsDirectory.toDirectory(), String.format("output/%s_verify_checkpoints.sql", facility.getName())));
+        }
+
+        String fileName = assessmentFile.getFile().getName().replaceFirst("[.][^.]+$", "");
+        AssessmentSQLGenerator.generate(assessmentChecklistData, new File(assessmentsDirectory.toDirectory(), String.format(outputFilePattern, fileName)), generateFacilityAssessmentSQL);
     }
 
     @Test

@@ -8,11 +8,15 @@ import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorDTO;
 import org.nhsrc.dto.IndicatorListDTO;
+import org.nhsrc.referenceDataImport.AssessmentChecklistData;
+import org.nhsrc.referenceDataImport.ExcelImporter;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.repository.security.UserRepository;
+import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
 import org.nhsrc.service.UserService;
+import org.nhsrc.web.contract.FacilityAssessmentExcelRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +25,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/")
@@ -36,14 +43,16 @@ public class FacilityAssessmentController {
     private FacilityAssessmentRepository facilityAssessmentRepository;
     private UserService userService;
     private static Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
+    private ExcelImportService excelImportService;
 
     @Autowired
-    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService) {
+    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
         this.stateRepository = stateRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
         this.userService = userService;
+        this.excelImportService = excelImportService;
     }
 
     @RequestMapping(value = "facility-assessment", method = RequestMethod.POST)
@@ -72,5 +81,21 @@ public class FacilityAssessmentController {
         State state = stateRepository.findOne(user.getUserTypeReferenceId());
         PageRequest pageable = new PageRequest(page, size);
         return facilityAssessmentRepository.findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
+    }
+
+    @RequestMapping(value = "facility-assessment/excel", method = RequestMethod.POST)
+    public ResponseEntity<?> submitAssessment(Principal principal, @RequestParam("assessmentFile") MultipartFile file, @RequestParam("facilityUuid") UUID facilityUuid, @RequestParam("assessmentTypeUuid") UUID assessmentTypeUuid, @RequestParam("assessmentToolUuid") UUID assessmentToolUuid) throws Exception {
+        User user = userRepository.findByEmail(principal.getName());
+        FacilityAssessmentDTO facilityAssessmentDTO = new FacilityAssessmentDTO();
+        facilityAssessmentDTO.setAssessmentTypeUUID(assessmentTypeUuid);
+        facilityAssessmentDTO.setAssessmentTool(assessmentToolUuid);
+        facilityAssessmentDTO.setFacility(facilityUuid);
+        Date date = new Date();
+        facilityAssessmentDTO.setStartDate(date);
+        facilityAssessmentDTO.setEndDate(date);
+        FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO, user);
+
+        AssessmentChecklistData assessmentChecklistData = excelImportService.parseAssessment(file.getInputStream(), facilityAssessmentDTO, facilityAssessment);
+        return new ResponseEntity<>(true, HttpStatus.CREATED);
     }
 }
