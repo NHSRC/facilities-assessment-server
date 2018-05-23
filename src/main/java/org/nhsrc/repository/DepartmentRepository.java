@@ -20,4 +20,5 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 public interface DepartmentRepository extends BaseRepository<Department> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<Department> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Department findByName(String name);
 }

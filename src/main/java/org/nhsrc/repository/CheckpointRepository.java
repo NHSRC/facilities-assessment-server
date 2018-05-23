@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Transactional
@@ -22,4 +23,6 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
 
     @RestResource(path = "forMeasurableElementAndChecklist", rel = "forMeasurableElementAndChecklist")
     Page<Checkpoint> findByMeasurableElementUuidAndChecklistUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("checklistUuid") UUID checklistUuid, @Param("measurableElementUuid") UUID measurableElementUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
+    List<Checkpoint> findAllByNameAndChecklistUuidAndMeasurableElementName(String name, UUID checklistUuid, String measurableElementName);
 }

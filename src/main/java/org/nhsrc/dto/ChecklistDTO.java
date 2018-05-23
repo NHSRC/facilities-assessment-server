@@ -1,5 +1,7 @@
 package org.nhsrc.dto;
 
+import org.nhsrc.domain.CheckpointScore;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -52,5 +54,9 @@ public class ChecklistDTO {
 
     public void setCheckpointScores(List<CheckpointScoreDTO> checkpointScores) {
         this.checkpointScores = checkpointScores;
+    }
+
+    public void addCheckpointScore(CheckpointScoreDTO checkpointScore) {
+        this.checkpointScores.add(checkpointScore);
     }
 }

@@ -6,17 +6,14 @@ import org.nhsrc.domain.State;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
-import org.nhsrc.dto.IndicatorDTO;
 import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.referenceDataImport.AssessmentChecklistData;
-import org.nhsrc.referenceDataImport.ExcelImporter;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
 import org.nhsrc.service.UserService;
-import org.nhsrc.web.contract.FacilityAssessmentExcelRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -96,7 +92,7 @@ public class FacilityAssessmentController {
         facilityAssessmentDTO.setEndDate(date);
         FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO, user);
 
-        AssessmentChecklistData assessmentChecklistData = excelImportService.parseAssessment(file.getInputStream(), facilityAssessmentDTO, facilityAssessment);
+        excelImportService.saveAssessment(file.getInputStream(), facilityAssessmentDTO, facilityAssessment);
         return new ResponseEntity<>(true, HttpStatus.CREATED);
     }
 }
