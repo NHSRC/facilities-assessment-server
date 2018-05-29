@@ -1,5 +1,6 @@
 package org.nhsrc.domain.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -43,6 +44,7 @@ public class User extends AbstractEntity {
     @Column(name = "user_type_reference_id")
     private int userTypeReferenceId;
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

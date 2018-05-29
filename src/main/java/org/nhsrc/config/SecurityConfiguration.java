@@ -22,7 +22,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-//    With constructor approach of auto-wiring it doesn't work
+    //    With constructor approach of auto-wiring it doesn't work
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -65,31 +65,31 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/ping").permitAll()
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/app/**").permitAll();
+        registry.anyRequest().authenticated().and().csrf().disable()
+                .formLogin().loginPage("/login").successHandler((request, response, authentication) -> {
+            logger.info("Login Successful");
+        }).failureHandler((request, response, exception) -> {
+            logger.info("Login Failed");
+        })
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .and().logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .and().exceptionHandling();
+
         if (isSecure) {
             registry.antMatchers("/loginSuccess").hasAuthority("USER");
             permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
             String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator"};
             permittedResourcesForOneDevice(semiProtectedResources, registry);
             permittedResourcesWithAuthority(semiProtectedResources, registry);
-            registry.antMatchers(HttpMethod.POST,"/api/facility-assessment/checklist").permitAll();
-            registry.antMatchers(HttpMethod.POST,"/api/facility-assessment/indicator").permitAll();
-            registry.antMatchers(HttpMethod.POST,"/api/facility-assessment").permitAll();
-
-            registry
-                    .anyRequest().authenticated().and().csrf().disable()
-                    .formLogin().loginPage("/login").successForwardUrl("/loginSuccess").successHandler((request, response, authentication) -> {
-                logger.info("Login Successful");
-            }).failureHandler((request, response, exception) -> {
-                logger.info("Login Failed");
-            })
-                    .usernameParameter("email")
-                    .passwordParameter("password")
-                    .and().logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .and().exceptionHandling();
+            permittedResourcesWithAuthority(new String[]{"/api/currentUser"}, registry);
+            registry.antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist").permitAll();
+            registry.antMatchers(HttpMethod.POST, "/api/facility-assessment/indicator").permitAll();
+            registry.antMatchers(HttpMethod.POST, "/api/facility-assessment").permitAll();
         } else {
-            registry.antMatchers(HttpMethod.POST,"/api/facility-assessment/**").permitAll();
-            registry.antMatchers(HttpMethod.POST,"/api/facility-assessment").permitAll();
+            registry.antMatchers(HttpMethod.POST, "/api/facility-assessment/**").permitAll();
+            registry.antMatchers(HttpMethod.POST, "/api/facility-assessment").permitAll();
             registry.antMatchers("/api/**").permitAll().and().csrf().disable();
         }
     }

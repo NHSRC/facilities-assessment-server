@@ -1,15 +1,19 @@
 package org.nhsrc.web.security;
 
 import org.nhsrc.domain.security.User;
+import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.UserService;
 import org.nhsrc.web.contract.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
+import java.security.Principal;
 
 @RestController
 public class UserController {
@@ -37,6 +41,12 @@ public class UserController {
         int userTypeId = userService.findIdForUserType(userRequest.getUserType(), userRequest.getUserTypeName());
         user.setUserTypeReferenceId(userTypeId);
         userService.saveUser(user);
+    }
+
+    @RequestMapping(value = "/api/currentUser", method = RequestMethod.GET)
+    public User loggedInUser(Principal principal) {
+        String name = principal.getName();
+        return userService.findUserByEmail(name);
     }
 
     @RequestMapping(value = "/loginSuccess", method = RequestMethod.GET)
