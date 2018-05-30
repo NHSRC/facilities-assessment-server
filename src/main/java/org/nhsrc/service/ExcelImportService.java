@@ -52,10 +52,11 @@ public class ExcelImportService {
         checkpointScores.forEach(checkpointScore -> {
             CheckpointScoreDTO checkpointScoreDTO = new CheckpointScoreDTO();
             String checkpointName = checkpointScore.getCheckpoint().getName();
-            String measurableElementName = checkpointScore.getCheckpoint().getMeasurableElement().getName();
-            List<Checkpoint> checkpoints = checkpointRepository.findAllByNameAndChecklistUuidAndMeasurableElementName(checkpointName, checklist.getUuid(), measurableElementName);
+            String measurableElementReference = checkpointScore.getCheckpoint().getMeasurableElement().getReference();
+            List<Checkpoint> checkpoints = checkpointRepository.findAllByNameAndChecklistUuidAndMeasurableElementReference(checkpointName, checklist.getUuid(), measurableElementReference);
             if (checkpoints.size() != 1) {
-                logger.error(String.format("%d checkpoints with same name=%s, found in checklist:%s, for ME:%s", checkpoints.size(), checkpointName, checklist.getUuid(), measurableElementName));
+//                logger.error(String.format("ME:%s", measurableElementName));
+                logger.error(String.format("ME:%s. %d checkpoints with same name=%s, found in checklist:%s", measurableElementReference, checkpoints.size(), checkpointName, checklist.getName()));
             }
             else {
                 checkpointScoreDTO.setCheckpoint(checkpoints.get(0).getUuid());

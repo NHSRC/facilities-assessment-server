@@ -24,5 +24,5 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     @RestResource(path = "forMeasurableElementAndChecklist", rel = "forMeasurableElementAndChecklist")
     Page<Checkpoint> findByMeasurableElementUuidAndChecklistUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("checklistUuid") UUID checklistUuid, @Param("measurableElementUuid") UUID measurableElementUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
-    List<Checkpoint> findAllByNameAndChecklistUuidAndMeasurableElementName(String name, UUID checklistUuid, String measurableElementName);
+    List<Checkpoint> findAllByNameAndChecklistUuidAndMeasurableElementReference(String name, UUID checklistUuid, String measurableElementReference);
 }
