@@ -10,10 +10,13 @@ import org.nhsrc.repository.AssessmentToolRepository;
 import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.CheckpointRepository;
 import org.nhsrc.repository.DepartmentRepository;
+import org.nhsrc.web.contract.FacilityAssessmentImportResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -26,20 +29,23 @@ public class ExcelImportService {
     private DepartmentRepository departmentRepository;
     private ChecklistRepository checklistRepository;
     private CheckpointRepository checkpointRepository;
+    private FacilityAssessmentService facilityAssessmentService;
     private static Logger logger = LoggerFactory.getLogger(ExcelImportService.class);
 
     @Autowired
-    public ExcelImportService(AssessmentToolRepository assessmentToolRepository, DepartmentRepository departmentRepository, ChecklistRepository checklistRepository, CheckpointRepository checkpointRepository) {
+    public ExcelImportService(AssessmentToolRepository assessmentToolRepository, DepartmentRepository departmentRepository, ChecklistRepository checklistRepository, CheckpointRepository checkpointRepository, FacilityAssessmentService facilityAssessmentService) {
         this.assessmentToolRepository = assessmentToolRepository;
         this.departmentRepository = departmentRepository;
         this.checklistRepository = checklistRepository;
         this.checkpointRepository = checkpointRepository;
+        this.facilityAssessmentService = facilityAssessmentService;
     }
 
-    public void saveAssessment(InputStream inputStream, FacilityAssessmentDTO facilityAssessmentDTO, FacilityAssessment facilityAssessment) throws Exception {
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void saveAssessment(InputStream inputStream, FacilityAssessment facilityAssessment, FacilityAssessmentImportResponse facilityAssessmentImportResponse) throws Exception {
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
         ExcelImporter excelImporter = new ExcelImporter(assessmentChecklistData);
-        AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
+        AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessment.getAssessmentTool().getUuid());
         excelImporter.importFile(inputStream, assessmentTool, 0, 1, true, facilityAssessment);
 
         List<CheckpointScore> checkpointScores = assessmentChecklistData.getCheckpointScores();
@@ -55,6 +61,7 @@ public class ExcelImportService {
             String measurableElementReference = checkpointScore.getCheckpoint().getMeasurableElement().getReference();
             List<Checkpoint> checkpoints = checkpointRepository.findAllByNameAndChecklistUuidAndMeasurableElementReference(checkpointName, checklist.getUuid(), measurableElementReference);
             if (checkpoints.size() != 1) {
+                facilityAssessmentImportResponse.addCheckpointInError(new FacilityAssessmentImportResponse.CheckpointInError(checkpointName, measurableElementReference));
 //                logger.error(String.format("ME:%s", measurableElementName));
                 logger.error(String.format("ME:%s. %d checkpoints with same name=%s, found in checklist:%s", measurableElementReference, checkpoints.size(), checkpointName, checklist.getName()));
             }
@@ -67,5 +74,6 @@ public class ExcelImportService {
                 checklistDTO.addCheckpointScore(checkpointScoreDTO);
             }
         });
+        facilityAssessmentService.saveChecklist(checklistDTO);
     }
 }

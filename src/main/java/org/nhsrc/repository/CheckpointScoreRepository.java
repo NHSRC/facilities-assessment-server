@@ -29,4 +29,6 @@ public interface CheckpointScoreRepository extends BaseRepository<CheckpointScor
 
     @RestResource(path = "byAssessmentId", rel = "byAssessmentId")
     Page<CheckpointScore> findByFacilityAssessmentId(@Param("assessmentId") int assessmentId, Pageable pageable);
+
+    List<CheckpointScore> findByFacilityAssessmentId(int assessmentId);
 }

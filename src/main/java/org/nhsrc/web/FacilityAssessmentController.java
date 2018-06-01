@@ -7,13 +7,13 @@ import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorListDTO;
-import org.nhsrc.referenceDataImport.AssessmentChecklistData;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
 import org.nhsrc.service.UserService;
+import org.nhsrc.web.contract.FacilityAssessmentImportResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -79,20 +80,40 @@ public class FacilityAssessmentController {
         return facilityAssessmentRepository.findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
     }
 
-    @RequestMapping(value = "facility-assessment/excel", method = RequestMethod.POST)
-    public ResponseEntity<?> submitAssessment(Principal principal, @RequestParam("assessmentFile") MultipartFile file, @RequestParam("facilityUuid") UUID facilityUuid, @RequestParam("assessmentTypeUuid") UUID assessmentTypeUuid, @RequestParam("assessmentToolUuid") UUID assessmentToolUuid) throws Exception {
+    @RequestMapping(value = "facility-assessment/excel/new", method = RequestMethod.POST)
+    @Transactional
+    public FacilityAssessmentImportResponse submitAssessment(Principal principal, @RequestParam("assessmentFile") MultipartFile file, @RequestParam("facilityUuid") UUID facilityUuid, @RequestParam("nonExistentFacilityName") String nonExistentFacilityName, @RequestParam("assessmentTypeUuid") UUID assessmentTypeUuid, @RequestParam("assessmentToolUuid") UUID assessmentToolUuid) throws Exception {
         User user = userRepository.findByEmail(principal.getName());
         FacilityAssessmentDTO facilityAssessmentDTO = new FacilityAssessmentDTO();
         facilityAssessmentDTO.setAssessmentTypeUUID(assessmentTypeUuid);
         facilityAssessmentDTO.setAssessmentTool(assessmentToolUuid);
         facilityAssessmentDTO.setFacility(facilityUuid);
+        facilityAssessmentDTO.setFacilityName(nonExistentFacilityName);
         facilityAssessmentDTO.setUuid(UUID.randomUUID());
         Date date = new Date();
         facilityAssessmentDTO.setStartDate(date);
         facilityAssessmentDTO.setEndDate(date);
         FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO, user);
 
-        excelImportService.saveAssessment(file.getInputStream(), facilityAssessmentDTO, facilityAssessment);
-        return new ResponseEntity<>(true, HttpStatus.CREATED);
+        FacilityAssessmentImportResponse facilityAssessmentImportResponse = new FacilityAssessmentImportResponse();
+        facilityAssessmentImportResponse.setFacilityAssessment(facilityAssessment);
+        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, facilityAssessmentImportResponse);
+        return facilityAssessmentImportResponse;
+    }
+
+    @RequestMapping(value = "facility-assessment/excel/update", method = RequestMethod.POST)
+    @Transactional
+    public FacilityAssessmentImportResponse submitAssessment(Principal principal, @RequestParam("assessmentFile") MultipartFile file, @RequestParam("facilityAssessmentUuid") UUID facilityAssessmentUuid) throws Exception {
+        User user = userRepository.findByEmail(principal.getName());
+        FacilityAssessmentImportResponse response = new FacilityAssessmentImportResponse();
+        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(facilityAssessmentUuid);
+        if (facilityAssessment == null) return response;
+
+        response.setFacilityAssessment(facilityAssessment);
+        facilityAssessmentService.clearCheckpointScores(facilityAssessment);
+        facilityAssessment.setUser(user);
+        facilityAssessmentRepository.save(facilityAssessment);
+        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, response);
+        return response;
     }
 }

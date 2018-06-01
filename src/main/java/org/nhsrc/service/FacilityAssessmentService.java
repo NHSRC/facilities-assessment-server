@@ -132,4 +132,9 @@ public class FacilityAssessmentService {
         });
         indicatorRepository.save(indicators);
     }
+
+    public void clearCheckpointScores(FacilityAssessment facilityAssessment) {
+        List<CheckpointScore> checkpointScores = checkpointScoreRepository.findByFacilityAssessmentId(facilityAssessment.getId());
+        checkpointScoreRepository.delete(checkpointScores);
+    }
 }
