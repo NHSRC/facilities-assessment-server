@@ -16,8 +16,7 @@ public class NHSRCChecklistCreator {
 
     @Test
     public void generateNHSRC_LAQSHYA() throws Exception {
-        generate("nhsrc/laqshya/LR10Feb.xlsx", "NQAS", "LAQSHYA", "nhsrc/output/LAQSHYA-NQAS-LR.sql", true);
-        generate("nhsrc/laqshya/OT10Feb.xlsx", "NQAS", "LAQSHYA", "nhsrc/output/LAQSHYA-NQAS-OT.sql", true);
+        generate("jss/OT-Laqshya.xlsx", "Maternity Services", "Maternity Services", "jss/output/Maternity-Services.sql", false);
     }
 
     private void generate(String inputFile, String assessmentToolName, String assessmentToolModeName, String outputFileName, boolean assessmentToolExists) throws Exception {
