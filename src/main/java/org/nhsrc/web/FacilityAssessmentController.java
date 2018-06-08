@@ -1,5 +1,6 @@
 package org.nhsrc.web;
 
+import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.CheckpointScore;
 import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.State;
@@ -7,6 +8,8 @@ import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorListDTO;
+import org.nhsrc.repository.ChecklistRepository;
+import org.nhsrc.repository.CheckpointScoreRepository;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.repository.security.UserRepository;
@@ -38,16 +41,20 @@ public class FacilityAssessmentController {
     private final UserRepository userRepository;
     private final StateRepository stateRepository;
     private FacilityAssessmentRepository facilityAssessmentRepository;
+    private ChecklistRepository checklistRepository;
+    private CheckpointScoreRepository checkpointScoreRepository;
     private UserService userService;
     private static Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
     private ExcelImportService excelImportService;
 
     @Autowired
-    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService) {
+    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, ChecklistRepository checklistRepository, CheckpointScoreRepository checkpointScoreRepository, UserService userService, ExcelImportService excelImportService) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
         this.stateRepository = stateRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
+        this.checklistRepository = checklistRepository;
+        this.checkpointScoreRepository = checkpointScoreRepository;
         this.userService = userService;
         this.excelImportService = excelImportService;
     }
@@ -82,7 +89,7 @@ public class FacilityAssessmentController {
 
     @RequestMapping(value = "facility-assessment/excel/new", method = RequestMethod.POST)
     @Transactional
-    public FacilityAssessmentImportResponse submitAssessment(Principal principal, @RequestParam("assessmentFile") MultipartFile file, @RequestParam("facilityUuid") UUID facilityUuid, @RequestParam("nonExistentFacilityName") String nonExistentFacilityName, @RequestParam("assessmentTypeUuid") UUID assessmentTypeUuid, @RequestParam("assessmentToolUuid") UUID assessmentToolUuid) throws Exception {
+    public FacilityAssessmentImportResponse submitAssessment(Principal principal, @RequestParam("assessmentFile") MultipartFile file, @RequestParam("facilityUuid") UUID facilityUuid, @RequestParam("nonExistentFacilityName") String nonExistentFacilityName, @RequestParam("assessmentTypeUuid") UUID assessmentTypeUuid, @RequestParam("assessmentToolUuid") UUID assessmentToolUuid, @RequestParam("checklistUuid") UUID checklistUuid) throws Exception {
         User user = userRepository.findByEmail(principal.getName());
         FacilityAssessmentDTO facilityAssessmentDTO = new FacilityAssessmentDTO();
         facilityAssessmentDTO.setAssessmentTypeUUID(assessmentTypeUuid);
@@ -97,7 +104,8 @@ public class FacilityAssessmentController {
 
         FacilityAssessmentImportResponse facilityAssessmentImportResponse = new FacilityAssessmentImportResponse();
         facilityAssessmentImportResponse.setFacilityAssessment(facilityAssessment);
-        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, facilityAssessmentImportResponse);
+        Checklist checklist = checklistRepository.findByUuid(checklistUuid);
+        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, checklist, facilityAssessmentImportResponse);
         return facilityAssessmentImportResponse;
     }
 
@@ -109,11 +117,15 @@ public class FacilityAssessmentController {
         FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(facilityAssessmentUuid);
         if (facilityAssessment == null) return response;
 
+        //Implemented only for laqshya right now, hence upload is one checklist at a time
+        CheckpointScore checkpointScore = checkpointScoreRepository.findFirstByFacilityAssessmentId(facilityAssessment.getId());
+
         response.setFacilityAssessment(facilityAssessment);
         facilityAssessmentService.clearCheckpointScores(facilityAssessment);
         facilityAssessment.setUser(user);
         facilityAssessmentRepository.save(facilityAssessment);
-        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, response);
+
+        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, checkpointScore.getChecklist(), response);
         return response;
     }
 }

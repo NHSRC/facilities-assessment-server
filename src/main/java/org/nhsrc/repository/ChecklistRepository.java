@@ -23,5 +23,6 @@ public interface ChecklistRepository extends BaseRepository<Checklist> {
     @RestResource(path = "forAssessmentTool", rel = "forAssessmentTool")
     Page<Checklist> findByAssessmentToolUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("assessmentToolUuid") UUID assessmentToolUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
-    Checklist findByNameAndAssessmentToolUuid(String name, UUID assessmentToolUuid);
+    @RestResource(path = "byAssessmentTool", rel = "byAssessmentTool")
+    Page<Checklist> findByAssessmentToolNameAndInactiveFalseOrderByName(@Param("assessmentToolName") String assessmentToolName, Pageable pageable);
 }
