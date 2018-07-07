@@ -10,8 +10,9 @@ help: ## This help dialog.
 	done
 
 database := facilities_assessment_$(dbSuffix)
-rr_version := 8
-response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
+rr_version := 9
+reference_response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
+client_response_folder := ../facilities-assessment-android-client/nhsrc/output/recorded-response/jsons/$(rr_version)
 port := 6001
 
 define _run_server
@@ -78,7 +79,7 @@ run_server_jss: build_server
 	$(call _run_server,cg,false,false)
 
 run_server_nhsrc_in_recording: clear_responses build_server
-	$(call _run_server,nhsrc,true,true)
+	$(call _run_server,nhsrc,true,false)
 
 test_server: reset_test_db
 	./gradlew build
@@ -101,9 +102,9 @@ clear_responses:
 	-rm -rf responses
 
 publish_responses:
-	-rm -rf $(response_folder)
-	-mkdir $(response_folder)
-	cp -R responses/* $(response_folder)/
+	-rm -rf $(reference_response_folder)
+	-mkdir $(reference_response_folder)
+	cp -R responses/* $(reference_response_folder)/
 # </scenario>
 
 

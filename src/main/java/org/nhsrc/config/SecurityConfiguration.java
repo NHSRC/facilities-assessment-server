@@ -64,7 +64,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/api/ping").permitAll()
                 .antMatchers("/registration").permitAll()
-                .antMatchers("/app/**").permitAll();
+                .antMatchers("/app/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/facility-assessment/indicator").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/facility-assessment/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/facility-assessment").permitAll();
+        permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
+
         registry.anyRequest().authenticated().and().csrf().disable()
                 .formLogin().loginPage("/login").successHandler((request, response, authentication) -> {
             logger.info("Login Successful");
@@ -79,17 +85,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         if (isSecure) {
             registry.antMatchers("/loginSuccess").hasAuthority("USER");
-            permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
             String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator"};
             permittedResourcesForOneDevice(semiProtectedResources, registry);
             permittedResourcesWithAuthority(semiProtectedResources, registry);
             permittedResourcesWithAuthority(new String[]{"/api/currentUser"}, registry);
-            registry.antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist").permitAll();
-            registry.antMatchers(HttpMethod.POST, "/api/facility-assessment/indicator").permitAll();
-            registry.antMatchers(HttpMethod.POST, "/api/facility-assessment").permitAll();
         } else {
-            registry.antMatchers(HttpMethod.POST, "/api/facility-assessment/**").permitAll();
-            registry.antMatchers(HttpMethod.POST, "/api/facility-assessment").permitAll();
             registry.antMatchers("/api/**").permitAll().and().csrf().disable();
         }
     }

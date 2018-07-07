@@ -57,6 +57,6 @@ public class NHSRCDataCreator {
         ChecklistCreator checklistCreator = new ChecklistCreator();
         checklistCreator.performImport(checklistFile, assessmentChecklistData);
         File outputFile = new File(checklistsProjectDirectory, String.format("output/%s", outputFileName));
-        checklistCreator.generate(assessmentChecklistData, outputFile, true);
+        checklistCreator.generate(assessmentChecklistData, outputFile, true, false);
     }
 }

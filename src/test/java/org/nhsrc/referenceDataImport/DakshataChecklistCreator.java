@@ -23,6 +23,6 @@ public class DakshataChecklistCreator {
         ChecklistCreator checklistCreator = new ChecklistCreator();
         checklistCreator.performImport(checklistFile, assessmentChecklistData);
         File outputFile = new File(checklistsProjectDirectory, String.format("output/%s", "forms.sql"));
-        checklistCreator.generate(assessmentChecklistData, outputFile, false);
+        checklistCreator.generate(assessmentChecklistData, outputFile, false, false);
     }
 }
