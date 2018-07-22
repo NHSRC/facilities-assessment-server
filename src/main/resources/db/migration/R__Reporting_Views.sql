@@ -25,7 +25,7 @@ CREATE OR REPLACE VIEW checkpoint_scores AS
     LEFT OUTER JOIN assessment_tool ON fa.assessment_tool_id = assessment_tool.id
     LEFT OUTER JOIN assessment_tool_mode ON assessment_tool_mode.id = assessment_tool.assessment_tool_mode_id;
 
-CREATE VIEW checkpoint_scores_aoc AS
+CREATE or replace VIEW checkpoint_scores_aoc AS
   SELECT
     assessment_tool_mode.id                                  AS assessment_type,
     fa.series_name                                           AS assessment_number,
@@ -38,7 +38,13 @@ CREATE VIEW checkpoint_scores_aoc AS
     facility_type.id                                         AS facility_type,
     s.reference                                              AS standard,
     s.name                                                   AS standard_name,
-    format('[%s, %s] - %s', aoc.reference, aoc.name, s.name) AS standard_description
+    format('[%s, %s] - %s', aoc.reference, aoc.name, s.name) AS standard_description,
+    fa.end_date                                              AS assessment_date,
+    facility.name                                            AS facility_name,
+    fa.id                                                    as facility_assessment_id,
+    assessment_tool_mode.name                                as assessment_tool_mode_name,
+    aoc.reference                                            as area_of_concern_reference,
+    aoc.id                                       as area_of_concern_id
   FROM checkpoint_score cs
     INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
     LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id
