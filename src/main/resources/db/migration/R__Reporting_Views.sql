@@ -44,7 +44,8 @@ CREATE or replace VIEW checkpoint_scores_aoc AS
     fa.id                                                    as facility_assessment_id,
     assessment_tool_mode.name                                as assessment_tool_mode_name,
     aoc.reference                                            as area_of_concern_reference,
-    aoc.id                                       as area_of_concern_id
+    aoc.id                                                   as area_of_concern_id,
+    facility_type.name                                       as faclity_type_name
   FROM checkpoint_score cs
     INNER JOIN checkpoint c ON cs.checkpoint_id = c.id
     LEFT OUTER JOIN checklist cl ON cl.id = cs.checklist_id

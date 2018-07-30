@@ -14,6 +14,9 @@ public class AssessmentChecklistData {
     private FacilityAssessment assessment;
     private State state;
 
+    public AssessmentChecklistData() {
+    }
+
     public void addDepartment(Department department) {
         this.departments.add(department);
     }
