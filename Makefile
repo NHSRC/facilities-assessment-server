@@ -9,13 +9,14 @@ help: ## This help dialog.
 	    printf "%-30s %s\n" $$help_command $$help_info ; \
 	done
 
-database := facilities_assessment_$(db)
-rr_version := 4
-response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
+database := facilities_assessment_$(dbSuffix)
+rr_version := 9
+reference_response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
+client_response_folder := ../facilities-assessment-android-client/nhsrc/output/recorded-response/jsons/$(rr_version)
 port := 6001
 
 define _run_server
-	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=$(port) --recording.mode=$2
+	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
 endef
 
 
@@ -60,20 +61,40 @@ seed_test_db:
 schema_clean:
 	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment -schemas=public clean
 
-schema_migrate: ## Requires argument - db
-	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/$(db) -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
+schema_migrate:
+	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/$(database) -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
 # </schema>
 
 # <server>
 build_server:
-	./gradlew build -x test
+	./gradlew clean build -x test
 
-run_server: build_server
-	$(call _run_server,nhsrc,false)
+run_server_nhsrc: build_server
+	$(call _run_server,nhsrc,false,true)
+
+run_server_nhsrc_insecure: build_server
+	$(call _run_server,nhsrc,false,false)
+
+run_server_jss: build_server
+	$(call _run_server,cg,false,false)
+
+run_server_nhsrc_in_recording: clear_responses build_server
+	$(call _run_server,nhsrc,true,false)
 
 test_server: reset_test_db
 	./gradlew build
+
+open_test_results:
+	open build/reports/tests/index.html
 # </server>
+
+# <jar>
+publish_jar_dropbox_jss:
+	cp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar ~/Dropbox/Public/Gunak/dev/jss/
+
+publish_jar_prod_nhsrc:
+	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar gunak-main:/home/nhsrc1/facilities-assessment-host/downloads/
+# </jar>
 
 
 # <scenario>
@@ -81,9 +102,9 @@ clear_responses:
 	-rm -rf responses
 
 publish_responses:
-	-rm -rf $(response_folder)
-	-mkdir $(response_folder)
-	cp -R responses/* $(response_folder)/
+	-rm -rf $(reference_response_folder)
+	-mkdir $(reference_response_folder)
+	cp -R responses/* $(reference_response_folder)/
 # </scenario>
 
 
@@ -91,9 +112,6 @@ publish_responses:
 create_empty_db_nhsrc:
 	make reset_db database=$(database)
 	psql -Unhsrc $(database) < src/test/resources/deleteDefaultData.sql
-
-start_in_record_mode: clear_responses build_server
-	$(call _run_server,nhsrc,true)
 # </scenario>
 
 clean:

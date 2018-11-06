@@ -21,4 +21,6 @@ import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<Checkpoint> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
+    Checkpoint findByNameAndChecklistName(String name, String checklistName);
 }

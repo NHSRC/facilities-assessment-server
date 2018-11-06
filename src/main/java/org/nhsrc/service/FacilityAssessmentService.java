@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -46,6 +47,9 @@ public class FacilityAssessmentService {
 
     public FacilityAssessment save(FacilityAssessmentDTO facilityAssessmentDTO) {
         Facility facility = facilityRepository.findByUuid(facilityAssessmentDTO.getFacility());
+        if (facility == null) {
+            facility = facilityRepository.findByName(facilityAssessmentDTO.getFacilityName());
+        }
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
         AssessmentType assessmentType = assessmentTypeRepository.findByUuid(facilityAssessmentDTO.getAssessmentTypeUUID());
 

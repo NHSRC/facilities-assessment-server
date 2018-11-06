@@ -20,7 +20,7 @@ public class FacilityAssessmentDevice extends AbstractEntity {
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity = AreaOfConcern.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "facility_assessment_id")
     @NotNull
     private FacilityAssessment facilityAssessment;

@@ -22,4 +22,5 @@ public interface FacilityRepository extends BaseRepository<Facility> {
     @RestResource(path = "lastModifiedByState", rel = "lastModifiedByState")
     Page<Facility> findByDistrictStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
+    Facility findByName(String name);
 }

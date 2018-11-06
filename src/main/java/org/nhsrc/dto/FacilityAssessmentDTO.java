@@ -13,6 +13,8 @@ public class FacilityAssessmentDTO implements Serializable {
 
     private UUID facility;
 
+    private String facilityName;
+
     private UUID assessmentTool;
 
     @JsonFormat(pattern = DATE_TIME_FORMAT_STRING)
@@ -89,5 +91,13 @@ public class FacilityAssessmentDTO implements Serializable {
 
     public void setAssessmentTypeUUID(UUID assessmentTypeUUID) {
         this.assessmentTypeUUID = assessmentTypeUUID;
+    }
+
+    public String getFacilityName() {
+        return facilityName;
+    }
+
+    public void setFacilityName(String facilityName) {
+        this.facilityName = facilityName;
     }
 }
