@@ -61,7 +61,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.
                 authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/api/login").permitAll()
                 .antMatchers("/api/ping").permitAll()
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/app/**").permitAll()
@@ -72,7 +72,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
 
         registry.anyRequest().authenticated().and().csrf().disable()
-                .formLogin().loginPage("/login").successHandler((request, response, authentication) -> {
+                .formLogin().loginPage("/api/login").successHandler((request, response, authentication) -> {
             logger.info("Login Successful");
         }).failureHandler((request, response, exception) -> {
             logger.info("Login Failed");
@@ -80,11 +80,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .and().logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
                 .and().exceptionHandling();
 
         if (isSecure) {
-            registry.antMatchers("/loginSuccess").hasAuthority("USER");
+            registry.antMatchers("/api/loginSuccess").hasAuthority("USER");
             String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator"};
             permittedResourcesForOneDevice(semiProtectedResources, registry);
             permittedResourcesWithAuthority(semiProtectedResources, registry);

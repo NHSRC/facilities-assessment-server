@@ -24,7 +24,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/registration", method = RequestMethod.POST)
     @Transactional
     public void createNewUser(@RequestBody UserRequest userRequest) {
         User user = userService.findUserByEmail(userRequest.getEmail());
@@ -49,7 +49,7 @@ public class UserController {
         return userService.findUserByEmail(name);
     }
 
-    @RequestMapping(value = "/loginSuccess", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/loginSuccess", method = RequestMethod.GET)
     public String loginSuccess() {
         return "Successful Login";
     }
