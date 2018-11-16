@@ -50,6 +50,11 @@ public class Standard extends AbstractEntity {
         return areaOfConcern;
     }
 
+    @JsonProperty
+    public long getAreaOfConcernId() {
+        return this.areaOfConcern.getId();
+    }
+
     public void setAreaOfConcern(AreaOfConcern areaOfConcern) {
         this.areaOfConcern = areaOfConcern;
     }

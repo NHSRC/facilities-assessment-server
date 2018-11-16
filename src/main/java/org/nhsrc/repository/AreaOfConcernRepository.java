@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -24,4 +25,7 @@ public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
 
     @RestResource(path = "forChecklist", rel = "forChecklist")
     Page<AreaOfConcern> findByChecklistsUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("checklistUuid") UUID checklistUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
+    @RestResource(path = "findAllById", rel = "ids")
+    List<AreaOfConcern> findByIdIn(@Param("ids") Integer[] ids);
 }
