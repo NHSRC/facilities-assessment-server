@@ -30,5 +30,5 @@ public interface DistrictRepository extends BaseRepository<District> {
     List<District> findByIdIn(@Param("ids") Integer[] ids);
 
     @RestResource(path = "findByState", rel = "ids")
-    List<District> findByStateId(@Param("stateId") Integer stateId);
+    Page<District> findByStateId(@Param("stateId") Integer stateId, Pageable pageable);
 }

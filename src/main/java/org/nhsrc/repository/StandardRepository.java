@@ -30,5 +30,5 @@ public interface StandardRepository extends BaseRepository<Standard> {
     List<Standard> findByIdIn(@Param("ids") Integer[] ids);
 
     @RestResource(path = "findByStandard", rel = "ids")
-    List<Standard> findByAreaOfConcernId(@Param("areaOfConcernId") Long areaOfConcernId);
+    Page<Standard> findByAreaOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
 }

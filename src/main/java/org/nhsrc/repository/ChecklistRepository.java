@@ -32,5 +32,5 @@ public interface ChecklistRepository extends BaseRepository<Checklist> {
     List<Checklist> findByIdIn(@Param("ids") Integer[] ids);
 
     @RestResource(path = "findByAssessmentTool", rel = "ids")
-    List<Checklist> findByAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId);
+    Page<Checklist> findByAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 }

@@ -31,5 +31,5 @@ public interface MeasurableElementRepository extends BaseRepository<MeasurableEl
     List<MeasurableElement> findByIdIn(@Param("ids") Integer[] ids);
 
     @RestResource(path = "findByStandard", rel = "findByStandard")
-    List<MeasurableElement> findByStandardId(@Param("standardId") Long standardId);
+    Page<MeasurableElement> findByStandardId(@Param("standardId") Integer standardId, Pageable pageable);
 }

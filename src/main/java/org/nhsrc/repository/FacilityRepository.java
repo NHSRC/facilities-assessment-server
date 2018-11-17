@@ -33,8 +33,8 @@ public interface FacilityRepository extends BaseRepository<Facility> {
     List<Facility> findByIdIn(@Param("ids") Integer[] ids);
 
     @RestResource(path = "findByFacilityType", rel = "ids")
-    List<Facility> findByFacilityTypeId(@Param("facilityTypeId") Integer facilityTypeId);
+    Page<Facility> findByFacilityTypeId(@Param("facilityTypeId") Integer facilityTypeId, Pageable pageable);
 
     @RestResource(path = "findByDistrict", rel = "ids")
-    List<Facility> findByDistrictId(@Param("districtId") Integer districtId);
+    Page<Facility> findByDistrictId(@Param("districtId") Integer districtId, Pageable pageable);
 }
