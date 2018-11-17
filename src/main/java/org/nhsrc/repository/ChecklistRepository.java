@@ -1,6 +1,7 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.Standard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -25,4 +27,10 @@ public interface ChecklistRepository extends BaseRepository<Checklist> {
 
     @RestResource(path = "byAssessmentTool", rel = "byAssessmentTool")
     Page<Checklist> findByAssessmentToolNameAndInactiveFalseOrderByName(@Param("assessmentToolName") String assessmentToolName, Pageable pageable);
+
+    @RestResource(path = "findAllById", rel = "ids")
+    List<Checklist> findByIdIn(@Param("ids") Integer[] ids);
+
+    @RestResource(path = "findByAssessmentTool", rel = "ids")
+    List<Checklist> findByAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId);
 }

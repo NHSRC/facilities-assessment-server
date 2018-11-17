@@ -54,6 +54,16 @@ public class Facility extends AbstractEntity {
         return facilityType;
     }
 
+    @JsonProperty("facilityTypeId")
+    public long _getFacilityTypeId() {
+        return this.facilityType.getId();
+    }
+
+    @JsonProperty("districtId")
+    public long _getDistrictId() {
+        return this.district.getId();
+    }
+
     public void setFacilityType(FacilityType facilityType) {
         this.facilityType = facilityType;
     }

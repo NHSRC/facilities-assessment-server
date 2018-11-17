@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -24,4 +25,10 @@ public interface DistrictRepository extends BaseRepository<District> {
 
     @RestResource(path = "byState", rel = "byState")
     Page<District> findByStateNameOrderByName(@Param("stateName") String stateName, Pageable pageable);
+
+    @RestResource(path = "findAllById", rel = "ids")
+    List<District> findByIdIn(@Param("ids") Integer[] ids);
+
+    @RestResource(path = "findByState", rel = "ids")
+    List<District> findByStateId(@Param("stateId") Integer stateId);
 }

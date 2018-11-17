@@ -167,6 +167,11 @@ public class Checkpoint extends AbstractEntity {
         this.scoreLevels = scoreLevels;
     }
 
+    @JsonProperty("measurableElementId")
+    public long _getMeasurableElementId() {
+        return this.measurableElement.getId();
+    }
+
     @Override
     public String toString() {
         return "Checkpoint{" +

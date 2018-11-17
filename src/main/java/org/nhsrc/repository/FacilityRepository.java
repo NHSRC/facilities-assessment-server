@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -27,4 +28,13 @@ public interface FacilityRepository extends BaseRepository<Facility> {
 
     @RestResource(path = "byDistrict", rel = "byDistrict")
     Page<Facility> findByDistrictNameOrderByName(@Param("districtName") String districtName, Pageable pageable);
+
+    @RestResource(path = "findAllById", rel = "ids")
+    List<Facility> findByIdIn(@Param("ids") Integer[] ids);
+
+    @RestResource(path = "findByFacilityType", rel = "ids")
+    List<Facility> findByFacilityTypeId(@Param("facilityTypeId") Integer facilityTypeId);
+
+    @RestResource(path = "findByDistrict", rel = "ids")
+    List<Facility> findByDistrictId(@Param("districtId") Integer districtId);
 }

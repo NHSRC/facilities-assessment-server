@@ -49,6 +49,11 @@ public class Checklist extends AbstractEntity {
         return assessmentTool;
     }
 
+    @JsonProperty("assessmentToolId")
+    public long _getAssessmentToolId() {
+        return this.assessmentTool.getId();
+    }
+
     public void setAssessmentTool(AssessmentTool assessmentTool) {
         this.assessmentTool = assessmentTool;
     }

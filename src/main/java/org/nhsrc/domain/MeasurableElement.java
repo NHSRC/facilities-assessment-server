@@ -56,6 +56,11 @@ public class MeasurableElement extends AbstractEntity {
         return standard;
     }
 
+    @JsonProperty("standardId")
+    public long _getStandardId() {
+        return this.standard.getId();
+    }
+
     public void setStandard(Standard standard) {
         this.standard = standard;
     }

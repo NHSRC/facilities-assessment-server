@@ -43,6 +43,11 @@ public class District extends AbstractEntity {
         return state;
     }
 
+    @JsonProperty("stateId")
+    public long _getStateId() {
+        return this.state.getId();
+    }
+
     public void setState(State state) {
         this.state = state;
     }

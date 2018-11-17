@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
@@ -31,4 +32,10 @@ public interface AssessmentToolRepository extends BaseRepository<AssessmentTool>
     Page<AssessmentTool> findByAssessmentToolModeNameOrderByNameAsc(@Param("assessmentToolModeName") String assessmentToolModeName, Pageable pageable);
 
     AssessmentTool findByName(String name);
+
+    @RestResource(path = "findAllById", rel = "ids")
+    List<AssessmentTool> findByIdIn(@Param("ids") Integer[] ids);
+
+    @RestResource(path = "findByAssessmentTool", rel = "ids")
+    List<AssessmentTool> findByAssessmentToolModeId(@Param("assessmentToolModeId") Integer assessmentToolModeId);
 }
