@@ -1,6 +1,5 @@
 package org.nhsrc.repository;
 
-import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

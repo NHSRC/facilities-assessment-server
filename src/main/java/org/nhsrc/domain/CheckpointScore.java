@@ -1,6 +1,7 @@
 package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -54,6 +55,11 @@ public class CheckpointScore extends AbstractScoreEntity {
 
     public FacilityAssessment getFacilityAssessment() {
         return facilityAssessment;
+    }
+
+    @JsonProperty("facilityAssessmentId")
+    public long _getFacilityAssessmentId() {
+        return this.facilityAssessment.getId();
     }
 
     public void setFacilityAssessment(FacilityAssessment facilityAssessment) {

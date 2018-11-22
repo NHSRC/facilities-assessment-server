@@ -2,6 +2,7 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.joda.time.DateTime;
@@ -106,6 +107,21 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     public AssessmentTool getAssessmentTool() {
         return assessmentTool;
+    }
+
+    @JsonProperty("assessmentToolId")
+    public long _getAssessmentToolId() {
+        return this.assessmentTool.getId();
+    }
+
+    @JsonProperty("FacilityId")
+    public long _getFacilityId() {
+        return this.facility.getId();
+    }
+
+    @JsonProperty("assessmentTypeId")
+    public long _getAssessmentTypeId() {
+        return this.assessmentType.getId();
     }
 
     public void setAssessmentTool(AssessmentTool assessmentTool) {

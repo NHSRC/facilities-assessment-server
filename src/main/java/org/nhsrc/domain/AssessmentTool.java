@@ -83,6 +83,11 @@ public class AssessmentTool extends AbstractEntity {
         return assessmentToolMode;
     }
 
+    @JsonProperty("assessmentToolModeId")
+    public long _getAssessmentToolModeId() {
+        return this.assessmentToolMode.getId();
+    }
+
     @Override
     public String toString() {
         return "AssessmentTool{" +

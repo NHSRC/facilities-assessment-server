@@ -33,9 +33,9 @@ public interface AssessmentToolRepository extends BaseRepository<AssessmentTool>
 
     AssessmentTool findByName(String name);
 
-    @RestResource(path = "findAllById", rel = "ids")
+    @RestResource(path = "findAllById", rel = "findAllById")
     List<AssessmentTool> findByIdIn(@Param("ids") Integer[] ids);
 
-    @RestResource(path = "findByAssessmentTool", rel = "ids")
-    List<AssessmentTool> findByAssessmentToolModeId(@Param("assessmentToolModeId") Integer assessmentToolModeId);
+    @RestResource(path = "findByAssessmentToolMode", rel = "findByAssessmentToolMode")
+    Page<AssessmentTool> findByAssessmentToolModeId(@Param("assessmentToolModeId") Integer assessmentToolModeId, Pageable pageable);
 }

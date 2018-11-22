@@ -28,9 +28,9 @@ public interface ChecklistRepository extends BaseRepository<Checklist> {
     @RestResource(path = "byAssessmentTool", rel = "byAssessmentTool")
     Page<Checklist> findByAssessmentToolNameAndInactiveFalseOrderByName(@Param("assessmentToolName") String assessmentToolName, Pageable pageable);
 
-    @RestResource(path = "findAllById", rel = "ids")
+    @RestResource(path = "findAllById", rel = "findAllById")
     List<Checklist> findByIdIn(@Param("ids") Integer[] ids);
 
-    @RestResource(path = "findByAssessmentTool", rel = "ids")
+    @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
     Page<Checklist> findByAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 }

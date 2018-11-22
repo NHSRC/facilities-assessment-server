@@ -29,12 +29,12 @@ public interface FacilityRepository extends BaseRepository<Facility> {
     @RestResource(path = "byDistrict", rel = "byDistrict")
     Page<Facility> findByDistrictNameOrderByName(@Param("districtName") String districtName, Pageable pageable);
 
-    @RestResource(path = "findAllById", rel = "ids")
+    @RestResource(path = "findAllById", rel = "findAllById")
     List<Facility> findByIdIn(@Param("ids") Integer[] ids);
 
-    @RestResource(path = "findByFacilityType", rel = "ids")
+    @RestResource(path = "findByFacilityType", rel = "findByFacilityType")
     Page<Facility> findByFacilityTypeId(@Param("facilityTypeId") Integer facilityTypeId, Pageable pageable);
 
-    @RestResource(path = "findByDistrict", rel = "ids")
+    @RestResource(path = "findByDistrict", rel = "findByDistrict")
     Page<Facility> findByDistrictId(@Param("districtId") Integer districtId, Pageable pageable);
 }

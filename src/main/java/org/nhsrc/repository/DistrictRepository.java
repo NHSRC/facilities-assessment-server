@@ -26,9 +26,9 @@ public interface DistrictRepository extends BaseRepository<District> {
     @RestResource(path = "byState", rel = "byState")
     Page<District> findByStateNameOrderByName(@Param("stateName") String stateName, Pageable pageable);
 
-    @RestResource(path = "findAllById", rel = "ids")
+    @RestResource(path = "findAllById", rel = "findAllById")
     List<District> findByIdIn(@Param("ids") Integer[] ids);
 
-    @RestResource(path = "findByState", rel = "ids")
+    @RestResource(path = "findByState", rel = "findByState")
     Page<District> findByStateId(@Param("stateId") Integer stateId, Pageable pageable);
 }

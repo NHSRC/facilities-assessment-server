@@ -32,4 +32,7 @@ public interface CheckpointScoreRepository extends BaseRepository<CheckpointScor
 
     List<CheckpointScore> findByFacilityAssessmentId(int assessmentId);
     CheckpointScore findFirstByFacilityAssessmentId(int assessmentId);
+
+    @RestResource(path = "findAllById", rel = "findAllById")
+    List<CheckpointScore> findByIdIn(@Param("ids") Integer[] ids);
 }

@@ -79,6 +79,11 @@ public class Checkpoint extends AbstractEntity {
         return checklist;
     }
 
+    @JsonProperty("checklistId")
+    public long _getChecklistId() {
+        return this.checklist.getId();
+    }
+
     public void setChecklist(Checklist checklist) {
         this.checklist = checklist;
     }

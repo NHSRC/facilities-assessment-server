@@ -27,9 +27,9 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
 
     List<Checkpoint> findAllByNameAndChecklistUuidAndMeasurableElementReference(String name, UUID checklistUuid, String measurableElementReference);
 
-    @RestResource(path = "findAllById", rel = "ids")
+    @RestResource(path = "findAllById", rel = "findAllById")
     List<Checkpoint> findByIdIn(@Param("ids") Integer[] ids);
 
-    @RestResource(path = "findByStandard", rel = "ids")
-    List<Checkpoint> findByMeasurableElementId(@Param("measurableElementId") Integer measurableElementId);
+    @RestResource(path = "findByStandard", rel = "findByStandard")
+    Page<Checkpoint> findByMeasurableElementId(@Param("measurableElementId") Integer measurableElementId, Pageable pageable);
 }
