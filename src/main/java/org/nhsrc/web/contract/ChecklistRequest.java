@@ -4,7 +4,9 @@ public class ChecklistRequest {
     private String uuid;
     private Boolean inactive;
     private String name;
+    private int assessmentToolId;
     private String assessmentToolUUID;
+    private int departmentId;
     private String departmentUUID;
     private String[] areasOfConcernUUIDs;
 
@@ -49,10 +51,26 @@ public class ChecklistRequest {
     }
 
     public String[] getAreasOfConcernUUIDs() {
-        return areasOfConcernUUIDs;
+        return areasOfConcernUUIDs == null ? new String[0] : areasOfConcernUUIDs;
     }
 
     public void setAreasOfConcernUUIDs(String[] areasOfConcernUUIDs) {
         this.areasOfConcernUUIDs = areasOfConcernUUIDs;
+    }
+
+    public int getAssessmentToolId() {
+        return assessmentToolId;
+    }
+
+    public void setAssessmentToolId(int assessmentToolId) {
+        this.assessmentToolId = assessmentToolId;
+    }
+
+    public int getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(int departmentId) {
+        this.departmentId = departmentId;
     }
 }

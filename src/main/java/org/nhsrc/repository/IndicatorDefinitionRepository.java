@@ -24,6 +24,6 @@ public interface IndicatorDefinitionRepository extends BaseRepository<IndicatorD
     @RestResource(path = "findAllById", rel = "findAllById")
     List<IndicatorDefinition> findByIdIn(@Param("ids") Integer[] ids);
 
-    @RestResource(path = "findByStandard", rel = "findByStandard")
+    @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
     Page<IndicatorDefinition> findByAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 }

@@ -62,6 +62,11 @@ public class Checklist extends AbstractEntity {
         return department;
     }
 
+    @JsonProperty("departmentId")
+    public long getDepartmentId() {
+        return this.department.getId();
+    }
+
     public void setDepartment(Department department) {
         this.department = department;
     }

@@ -30,6 +30,9 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     @RestResource(path = "findAllById", rel = "findAllById")
     List<Checkpoint> findByIdIn(@Param("ids") Integer[] ids);
 
-    @RestResource(path = "findByStandard", rel = "findByStandard")
+    @RestResource(path = "findByMeasurableElement", rel = "findByMeasurableElement")
     Page<Checkpoint> findByMeasurableElementId(@Param("measurableElementId") Integer measurableElementId, Pageable pageable);
+
+    @RestResource(path = "findByChecklist", rel = "findByChecklist")
+    Page<Checkpoint> findByChecklistId(@Param("checklistId") Integer checklistId, Pageable pageable);
 }

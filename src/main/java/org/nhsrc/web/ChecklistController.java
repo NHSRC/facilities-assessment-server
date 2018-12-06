@@ -1,10 +1,8 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Checklist;
-import org.nhsrc.domain.Facility;
 import org.nhsrc.repository.*;
 import org.nhsrc.web.contract.ChecklistRequest;
-import org.nhsrc.web.contract.FacilityRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,23 +28,37 @@ public class ChecklistController {
         this.areaOfConcernRepository = areaOfConcernRepository;
     }
 
-    @RequestMapping(value = "/checklists", method = RequestMethod.POST)
+    @RequestMapping(value = "/checklists", method = RequestMethod.PUT)
     @Transactional
-    void save(@RequestBody ChecklistRequest checklistRequest) {
-        Checklist checklist = checklistRepository.findByUuid(UUID.fromString(checklistRequest.getUuid()));
+    public Checklist update(@RequestBody ChecklistRequest checklistRequest) {
+        return this.save(checklistRequest);
+    }
+
+    @RequestMapping(value = "checklists", method = RequestMethod.POST)
+    @Transactional
+    Checklist save(@RequestBody ChecklistRequest checklistRequest) {
+        Checklist checklist;
+        if (checklistRequest.getUuid() == null) {
+            checklist = new Checklist();
+            checklist.setUuid(UUID.randomUUID());
+        } else {
+            checklist = checklistRepository.findByUuid(UUID.fromString(checklistRequest.getUuid()));
+        }
         if (checklist == null) {
             checklist = new Checklist();
             checklist.setUuid(UUID.fromString(checklistRequest.getUuid()));
         }
+
         checklist.setName(checklistRequest.getName());
-        checklist.setDepartment(departmentRepository.findByUuid(UUID.fromString(checklistRequest.getDepartmentUUID())));
-        checklist.setAssessmentTool(assessmentToolRepository.findByUuid(UUID.fromString(checklistRequest.getAssessmentToolUUID())));
+
+        checklist.setDepartment(Repository.findByUuidOrId(checklistRequest.getDepartmentUUID(), checklistRequest.getDepartmentId(), departmentRepository));
+        checklist.setAssessmentTool(Repository.findByUuidOrId(checklistRequest.getAssessmentToolUUID(), checklistRequest.getAssessmentToolId(), assessmentToolRepository));
 
         String[] areasOfConcernUUIDs = checklistRequest.getAreasOfConcernUUIDs();
         for (String areaOfConcernUUID : areasOfConcernUUIDs) {
             checklist.addAreaOfConcern(areaOfConcernRepository.findByUuid(UUID.fromString(areaOfConcernUUID)));
         }
 
-        checklistRepository.save(checklist);
+        return checklistRepository.save(checklist);
     }
 }
