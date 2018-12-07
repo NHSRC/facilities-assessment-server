@@ -71,19 +71,27 @@ public class FacilityAssessmentService {
         FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(checklistDTO.getFacilityAssessment());
         List<CheckpointScore> checkpointScores = new ArrayList<>();
         checklistDTO.getCheckpointScores().forEach(checkpointScoreDTO -> {
-            Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
-            CheckpointScore checkpointScore = checkpointScoreRepository.findByCheckpointAndFacilityAssessmentAndChecklist(checkpoint, facilityAssessment, checklist);
-            if (checkpointScore == null) {
-                checkpointScore = new CheckpointScore();
-                checkpointScore.setFacilityAssessment(facilityAssessment);
-                checkpointScore.setChecklist(checklist);
-                checkpointScore.setCheckpoint(checkpoint);
-                checkpointScore.setUuid(checkpointScoreDTO.getUuid());
+            UUID checkpointUuid = checkpointScoreDTO.getCheckpoint();
+            if (checkpointUuid == null || checkpointUuid.toString().isEmpty()) {
+                System.err.println("No checkpoint specified");
             }
-            checkpointScore.setScore(checkpointScoreDTO.getScore());
-            checkpointScore.setNa(checkpointScoreDTO.getNa());
-            checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
-            checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
+            Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointUuid);
+            if (checkpoint != null) {
+                CheckpointScore checkpointScore = checkpointScoreRepository.findByCheckpointAndFacilityAssessmentAndChecklist(checkpoint, facilityAssessment, checklist);
+                if (checkpointScore == null) {
+                    checkpointScore = new CheckpointScore();
+                    checkpointScore.setFacilityAssessment(facilityAssessment);
+                    checkpointScore.setChecklist(checklist);
+                    checkpointScore.setCheckpoint(checkpoint);
+                    checkpointScore.setUuid(checkpointScoreDTO.getUuid());
+                }
+                checkpointScore.setScore(checkpointScoreDTO.getScore());
+                checkpointScore.setNa(checkpointScoreDTO.getNa());
+                checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
+                checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
+            } else {
+                System.err.println("CHECKPOINT NOT FOUND!!!!");
+            }
         });
         return checkpointScores;
     }
