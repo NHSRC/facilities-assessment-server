@@ -19,6 +19,9 @@ public class MeasurableElement extends AbstractEntity {
     @Column(name = "reference", unique = true, nullable = false)
     private String reference;
 
+    @Column(name = "ref_num", nullable = false)
+    private double refAsNumber;
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "measurableElement")
     private Set<Checkpoint> checkpoints = new HashSet<>();
 
@@ -42,6 +45,11 @@ public class MeasurableElement extends AbstractEntity {
 
     public void setReference(String reference) {
         this.reference = reference;
+        this.refAsNumber = Double.parseDouble(reference.substring(1));
+    }
+
+    public double getRefAsNumber() {
+        return refAsNumber;
     }
 
     public Set<Checkpoint> getCheckpoints() {
