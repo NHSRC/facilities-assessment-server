@@ -27,9 +27,9 @@ public class AssessmentToolController {
         this.assessmentToolModeRepository = assessmentToolModeRepository;
     }
 
-    @RequestMapping(value = "/assessmentTools", method = RequestMethod.POST)
+    @RequestMapping(value = "/assessmentTools", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    void save(@RequestBody AssessmentToolRequest assessmentToolRequest) {
+    public AssessmentTool save(@RequestBody AssessmentToolRequest assessmentToolRequest) {
         AssessmentToolMode assessmentToolMode = assessmentToolModeRepository.findByName(assessmentToolRequest.getMode());
         if (assessmentToolMode == null) {
             assessmentToolMode = new AssessmentToolMode();
@@ -45,6 +45,6 @@ public class AssessmentToolController {
         }
         assessmentTool.setName(assessmentToolRequest.getName());
         assessmentTool.setAssessmentToolMode(assessmentToolMode);
-        assessmentToolRepository.save(assessmentTool);
+        return assessmentToolRepository.save(assessmentTool);
     }
 }

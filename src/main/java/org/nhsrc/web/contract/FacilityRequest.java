@@ -5,7 +5,9 @@ public class FacilityRequest {
     private Boolean inactive;
     private String name;
     private String facilityTypeUUID;
+    private int facilityTypeId;
     private String districtUUID;
+    private int districtId;
 
     public String getUuid() {
         return uuid;
@@ -43,7 +45,23 @@ public class FacilityRequest {
         return districtUUID;
     }
 
+    public int getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(int districtId) {
+        this.districtId = districtId;
+    }
+
     public void setDistrictUUID(String districtUUID) {
         this.districtUUID = districtUUID;
+    }
+
+    public int getFacilityTypeId() {
+        return facilityTypeId;
+    }
+
+    public void setFacilityTypeId(int facilityTypeId) {
+        this.facilityTypeId = facilityTypeId;
     }
 }

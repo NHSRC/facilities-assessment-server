@@ -4,6 +4,7 @@ import org.nhsrc.domain.Facility;
 import org.nhsrc.repository.DistrictRepository;
 import org.nhsrc.repository.FacilityRepository;
 import org.nhsrc.repository.FacilityTypeRepository;
+import org.nhsrc.repository.Repository;
 import org.nhsrc.web.contract.FacilityRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,17 +29,17 @@ public class FacilityController {
         this.facilityRepository = facilityRepository;
     }
 
-    @RequestMapping(value = "/facilities", method = RequestMethod.POST)
+    @RequestMapping(value = "/facilities", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    void save(@RequestBody FacilityRequest facilityRequest) {
-        Facility facility = facilityRepository.findByUuid(UUID.fromString(facilityRequest.getUuid()));
+    public Facility save(@RequestBody FacilityRequest request) {
+        Facility facility = facilityRepository.findByUuid(UUID.fromString(request.getUuid()));
         if (facility == null) {
             facility = new Facility();
-            facility.setUuid(UUID.fromString(facilityRequest.getUuid()));
+            facility.setUuid(UUID.fromString(request.getUuid()));
         }
-        facility.setName(facilityRequest.getName());
-        facility.setDistrict(districtRepository.findByUuid(UUID.fromString(facilityRequest.getDistrictUUID())));
-        facility.setFacilityType(facilityTypeRepository.findByUuid(UUID.fromString(facilityRequest.getFacilityTypeUUID())));
-        facilityRepository.save(facility);
+        facility.setName(request.getName());
+        facility.setDistrict(Repository.findByUuidOrId(request.getDistrictUUID(), request.getDistrictId(), districtRepository));
+        facility.setFacilityType(Repository.findByUuidOrId(request.getFacilityTypeUUID(), request.getFacilityTypeId(), facilityTypeRepository));
+        return facilityRepository.save(facility);
     }
 }

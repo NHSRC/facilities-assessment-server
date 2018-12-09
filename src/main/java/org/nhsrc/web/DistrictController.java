@@ -25,9 +25,9 @@ public class DistrictController {
         this.stateRepository = stateRepository;
     }
 
-    @RequestMapping(value = "/districts", method = RequestMethod.POST)
+    @RequestMapping(value = "/districts", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    void save(@RequestBody DistrictRequest districtRequest) {
+    public District save(@RequestBody DistrictRequest districtRequest) {
         District district = districtRepository.findByUuid(UUID.fromString(districtRequest.getUuid()));
         if (district == null) {
             district = new District();
@@ -35,6 +35,6 @@ public class DistrictController {
         }
         district.setName(districtRequest.getName());
         district.setState(stateRepository.findByUuid(UUID.fromString(districtRequest.getStateUUID())));
-        districtRepository.save(district);
+        return districtRepository.save(district);
     }
 }

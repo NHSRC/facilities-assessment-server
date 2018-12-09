@@ -1,9 +1,9 @@
 package org.nhsrc.web;
 
-import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.MeasurableElement;
-import org.nhsrc.repository.*;
-import org.nhsrc.web.contract.ChecklistRequest;
+import org.nhsrc.repository.MeasurableElementRepository;
+import org.nhsrc.repository.Repository;
+import org.nhsrc.repository.StandardRepository;
 import org.nhsrc.web.contract.MeasurableElementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,17 +26,17 @@ public class MeasurableElementController {
         this.measurableElementRepository = measurableElementRepository;
     }
 
-    @RequestMapping(value = "/measurableElements", method = RequestMethod.POST)
+    @RequestMapping(value = "/measurableElements", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    void save(@RequestBody MeasurableElementRequest measurableElementRequest) {
-        MeasurableElement measurableElement = measurableElementRepository.findByUuid(UUID.fromString(measurableElementRequest.getUuid()));
+    public MeasurableElement save(@RequestBody MeasurableElementRequest request) {
+        MeasurableElement measurableElement = measurableElementRepository.findByUuid(UUID.fromString(request.getUuid()));
         if (measurableElement == null) {
             measurableElement = new MeasurableElement();
-            measurableElement.setUuid(UUID.fromString(measurableElementRequest.getUuid()));
+            measurableElement.setUuid(UUID.fromString(request.getUuid()));
         }
-        measurableElement.setName(measurableElementRequest.getName());
-        measurableElement.setReference(measurableElementRequest.getReference());
-        measurableElement.setStandard(standardRepository.findByUuid(UUID.fromString(measurableElementRequest.getStandardUUID())));
-        measurableElementRepository.save(measurableElement);
+        measurableElement.setName(request.getName());
+        measurableElement.setReference(request.getReference());
+        measurableElement.setStandard(Repository.findByUuidOrId(request.getStandardUUID(), request.getStandardId(), standardRepository));
+        return measurableElementRepository.save(measurableElement);
     }
 }

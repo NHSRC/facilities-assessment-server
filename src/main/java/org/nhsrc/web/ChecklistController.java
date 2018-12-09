@@ -28,15 +28,9 @@ public class ChecklistController {
         this.areaOfConcernRepository = areaOfConcernRepository;
     }
 
-    @RequestMapping(value = "/checklists", method = RequestMethod.PUT)
+    @RequestMapping(value = "checklists", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    public Checklist update(@RequestBody ChecklistRequest checklistRequest) {
-        return this.save(checklistRequest);
-    }
-
-    @RequestMapping(value = "checklists", method = RequestMethod.POST)
-    @Transactional
-    Checklist save(@RequestBody ChecklistRequest checklistRequest) {
+    public Checklist save(@RequestBody ChecklistRequest checklistRequest) {
         Checklist checklist;
         if (checklistRequest.getUuid() == null) {
             checklist = new Checklist();

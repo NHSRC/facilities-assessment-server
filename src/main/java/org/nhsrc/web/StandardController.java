@@ -2,6 +2,7 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.Standard;
 import org.nhsrc.repository.AreaOfConcernRepository;
+import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StandardRepository;
 import org.nhsrc.web.contract.StandardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,9 @@ public class StandardController {
         this.areaOfConcernRepository = areaOfConcernRepository;
     }
 
-    @RequestMapping(value = "/standards", method = RequestMethod.POST)
+    @RequestMapping(value = "/standards", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    void save(@RequestBody StandardRequest standardRequest) {
+    public Standard save(@RequestBody StandardRequest standardRequest) {
         Standard standard = standardRepository.findByUuid(UUID.fromString(standardRequest.getUuid()));
         if (standard == null) {
             standard = new Standard();
@@ -35,7 +36,7 @@ public class StandardController {
         }
         standard.setName(standardRequest.getName());
         standard.setReference(standardRequest.getReference());
-        standard.setAreaOfConcern(areaOfConcernRepository.findByUuid(UUID.fromString(standardRequest.getAreaOfConcernUUID())));
-        standardRepository.save(standard);
+        standard.setAreaOfConcern(Repository.findByUuidOrId(standardRequest.getAreaOfConcernUUID(), standardRequest.getAreaOfConcernId(), areaOfConcernRepository));
+        return standardRepository.save(standard);
     }
 }

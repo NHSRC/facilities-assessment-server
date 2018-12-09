@@ -1,13 +1,11 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Checkpoint;
-import org.nhsrc.domain.MeasurableElement;
 import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.CheckpointRepository;
 import org.nhsrc.repository.MeasurableElementRepository;
-import org.nhsrc.repository.StandardRepository;
+import org.nhsrc.repository.Repository;
 import org.nhsrc.web.contract.CheckpointRequest;
-import org.nhsrc.web.contract.MeasurableElementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,24 +29,24 @@ public class CheckpointController {
         this.checklistRepository = checklistRepository;
     }
 
-    @RequestMapping(value = "/checkpoints", method = RequestMethod.POST)
+    @RequestMapping(value = "/checkpoints", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    void save(@RequestBody CheckpointRequest checkpointRequest) {
-        Checkpoint checkpoint = checkpointRepository.findByUuid(UUID.fromString(checkpointRequest.getUuid()));
+    public Checkpoint save(@RequestBody CheckpointRequest request) {
+        Checkpoint checkpoint = checkpointRepository.findByUuid(UUID.fromString(request.getUuid()));
         if (checkpoint == null) {
             checkpoint = new Checkpoint();
-            checkpoint.setUuid(UUID.fromString(checkpointRequest.getUuid()));
+            checkpoint.setUuid(UUID.fromString(request.getUuid()));
         }
-        checkpoint.setName(checkpointRequest.getName());
-        checkpoint.setAssessmentMethodObservation(checkpointRequest.getAssessmentMethodObservation());
-        checkpoint.setAssessmentMethodPatientInterview(checkpointRequest.getAssessmentMethodStaffInterview());
-        checkpoint.setAssessmentMethodRecordReview(checkpointRequest.getAssessmentMethodPatientInterview());
-        checkpoint.setAssessmentMethodStaffInterview(checkpointRequest.getAssessmentMethodRecordReview());
-        checkpoint.setDefault(checkpointRequest.getDefault());
-        checkpoint.setMeansOfVerification(checkpointRequest.getMeansOfVerification());
-        checkpoint.setSortOrder(checkpointRequest.getSortOrder());
-        checkpoint.setMeasurableElement(measurableElementRepository.findByUuid(UUID.fromString(checkpointRequest.getMeasurableElementUUID())));
-        checkpoint.setChecklist(checklistRepository.findByUuid(UUID.fromString(checkpointRequest.getChecklistUUID())));
-        checkpointRepository.save(checkpoint);
+        checkpoint.setName(request.getName());
+        checkpoint.setAssessmentMethodObservation(request.getAssessmentMethodObservation());
+        checkpoint.setAssessmentMethodPatientInterview(request.getAssessmentMethodStaffInterview());
+        checkpoint.setAssessmentMethodRecordReview(request.getAssessmentMethodPatientInterview());
+        checkpoint.setAssessmentMethodStaffInterview(request.getAssessmentMethodRecordReview());
+        checkpoint.setDefault(request.getDefault());
+        checkpoint.setMeansOfVerification(request.getMeansOfVerification());
+        checkpoint.setSortOrder(request.getSortOrder());
+        checkpoint.setMeasurableElement(Repository.findByUuidOrId(request.getMeasurableElementUUID(), request.getMeasurableElementId(), measurableElementRepository));
+        checkpoint.setChecklist(Repository.findByUuidOrId(request.getChecklistUUID(), request.getChecklistId(), checklistRepository));
+        return checkpointRepository.save(checkpoint);
     }
 }

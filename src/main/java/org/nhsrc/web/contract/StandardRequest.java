@@ -6,6 +6,7 @@ public class StandardRequest {
     private String name;
     private String reference;
     private String areaOfConcernUUID;
+    private int areaOfConcernId;
 
     public String getUuid() {
         return uuid;
@@ -45,5 +46,13 @@ public class StandardRequest {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public int getAreaOfConcernId() {
+        return areaOfConcernId;
+    }
+
+    public void setAreaOfConcernId(int areaOfConcernId) {
+        this.areaOfConcernId = areaOfConcernId;
     }
 }

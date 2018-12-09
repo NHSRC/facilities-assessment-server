@@ -6,6 +6,7 @@ public class MeasurableElementRequest {
     private String name;
     private String reference;
     private String standardUUID;
+    private int standardId;
 
     public String getUuid() {
         return uuid;
@@ -45,5 +46,13 @@ public class MeasurableElementRequest {
 
     public void setStandardUUID(String standardUUID) {
         this.standardUUID = standardUUID;
+    }
+
+    public int getStandardId() {
+        return standardId;
+    }
+
+    public void setStandardId(int standardId) {
+        this.standardId = standardId;
     }
 }

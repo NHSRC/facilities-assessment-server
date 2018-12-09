@@ -6,7 +6,9 @@ public class CheckpointRequest {
     private String name;
     private String meansOfVerification;
     private String measurableElementUUID;
+    private int measurableElementId;
     private String checklistUUID;
+    private int checklistId;
     private Boolean assessmentMethodObservation;
     private Boolean assessmentMethodStaffInterview;
     private Boolean assessmentMethodPatientInterview;
@@ -109,5 +111,21 @@ public class CheckpointRequest {
 
     public void setChecklistUUID(String checklistUUID) {
         this.checklistUUID = checklistUUID;
+    }
+
+    public int getMeasurableElementId() {
+        return measurableElementId;
+    }
+
+    public void setMeasurableElementId(int measurableElementId) {
+        this.measurableElementId = measurableElementId;
+    }
+
+    public int getChecklistId() {
+        return checklistId;
+    }
+
+    public void setChecklistId(int checklistId) {
+        this.checklistId = checklistId;
     }
 }
