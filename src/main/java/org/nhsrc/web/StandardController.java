@@ -29,11 +29,7 @@ public class StandardController {
     @RequestMapping(value = "/standards", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
     public Standard save(@RequestBody StandardRequest standardRequest) {
-        Standard standard = standardRepository.findByUuid(UUID.fromString(standardRequest.getUuid()));
-        if (standard == null) {
-            standard = new Standard();
-            standard.setUuid(UUID.fromString(standardRequest.getUuid()));
-        }
+        Standard standard = Repository.findByUuidOrCreate(standardRequest.getUuid(), standardRepository, new Standard());
         standard.setName(standardRequest.getName());
         standard.setReference(standardRequest.getReference());
         standard.setAreaOfConcern(Repository.findByUuidOrId(standardRequest.getAreaOfConcernUUID(), standardRequest.getAreaOfConcernId(), areaOfConcernRepository));
