@@ -29,11 +29,7 @@ public class MeasurableElementController {
     @RequestMapping(value = "/measurableElements", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
     public MeasurableElement save(@RequestBody MeasurableElementRequest request) {
-        MeasurableElement measurableElement = measurableElementRepository.findByUuid(UUID.fromString(request.getUuid()));
-        if (measurableElement == null) {
-            measurableElement = new MeasurableElement();
-            measurableElement.setUuid(UUID.fromString(request.getUuid()));
-        }
+        MeasurableElement measurableElement = Repository.findByUuidOrCreate(request.getUuid(), measurableElementRepository, new MeasurableElement());
         measurableElement.setName(request.getName());
         measurableElement.setReference(request.getReference());
         measurableElement.setStandard(Repository.findByUuidOrId(request.getStandardUUID(), request.getStandardId(), standardRepository));

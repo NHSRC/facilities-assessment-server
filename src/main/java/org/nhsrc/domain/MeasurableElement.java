@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "measurable_element")
@@ -31,6 +28,8 @@ public class MeasurableElement extends AbstractEntity {
     @NotNull
     private Standard standard;
 
+    private static int BASE_ASCII_VALUE = 'A';
+
     public String getName() {
         return name;
     }
@@ -45,7 +44,11 @@ public class MeasurableElement extends AbstractEntity {
 
     public void setReference(String reference) {
         this.reference = reference;
-        this.refAsNumber = Double.parseDouble(reference.substring(1));
+        int ascii = reference.charAt(0);
+        StringTokenizer stringTokenizer = new StringTokenizer(reference.substring(1), ".");
+        String wholeNumberPart = stringTokenizer.nextToken();
+        String decimalPart = stringTokenizer.nextToken();
+        this.refAsNumber = ((ascii - BASE_ASCII_VALUE + 1) * 1000) + (Integer.parseInt(wholeNumberPart) * 100) + Integer.parseInt(decimalPart);
     }
 
     public double getRefAsNumber() {
@@ -100,8 +103,10 @@ public class MeasurableElement extends AbstractEntity {
     }
 
     public Checkpoint findCheckpoint(String name, Checklist checklist) {
-        return checkpoints.stream().filter(checkpoint1 -> {{
-            return checkpoint1.getName().equals(name) && checkpoint1.getChecklist().getName().equals(checklist.getName());
-        }}).findAny().orElse(null);
+        return checkpoints.stream().filter(checkpoint1 -> {
+            {
+                return checkpoint1.getName().equals(name) && checkpoint1.getChecklist().getName().equals(checklist.getName());
+            }
+        }).findAny().orElse(null);
     }
 }
