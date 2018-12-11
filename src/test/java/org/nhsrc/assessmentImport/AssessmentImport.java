@@ -1,5 +1,6 @@
 package org.nhsrc.assessmentImport;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Facility;
@@ -14,7 +15,7 @@ import java.io.File;
 import java.util.List;
 
 public class AssessmentImport {
-    @Test
+    @Test @Ignore
     public void importAssessments() throws Exception {
         importAssessmentsFromFiles(1, -1, true, "output/%s.sql", true);
     }

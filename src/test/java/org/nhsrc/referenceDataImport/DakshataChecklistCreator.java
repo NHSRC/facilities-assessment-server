@@ -1,6 +1,7 @@
 package org.nhsrc.referenceDataImport;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nhsrc.domain.AssessmentTool;
 
@@ -14,7 +15,7 @@ public class DakshataChecklistCreator {
         checklistsProjectDirectory = new File("../reference-data/dakshata");
     }
 
-    @Test
+    @Test @Ignore
     public void generate_Forms() throws Exception {
         AssessmentTool assessmentTool = new AssessmentTool("Dakshata", "dakshata");
         File checklistFile = new File(checklistsProjectDirectory, "Forms.xlsx");
