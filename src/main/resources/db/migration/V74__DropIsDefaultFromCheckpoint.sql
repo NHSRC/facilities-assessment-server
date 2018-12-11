@@ -1,0 +1,1 @@
+alter table checkpoint drop column is_default;

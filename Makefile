@@ -19,6 +19,9 @@ define _run_server
 	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
 endef
 
+define _debug_server
+	java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
+endef
 
 # <db>
 init_db:
@@ -71,6 +74,9 @@ build_server:
 
 run_server_nhsrc: build_server
 	$(call _run_server,nhsrc,false,true)
+
+debug_server_nhsrc: build_server
+	$(call _debug_server,nhsrc,false,true)
 
 run_server_nhsrc_insecure: build_server
 	$(call _run_server,nhsrc,false,false)

@@ -34,5 +34,5 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     Page<Checkpoint> findByMeasurableElementId(@Param("measurableElementId") Integer measurableElementId, Pageable pageable);
 
     @RestResource(path = "findByChecklist", rel = "findByChecklist")
-    Page<Checkpoint> findByChecklistIdOrderByMeasurableElementRefAsNumberAsc(@Param("checklistId") Integer checklistId, Pageable pageable);
+    Page<Checkpoint> findByChecklistIdOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, Pageable pageable);
 }

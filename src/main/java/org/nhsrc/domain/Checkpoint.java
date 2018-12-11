@@ -31,10 +31,6 @@ public class Checkpoint extends AbstractEntity {
     @JoinColumn(name = "state_id")
     private State state;
 
-    @Column(name = "is_default")
-    @NotNull
-    private Boolean isDefault = true;
-
     @Column(name = "am_observation")
     @NotNull
     private Boolean assessmentMethodObservation = false;
@@ -100,20 +96,12 @@ public class Checkpoint extends AbstractEntity {
         this.meansOfVerification = meansOfVerification;
     }
 
-    public Boolean getDefault() {
-        return isDefault;
-    }
-
-    public void setDefault(Boolean aDefault) {
-        isDefault = aDefault;
-    }
-
     public Boolean getAssessmentMethodObservation() {
         return assessmentMethodObservation;
     }
 
     public void setAssessmentMethodObservation(Boolean assessmentMethodObservation) {
-        this.assessmentMethodObservation = assessmentMethodObservation;
+        this.assessmentMethodObservation = assessmentMethodObservation == null ? false : assessmentMethodObservation;
     }
 
     public Boolean getAssessmentMethodStaffInterview() {
@@ -121,7 +109,7 @@ public class Checkpoint extends AbstractEntity {
     }
 
     public void setAssessmentMethodStaffInterview(Boolean assessmentMethodStaffInterview) {
-        this.assessmentMethodStaffInterview = assessmentMethodStaffInterview;
+        this.assessmentMethodStaffInterview = assessmentMethodStaffInterview == null ? false : assessmentMethodStaffInterview;
     }
 
     public Boolean getAssessmentMethodPatientInterview() {
@@ -129,7 +117,7 @@ public class Checkpoint extends AbstractEntity {
     }
 
     public void setAssessmentMethodPatientInterview(Boolean assessmentMethodPatientInterview) {
-        this.assessmentMethodPatientInterview = assessmentMethodPatientInterview;
+        this.assessmentMethodPatientInterview = assessmentMethodPatientInterview == null ? false : assessmentMethodPatientInterview;
     }
 
     public Boolean getAssessmentMethodRecordReview() {
@@ -137,7 +125,7 @@ public class Checkpoint extends AbstractEntity {
     }
 
     public void setAssessmentMethodRecordReview(Boolean assessmentMethodRecordReview) {
-        this.assessmentMethodRecordReview = assessmentMethodRecordReview;
+        this.assessmentMethodRecordReview = assessmentMethodRecordReview == null ? false : assessmentMethodRecordReview;
     }
 
     public State getState() {

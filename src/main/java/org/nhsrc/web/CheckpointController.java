@@ -32,17 +32,12 @@ public class CheckpointController {
     @RequestMapping(value = "/checkpoints", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
     public Checkpoint save(@RequestBody CheckpointRequest request) {
-        Checkpoint checkpoint = checkpointRepository.findByUuid(UUID.fromString(request.getUuid()));
-        if (checkpoint == null) {
-            checkpoint = new Checkpoint();
-            checkpoint.setUuid(UUID.fromString(request.getUuid()));
-        }
+        Checkpoint checkpoint = Repository.findByUuidOrCreate(request.getUuid(), checkpointRepository, new Checkpoint());
         checkpoint.setName(request.getName());
         checkpoint.setAssessmentMethodObservation(request.getAssessmentMethodObservation());
         checkpoint.setAssessmentMethodPatientInterview(request.getAssessmentMethodStaffInterview());
         checkpoint.setAssessmentMethodRecordReview(request.getAssessmentMethodPatientInterview());
         checkpoint.setAssessmentMethodStaffInterview(request.getAssessmentMethodRecordReview());
-        checkpoint.setDefault(request.getDefault());
         checkpoint.setMeansOfVerification(request.getMeansOfVerification());
         checkpoint.setSortOrder(request.getSortOrder());
         checkpoint.setMeasurableElement(Repository.findByUuidOrId(request.getMeasurableElementUUID(), request.getMeasurableElementId(), measurableElementRepository));

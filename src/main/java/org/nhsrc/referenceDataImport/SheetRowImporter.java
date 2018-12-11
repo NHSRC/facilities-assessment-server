@@ -129,7 +129,6 @@ public class SheetRowImporter {
         checkpoint.setAssessmentMethodPatientInterview(am.toLowerCase().contains("pi"));
         checkpoint.setAssessmentMethodRecordReview(am.toLowerCase().contains("rr"));
         checkpoint.setAssessmentMethodStaffInterview(am.toLowerCase().contains("si"));
-        checkpoint.setDefault(true);
         checkpoint.setMeasurableElement(currME);
         if (!getText(row, 5).equals("")) {
             checkpoint.setMeansOfVerification(getText(row, 5));
@@ -184,7 +183,6 @@ public class SheetRowImporter {
         checkpoint.setAssessmentMethodRecordReview(am.toLowerCase().contains("rr"));
         checkpoint.setAssessmentMethodStaffInterview(am.toLowerCase().contains("si"));
         checkpoint.setMeansOfVerification(getText(currentRow, 4));
-        checkpoint.setDefault(true);
         checkpoint.setMeasurableElement(currME);
         currME.addCheckpoint(checkpoint);
         checklist.addCheckpoint(checkpoint);
