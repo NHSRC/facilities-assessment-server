@@ -1,6 +1,7 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.District;
+import org.nhsrc.domain.MeasurableElement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -31,4 +32,7 @@ public interface DistrictRepository extends BaseRepository<District> {
 
     @RestResource(path = "findByState", rel = "findByState")
     Page<District> findByStateId(@Param("stateId") Integer stateId, Pageable pageable);
+
+    @RestResource(path = "find", rel = "find")
+    Page<District> findByNameStartingWithOrderByName(@Param("q") String q, Pageable pageable);
 }
