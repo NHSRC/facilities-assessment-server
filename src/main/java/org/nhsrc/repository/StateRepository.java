@@ -22,6 +22,6 @@ public interface StateRepository extends BaseRepository<State> {
 
     State findByName(String name);
 
-    @RestResource(path = "findAllById", rel = "ids")
+    @RestResource(path = "findAllById", rel = "findAllById")
     List<State> findByIdIn(@Param("ids") Integer[] ids);
 }
