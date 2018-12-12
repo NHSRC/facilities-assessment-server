@@ -5,6 +5,7 @@ public class DistrictRequest {
     private Boolean inactive;
     private String name;
     private String stateUUID;
+    private int stateId;
 
     public String getUuid() {
         return uuid;
@@ -36,5 +37,13 @@ public class DistrictRequest {
 
     public void setStateUUID(String stateUUID) {
         this.stateUUID = stateUUID;
+    }
+
+    public int getStateId() {
+        return stateId;
+    }
+
+    public void setStateId(int stateId) {
+        this.stateId = stateId;
     }
 }

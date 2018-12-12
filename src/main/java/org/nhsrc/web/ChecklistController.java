@@ -31,20 +31,8 @@ public class ChecklistController {
     @RequestMapping(value = "checklists", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
     public Checklist save(@RequestBody ChecklistRequest checklistRequest) {
-        Checklist checklist;
-        if (checklistRequest.getUuid() == null) {
-            checklist = new Checklist();
-            checklist.setUuid(UUID.randomUUID());
-        } else {
-            checklist = checklistRepository.findByUuid(UUID.fromString(checklistRequest.getUuid()));
-        }
-        if (checklist == null) {
-            checklist = new Checklist();
-            checklist.setUuid(UUID.fromString(checklistRequest.getUuid()));
-        }
-
+        Checklist checklist = Repository.findByUuidOrCreate(checklistRequest.getUuid(), checklistRepository, new Checklist());
         checklist.setName(checklistRequest.getName());
-
         checklist.setDepartment(Repository.findByUuidOrId(checklistRequest.getDepartmentUUID(), checklistRequest.getDepartmentId(), departmentRepository));
         checklist.setAssessmentTool(Repository.findByUuidOrId(checklistRequest.getAssessmentToolUUID(), checklistRequest.getAssessmentToolId(), assessmentToolRepository));
 

@@ -29,14 +29,10 @@ public class FacilityController {
         this.facilityRepository = facilityRepository;
     }
 
-    @RequestMapping(value = "/facilities", method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = "/facilitys", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
     public Facility save(@RequestBody FacilityRequest request) {
-        Facility facility = facilityRepository.findByUuid(UUID.fromString(request.getUuid()));
-        if (facility == null) {
-            facility = new Facility();
-            facility.setUuid(UUID.fromString(request.getUuid()));
-        }
+        Facility facility = Repository.findByUuidOrCreate(request.getUuid(), facilityRepository, new Facility());
         facility.setName(request.getName());
         facility.setDistrict(Repository.findByUuidOrId(request.getDistrictUUID(), request.getDistrictId(), districtRepository));
         facility.setFacilityType(Repository.findByUuidOrId(request.getFacilityTypeUUID(), request.getFacilityTypeId(), facilityTypeRepository));

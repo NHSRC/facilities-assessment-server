@@ -2,6 +2,7 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.District;
 import org.nhsrc.repository.DistrictRepository;
+import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.web.contract.DistrictRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,9 @@ public class DistrictController {
     @RequestMapping(value = "/districts", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
     public District save(@RequestBody DistrictRequest districtRequest) {
-        District district = districtRepository.findByUuid(UUID.fromString(districtRequest.getUuid()));
-        if (district == null) {
-            district = new District();
-            district.setUuid(UUID.fromString(districtRequest.getUuid()));
-        }
+        District district = Repository.findByUuidOrCreate(districtRequest.getUuid(), districtRepository, new District());
         district.setName(districtRequest.getName());
-        district.setState(stateRepository.findByUuid(UUID.fromString(districtRequest.getStateUUID())));
+        district.setState(Repository.findByUuidOrId(districtRequest.getStateUUID(), districtRequest.getStateId(), stateRepository));
         return districtRepository.save(district);
     }
 }
