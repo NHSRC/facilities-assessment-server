@@ -2,6 +2,7 @@ package org.nhsrc.repository;
 
 import org.nhsrc.domain.AreaOfConcern;
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.District;
 import org.nhsrc.domain.Standard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,4 +30,7 @@ public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
 
     @RestResource(path = "findAllById", rel = "findAllById")
     List<AreaOfConcern> findByIdIn(@Param("ids") Integer[] ids);
+
+    @RestResource(path = "findByChecklist", rel = "findByChecklist")
+    Page<AreaOfConcern> findByChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
 }
