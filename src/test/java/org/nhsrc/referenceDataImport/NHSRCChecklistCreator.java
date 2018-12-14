@@ -1,11 +1,13 @@
 package org.nhsrc.referenceDataImport;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nhsrc.domain.AssessmentTool;
 
 import java.io.File;
 
+@Ignore
 public class NHSRCChecklistCreator {
     private File checklistsProjectDirectory;
 

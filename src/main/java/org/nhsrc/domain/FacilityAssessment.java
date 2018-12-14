@@ -24,8 +24,6 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@DynamicUpdate
-@SelectBeforeUpdate
 @Table(name = "facility_assessment")
 public class FacilityAssessment extends AbstractScoreEntity {
     private static SimpleDateFormat dateFormatter = new SimpleDateFormat("ddMMyyyy");
@@ -114,9 +112,11 @@ public class FacilityAssessment extends AbstractScoreEntity {
         return this.assessmentTool.getId();
     }
 
-    @JsonProperty("FacilityId")
-    public long _getFacilityId() {
-        return this.facility.getId();
+    @JsonProperty("facilityId")
+    public Integer _getFacilityId() {
+        if (this.facility != null)
+            return this.facility.getId();
+        return null;
     }
 
     @JsonProperty("assessmentTypeId")

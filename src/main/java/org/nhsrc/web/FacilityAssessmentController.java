@@ -79,7 +79,7 @@ public class FacilityAssessmentController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "facilityAssessment", method = RequestMethod.GET)
+    @RequestMapping(value = "facilityAssessment/byUser", method = RequestMethod.GET)
     Page<FacilityAssessment> getAssessmentsForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {
         User user = userRepository.findByEmail(principal.getName());
         State state = stateRepository.findOne(user.getUserTypeReferenceId());
