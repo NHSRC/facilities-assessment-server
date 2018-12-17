@@ -1,6 +1,7 @@
 package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "area_of_concern")
+@BatchSize(size = 25)
 public class AreaOfConcern extends AbstractEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
@@ -57,6 +59,13 @@ public class AreaOfConcern extends AbstractEntity {
 
     public void setStandards(Set<Standard> standards) {
         this.standards = standards;
+    }
+
+    @JsonProperty("assessmentToolId")
+    public Long _getAssessmentToolId() {
+        Checklist checklist = this.getChecklists().stream().findFirst().orElse(null);
+        if (checklist == null) return null;
+        return checklist.getAssessmentToolId();
     }
 
     public void addStandard(Standard standard) {

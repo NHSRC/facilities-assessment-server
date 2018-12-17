@@ -1,6 +1,7 @@
 package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "standard")
+@BatchSize(size = 25)
 public class Standard extends AbstractEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;

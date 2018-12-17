@@ -6,6 +6,7 @@ import org.nhsrc.domain.District;
 import org.nhsrc.domain.Standard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -33,4 +34,7 @@ public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
 
     @RestResource(path = "findByChecklist", rel = "findByChecklist")
     Page<AreaOfConcern> findByChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
+
+    @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
+    Page<AreaOfConcern> findByChecklistsAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 }

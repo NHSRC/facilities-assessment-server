@@ -1,6 +1,7 @@
 package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "checklist")
+@BatchSize(size = 25)
 public class Checklist extends AbstractEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
@@ -50,7 +52,7 @@ public class Checklist extends AbstractEntity {
     }
 
     @JsonProperty("assessmentToolId")
-    public long _getAssessmentToolId() {
+    public long getAssessmentToolId() {
         return this.assessmentTool.getId();
     }
 
