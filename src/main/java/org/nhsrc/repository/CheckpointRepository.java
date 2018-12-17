@@ -4,6 +4,7 @@ import org.nhsrc.domain.Checkpoint;
 import org.nhsrc.domain.MeasurableElement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -35,4 +36,10 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
 
     @RestResource(path = "findByChecklist", rel = "findByChecklist")
     Page<Checkpoint> findByChecklistIdOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, Pageable pageable);
+
+    @RestResource(path = "findByState", rel = "findByState")
+    Page<Checkpoint> findByStateIdOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("stateId") Integer stateId, Pageable pageable);
+
+    @Query("SELECT c FROM Checkpoint c WHERE (state_id = :stateId or state_id is null) and checklist_id = :checklistId")
+    Page<Checkpoint> findByChecklistIdAndStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, @Param("stateId") Integer stateId, Pageable pageable);
 }

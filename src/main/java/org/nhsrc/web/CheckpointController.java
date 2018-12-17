@@ -7,10 +7,10 @@ import org.nhsrc.repository.MeasurableElementRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.web.contract.CheckpointRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.UUID;
@@ -43,5 +43,10 @@ public class CheckpointController {
         checkpoint.setMeasurableElement(Repository.findByUuidOrId(request.getMeasurableElementUUID(), request.getMeasurableElementId(), measurableElementRepository));
         checkpoint.setChecklist(Repository.findByUuidOrId(request.getChecklistUUID(), request.getChecklistId(), checklistRepository));
         return checkpointRepository.save(checkpoint);
+    }
+
+    @RequestMapping(value = "/checkpoint/search/find", method = {RequestMethod.GET})
+    public Page<Checkpoint> findAll(@RequestParam Integer stateId, @RequestParam Integer checklistId, Pageable pageable) {
+        return checkpointRepository.findByChecklistIdAndStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(checklistId, stateId, pageable);
     }
 }
