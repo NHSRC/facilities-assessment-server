@@ -2,6 +2,7 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -95,6 +96,11 @@ public class Checklist extends AbstractEntity {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    @JsonProperty("fullReference")
+    public String getFullReference() {
+        return String.format("%s - %s", this.getAssessmentTool().getName(), this.getName());
     }
 
     public String toSummary() {

@@ -77,6 +77,12 @@ public class Standard extends AbstractEntity {
         this.shortName = shortName;
     }
 
+    @JsonProperty("fullReference")
+    public String getFullReference() {
+        Checklist checklist = this.getAreaOfConcern().getChecklist();
+        return String.format("%s - %s", checklist == null ? null : checklist.getAssessmentTool().getName(), this.getReference());
+    }
+
     public void addMeasurableElement(MeasurableElement measurableElement) {
         if (this.measurableElements.stream().noneMatch(std -> std.getReference().equals(measurableElement.getReference()))) {
             this.measurableElements.add(measurableElement);
