@@ -49,6 +49,12 @@ public interface FacilityAssessmentRepository extends BaseRepository<FacilityAss
     @RestResource(path = "findByFacility", rel = "findByFacility")
     Page<FacilityAssessment> findByFacilityId(@Param("facilityId") Integer facilityId, Pageable pageable);
 
+    @RestResource(path = "findByDistrict", rel = "findByDistrict")
+    Page<FacilityAssessment> findByFacilityDistrictId(@Param("districtId") Integer districtId, Pageable pageable);
+
     @RestResource(path = "findByAssessmentType", rel = "findByAssessmentType")
     Page<FacilityAssessment> findByAssessmentTypeId(@Param("assessmentTypeId") Integer assessmentTypeId, Pageable pageable);
+
+    @RestResource(path = "find", rel = "find")
+    Page<FacilityAssessment> findByFacilityDistrictIdAndAssessmentToolId(@Param("districtId") Integer districtId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 }
