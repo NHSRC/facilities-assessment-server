@@ -38,8 +38,8 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     Page<Checkpoint> findByChecklistIdOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, Pageable pageable);
 
     @RestResource(path = "findByState", rel = "findByState")
-    Page<Checkpoint> findByStateIdOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("stateId") Integer stateId, Pageable pageable);
+    Page<Checkpoint> findByStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("stateId") Integer stateId, Pageable pageable);
 
-    @Query("SELECT c FROM Checkpoint c WHERE (state_id = :stateId or state_id is null) and checklist_id = :checklistId")
+    @Query("SELECT c FROM Checkpoint c inner join c.measurableElement as me WHERE (c.state.id = :stateId or c.state is null) and c.checklist.id = :checklistId order by me.refAsNumber")
     Page<Checkpoint> findByChecklistIdAndStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, @Param("stateId") Integer stateId, Pageable pageable);
 }
