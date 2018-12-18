@@ -89,7 +89,7 @@ run_server_nhsrc_in_recording: clear_responses build_server
 	$(call _run_server,nhsrc,true,false)
 
 test_server: reset_test_db
-	./gradlew build
+	./gradlew clean build
 
 open_test_results:
 	open build/reports/tests/index.html

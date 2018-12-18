@@ -26,6 +26,9 @@ jobs:
 
       - run: sudo apt-get install make postgresql-client
 
+      - run:
+          command:  export TERM=${TERM:-dumb}
+
       - run: make test_server
 
       - save_cache:
