@@ -7,7 +7,7 @@ jobs:
       - image: circleci/postgres:9.5
         environment:
           - POSTGRES_USER: nhsrc
-          - POSTGRES_DB: facilities-assessment_test
+          - POSTGRES_DB: facilities_assessment_test
           - POSTGRES_PASSWORD: password
 
 
