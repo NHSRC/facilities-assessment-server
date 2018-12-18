@@ -6,9 +6,8 @@ jobs:
 
       - image: circleci/postgres:9.5
         environment:
-          - POSTGRES_USER: nhsrc
-          - POSTGRES_DB: facilities_assessment_test
-          - POSTGRES_PASSWORD: password
+        - POSTGRES_USER: circleci
+        - POSTGRES_DB: facilities_assessment_test
 
 
     working_directory: ~/facilities-assessment-server
@@ -21,8 +20,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
+          - v1-dependencies-{{ checksum "build.gradle" }}
+          - v1-dependencies-
 
       - run: sudo apt-get install make postgresql-client
 
