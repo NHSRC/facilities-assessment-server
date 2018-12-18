@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -28,7 +29,7 @@ public class StandardShortNameImporter {
         standardShortNameOutputFilePath = "../reference-data/nhsrc/output/standards_short_names.sql";
     }
 
-    @Test
+    @Test @Ignore
     public void importStandardDataNHSRC() throws Exception {
         this.importShortNames(standardShortNameInputFile, standardShortNameOutputFilePath);
     }

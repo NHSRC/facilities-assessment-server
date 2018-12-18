@@ -3,6 +3,7 @@ package org.nhsrc.referenceDataImport;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -16,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RegionDataImporter {
-    @Test
+    @Test @Ignore
     public void generateNHSRCRegionData() throws IOException {
         File regionInputDir = new File("../reference-data/nhsrc/regions/ANIslands.xlsx");
         generateRegionData(regionInputDir, "../reference-data/nhsrc/regions/andaman-nicobar.sql");

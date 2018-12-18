@@ -56,7 +56,7 @@ public class AssessmentImport {
         AssessmentSQLGenerator.generate(assessmentChecklistData, new File(assessmentsDirectory.toDirectory(), String.format(outputFilePattern, fileName)), generateFacilityAssessmentSQL);
     }
 
-    @Test
+    @Test @Ignore
     public void importFirstDepartment() throws Exception {
         importAssessmentsFromFiles(0, 1, false, "output2/%s_2.sql", false);
     }

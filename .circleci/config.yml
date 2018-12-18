@@ -4,39 +4,42 @@
 #
 version: 2
 jobs:
-  build:
+  build_test:
     docker:
-      # specify the version you desire here
       - image: circleci/openjdk:8-jdk
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
+      - image: circleci/postgres:9.5
+        environment:
+          - POSTGRES_USER: nhsrc
+          - POSTGRES_DB: facilities-assessment_test
+          - POSTGRES_PASSWORD: password
 
-    working_directory: ~/repo
+
+    working_directory: ~/facilities-assessment-server
 
     environment:
-      # Customize the JVM maximum heap limit
       JVM_OPTS: -Xmx3200m
-      TERM: dumb
 
     steps:
       - checkout
 
-      # Download and cache dependencies
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "build.gradle" }}
-            # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: gradle dependencies
+      - run: make test_server
 
       - save_cache:
           paths:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      # run tests!
-      - run: gradle test
+      - store_artifacts:
+          path: build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build_test
