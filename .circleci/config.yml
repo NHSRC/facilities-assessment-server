@@ -33,7 +33,7 @@ jobs:
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
       - store_test_results:
-          path: build/reports/tests/
+          path: build/test-results/
 
       - store_artifacts:
           path: build/reports/tests/
