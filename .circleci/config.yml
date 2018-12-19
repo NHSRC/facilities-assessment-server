@@ -48,13 +48,42 @@ jobs:
 
       - store_artifacts:
           path: build/reports/tests/
-          destination: htmlResults
+          destination: testResultsHtml
 
       - store_artifacts:
-          path: build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar
+          path: build/libs/
+          destination: jars
+
+      - run: mkdir -p ~/jars && cp build/libs/*.jar ~/jars/.
+
+      - persist_to_workspace:
+          root: ~/jars
+          paths:
+            - .
+
+  deploy_to_jss:
+    # using speedier docker instead of machine
+    # since all we need is ssh
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "1a:e5:4f:89:fd:93:89:1d:bf:08:4c:df:00:56:71:57"
+      - run:
+          name: Deploy with SCP
+          command: |
+            scp ~/jars/*.jar $JSS_USER@$JSS_HOST:/home/app/facilities_assessment_host/app_servers/. && sudo systemctl restart fab
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build_test
+      - hold:
+          type: approval
+          requires:
+            - build_test
+      - deploy_to_jss:
+          requires:
+            - hold
