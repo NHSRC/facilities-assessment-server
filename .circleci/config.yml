@@ -67,6 +67,9 @@ jobs:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
+      - attach_workspace:
+          at: ~/jars
+
       - add_ssh_keys:
           fingerprints:
             - "1a:e5:4f:89:fd:93:89:1d:bf:08:4c:df:00:56:71:57"
