@@ -82,9 +82,7 @@ jobs:
       - run:
           name: Deploy with SCP
           command: |
-            scp ~/jars/*.jar $JSS_USER@$JSS_HOST:~/
-
-        # scp ~/jars/*.jar $JSS_USER@$JSS_HOST:/home/app/facilities-assessment-host/app-servers && sudo systemctl restart fab
+            scp ~/jars/*.jar $JSS_USER@$JSS_HOST:$JAR_DESTINATION && ssh $JSS_USER@$JSS_HOST 'sudo chown app:app $JAR_DESTINATION/*.jar && sudo systemctl restart fab'
 
 workflows:
   version: 2
