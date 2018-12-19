@@ -73,7 +73,7 @@ jobs:
       - run:
           name: Deploy to QA
           command: |
-            scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ~/jars $JSS_USER@$JSS_HOST:~
+            scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r ~/jars $JSS_USER@$JSS_HOST:~
             ssh $JSS_USER@$JSS_HOST "sudo su app -c 'cp jars/*.jar $QA_JAR_PATH' && rm -rf jars && sudo systemctl restart qa-fab"
 
   deploy_to_jss_prod:
@@ -89,7 +89,7 @@ jobs:
       - run:
           name: Deploy to PROD
           command: |
-            scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ~/jars $JSS_USER@$JSS_HOST:~
+            scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r ~/jars $JSS_USER@$JSS_HOST:~
             ssh $JSS_USER@$JSS_HOST "sudo su app -c 'cp jars/*.jar $JAR_PATH' && rm -rf jars && sudo systemctl restart fab"
 
 workflows:
