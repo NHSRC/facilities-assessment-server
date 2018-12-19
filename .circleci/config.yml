@@ -71,6 +71,7 @@ jobs:
           at: ~/jars
 
       - run:
+          # set KNOWN_HOST_KEY in project settings
           name: Add to known hosts
           command: |
             mkdir -p ~/.ssh && echo $KNOWN_HOST_KEY >> ~/.ssh/known_hosts
@@ -81,7 +82,9 @@ jobs:
       - run:
           name: Deploy with SCP
           command: |
-            scp ~/jars/*.jar $JSS_USER@$JSS_HOST:/home/app/facilities-assessment-host/app-servers/. && sudo systemctl restart fab
+            scp ~/jars/*.jar $JSS_USER@$JSS_HOST:~/
+
+        # scp ~/jars/*.jar $JSS_USER@$JSS_HOST:/home/app/facilities-assessment-host/app-servers && sudo systemctl restart fab
 
 workflows:
   version: 2
