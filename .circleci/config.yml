@@ -70,6 +70,11 @@ jobs:
       - attach_workspace:
           at: ~/jars
 
+      - run:
+          name: Add to known hosts
+          command: |
+            echo $KNOWN_HOST_KEY >> ~/.ssh/known_hosts
+
       - add_ssh_keys:
           fingerprints:
             - "1a:e5:4f:89:fd:93:89:1d:bf:08:4c:df:00:56:71:57"
