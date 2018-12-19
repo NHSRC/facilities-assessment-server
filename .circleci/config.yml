@@ -40,10 +40,9 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      - store_test_results:
-          path: ~/junit/
-
       - store_artifacts:
+          path: ~/junit
+      - store_test_results:
           path: ~/junit
 
       - store_artifacts:
@@ -61,38 +60,54 @@ jobs:
           paths:
             - .
 
-  deploy_to_jss:
-    # using speedier docker instead of machine
-    # since all we need is ssh
+  deploy_to_jss_QA:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
       - attach_workspace:
           at: ~/jars
 
+      - add_ssh_keys:
+          fingerprints:
+            - "1a:e5:4f:89:fd:93:89:1d:bf:08:4c:df:00:56:71:57"
       - run:
-          # set KNOWN_HOST_KEY in project settings
-          name: Add to known hosts
+          name: Deploy to QA
           command: |
-            mkdir -p ~/.ssh && echo $KNOWN_HOST_KEY >> ~/.ssh/known_hosts
+            scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ~/jars $JSS_USER@$JSS_HOST:~
+            ssh $JSS_USER@$JSS_HOST "sudo su app -c 'cp jars/*.jar $QA_JAR_PATH' && rm -rf jars && sudo systemctl restart qa-fab"
+
+  deploy_to_jss_prod:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - attach_workspace:
+          at: ~/jars
 
       - add_ssh_keys:
           fingerprints:
             - "1a:e5:4f:89:fd:93:89:1d:bf:08:4c:df:00:56:71:57"
       - run:
-          name: Deploy with SCP
+          name: Deploy to PROD
           command: |
-            scp ~/jars/*.jar $JSS_USER@$JSS_HOST:~ && ssh $JSS_USER@$JSS_HOST "sudo su app -c 'cp facilities*.jar $JAR_DESTINATION' && sudo systemctl restart fab"
+            scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ~/jars $JSS_USER@$JSS_HOST:~
+            ssh $JSS_USER@$JSS_HOST "sudo su app -c 'cp jars/*.jar $JAR_PATH' && rm -rf jars && sudo systemctl restart fab"
 
 workflows:
   version: 2
-  build_and_test:
+  build_test_and_deploy:
     jobs:
       - build_test
-      - hold:
+      - approve_JSS_deployment:
           type: approval
           requires:
             - build_test
-      - deploy_to_jss:
+      - deploy_to_jss_QA:
           requires:
-            - hold
+            - approve_JSS_deployment
+      - approve_prod_deployment:
+          type: approval
+          requires:
+            - deploy_to_jss_QA
+      - deploy_to_jss_prod:
+          requires:
+            - approve_prod_deployment
