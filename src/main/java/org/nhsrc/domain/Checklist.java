@@ -100,7 +100,7 @@ public class Checklist extends AbstractEntity {
 
     @JsonProperty("fullReference")
     public String getFullReference() {
-        return String.format("%s - %s", this.getAssessmentTool().getName(), this.getName());
+        return String.format("%s - [%s]", this.getName(), this.getAssessmentTool().getName());
     }
 
     public String toSummary() {

@@ -80,7 +80,7 @@ public class Standard extends AbstractEntity {
     @JsonProperty("fullReference")
     public String getFullReference() {
         Checklist checklist = this.getAreaOfConcern().getChecklist();
-        return String.format("%s - %s", checklist == null ? null : checklist.getAssessmentTool().getName(), this.getReference());
+        return String.format("%s - [%s]", this.getReference(), checklist == null ? null : checklist.getAssessmentTool().getName());
     }
 
     public void addMeasurableElement(MeasurableElement measurableElement) {
