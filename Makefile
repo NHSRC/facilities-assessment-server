@@ -95,14 +95,6 @@ open_test_results:
 	open build/reports/tests/index.html
 # </server>
 
-# <jar>
-publish_jar_dropbox_jss:
-	cp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar ~/Dropbox/Public/Gunak/dev/jss/
-
-publish_jar_prod_nhsrc:
-	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar gunak-main:/home/nhsrc1/facilities-assessment-host/downloads/
-# </jar>
-
 
 # <scenario>
 clear_responses:

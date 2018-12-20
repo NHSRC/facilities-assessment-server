@@ -2,9 +2,9 @@ package org.nhsrc;
 
 import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
+import org.nhsrc.config.GunakWebSecurityConfigurerAdapter;
 import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.*;
-import org.nhsrc.web.ServerFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
