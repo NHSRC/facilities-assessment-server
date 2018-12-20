@@ -25,7 +25,7 @@ jobs:
 
       - run: sudo apt-get install make postgresql-client
 
-      - run: ./gradlew clean test
+      - run: make reset_test_db && ./gradlew clean test
 
       - run:
           name: Save test results
