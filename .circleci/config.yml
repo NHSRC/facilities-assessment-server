@@ -1,12 +1,13 @@
 version: 2
 jobs:
   test:
-    - image: circleci/openjdk:8-jdk
+    docker:
+      - image: circleci/openjdk:8-jdk
 
-    - image: circleci/postgres:9.5-ram
-      environment:
-        - POSTGRES_USER: circleci
-        - POSTGRES_DB: facilities_assessment_test
+      - image: circleci/postgres:9.5-ram
+        environment:
+          - POSTGRES_USER: circleci
+          - POSTGRES_DB: facilities_assessment_test
 
     working_directory: ~/facilities-assessment-server
 
