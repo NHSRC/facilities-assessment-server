@@ -1,14 +1,12 @@
 version: 2
 jobs:
-  build_test:
-    docker:
-      - image: circleci/openjdk:8-jdk
+  test:
+    - image: circleci/openjdk:8-jdk
 
-      - image: circleci/postgres:9.5
-        environment:
+    - image: circleci/postgres:9.5-ram
+      environment:
         - POSTGRES_USER: circleci
         - POSTGRES_DB: facilities_assessment_test
-
 
     working_directory: ~/facilities-assessment-server
 
@@ -21,12 +19,12 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
 
       - run: sudo apt-get install make postgresql-client
 
-      - run: make test_server
+      - run: ./gradlew clean test
 
       - run:
           name: Save test results
@@ -48,6 +46,26 @@ jobs:
       - store_artifacts:
           path: build/reports/tests/
           destination: testResultsHtml
+
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/facilities-assessment-server
+
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "build.gradle" }}
+          - v1-dependencies-
+
+      - run: make build_server
 
       - store_artifacts:
           path: build/libs/
@@ -94,13 +112,20 @@ jobs:
 
 workflows:
   version: 2
-  build_test_and_deploy:
+  test_build_and_deploy:
     jobs:
-      - build_test
+      - test
+      - approve_build:
+          type: approval
+          requires:
+            - test
+      - build:
+          requires:
+            - approve_build
       - approve_JSS_deployment:
           type: approval
           requires:
-            - build_test
+            - build
       - deploy_to_jss_QA:
           requires:
             - approve_JSS_deployment
