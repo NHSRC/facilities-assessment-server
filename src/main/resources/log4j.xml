@@ -7,14 +7,24 @@
                    value="%d{yy-MM-dd HH:mm:ss} [%t][%-5p][%c{1}] - %m%n"/>
         </layout>
     </appender>
+    <appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="log/facilities_assessment.log"/>
+        <param name="MaxBackupIndex" value="25"/>
+        <param name="MaxFileSize" value="3MB"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p (%F:%L) - %m%n"/>
+        </layout>
+    </appender>
 
     <logger name="org.nhsrc" additivity="false">
         <level value="info"/>
         <appender-ref ref="console"/>
+        <appender-ref ref="fileAppender"/>
     </logger>
-    
+
     <root>
         <level value="warn"/>
         <appender-ref ref="console"/>
+        <appender-ref ref="fileAppender"/>
     </root>
 </log4j:configuration>
