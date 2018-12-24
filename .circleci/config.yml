@@ -6,7 +6,7 @@ jobs:
 
       - image: circleci/postgres:9.5-ram
         environment:
-          - POSTGRES_USER: circleci
+          - POSTGRES_USER: postgres
           - POSTGRES_DB: facilities_assessment_test
 
     working_directory: ~/facilities-assessment-server
