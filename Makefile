@@ -16,7 +16,7 @@ client_response_folder := ../facilities-assessment-android-client/nhsrc/output/r
 port := 6001
 
 define _run_server
-	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
+	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --spring.profiles.active=${FA_ENV} --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
 endef
 
 define _debug_server
