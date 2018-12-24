@@ -24,7 +24,7 @@
         </root>
     </springProfile>
     <springProfile name="qa,prod,production">
-        <logger name="org.nhsrc" level="DEBUG" additivity="false">
+        <logger name="org.nhsrc" level="INFO" additivity="false">
             <appender-ref ref="ROLLING-FILE" />
         </logger>
         <root level="INFO">
