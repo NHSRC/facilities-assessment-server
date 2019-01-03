@@ -14,16 +14,17 @@ public class SheetRowImporter {
     private MeasurableElement currME;
     private AreaOfConcern currAOC;
     private AssessmentChecklistData data;
-    private static Pattern mePattern = Pattern.compile("^([a-zA-Z][0-9]+\\.[0-9]+)(.*)");
-    private static Pattern standardPattern = Pattern.compile("^([a-zA-Z][0-9]+)(.*)");
+    private static Pattern mePattern = Pattern.compile("([a-zA-Z][0-9]+\\.[0-9]+)(.*)");
+    private static Pattern standardPattern = Pattern.compile("([a-zA-Z][0-9]+)(.*)");
 
     public SheetRowImporter(AssessmentChecklistData data) {
         this.data = data;
     }
 
-    private String getCleanedRef(String cell, Pattern pattern, String replacement) {
-        String ref = cell.replace(replacement, "").trim().replaceAll(" +", " ");
+    private String getCleanedRef(String cellContent, Pattern pattern, String toReplace) {
+        String ref = cellContent.replace(toReplace, "").trim().replaceAll(" +", " ");
         ref = ref.replaceAll("\\s", "");
+        ref = ref.replaceAll("[,.]+", ".");
         Matcher matcher = pattern.matcher(ref);
         String cleanedRef = ref;
         if (matcher.find()) {
@@ -32,7 +33,7 @@ public class SheetRowImporter {
         return cleanedRef;
     }
 
-    private String getMERef(String cellText) {
+    String getMERef(String cellText) {
         return getCleanedRef(cellText, mePattern, "ME");
     }
 
