@@ -55,18 +55,23 @@ public class ExcelImportService {
             String checkpointName = checkpointScore.getCheckpoint().getName();
             String measurableElementReference = checkpointScore.getCheckpoint().getMeasurableElement().getReference();
             List<Checkpoint> checkpoints = checkpointRepository.findAllByNameAndChecklistUuidAndMeasurableElementReference(checkpointName, checklist.getUuid(), measurableElementReference);
-            if (checkpoints.size() != 1) {
-                facilityAssessmentImportResponse.addCheckpointInError(new FacilityAssessmentImportResponse.CheckpointInError(checkpointName, measurableElementReference));
-//                logger.error(String.format("ME:%s", measurableElementName));
-                logger.error(String.format("ME:%s. %d checkpoints with same name=%s, found in checklist:%s", measurableElementReference, checkpoints.size(), checkpointName, checklist.getName()));
+            if (checkpoints.size() == 0) { // additionally try to resolve by looking for checkpoint in Standard
+                String standardRef = checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference();
+                checkpoints = checkpointRepository.findAllByNameAndChecklistUuidAndMeasurableElementStandardReference(checkpointName, checklist.getUuid(), standardRef);
             }
-            else {
+
+            if (checkpoints.size() == 1) {
                 checkpointScoreDTO.setCheckpoint(checkpoints.get(0).getUuid());
                 checkpointScoreDTO.setNa(false);
                 checkpointScoreDTO.setRemarks(checkpointScore.getRemarks());
                 checkpointScoreDTO.setScore(checkpointScore.getScore());
                 checkpointScoreDTO.setUuid(UUID.randomUUID());
                 checklistDTO.addCheckpointScore(checkpointScoreDTO);
+            }
+            else {
+                facilityAssessmentImportResponse.addCheckpointInError(new FacilityAssessmentImportResponse.CheckpointInError(checkpointName, measurableElementReference));
+//                logger.error(String.format("ME:%s", measurableElementName));
+                logger.error(String.format("ME:%s. %d checkpoints with same name=%s, found in checklist:%s", measurableElementReference, checkpoints.size(), checkpointName, checklist.getName()));
             }
         });
         facilityAssessmentService.saveChecklist(checklistDTO);

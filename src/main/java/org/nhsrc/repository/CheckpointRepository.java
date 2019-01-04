@@ -1,7 +1,6 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.Checkpoint;
-import org.nhsrc.domain.MeasurableElement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +26,7 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     Page<Checkpoint> findByMeasurableElementUuidAndChecklistUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("checklistUuid") UUID checklistUuid, @Param("measurableElementUuid") UUID measurableElementUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     List<Checkpoint> findAllByNameAndChecklistUuidAndMeasurableElementReference(String name, UUID checklistUuid, String measurableElementReference);
+    List<Checkpoint> findAllByNameAndChecklistUuidAndMeasurableElementStandardReference(String name, UUID checklistUuid, String standardReference);
 
     @RestResource(path = "findAllById", rel = "findAllById")
     List<Checkpoint> findByIdIn(@Param("ids") Integer[] ids);
