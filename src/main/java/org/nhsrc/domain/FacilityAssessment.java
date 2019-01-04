@@ -23,13 +23,6 @@ public class FacilityAssessment extends AbstractScoreEntity {
     private static Logger logger = LoggerFactory.getLogger(FacilityAssessment.class);
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "facility_id")
-    private Facility facility;
-
-    @Column(name = "facility_name")
-    private String facilityName;
-
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_id")
     @NotNull
     private AssessmentTool assessmentTool;
@@ -72,14 +65,6 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "facilityAssessment")
     private Set<FacilityAssessmentDevice> facilityAssessmentDevices = new HashSet<>();
 
-    public Facility getFacility() {
-        return facility;
-    }
-
-    public void setFacility(Facility facility) {
-        this.facility = facility;
-    }
-
     public Date getStartDate() {
         return startDate;
     }
@@ -103,13 +88,6 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @JsonProperty("assessmentToolId")
     public long _getAssessmentToolId() {
         return this.assessmentTool.getId();
-    }
-
-    @JsonProperty("facilityId")
-    public Integer _getFacilityId() {
-        if (this.facility != null)
-            return this.facility.getId();
-        return null;
     }
 
     @JsonProperty("assessmentTypeId")
@@ -137,14 +115,6 @@ public class FacilityAssessment extends AbstractScoreEntity {
         this.facilityAssessmentDevices = facilityAssessmentDevices;
     }
 
-    public String getFacilityName() {
-        return facilityName;
-    }
-
-    public void setFacilityName(String facilityName) {
-        this.facilityName = facilityName;
-    }
-
     public void incorporateDevice(String deviceId) {
         if (deviceId != null && !deviceId.isEmpty() && facilityAssessmentDevices.stream().noneMatch(facilityAssessmentDevice -> facilityAssessmentDevice.getDeviceId().equals(deviceId))) {
             FacilityAssessmentDevice facilityAssessmentDevice = new FacilityAssessmentDevice();
@@ -153,6 +123,85 @@ public class FacilityAssessment extends AbstractScoreEntity {
             facilityAssessmentDevice.setFacilityAssessment(this);
             facilityAssessmentDevices.add(facilityAssessmentDevice);
         }
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "facility_id")
+    private Facility facility;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "state_id")
+    private State state;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "district_id")
+    private District district;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "facility_type_id")
+    private FacilityType facilityType;
+
+    @Column(name = "facility_name")
+    private String facilityName;
+
+    public Facility getFacility() {
+        return facility;
+    }
+
+    @JsonProperty("facilityId")
+    public Integer _getFacilityId() {
+        return this.facility == null ? null : this.facility.getId();
+    }
+
+    public void setFacility(Facility facility) {
+        this.facility = facility;
+    }
+
+    public State getState() {
+        return this.state;
+    }
+
+    @JsonProperty("stateId")
+    public Integer _getStateId() {
+        return this.state == null ? null : this.state.getId();
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public District getDistrict() {
+        return this.district;
+    }
+
+    @JsonProperty("districtId")
+    public Integer _getDistrictId() {
+        return this.district == null ? null : this.district.getId();
+    }
+
+    public void setDistrict(District district) {
+        this.district = district;
+    }
+
+    public FacilityType getFacilityType() {
+        return this.facilityType;
+    }
+
+    @JsonProperty("facilityTypeId")
+    public Integer _getFacilityTypeId() {
+        return this.facilityType == null ? null : this.facilityType.getId();
+    }
+
+    public void setFacilityType(FacilityType facilityType) {
+        this.facilityType = facilityType;
+    }
+
+    public String getFacilityName() {
+        return facilityName;
+    }
+
+    public void setFacilityName(String facilityName) {
+        this.facilityName = facilityName;
     }
 
     public void setupCode() {

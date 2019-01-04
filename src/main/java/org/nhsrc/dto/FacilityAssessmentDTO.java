@@ -13,9 +13,13 @@ public class FacilityAssessmentDTO implements Serializable {
 
     private UUID facility;
 
+    private int facilityId;
+
     private String facilityName;
 
     private UUID assessmentTool;
+
+    private int assessmentToolId;
 
     @JsonFormat(pattern = DATE_TIME_FORMAT_STRING)
     private Date startDate;
@@ -28,6 +32,20 @@ public class FacilityAssessmentDTO implements Serializable {
     private String deviceId;
 
     private UUID assessmentTypeUUID;
+
+    private int assessmentTypeId;
+
+    private UUID stateUUID;
+
+    private int stateId;
+
+    private UUID districtUUID;
+
+    private int districtId;
+
+    private UUID facilityTypeUUID;
+
+    private int facilityTypeId;
 
     public UUID getUuid() {
         return uuid;
@@ -99,6 +117,78 @@ public class FacilityAssessmentDTO implements Serializable {
 
     public void setFacilityName(String facilityName) {
         this.facilityName = facilityName;
+    }
+
+    public UUID getStateUUID() {
+        return stateUUID;
+    }
+
+    public void setStateUUID(UUID stateUUID) {
+        this.stateUUID = stateUUID;
+    }
+
+    public UUID getDistrictUUID() {
+        return districtUUID;
+    }
+
+    public void setDistrictUUID(UUID districtUUID) {
+        this.districtUUID = districtUUID;
+    }
+
+    public UUID getFacilityTypeUUID() {
+        return facilityTypeUUID;
+    }
+
+    public void setFacilityTypeUUID(UUID facilityTypeUUID) {
+        this.facilityTypeUUID = facilityTypeUUID;
+    }
+
+    public int getFacilityId() {
+        return facilityId;
+    }
+
+    public void setFacilityId(int facilityId) {
+        this.facilityId = facilityId;
+    }
+
+    public int getAssessmentToolId() {
+        return assessmentToolId;
+    }
+
+    public void setAssessmentToolId(int assessmentToolId) {
+        this.assessmentToolId = assessmentToolId;
+    }
+
+    public int getAssessmentTypeId() {
+        return assessmentTypeId;
+    }
+
+    public void setAssessmentTypeId(int assessmentTypeId) {
+        this.assessmentTypeId = assessmentTypeId;
+    }
+
+    public int getStateId() {
+        return stateId;
+    }
+
+    public void setStateId(int stateId) {
+        this.stateId = stateId;
+    }
+
+    public int getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(int districtId) {
+        this.districtId = districtId;
+    }
+
+    public int getFacilityTypeId() {
+        return facilityTypeId;
+    }
+
+    public void setFacilityTypeId(int facilityTypeId) {
+        this.facilityTypeId = facilityTypeId;
     }
 
     @Override

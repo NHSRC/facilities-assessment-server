@@ -28,6 +28,9 @@ public class FacilityAssessmentService {
     private AssessmentTypeRepository assessmentTypeRepository;
     private IndicatorDefinitionRepository indicatorDefinitionRepository;
     private IndicatorRepository indicatorRepository;
+    private StateRepository stateRepository;
+    private DistrictRepository districtRepository;
+    private FacilityTypeRepository facilityTypeRepository;
 
     @Autowired
     public FacilityAssessmentService(FacilityRepository facilityRepository,
@@ -39,7 +42,10 @@ public class FacilityAssessmentService {
                                      AssessmentMatchingService assessmentMatchingService,
                                      AssessmentTypeRepository assessmentTypeRepository,
                                      IndicatorDefinitionRepository indicatorDefinitionRepository,
-                                     IndicatorRepository indicatorRepository) {
+                                     IndicatorRepository indicatorRepository,
+                                     StateRepository stateRepository,
+                                     DistrictRepository districtRepository,
+                                     FacilityTypeRepository facilityTypeRepository) {
         this.facilityRepository = facilityRepository;
         this.assessmentToolRepository = assessmentToolRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
@@ -50,21 +56,27 @@ public class FacilityAssessmentService {
         this.assessmentTypeRepository = assessmentTypeRepository;
         this.indicatorDefinitionRepository = indicatorDefinitionRepository;
         this.indicatorRepository = indicatorRepository;
+        this.stateRepository = stateRepository;
+        this.districtRepository = districtRepository;
+        this.facilityTypeRepository = facilityTypeRepository;
     }
 
     public FacilityAssessment save(FacilityAssessmentDTO facilityAssessmentDTO, User user) {
-        Facility facility = facilityRepository.findByUuid(facilityAssessmentDTO.getFacility());
+        Facility facility = Repository.findByUuidOrId(facilityAssessmentDTO.getFacility(), facilityAssessmentDTO.getFacilityId(), facilityRepository);
         if (facility == null && (facilityAssessmentDTO.getFacilityName() == null || facilityAssessmentDTO.getFacilityName().isEmpty()))
             throw new ValidationException("Facility not found and facility name is also empty");
 
-        AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentDTO.getAssessmentTool());
-        AssessmentType assessmentType = assessmentTypeRepository.findByUuid(facilityAssessmentDTO.getAssessmentTypeUUID());
+        AssessmentTool assessmentTool = Repository.findByUuidOrId(facilityAssessmentDTO.getAssessmentTool(), facilityAssessmentDTO.getAssessmentToolId(), assessmentToolRepository);
+        AssessmentType assessmentType = Repository.findByUuidOrId(facilityAssessmentDTO.getAssessmentTypeUUID(), facilityAssessmentDTO.getAssessmentToolId(), assessmentTypeRepository);
+        State state = Repository.findByUuidOrId(facilityAssessmentDTO.getStateUUID(), facilityAssessmentDTO.getStateId(), stateRepository);
+        District district = Repository.findByUuidOrId(facilityAssessmentDTO.getDistrictUUID(), facilityAssessmentDTO.getDistrictId(), districtRepository);
+        FacilityType facilityType = Repository.findByUuidOrId(facilityAssessmentDTO.getFacilityTypeUUID(), facilityAssessmentDTO.getFacilityId(), facilityTypeRepository);
 
         String lockString = String.format("%s-%d", facility == null ? facilityAssessmentDTO.getFacilityName() : facility.getId(), assessmentTool.getId());
         synchronized (lockString.intern()) {
             FacilityAssessment facilityAssessment = this.assessmentMatchingService.findExistingAssessment(facilityAssessmentDTO.getSeriesName(), facilityAssessmentDTO.getUuid(), facility, facilityAssessmentDTO.getFacilityName(), assessmentTool);
             if (facilityAssessment == null)
-                facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool, assessmentType);
+                facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool, assessmentType, state, district, facilityType);
             else
                 facilityAssessment.updateEndDate(facilityAssessmentDTO.getEndDate());
 

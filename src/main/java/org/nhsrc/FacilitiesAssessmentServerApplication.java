@@ -2,7 +2,6 @@ package org.nhsrc;
 
 import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
-import org.nhsrc.config.GunakWebSecurityConfigurerAdapter;
 import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.*;
 import org.slf4j.Logger;
@@ -134,14 +133,21 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
             public Resource<FacilityAssessment> process(Resource<FacilityAssessment> resource) {
                 FacilityAssessment facilityAssessment = resource.getContent();
                 resource.removeLinks();
-                Facility facility = facilityAssessment.getFacility();
-                String facilityUUID = facility == null ? UUID.randomUUID().toString() : facility.getUuid().toString();
-                resource.add(new Link(facilityUUID, "facilityUUID"));
+
+                addResourceLink(resource, facilityAssessment.getFacility(), "facilityUUID");
+                addResourceLink(resource, facilityAssessment.getState(), "stateUUID");
+                addResourceLink(resource, facilityAssessment.getDistrict(), "districtUUID");
+                addResourceLink(resource, facilityAssessment.getFacilityType(), "facilityTypeUUID");
                 resource.add(new Link(facilityAssessment.getAssessmentTool().getUuid().toString(), "assessmentToolUUID"));
                 resource.add(new Link(facilityAssessment.getAssessmentType().getUuid().toString(), "assessmentTypeUUID"));
                 return resource;
             }
         };
+    }
+
+    private void addResourceLink(Resource<FacilityAssessment> resource, AbstractEntity abstractEntity, String linkName) {
+        if (abstractEntity == null) return;
+        resource.add(new Link(abstractEntity.getUuid().toString(), linkName));
     }
 
     @Bean

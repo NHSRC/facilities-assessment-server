@@ -1,18 +1,20 @@
 package org.nhsrc.mapper;
 
-import org.nhsrc.domain.AssessmentTool;
-import org.nhsrc.domain.AssessmentType;
-import org.nhsrc.domain.Facility;
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.*;
 import org.nhsrc.dto.FacilityAssessmentDTO;
 
 public class FacilityAssessmentMapper {
     public static FacilityAssessment fromDTO(FacilityAssessmentDTO facilityAssessmentDTO,
                                              Facility facility,
-                                             AssessmentTool assessmentTool, AssessmentType assessmentType) {
+                                             AssessmentTool assessmentTool, AssessmentType assessmentType, State state, District district, FacilityType facilityType) {
         FacilityAssessment facilityAssessment = new FacilityAssessment();
         facilityAssessment.setFacility(facility);
         facilityAssessment.setFacilityName(facilityAssessmentDTO.getFacilityName());
+        facilityAssessment.setState(state);
+        facilityAssessment.setDistrict(district);
+        facilityAssessment.setFacilityType(facilityType);
+        facilityAssessment.setFacilityName(facilityAssessmentDTO.getFacilityName());
+
         facilityAssessment.setAssessmentTool(assessmentTool);
         facilityAssessment.setUuid(facilityAssessmentDTO.getUuid());
         facilityAssessment.setStartDate(facilityAssessmentDTO.getStartDate());

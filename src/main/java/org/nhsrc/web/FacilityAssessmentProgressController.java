@@ -154,7 +154,7 @@ public class FacilityAssessmentProgressController {
     private List<StandardProgressDTO> getStandardProgressDTO(FacilityAssessment facilityAssessment) {
         Query standardProgressForAssessment = entityManager.createNativeQuery(standardProgressPerAssessment, StandardProgressDTO.class);
         standardProgressForAssessment.setParameter("faid", facilityAssessment.getId());
-        standardProgressForAssessment.setParameter("stid", facilityAssessment.getFacility().getDistrict().getState().getId());
+        standardProgressForAssessment.setParameter("stid", facilityAssessment.getState().getId());
         standardProgressForAssessment.setParameter("atid", facilityAssessment.getAssessmentTool().getId());
         return (List<StandardProgressDTO>) standardProgressForAssessment.getResultList();
     }
@@ -162,7 +162,7 @@ public class FacilityAssessmentProgressController {
     private List<AreaOfConcernProgressDTO> getAreaOfConcernProgressDTO(FacilityAssessment facilityAssessment, List<StandardProgressDTO> standardsProgressDTO) {
         Query areaOfConcernProgressForAssessment = entityManager.createNativeQuery(areaOfConcernTotalForAssessmentTool, AreaOfConcernProgressDTO.class);
         areaOfConcernProgressForAssessment.setParameter("id", facilityAssessment.getAssessmentTool().getId());
-        areaOfConcernProgressForAssessment.setParameter("stid", facilityAssessment.getFacility().getDistrict().getState().getId());
+        areaOfConcernProgressForAssessment.setParameter("stid", facilityAssessment.getState().getId());
         List<AreaOfConcernProgressDTO> areasOfConcernProgress = (List<AreaOfConcernProgressDTO>) areaOfConcernProgressForAssessment.getResultList();
 
         Map<String, List<StandardProgressDTO>> standardProgressByAOC = standardsProgressDTO.stream().collect(Collectors.groupingBy(standardProgressDTO -> standardProgressDTO.getAocUUID() + standardProgressDTO.getChecklistUUID()));
@@ -173,7 +173,7 @@ public class FacilityAssessmentProgressController {
     private List<ChecklistProgressDTO> getChecklistProgress(FacilityAssessment facilityAssessment, List<AreaOfConcernProgressDTO> areasOfConcernProgressDTO) {
         Query checklistProgressForAssessmentTool = entityManager.createNativeQuery(checklistTotalForAssessmentTool, ChecklistProgressDTO.class);
         checklistProgressForAssessmentTool.setParameter("id", facilityAssessment.getAssessmentTool().getId());
-        checklistProgressForAssessmentTool.setParameter("stid", facilityAssessment.getFacility().getDistrict().getState().getId());
+        checklistProgressForAssessmentTool.setParameter("stid", facilityAssessment.getState().getId());
         List<ChecklistProgressDTO> checklistProgressDTOS = (List<ChecklistProgressDTO>) checklistProgressForAssessmentTool.getResultList();
 
         Map<String, List<AreaOfConcernProgressDTO>> aocProgressByChecklist = areasOfConcernProgressDTO.stream().collect(Collectors.groupingBy(AreaOfConcernProgressDTO::getChecklistUUID));
