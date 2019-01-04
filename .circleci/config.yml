@@ -137,3 +137,6 @@ workflows:
       - deploy_to_jss_prod:
           requires:
             - approve_prod_deployment
+notify:
+  webhooks:
+  - url: https://webhooks.gitter.im/e/0862d3a659c6cd1fc929
