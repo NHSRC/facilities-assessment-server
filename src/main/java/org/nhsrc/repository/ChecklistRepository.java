@@ -1,10 +1,12 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.Checkpoint;
 import org.nhsrc.domain.Facility;
 import org.nhsrc.domain.Standard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -41,4 +43,6 @@ public interface ChecklistRepository extends BaseRepository<Checklist> {
     @RestResource(path = "find", rel = "find")
     Page<Checklist> findByStateIdAndAssessmentToolId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
+    @Query("SELECT c FROM Checklist c inner join c.assessmentTool as at WHERE (c.state.id = :stateId or c.state is null) and c.assessmentTool.id = :assessmentToolId order by at.name, c.name")
+    Page<Checklist> findByAssessmentToolIdAndStateIdOrStateIsNull(@Param("assessmentToolId") Integer assessmentToolId, @Param("stateId") Integer stateId, Pageable pageable);
 }

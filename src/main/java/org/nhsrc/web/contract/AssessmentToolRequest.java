@@ -2,9 +2,11 @@ package org.nhsrc.web.contract;
 
 public class AssessmentToolRequest {
     private String uuid;
+    private int id;
     private Boolean inactive;
     private String name;
-    private String mode;
+    private int assessmentToolModeId;
+    private String assessmentType;
 
     public String getUuid() {
         return uuid;
@@ -30,11 +32,27 @@ public class AssessmentToolRequest {
         this.name = name;
     }
 
-    public String getMode() {
-        return mode;
+    public int getAssessmentToolModeId() {
+        return assessmentToolModeId;
     }
 
-    public void setMode(String mode) {
-        this.mode = mode;
+    public void setAssessmentToolModeId(int assessmentToolModeId) {
+        this.assessmentToolModeId = assessmentToolModeId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getAssessmentType() {
+        return assessmentType;
+    }
+
+    public void setAssessmentType(String assessmentType) {
+        this.assessmentType = assessmentType;
     }
 }

@@ -1,5 +1,7 @@
 package org.nhsrc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 
@@ -27,6 +29,7 @@ public class AreaOfConcern extends AbstractEntity {
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinTable(name = "checklist_area_of_concern", joinColumns = @JoinColumn(name = "area_of_concern_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "checklist_id", referencedColumnName = "id"))
     @NotNull
+    @JsonIgnore
     private Set<Checklist> checklists = new HashSet<>();
 
     public String getName() {

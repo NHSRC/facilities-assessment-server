@@ -1,13 +1,13 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.Checkpoint;
 import org.nhsrc.repository.*;
 import org.nhsrc.web.contract.ChecklistRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.UUID;
@@ -42,5 +42,10 @@ public class ChecklistController {
         }
 
         return checklistRepository.save(checklist);
+    }
+
+    @RequestMapping(value = "/checklist/search/find", method = {RequestMethod.GET})
+    public Page<Checklist> findAll(@RequestParam Integer assessmentToolId, @RequestParam Integer stateId, Pageable pageable) {
+        return checklistRepository.findByAssessmentToolIdAndStateIdOrStateIsNull(assessmentToolId, stateId, pageable);
     }
 }

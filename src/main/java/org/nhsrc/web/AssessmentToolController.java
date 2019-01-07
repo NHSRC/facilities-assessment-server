@@ -2,18 +2,17 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.AssessmentToolMode;
-import org.nhsrc.domain.Facility;
+import org.nhsrc.domain.AssessmentToolType;
 import org.nhsrc.repository.*;
 import org.nhsrc.web.contract.AssessmentToolRequest;
-import org.nhsrc.web.contract.FacilityRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/")
@@ -29,22 +28,17 @@ public class AssessmentToolController {
 
     @RequestMapping(value = "/assessmentTools", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    public AssessmentTool save(@RequestBody AssessmentToolRequest assessmentToolRequest) {
-        AssessmentToolMode assessmentToolMode = assessmentToolModeRepository.findByName(assessmentToolRequest.getMode());
-        if (assessmentToolMode == null) {
-            assessmentToolMode = new AssessmentToolMode();
-            assessmentToolMode.setName(assessmentToolRequest.getMode());
-            assessmentToolMode.setUuid(UUID.randomUUID());
-            assessmentToolModeRepository.save(assessmentToolMode);
-        }
-
-        AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(UUID.fromString(assessmentToolRequest.getUuid()));
-        if (assessmentTool == null) {
-            assessmentTool = new AssessmentTool();
-            assessmentTool.setUuid(UUID.fromString(assessmentToolRequest.getUuid()));
-        }
-        assessmentTool.setName(assessmentToolRequest.getName());
+    public AssessmentTool save(@RequestBody AssessmentToolRequest request) {
+        AssessmentTool assessmentTool = Repository.findByUuidOrCreate(request.getUuid(), assessmentToolRepository, new AssessmentTool());
+        AssessmentToolMode assessmentToolMode = Repository.findByUuidOrId(request.getUuid(), request.getAssessmentToolModeId(), assessmentToolModeRepository);
+        assessmentTool.setName(request.getName());
         assessmentTool.setAssessmentToolMode(assessmentToolMode);
+        assessmentTool.setInactive(request.getInactive());
+        if (request.getAssessmentType() == null || request.getAssessmentType().isEmpty()) {
+            assessmentTool.setAssessmentToolType(AssessmentToolType.COMPLIANCE);
+        } else {
+            assessmentTool.setAssessmentToolType(AssessmentToolType.INDICATOR);
+        }
         return assessmentToolRepository.save(assessmentTool);
     }
 }
