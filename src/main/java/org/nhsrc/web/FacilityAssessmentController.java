@@ -5,10 +5,7 @@ import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorListDTO;
-import org.nhsrc.repository.ChecklistRepository;
-import org.nhsrc.repository.CheckpointScoreRepository;
-import org.nhsrc.repository.FacilityAssessmentRepository;
-import org.nhsrc.repository.StateRepository;
+import org.nhsrc.repository.*;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
@@ -39,20 +36,16 @@ public class FacilityAssessmentController {
     private final UserRepository userRepository;
     private final StateRepository stateRepository;
     private FacilityAssessmentRepository facilityAssessmentRepository;
-    private ChecklistRepository checklistRepository;
-    private CheckpointScoreRepository checkpointScoreRepository;
     private UserService userService;
     private static Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
     private ExcelImportService excelImportService;
 
     @Autowired
-    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, ChecklistRepository checklistRepository, CheckpointScoreRepository checkpointScoreRepository, UserService userService, ExcelImportService excelImportService) {
+    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
         this.stateRepository = stateRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
-        this.checklistRepository = checklistRepository;
-        this.checkpointScoreRepository = checkpointScoreRepository;
         this.userService = userService;
         this.excelImportService = excelImportService;
     }
@@ -85,45 +78,38 @@ public class FacilityAssessmentController {
         return facilityAssessmentRepository.findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
     }
 
-    @RequestMapping(value = "facility-assessment/excel/new", method = RequestMethod.POST)
+    @RequestMapping(value = "facilityAssessments", method = {RequestMethod.PUT, RequestMethod.POST})
     @Transactional
-    public FacilityAssessmentImportResponse submitAssessment(Principal principal, @RequestParam("assessmentFile") MultipartFile file, @RequestParam("facilityUuid") UUID facilityUuid, @RequestParam("nonExistentFacilityName") String nonExistentFacilityName, @RequestParam("assessmentTypeUuid") UUID assessmentTypeUuid, @RequestParam("assessmentToolUuid") UUID assessmentToolUuid, @RequestParam("checklistUuid") UUID checklistUuid) throws Exception {
+    public FacilityAssessmentImportResponse submitAssessment(Principal principal,
+                                                             @RequestParam("assessmentFile") MultipartFile file,
+                                                             @RequestParam("uuid") UUID uuid,
+                                                             @RequestParam("facilityId") int facilityId,
+                                                             @RequestParam("facilityName") String nonExistentFacilityName,
+                                                             @RequestParam("assessmentTypeId") int assessmentTypeId,
+                                                             @RequestParam("assessmentToolId") int assessmentToolId,
+                                                             @RequestParam("stateId") int stateId,
+                                                             @RequestParam("districtId") int districtId,
+                                                             @RequestParam("facilityTypeId") int facilityTypeId,
+                                                             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
+                                                             @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate) throws Exception {
         User user = userRepository.findByEmail(principal.getName());
         FacilityAssessmentDTO facilityAssessmentDTO = new FacilityAssessmentDTO();
-        facilityAssessmentDTO.setAssessmentTypeUUID(assessmentTypeUuid);
-        facilityAssessmentDTO.setAssessmentTool(assessmentToolUuid);
-        facilityAssessmentDTO.setFacility(facilityUuid);
+        facilityAssessmentDTO.setAssessmentTypeId(assessmentTypeId);
+        facilityAssessmentDTO.setAssessmentToolId(assessmentToolId);
+        facilityAssessmentDTO.setStateId(stateId);
+        facilityAssessmentDTO.setDistrictId(districtId);
+        facilityAssessmentDTO.setFacilityTypeId(facilityTypeId);
+        facilityAssessmentDTO.setFacilityId(facilityId);
         facilityAssessmentDTO.setFacilityName(nonExistentFacilityName);
-        facilityAssessmentDTO.setUuid(UUID.randomUUID());
-        Date date = new Date();
-        facilityAssessmentDTO.setStartDate(date);
-        facilityAssessmentDTO.setEndDate(date);
+        facilityAssessmentDTO.setUuid(uuid);
+        facilityAssessmentDTO.setStartDate(startDate);
+        facilityAssessmentDTO.setEndDate(endDate);
+
         FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO, user);
 
         FacilityAssessmentImportResponse facilityAssessmentImportResponse = new FacilityAssessmentImportResponse();
         facilityAssessmentImportResponse.setFacilityAssessment(facilityAssessment);
-        Checklist checklist = checklistRepository.findByUuid(checklistUuid);
-        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, checklist, facilityAssessmentImportResponse);
+        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, facilityAssessmentImportResponse);
         return facilityAssessmentImportResponse;
-    }
-
-    @RequestMapping(value = "facility-assessment/excel/update", method = RequestMethod.POST)
-    @Transactional
-    public FacilityAssessmentImportResponse submitAssessment(Principal principal, @RequestParam("assessmentFile") MultipartFile file, @RequestParam("facilityAssessmentUuid") UUID facilityAssessmentUuid) throws Exception {
-        User user = userRepository.findByEmail(principal.getName());
-        FacilityAssessmentImportResponse response = new FacilityAssessmentImportResponse();
-        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(facilityAssessmentUuid);
-        if (facilityAssessment == null) return response;
-
-        //Implemented only for laqshya right now, hence upload is one checklist at a time
-        CheckpointScore checkpointScore = checkpointScoreRepository.findFirstByFacilityAssessmentId(facilityAssessment.getId());
-
-        response.setFacilityAssessment(facilityAssessment);
-        facilityAssessmentService.clearCheckpointScores(facilityAssessment);
-        facilityAssessment.setUser(user);
-        facilityAssessmentRepository.save(facilityAssessment);
-
-        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, checkpointScore.getChecklist(), response);
-        return response;
     }
 }

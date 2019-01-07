@@ -10,12 +10,8 @@ import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.repository.AssessmentToolRepository;
 import org.nhsrc.repository.AssessmentTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.UUID;
 
 public class FacilityAssessmentControllerTest extends AbstractWebIntegrationTest {

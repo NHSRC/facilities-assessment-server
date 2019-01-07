@@ -92,6 +92,7 @@ public class FacilityAssessmentService {
     public List<CheckpointScore> saveChecklist(ChecklistDTO checklistDTO) {
         Checklist checklist = checklistRepository.findByUuid(checklistDTO.getUuid());
         FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(checklistDTO.getFacilityAssessment());
+        this.clearCheckpointScores(facilityAssessment.getId(), checklist.getName());
         List<CheckpointScore> checkpointScores = new ArrayList<>();
         checklistDTO.getCheckpointScores().forEach(checkpointScoreDTO -> {
             Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
@@ -145,8 +146,8 @@ public class FacilityAssessmentService {
         indicatorRepository.save(indicators);
     }
 
-    public void clearCheckpointScores(FacilityAssessment facilityAssessment) {
-        List<CheckpointScore> checkpointScores = checkpointScoreRepository.findByFacilityAssessmentId(facilityAssessment.getId());
+    public void clearCheckpointScores(int facilityAssessmentId, String checklistName) {
+        List<CheckpointScore> checkpointScores = checkpointScoreRepository.findByFacilityAssessmentIdAndChecklistName(facilityAssessmentId, checklistName);
         checkpointScoreRepository.delete(checkpointScores);
     }
 }

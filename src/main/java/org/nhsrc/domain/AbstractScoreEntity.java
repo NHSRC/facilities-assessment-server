@@ -63,6 +63,7 @@ public abstract class AbstractScoreEntity {
         return uuid;
     }
 
+    @JsonIgnore
     public String getUuidString() {
         return uuid.toString();
     }

@@ -1,7 +1,5 @@
 package org.nhsrc.dto;
 
-import org.nhsrc.domain.CheckpointScore;
-
 import java.util.List;
 import java.util.UUID;
 

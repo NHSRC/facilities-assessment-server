@@ -4,6 +4,7 @@ import org.nhsrc.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AssessmentChecklistData {
     private List<Checklist> checklists = new ArrayList<>();
@@ -63,6 +64,10 @@ public class AssessmentChecklistData {
 
     public List<CheckpointScore> getCheckpointScores() {
         return checkpointScores;
+    }
+
+    public List<CheckpointScore> getCheckpointScores(String checklistName) {
+        return checkpointScores.stream().filter(checkpointScore -> checkpointScore.getChecklist().getName().equals(checklistName)).collect(Collectors.toList());
     }
 
     public FacilityAssessment getAssessment() {
