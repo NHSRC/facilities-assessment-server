@@ -20,8 +20,12 @@ public class AssessmentMatchingService {
     }
 
     public FacilityAssessment findExistingAssessment(String seriesName, UUID facilityAssessmentUUID, Facility facility, AssessmentTool assessmentTool) {
-        if (facilityAssessmentUUID != null)
-            return facilityAssessmentRepository.findByUuid(facilityAssessmentUUID);
+        FacilityAssessment facilityAssessment = null;
+        if (facilityAssessmentUUID != null) {
+            facilityAssessment = facilityAssessmentRepository.findByUuid(facilityAssessmentUUID);
+        }
+
+        if (facilityAssessment != null) return facilityAssessment;
 
         if (seriesName != null && !seriesName.isEmpty())
             return facilityAssessmentRepository.findByFacilityAndAssessmentToolAndSeriesName(facility, assessmentTool, seriesName.trim());
