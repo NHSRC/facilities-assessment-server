@@ -57,7 +57,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
                 .antMatchers("/").permitAll()
                 .antMatchers("/api/login").permitAll()
                 .antMatchers("/api/ping").permitAll()
-                .antMatchers("/registration").permitAll()
+                .antMatchers("/api/registration").permitAll()
                 .antMatchers("/app/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/facility-assessment/indicator").permitAll()

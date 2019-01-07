@@ -62,10 +62,10 @@ public class AreaOfConcern extends AbstractEntity {
     }
 
     @JsonProperty("assessmentToolId")
-    public Long _getAssessmentToolId() {
+    public Integer _getAssessmentToolId() {
         Checklist checklist = getChecklist();
         if (checklist == null) return null;
-        return checklist.getAssessmentToolId();
+        return checklist._getAssessmentToolId();
     }
 
     public Checklist getChecklist() {

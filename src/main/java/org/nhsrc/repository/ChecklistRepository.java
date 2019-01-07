@@ -1,6 +1,7 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.Facility;
 import org.nhsrc.domain.Standard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,5 +33,12 @@ public interface ChecklistRepository extends BaseRepository<Checklist> {
     List<Checklist> findByIdIn(@Param("ids") Integer[] ids);
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
-    Page<Checklist> findByAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+    Page<Checklist> findByAssessmentToolId(@Param("assessmentToolId") int assessmentToolId, Pageable pageable);
+
+    @RestResource(path = "findByState", rel = "findByState")
+    Page<Checklist> findByStateId(@Param("stateId") int stateId, Pageable pageable);
+
+    @RestResource(path = "find", rel = "find")
+    Page<Checklist> findByStateIdAndAssessmentToolId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+
 }

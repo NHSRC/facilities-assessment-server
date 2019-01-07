@@ -85,6 +85,9 @@ run_server_nhsrc_insecure: build_server
 run_server_jss: build_server
 	$(call _run_server,cg,false,false)
 
+debug_server_jss: build_server
+	$(call _debug_server,cg,false,false)
+
 run_server_nhsrc_in_recording: clear_responses build_server
 	$(call _run_server,nhsrc,true,false)
 
