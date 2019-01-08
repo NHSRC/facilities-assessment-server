@@ -35,7 +35,6 @@ public class StandardController {
     }
 
     @RequestMapping(value = "/standard/search/find", method = {RequestMethod.GET})
-    @Transactional
     public Page<Standard> find(@RequestParam(value = "areaOfConcernId", required = false) Integer areaOfConcernId, Pageable pageable) {
         if (areaOfConcernId != null)
             return standardRepository.findByAreaOfConcernId(areaOfConcernId, pageable);
@@ -43,14 +42,12 @@ public class StandardController {
     }
 
     @RequestMapping(value = "/standard/search/findByAssessmentTool", method = {RequestMethod.GET})
-    @Transactional
-    public Page<Standard> findByAssessmentTool(@RequestParam("assessmentToolId") int assessmentToolId, Pageable pageable) {
+    public Page<Standard> findByAssessmentTool(Pageable pageable) {
         return standardRepository.findAll(pageable);
     }
 
     @RequestMapping(value = "/standard/search/findByChecklist", method = {RequestMethod.GET})
-    @Transactional
-    public Page<Standard> findByChecklist(@RequestParam("checklistId") int checklistId, Pageable pageable) {
+    public Page<Standard> findByChecklist(Pageable pageable) {
         return standardRepository.findAll(pageable);
     }
 }

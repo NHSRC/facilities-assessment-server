@@ -1,15 +1,15 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.MeasurableElement;
+import org.nhsrc.domain.Standard;
 import org.nhsrc.repository.MeasurableElementRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StandardRepository;
 import org.nhsrc.web.contract.MeasurableElementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.UUID;
@@ -34,5 +34,17 @@ public class MeasurableElementController {
         measurableElement.setReference(request.getReference());
         measurableElement.setStandard(Repository.findByUuidOrId(request.getStandardUUID(), request.getStandardId(), standardRepository));
         return measurableElementRepository.save(measurableElement);
+    }
+
+    @RequestMapping(value = "/measurableElement/search/find", method = {RequestMethod.GET})
+    public Page<MeasurableElement> find(@RequestParam(value = "standardId", required = false) Integer standardId, Pageable pageable) {
+        if (standardId != null)
+            return measurableElementRepository.findByStandardId(standardId, pageable);
+        return measurableElementRepository.findAll(pageable);
+    }
+
+    @RequestMapping(value = "/measurableElement/search/findByAssessmentTool", method = {RequestMethod.GET})
+    public Page<MeasurableElement> findByAssessmentTool(Pageable pageable) {
+        return measurableElementRepository.findAll(pageable);
     }
 }
