@@ -6,13 +6,11 @@ import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StandardRepository;
 import org.nhsrc.web.contract.StandardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/")
@@ -34,5 +32,25 @@ public class StandardController {
         standard.setReference(standardRequest.getReference());
         standard.setAreaOfConcern(Repository.findByUuidOrId(standardRequest.getAreaOfConcernUUID(), standardRequest.getAreaOfConcernId(), areaOfConcernRepository));
         return standardRepository.save(standard);
+    }
+
+    @RequestMapping(value = "/standard/search/find", method = {RequestMethod.GET})
+    @Transactional
+    public Page<Standard> find(@RequestParam(value = "areaOfConcernId", required = false) Integer areaOfConcernId, Pageable pageable) {
+        if (areaOfConcernId != null)
+            return standardRepository.findByAreaOfConcernId(areaOfConcernId, pageable);
+        return standardRepository.findAll(pageable);
+    }
+
+    @RequestMapping(value = "/standard/search/findByAssessmentTool", method = {RequestMethod.GET})
+    @Transactional
+    public Page<Standard> findByAssessmentTool(@RequestParam("assessmentToolId") int assessmentToolId, Pageable pageable) {
+        return standardRepository.findAll(pageable);
+    }
+
+    @RequestMapping(value = "/standard/search/findByChecklist", method = {RequestMethod.GET})
+    @Transactional
+    public Page<Standard> findByChecklist(@RequestParam("checklistId") int checklistId, Pageable pageable) {
+        return standardRepository.findAll(pageable);
     }
 }

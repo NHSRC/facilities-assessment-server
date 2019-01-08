@@ -45,6 +45,11 @@ public class Checklist extends AbstractEntity {
         return name;
     }
 
+    @JsonProperty("fullName")
+    public String getFullName() {
+        return String.format("%s - [%s]", this.getName(), this.state == null ? "ALL" : this.state.getName());
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -84,16 +89,8 @@ public class Checklist extends AbstractEntity {
         return areasOfConcern;
     }
 
-    public void setAreasOfConcern(Set<AreaOfConcern> areasOfConcern) {
-        this.areasOfConcern = areasOfConcern;
-    }
-
     public Set<Checkpoint> getCheckpoints() {
         return checkpoints;
-    }
-
-    public void setCheckpoints(Set<Checkpoint> checkpoints) {
-        this.checkpoints = checkpoints;
     }
 
     public State getState() {
@@ -109,31 +106,9 @@ public class Checklist extends AbstractEntity {
         return String.format("%s - [%s]", this.getName(), this.getAssessmentTool().getName());
     }
 
-    public String toSummary() {
-        StringBuffer stringBuffer = new StringBuffer();
-        areasOfConcern.stream().sorted((o1, o2) -> o1.getReference().compareTo(o2.getReference())).forEach(areaOfConcern -> stringBuffer.append(areaOfConcern.toSummary()).append("\n\t"));
-        return String.format("ESTIMATED_COUNT=%d  Checklist=%s  #AOC=%d  #Checkpoints=%d. \n\t%s", this.estimatedCount(), name, areasOfConcern.size(), checkpoints.size(), stringBuffer.toString());
-    }
-
     public void addAreaOfConcern(AreaOfConcern areaOfConcern) {
         this.areasOfConcern.add(areaOfConcern);
-        areaOfConcern.addChecklist(this);
-    }
-
-    public void removeEmptyOnes() {
-        areasOfConcern.forEach(AreaOfConcern::removeEmptyOnes);
-
-        List<AreaOfConcern> toRemove = new ArrayList<>();
-        areasOfConcern.forEach(areaOfConcern -> {
-            if (areaOfConcern.getStandards().size() == 0) toRemove.add(areaOfConcern);
-        });
-        areasOfConcern.removeAll(toRemove);
-    }
-
-    public int estimatedCount() {
-        int count = areasOfConcern.size();
-        for (AreaOfConcern areaOfConcern : areasOfConcern) count = count + areaOfConcern.estimatedCount();
-        return count;
+//        areaOfConcern.addChecklist(this);
     }
 
     public void addCheckpoint(Checkpoint checkpoint) {

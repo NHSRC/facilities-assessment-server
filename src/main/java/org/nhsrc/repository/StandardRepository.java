@@ -31,7 +31,4 @@ public interface StandardRepository extends BaseRepository<Standard> {
 
     @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
     Page<Standard> findByAreaOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
-
-    @RestResource(path = "find", rel = "find")
-    Page<Standard> findByReferenceStartingWith(@Param("q") String q, Pageable pageable);
 }

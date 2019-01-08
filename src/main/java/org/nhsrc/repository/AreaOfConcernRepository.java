@@ -37,4 +37,7 @@ public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
     Page<AreaOfConcern> findByChecklistsAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+
+    @RestResource(path = "find", rel = "find")
+    Page<AreaOfConcern> findAllByChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
 }

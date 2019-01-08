@@ -57,24 +57,22 @@ public class Standard extends AbstractEntity {
         return this.areaOfConcern.getId();
     }
 
+    @JsonProperty("assessmentToolId")
+    public long _getAssessmentToolId() {
+        return this.areaOfConcern.getChecklist().getAssessmentTool().getId();
+    }
+
+    @JsonProperty("checklistId")
+    public long _getChecklistId() {
+        return this.areaOfConcern.getChecklist().getId();
+    }
+
     public void setAreaOfConcern(AreaOfConcern areaOfConcern) {
         this.areaOfConcern = areaOfConcern;
     }
 
     public Set<MeasurableElement> getMeasurableElements() {
         return measurableElements;
-    }
-
-    public void setMeasurableElements(Set<MeasurableElement> measurableElements) {
-        this.measurableElements = measurableElements;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
     }
 
     @JsonProperty("fullReference")

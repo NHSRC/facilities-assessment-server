@@ -4,6 +4,7 @@ public class AreaOfConcernRequest {
     private String uuid;
     private String name;
     private String reference;
+    private Integer checklistId;
 
     public String getUuid() {
         return uuid;
@@ -27,5 +28,13 @@ public class AreaOfConcernRequest {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public Integer getChecklistId() {
+        return checklistId;
+    }
+
+    public void setChecklistId(Integer checklistId) {
+        this.checklistId = checklistId;
     }
 }

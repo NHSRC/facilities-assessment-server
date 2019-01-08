@@ -75,6 +75,11 @@ public class AreaOfConcern extends AbstractEntity {
         return this.getChecklists().stream().findFirst().orElse(null);
     }
 
+    @JsonProperty("checklistId")
+    public long _getChecklistId() {
+        return this.getChecklist().getId();
+    }
+
     @JsonProperty("fullReference")
     public String getFullReference() {
         Checklist checklist = this.getChecklist();
