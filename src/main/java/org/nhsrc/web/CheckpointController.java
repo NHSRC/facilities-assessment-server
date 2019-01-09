@@ -1,6 +1,7 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Checkpoint;
+import org.nhsrc.domain.MeasurableElement;
 import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.CheckpointRepository;
 import org.nhsrc.repository.MeasurableElementRepository;
@@ -46,7 +47,22 @@ public class CheckpointController {
     }
 
     @RequestMapping(value = "/checkpoint/search/find", method = {RequestMethod.GET})
-    public Page<Checkpoint> findAll(@RequestParam Integer stateId, @RequestParam Integer checklistId, Pageable pageable) {
-        return checkpointRepository.findByChecklistIdAndStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(checklistId, stateId, pageable);
+    public Page<Checkpoint> find(@RequestParam(value = "measurableElementId", required = false) Integer measurableElementId,
+                                        @RequestParam(value = "standardId", required = false) Integer standardId,
+                                        @RequestParam(value = "areaOfConcernId", required = false) Integer areaOfConcernId,
+                                        @RequestParam(value = "checklistId", required = false) Integer checklistId,
+                                        @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
+                                        Pageable pageable) {
+        if (measurableElementId != null)
+            return checkpointRepository.findByMeasurableElementId(measurableElementId, pageable);
+        if (standardId != null)
+            return checkpointRepository.findByMeasurableElementStandardId(standardId, pageable);
+        if (areaOfConcernId != null)
+            return checkpointRepository.findByMeasurableElementStandardAreaOfConcernId(areaOfConcernId, pageable);
+        if (checklistId != null)
+            return checkpointRepository.findByMeasurableElementStandardAreaOfConcernChecklistsId(checklistId, pageable);
+        if (assessmentToolId != null)
+            return checkpointRepository.findByMeasurableElementStandardAreaOfConcernChecklistsAssessmentToolId(assessmentToolId, pageable);
+        return checkpointRepository.findAll(pageable);
     }
 }

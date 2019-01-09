@@ -1,6 +1,7 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.Checkpoint;
+import org.nhsrc.domain.MeasurableElement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -34,12 +35,21 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     @RestResource(path = "findByMeasurableElement", rel = "findByMeasurableElement")
     Page<Checkpoint> findByMeasurableElementId(@Param("measurableElementId") Integer measurableElementId, Pageable pageable);
 
-    @RestResource(path = "findByChecklist", rel = "findByChecklist")
-    Page<Checkpoint> findByChecklistIdOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, Pageable pageable);
-
     @RestResource(path = "findByState", rel = "findByState")
     Page<Checkpoint> findByStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("stateId") Integer stateId, Pageable pageable);
 
     @Query("SELECT c FROM Checkpoint c inner join c.measurableElement as me WHERE (c.state.id = :stateId or c.state is null) and c.checklist.id = :checklistId order by me.refAsNumber")
     Page<Checkpoint> findByChecklistIdAndStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, @Param("stateId") Integer stateId, Pageable pageable);
+
+    @RestResource(path = "findByStandard", rel = "findByStandard")
+    Page<Checkpoint> findByMeasurableElementStandardId(@Param("standardId") Integer standardId, Pageable pageable);
+
+    @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
+    Page<Checkpoint> findByMeasurableElementStandardAreaOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
+
+    @RestResource(path = "findByChecklist", rel = "findByChecklist")
+    Page<Checkpoint> findByMeasurableElementStandardAreaOfConcernChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
+
+    @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
+    Page<Checkpoint> findByMeasurableElementStandardAreaOfConcernChecklistsAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 }
