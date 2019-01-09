@@ -38,6 +38,10 @@ public interface FacilityRepository extends BaseRepository<Facility> {
     @RestResource(path = "findByDistrict", rel = "findByDistrict")
     Page<Facility> findByDistrictId(@Param("districtId") Integer districtId, Pageable pageable);
 
-    @RestResource(path = "find", rel = "find")
     Page<Facility> findByDistrictIdAndFacilityTypeId(@Param("districtId") Integer districtId, @Param("facilityTypeId") Integer facilityTypeId, Pageable pageable);
+
+    @RestResource(path = "findByState", rel = "findByState")
+    Page<Facility> findByDistrictStateId(@Param("stateId") Integer stateId, Pageable pageable);
+
+    Page<Facility> findByDistrictStateIdAndFacilityTypeId(@Param("stateId") Integer stateId, @Param("facilityTypeId") Integer facilityTypeId, Pageable pageable);
 }

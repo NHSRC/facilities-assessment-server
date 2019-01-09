@@ -64,6 +64,11 @@ public class Facility extends AbstractEntity {
         return this.district.getId();
     }
 
+    @JsonProperty("stateId")
+    public long _getStateId() {
+        return this.district.getState().getId();
+    }
+
     public void setFacilityType(FacilityType facilityType) {
         this.facilityType = facilityType;
     }
