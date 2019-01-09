@@ -33,3 +33,4 @@ keystore.*
 metabase-migration/node_modules/*
 
 log/
+app/*

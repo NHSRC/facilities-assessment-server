@@ -37,9 +37,13 @@ public class MeasurableElementController {
     }
 
     @RequestMapping(value = "/measurableElement/search/find", method = {RequestMethod.GET})
-    public Page<MeasurableElement> find(@RequestParam(value = "standardId", required = false) Integer standardId, Pageable pageable) {
+    public Page<MeasurableElement> find(@RequestParam(value = "standardId", required = false) Integer standardId, @RequestParam(value = "areaOfConcernId", required = false) Integer areaOfConcernId, @RequestParam(value = "checklistId", required = false) Integer checklistId, Pageable pageable) {
         if (standardId != null)
             return measurableElementRepository.findByStandardId(standardId, pageable);
+        if (areaOfConcernId != null)
+            return measurableElementRepository.findByStandardAreaOfConcernId(areaOfConcernId, pageable);
+        if (checklistId != null)
+            return measurableElementRepository.findByStandardAreaOfConcernChecklistsId(checklistId, pageable);
         return measurableElementRepository.findAll(pageable);
     }
 

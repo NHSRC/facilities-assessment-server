@@ -33,6 +33,12 @@ public interface MeasurableElementRepository extends BaseRepository<MeasurableEl
     @RestResource(path = "findByStandard", rel = "findByStandard")
     Page<MeasurableElement> findByStandardId(@Param("standardId") Integer standardId, Pageable pageable);
 
+    @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
+    Page<MeasurableElement> findByStandardAreaOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
+
+    @RestResource(path = "findByChecklist", rel = "findByChecklist")
+    Page<MeasurableElement> findByStandardAreaOfConcernChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
+
     @RestResource(path = "find", rel = "find")
     Page<MeasurableElement> findByReferenceContaining(@Param("q") String q, Pageable pageable);
 }
