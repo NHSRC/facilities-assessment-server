@@ -39,6 +39,9 @@ public interface MeasurableElementRepository extends BaseRepository<MeasurableEl
     @RestResource(path = "findByChecklist", rel = "findByChecklist")
     Page<MeasurableElement> findByStandardAreaOfConcernChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
 
+    @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
+    Page<MeasurableElement> findByStandardAreaOfConcernChecklistsAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+
     @RestResource(path = "find", rel = "find")
     Page<MeasurableElement> findByReferenceContaining(@Param("q") String q, Pageable pageable);
 }
