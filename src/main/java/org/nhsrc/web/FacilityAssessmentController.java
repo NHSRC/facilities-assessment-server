@@ -81,7 +81,7 @@ public class FacilityAssessmentController {
     @RequestMapping(value = "facilityAssessments", method = {RequestMethod.PUT, RequestMethod.POST})
     @Transactional
     public FacilityAssessmentImportResponse submitAssessment(Principal principal,
-                                                             @RequestParam("assessmentFile") MultipartFile file,
+                                                             @RequestParam("uploadedFile") MultipartFile file,
                                                              @RequestParam(value = "uuid", required = false) UUID uuid,
                                                              @RequestParam(value = "facilityId", required = false) int facilityId,
                                                              @RequestParam(value = "facilityName", required = false) String nonExistentFacilityName,
