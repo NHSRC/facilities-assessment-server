@@ -82,16 +82,16 @@ public class FacilityAssessmentController {
     @Transactional
     public FacilityAssessmentImportResponse submitAssessment(Principal principal,
                                                              @RequestParam("assessmentFile") MultipartFile file,
-                                                             @RequestParam("uuid") UUID uuid,
-                                                             @RequestParam("facilityId") int facilityId,
-                                                             @RequestParam("facilityName") String nonExistentFacilityName,
+                                                             @RequestParam(value = "uuid", required = false) UUID uuid,
+                                                             @RequestParam(value = "facilityId", required = false) int facilityId,
+                                                             @RequestParam(value = "facilityName", required = false) String nonExistentFacilityName,
                                                              @RequestParam("assessmentTypeId") int assessmentTypeId,
                                                              @RequestParam("assessmentToolId") int assessmentToolId,
                                                              @RequestParam("stateId") int stateId,
                                                              @RequestParam("districtId") int districtId,
                                                              @RequestParam("facilityTypeId") int facilityTypeId,
-                                                             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
-                                                             @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate) throws Exception {
+                                                             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+                                                             @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) throws Exception {
         User user = userRepository.findByEmail(principal.getName());
         FacilityAssessmentDTO facilityAssessmentDTO = new FacilityAssessmentDTO();
         facilityAssessmentDTO.setAssessmentTypeId(assessmentTypeId);
