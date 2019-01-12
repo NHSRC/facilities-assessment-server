@@ -118,3 +118,9 @@ create_empty_db_nhsrc:
 
 clean:
 	./gradlew clean
+
+# deploy
+deploy_to_jss_qa:
+	ssh sam@139.59.19.108 "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
+	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar sam@139.59.19.108:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
+#
