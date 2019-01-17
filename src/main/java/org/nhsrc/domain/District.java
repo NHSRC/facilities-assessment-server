@@ -1,5 +1,6 @@
 package org.nhsrc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -52,6 +53,7 @@ public class District extends AbstractEntity {
         this.state = state;
     }
 
+    @JsonIgnore
     public Set<Facility> getFacilities() {
         return facilities;
     }

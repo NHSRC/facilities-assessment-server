@@ -40,11 +40,11 @@ public class StandardController {
                                @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
                                Pageable pageable) {
         if (areaOfConcernId != null)
-            return standardRepository.findByAreaOfConcernId(areaOfConcernId, pageable);
+            return standardRepository.findDistinctByAreaOfConcernId(areaOfConcernId, pageable);
         if (checklistId != null)
-            return standardRepository.findByAreaOfConcernChecklistsId(checklistId, pageable);
+            return standardRepository.findDistinctByAreaOfConcernChecklistsId(checklistId, pageable);
         if (assessmentToolId != null)
-            return standardRepository.findByAreaOfConcernChecklistsAssessmentToolId(assessmentToolId, pageable);
+            return standardRepository.findDistinctByAreaOfConcernChecklistsAssessmentToolId(assessmentToolId, pageable);
         return standardRepository.findAll(pageable);
     }
 }

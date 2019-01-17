@@ -43,6 +43,7 @@ public class State extends AbstractEntity {
         this.name = name;
     }
 
+    @JsonIgnore
     public Set<District> getDistricts() {
         return districts;
     }

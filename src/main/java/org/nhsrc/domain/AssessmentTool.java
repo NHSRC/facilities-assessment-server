@@ -48,32 +48,12 @@ public class AssessmentTool extends AbstractEntity {
         this.name = name;
     }
 
-    public Set<Checklist> getChecklists() {
-        return checklists;
-    }
-
-    public void setChecklists(Set<Checklist> checklists) {
-        this.checklists = checklists;
-    }
-
-    public void addChecklist(Checklist checklist) {
-        this.checklists.add(checklist);
-    }
-
-    public void addChecklists(ArrayList<Checklist> checklists) {
-        this.checklists.addAll(checklists);
-    }
-
     public String getMode() {
         return assessmentToolMode.getName();
     }
 
     public void setAssessmentToolMode(AssessmentToolMode assessmentToolMode) {
         this.assessmentToolMode = assessmentToolMode;
-    }
-
-    public AssessmentToolType getAssessmentToolType() {
-        return assessmentToolType;
     }
 
     public void setAssessmentToolType(AssessmentToolType assessmentToolType) {

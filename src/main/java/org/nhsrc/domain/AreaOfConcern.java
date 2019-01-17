@@ -40,6 +40,7 @@ public class AreaOfConcern extends AbstractEntity {
         this.name = name;
     }
 
+    @JsonIgnore
     public Set<Checklist> getChecklists() {
         return checklists;
     }
@@ -56,6 +57,7 @@ public class AreaOfConcern extends AbstractEntity {
         this.reference = reference;
     }
 
+    @JsonIgnore
     public Set<Standard> getStandards() {
         return standards;
     }
@@ -71,6 +73,7 @@ public class AreaOfConcern extends AbstractEntity {
         return checklist._getAssessmentToolId();
     }
 
+    @JsonIgnore
     public Checklist getChecklist() {
         return this.getChecklists().stream().findFirst().orElse(null);
     }
@@ -117,6 +120,7 @@ public class AreaOfConcern extends AbstractEntity {
         this.checklists.add(checklist);
     }
 
+    @JsonIgnore
     public Standard getStandard(String reference) {
         return this.standards.stream().filter(std -> std.getReference().equals(reference)).findAny().orElse(null);
     }

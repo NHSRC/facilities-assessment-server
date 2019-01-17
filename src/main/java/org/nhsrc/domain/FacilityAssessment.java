@@ -82,6 +82,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
         this.endDate = endDate;
     }
 
+    @JsonIgnore
     public AssessmentTool getAssessmentTool() {
         return assessmentTool;
     }
@@ -145,6 +146,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @Column(name = "facility_name")
     private String facilityName;
 
+    @JsonIgnore
     public Facility getFacility() {
         return facility;
     }
@@ -171,6 +173,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
         this.state = state;
     }
 
+    @JsonIgnore
     public District getDistrict() {
         return this.district;
     }
@@ -184,6 +187,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
         this.district = district;
     }
 
+    @JsonIgnore
     public FacilityType getFacilityType() {
         return this.facilityType;
     }

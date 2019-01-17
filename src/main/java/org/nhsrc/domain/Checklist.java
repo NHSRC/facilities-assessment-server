@@ -72,6 +72,7 @@ public class Checklist extends AbstractEntity {
         this.assessmentTool = assessmentTool;
     }
 
+    @JsonIgnore
     public Department getDepartment() {
         return department;
     }
@@ -85,10 +86,12 @@ public class Checklist extends AbstractEntity {
         this.department = department;
     }
 
+    @JsonIgnore
     public Set<AreaOfConcern> getAreasOfConcern() {
         return areasOfConcern;
     }
 
+    @JsonIgnore
     public Set<Checkpoint> getCheckpoints() {
         return checkpoints;
     }

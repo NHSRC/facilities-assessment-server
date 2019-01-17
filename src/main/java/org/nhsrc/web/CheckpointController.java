@@ -54,15 +54,15 @@ public class CheckpointController {
                                         @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
                                         Pageable pageable) {
         if (measurableElementId != null)
-            return checkpointRepository.findByMeasurableElementId(measurableElementId, pageable);
+            return checkpointRepository.findDistinctByMeasurableElementId(measurableElementId, pageable);
         if (standardId != null)
-            return checkpointRepository.findByMeasurableElementStandardId(standardId, pageable);
+            return checkpointRepository.findDistinctByMeasurableElementStandardId(standardId, pageable);
         if (areaOfConcernId != null)
-            return checkpointRepository.findByMeasurableElementStandardAreaOfConcernId(areaOfConcernId, pageable);
+            return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernId(areaOfConcernId, pageable);
         if (checklistId != null)
-            return checkpointRepository.findByMeasurableElementStandardAreaOfConcernChecklistsId(checklistId, pageable);
+            return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernChecklistsId(checklistId, pageable);
         if (assessmentToolId != null)
-            return checkpointRepository.findByMeasurableElementStandardAreaOfConcernChecklistsAssessmentToolId(assessmentToolId, pageable);
+            return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernChecklistsAssessmentToolId(assessmentToolId, pageable);
         return checkpointRepository.findAll(pageable);
     }
 }

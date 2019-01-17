@@ -38,18 +38,23 @@ public class MeasurableElementController {
 
     @RequestMapping(value = "/measurableElement/search/find", method = {RequestMethod.GET})
     public Page<MeasurableElement> find(@RequestParam(value = "standardId", required = false) Integer standardId,
+                                        @RequestParam(value = "stateId", required = false) Integer stateId,
                                         @RequestParam(value = "areaOfConcernId", required = false) Integer areaOfConcernId,
                                         @RequestParam(value = "checklistId", required = false) Integer checklistId,
                                         @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
                                         Pageable pageable) {
         if (standardId != null)
-            return measurableElementRepository.findByStandardId(standardId, pageable);
+            return measurableElementRepository.findDistinctByStandardId(standardId, pageable);
         if (areaOfConcernId != null)
-            return measurableElementRepository.findByStandardAreaOfConcernId(areaOfConcernId, pageable);
+            return measurableElementRepository.findDistinctByStandardAreaOfConcernId(areaOfConcernId, pageable);
         if (checklistId != null)
-            return measurableElementRepository.findByStandardAreaOfConcernChecklistsId(checklistId, pageable);
-        if (assessmentToolId != null)
-            return measurableElementRepository.findByStandardAreaOfConcernChecklistsAssessmentToolId(assessmentToolId, pageable);
+            return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsId(checklistId, pageable);
+        if (assessmentToolId != null && stateId == null)
+            return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsAssessmentToolId(assessmentToolId, pageable);
+        if (assessmentToolId == null && stateId != null)
+            return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNull(stateId, pageable);
+        if (assessmentToolId != null && stateId != null)
+            return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNullAndStandardAreaOfConcernChecklistsAssessmentToolId(stateId, assessmentToolId, pageable);
         return measurableElementRepository.findAll(pageable);
     }
 }

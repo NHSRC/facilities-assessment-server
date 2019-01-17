@@ -1,5 +1,6 @@
 package org.nhsrc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 
@@ -48,6 +49,7 @@ public class Standard extends AbstractEntity {
         this.reference = reference;
     }
 
+    @JsonIgnore
     public AreaOfConcern getAreaOfConcern() {
         return areaOfConcern;
     }
@@ -71,6 +73,7 @@ public class Standard extends AbstractEntity {
         this.areaOfConcern = areaOfConcern;
     }
 
+    @JsonIgnore
     public Set<MeasurableElement> getMeasurableElements() {
         return measurableElements;
     }

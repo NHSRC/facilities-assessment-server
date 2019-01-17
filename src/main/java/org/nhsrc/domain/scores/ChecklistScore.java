@@ -1,5 +1,6 @@
 package org.nhsrc.domain.scores;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nhsrc.domain.*;
 
 import javax.persistence.*;
@@ -34,6 +35,7 @@ public class ChecklistScore extends AbstractTransactionalEntity {
     @Column(name = "denominator")
     private int denominator;
 
+    @JsonIgnore
     public AreaOfConcern getAreaOfConcern() {
         return areaOfConcern;
     }
@@ -42,6 +44,7 @@ public class ChecklistScore extends AbstractTransactionalEntity {
         this.areaOfConcern = areaOfConcern;
     }
 
+    @JsonIgnore
     public Standard getStandard() {
         return standard;
     }
@@ -50,6 +53,7 @@ public class ChecklistScore extends AbstractTransactionalEntity {
         this.standard = standard;
     }
 
+    @JsonIgnore
     public Checklist getChecklist() {
         return checklist;
     }
@@ -74,6 +78,7 @@ public class ChecklistScore extends AbstractTransactionalEntity {
         this.denominator = denominator;
     }
 
+    @JsonIgnore
     public FacilityAssessment getFacilityAssessment() {
         return facilityAssessment;
     }

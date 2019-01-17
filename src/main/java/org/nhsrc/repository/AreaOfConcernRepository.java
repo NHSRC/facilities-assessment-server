@@ -23,21 +23,27 @@ import java.util.UUID;
 @RepositoryRestResource(collectionResourceRel = "areaOfConcern", path = "areaOfConcern")
 public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<AreaOfConcern> findByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
-    AreaOfConcern findByReference(String reference);
+    Page<AreaOfConcern> findDistinctByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
+    AreaOfConcern findDistinctByReference(String reference);
 
     @RestResource(path = "forChecklist", rel = "forChecklist")
-    Page<AreaOfConcern> findByChecklistsUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("checklistUuid") UUID checklistUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<AreaOfConcern> findDistinctByChecklistsUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("checklistUuid") UUID checklistUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "findAllById", rel = "findAllById")
     List<AreaOfConcern> findByIdIn(@Param("ids") Integer[] ids);
 
     @RestResource(path = "findByChecklist", rel = "findByChecklist")
-    Page<AreaOfConcern> findByChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
+    Page<AreaOfConcern> findDistinctByChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
-    Page<AreaOfConcern> findByChecklistsAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+    Page<AreaOfConcern> findDistinctByChecklistsAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
-    @RestResource(path = "find", rel = "find")
-    Page<AreaOfConcern> findAllByChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
+    Page<AreaOfConcern> findAllDistinctByChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
+
+    @RestResource(path = "findByState", rel = "findByState")
+    Page<AreaOfConcern> findAllDistinctByChecklistsStateIdOrChecklistsStateIdIsNull(@Param("stateId") Integer stateId, Pageable pageable);
+
+    @Query("SELECT distinct aoc FROM AreaOfConcern aoc inner join aoc.checklists c inner join c.assessmentTool at WHERE (c.state.id = :stateId or c.state is null) and c.assessmentTool.id = :assessmentToolId")
+    Page<AreaOfConcern> findAllByStateAndAssessmentTool(@Param("assessmentToolId") Integer assessmentToolId, @Param("stateId") Integer stateId, Pageable pageable);
 }

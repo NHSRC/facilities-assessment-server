@@ -1,5 +1,6 @@
 package org.nhsrc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 
@@ -69,10 +70,12 @@ public class Checkpoint extends AbstractEntity {
         this.name = name;
     }
 
+    @JsonIgnore
     public MeasurableElement getMeasurableElement() {
         return measurableElement;
     }
 
+    @JsonIgnore
     public Checklist getChecklist() {
         return checklist;
     }
@@ -130,6 +133,7 @@ public class Checkpoint extends AbstractEntity {
         this.assessmentMethodRecordReview = assessmentMethodRecordReview == null ? false : assessmentMethodRecordReview;
     }
 
+    @JsonIgnore
     public State getState() {
         return state;
     }

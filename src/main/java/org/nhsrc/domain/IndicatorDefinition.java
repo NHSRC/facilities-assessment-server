@@ -1,5 +1,6 @@
 package org.nhsrc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -51,6 +52,7 @@ public class IndicatorDefinition extends AbstractEntity {
         this.dataType = dataType;
     }
 
+    @JsonIgnore
     public AssessmentTool getAssessmentTool() {
         return assessmentTool;
     }

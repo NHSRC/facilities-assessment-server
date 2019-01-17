@@ -42,6 +42,7 @@ public class Facility extends AbstractEntity {
         this.name = name;
     }
 
+    @JsonIgnore
     public District getDistrict() {
         return district;
     }
@@ -50,6 +51,7 @@ public class Facility extends AbstractEntity {
         this.district = district;
     }
 
+    @JsonIgnore
     public FacilityType getFacilityType() {
         return facilityType;
     }
