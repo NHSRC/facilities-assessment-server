@@ -27,6 +27,7 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     Page<Checkpoint> findDistinctByMeasurableElementUuidAndChecklistUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("checklistUuid") UUID checklistUuid, @Param("measurableElementUuid") UUID measurableElementUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     List<Checkpoint> findAllDistinctByNameAndChecklistUuidAndMeasurableElementReference(String name, UUID checklistUuid, String measurableElementReference);
+
     List<Checkpoint> findAllDistinctByNameAndChecklistUuidAndMeasurableElementStandardReference(String name, UUID checklistUuid, String standardReference);
 
     @RestResource(path = "findAllById", rel = "findAllById")
@@ -36,7 +37,10 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     Page<Checkpoint> findDistinctByMeasurableElementId(@Param("measurableElementId") Integer measurableElementId, Pageable pageable);
 
     @RestResource(path = "findByState", rel = "findByState")
-    Page<Checkpoint> findDistinctByStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("stateId") Integer stateId, Pageable pageable);
+    Page<Checkpoint> findDistinctByChecklistStateIdOrChecklistStateIsNull(@Param("stateId") Integer stateId, Pageable pageable);
+
+    @RestResource(path = "findByStateAndAssessmentTool", rel = "findByStateAndAssessmentTool")
+    Page<Checkpoint> findDistinctByChecklistStateIdOrChecklistStateIsNullAndChecklistAssessmentToolId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
     @Query("SELECT distinct c FROM Checkpoint c inner join c.measurableElement as me WHERE (c.state.id = :stateId or c.state is null) and c.checklist.id = :checklistId")
     Page<Checkpoint> findByChecklistIdAndStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, @Param("stateId") Integer stateId, Pageable pageable);
@@ -51,5 +55,5 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     Page<Checkpoint> findDistinctByMeasurableElementStandardAreaOfConcernChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
-    Page<Checkpoint> findDistinctByMeasurableElementStandardAreaOfConcernChecklistsAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+    Page<Checkpoint> findDistinctByChecklistAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 }

@@ -47,12 +47,13 @@ public class CheckpointController {
     }
 
     @RequestMapping(value = "/checkpoint/search/find", method = {RequestMethod.GET})
-    public Page<Checkpoint> find(@RequestParam(value = "measurableElementId", required = false) Integer measurableElementId,
-                                        @RequestParam(value = "standardId", required = false) Integer standardId,
-                                        @RequestParam(value = "areaOfConcernId", required = false) Integer areaOfConcernId,
-                                        @RequestParam(value = "checklistId", required = false) Integer checklistId,
-                                        @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
-                                        Pageable pageable) {
+    public Page<Checkpoint> find(@RequestParam(value = "stateId", required = false) Integer stateId,
+                                 @RequestParam(value = "measurableElementId", required = false) Integer measurableElementId,
+                                 @RequestParam(value = "standardId", required = false) Integer standardId,
+                                 @RequestParam(value = "areaOfConcernId", required = false) Integer areaOfConcernId,
+                                 @RequestParam(value = "checklistId", required = false) Integer checklistId,
+                                 @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
+                                 Pageable pageable) {
         if (measurableElementId != null)
             return checkpointRepository.findDistinctByMeasurableElementId(measurableElementId, pageable);
         if (standardId != null)
@@ -61,8 +62,12 @@ public class CheckpointController {
             return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernId(areaOfConcernId, pageable);
         if (checklistId != null)
             return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernChecklistsId(checklistId, pageable);
-        if (assessmentToolId != null)
-            return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernChecklistsAssessmentToolId(assessmentToolId, pageable);
+        if (assessmentToolId != null && stateId == null)
+            return checkpointRepository.findDistinctByChecklistAssessmentToolId(assessmentToolId, pageable);
+        if (assessmentToolId == null && stateId != null)
+            return checkpointRepository.findDistinctByChecklistStateIdOrChecklistStateIsNull(stateId, pageable);
+        if (assessmentToolId != null && stateId != null)
+            return checkpointRepository.findDistinctByChecklistStateIdOrChecklistStateIsNullAndChecklistAssessmentToolId(stateId, assessmentToolId, pageable);
         return checkpointRepository.findAll(pageable);
     }
 }
