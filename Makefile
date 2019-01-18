@@ -123,4 +123,8 @@ clean:
 deploy_to_jss_qa:
 	ssh sam@139.59.19.108 "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
 	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar sam@139.59.19.108:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
+
+deploy_to_nhsrc_qa:
+	ssh gunak-other "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
+	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar gunak-other:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
 #

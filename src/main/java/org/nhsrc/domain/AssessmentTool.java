@@ -44,6 +44,11 @@ public class AssessmentTool extends AbstractEntity {
         return name;
     }
 
+    @JsonProperty("fullName")
+    public String _getFullName() {
+        return String.format("%s - %s", this.getAssessmentToolMode().getName(), this.getName());
+    }
+
     public void setName(String name) {
         this.name = name;
     }
