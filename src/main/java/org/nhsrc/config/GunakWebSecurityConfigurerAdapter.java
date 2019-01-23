@@ -77,8 +77,8 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
                 .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
                 .and().exceptionHandling();
 
+        registry.antMatchers("/api/loginSuccess").hasAuthority("USER");
         if (isSecure) {
-            registry.antMatchers("/api/loginSuccess").hasAuthority("USER");
             String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator"};
             permittedResourcesForOneDevice(semiProtectedResources, registry);
             permittedResourcesWithAuthority(semiProtectedResources, registry);
