@@ -53,7 +53,7 @@ public class FacilityAssessmentController {
     @RequestMapping(value = "facility-assessment", method = RequestMethod.POST)
     public ResponseEntity<FacilityAssessment> syncFacilityAssessment(Principal principal, @RequestBody FacilityAssessmentDTO facilityAssessmentDTO) {
         logger.info(facilityAssessmentDTO.toString());
-        User user = userService.findSubmissionUser(principal == null ? null : principal.getName());
+        User user = userService.findSubmissionUser(principal);
         FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO, user);
         return new ResponseEntity<>(facilityAssessment, HttpStatus.CREATED);
     }
@@ -70,13 +70,13 @@ public class FacilityAssessmentController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "facilityAssessment/byUser", method = RequestMethod.GET)
-    Page<FacilityAssessment> getAssessmentsForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {
-        User user = userRepository.findByEmail(principal.getName());
-        State state = stateRepository.findOne(user.getUserTypeReferenceId());
-        PageRequest pageable = new PageRequest(page, size);
-        return facilityAssessmentRepository.findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
-    }
+//    @RequestMapping(value = "facilityAssessment/byUser", method = RequestMethod.GET)
+//    Page<FacilityAssessment> getAssessmentsForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {
+//        User user = userRepository.findByEmail(principal.getName());
+//        State state = null;
+//        PageRequest pageable = new PageRequest(page, size);
+//        return facilityAssessmentRepository.findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
+//    }
 
     @RequestMapping(value = "facilityAssessments", method = {RequestMethod.PUT, RequestMethod.POST})
     @Transactional

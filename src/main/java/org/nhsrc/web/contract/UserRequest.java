@@ -1,12 +1,13 @@
 package org.nhsrc.web.contract;
 
 public class UserRequest {
+    private int id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
-    private String userType;
-    private String userTypeName;
+    private Boolean inactive;
+    private String uuid;
 
     public String getFirstName() {
         return firstName;
@@ -40,19 +41,27 @@ public class UserRequest {
         this.password = password;
     }
 
-    public String getUserType() {
-        return userType;
+    public Boolean getInactive() {
+        return inactive;
     }
 
-    public void setUserType(String userType) {
-        this.userType = userType;
+    public void setInactive(Boolean inactive) {
+        this.inactive = inactive;
     }
 
-    public String getUserTypeName() {
-        return userTypeName;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setUserTypeName(String userTypeName) {
-        this.userTypeName = userTypeName;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

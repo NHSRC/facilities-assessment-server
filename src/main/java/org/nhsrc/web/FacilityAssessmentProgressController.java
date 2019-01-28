@@ -110,13 +110,13 @@ public class FacilityAssessmentProgressController {
         return getProgressFor(facilityAssessments);
     }
 
-    @RequestMapping(value = "facilityAssessmentProgress", method = RequestMethod.GET)
-    Page<FacilityAssessment> getAssessmentsForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {
-        User user = userRepository.findByEmail(principal.getName());
-        State state = stateRepository.findOne(user.getUserTypeReferenceId());
-        PageRequest pageable = new PageRequest(page, size);
-        return facilityAssessmentRepository.findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
-    }
+//    @RequestMapping(value = "facilityAssessmentProgress", method = RequestMethod.GET)
+//    Page<FacilityAssessment> getAssessmentsForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {
+//        User user = userRepository.findByEmail(principal.getName());
+//        State state = stateRepository.findOne(user.getUserTypeReferenceId());
+//        PageRequest pageable = new PageRequest(page, size);
+//        return facilityAssessmentRepository.findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
+//    }
 
     private ResponseEntity<List<FacilityAssessmentProgressDTO>> getProgressFor(List<FacilityAssessment> facilityAssessments) {
         List<FacilityAssessmentProgressDTO> facilityAssessmentsProgress = new ArrayList<>();

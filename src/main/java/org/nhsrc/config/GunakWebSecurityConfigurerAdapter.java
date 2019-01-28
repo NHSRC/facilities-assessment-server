@@ -54,17 +54,24 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
     protected void configure(HttpSecurity http) throws Exception {
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.
                 authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/api/login").permitAll()
-                .antMatchers("/api/ping").permitAll()
-                .antMatchers("/api/registration").permitAll()
-                .antMatchers("/app/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/facility-assessment/indicator").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/facility-assessment/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/facility-assessment").permitAll();
+                .antMatchers("/", "/api/login", "/api/loginSuccess", "/api/ping", "/api/users/first").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist", "/api/facility-assessment/indicator", "/api/facility-assessment/**", "/api/facility-assessment").permitAll();
+
         permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
 
+        handleLogin(registry);
+
+        registry.antMatchers(new String[]{"/api/currentUser"}).hasAuthority("USER");
+        if (isSecure) {
+            String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user"};
+            permittedResourcesForOneDevice(semiProtectedResources, registry);
+            permittedResourcesWithAuthority(semiProtectedResources, registry);
+        } else {
+            registry.antMatchers("/api/**").permitAll().and().csrf().disable();
+        }
+    }
+
+    private void handleLogin(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) throws Exception {
         registry.anyRequest().authenticated().and().csrf().disable()
                 .formLogin().loginPage("/api/login").successHandler((request, response, authentication) -> {
             logger.info("Login Successful");
@@ -76,16 +83,6 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
                 .and().exceptionHandling();
-
-        registry.antMatchers("/api/loginSuccess").hasAuthority("USER");
-        if (isSecure) {
-            String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator"};
-            permittedResourcesForOneDevice(semiProtectedResources, registry);
-            permittedResourcesWithAuthority(semiProtectedResources, registry);
-            permittedResourcesWithAuthority(new String[]{"/api/currentUser"}, registry);
-        } else {
-            registry.antMatchers("/api/**").permitAll().and().csrf().disable();
-        }
     }
 
     private void permittedResourcesWithAuthority(String[] patterns, ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
@@ -108,7 +105,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/ext/**");
+        web.ignoring().antMatchers("/ext/**", "/app/**");
     }
 
 }

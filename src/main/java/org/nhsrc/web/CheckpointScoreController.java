@@ -31,12 +31,12 @@ public class CheckpointScoreController {
         this.stateRepository = stateRepository;
     }
 
-    @RequestMapping(value = "checkpointScore", method = RequestMethod.GET)
-    Page<CheckpointScore> getScoresForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {
-        String name = principal.getName();
-        User user = userRepository.findByEmail(name);
-        State state = stateRepository.findOne(user.getUserTypeReferenceId());
-        PageRequest pageable = new PageRequest(page, size);
-        return checkpointScoreRepository.findByFacilityAssessmentFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
-    }
+//    @RequestMapping(value = "checkpointScore", method = RequestMethod.GET)
+//    Page<CheckpointScore> getScoresForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {
+//        String name = principal.getName();
+//        User user = userRepository.findByEmail(name);
+//        State state = stateRepository.findOne(user.getUserTypeReferenceId());
+//        PageRequest pageable = new PageRequest(page, size);
+//        return checkpointScoreRepository.findByFacilityAssessmentFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
+//    }
 }

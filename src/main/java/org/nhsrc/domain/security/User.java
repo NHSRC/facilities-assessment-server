@@ -20,7 +20,6 @@ public class User extends AbstractEntity {
     private String email;
 
     @Column(name = "password")
-    @Length(min = 12, message = "*Your password must have at least 12 characters")
     @NotEmpty(message = "*Please provide your password")
     @Transient
     private String password;
@@ -36,13 +35,6 @@ public class User extends AbstractEntity {
     @ManyToMany
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
-
-    @Column(name = "user_type")
-    @NotNull
-    private String userType;
-
-    @Column(name = "user_type_reference_id")
-    private int userTypeReferenceId;
 
     @JsonIgnore
     public String getPassword() {
@@ -83,21 +75,5 @@ public class User extends AbstractEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
-    }
-
-    public int getUserTypeReferenceId() {
-        return userTypeReferenceId;
-    }
-
-    public void setUserTypeReferenceId(int userTypeReferenceId) {
-        this.userTypeReferenceId = userTypeReferenceId;
     }
 }

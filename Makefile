@@ -119,14 +119,17 @@ create_empty_db_nhsrc:
 clean:
 	./gradlew clean
 
-# deploy
+# DEPLOY
 deploy_to_jss_qa: build_server
 	ssh igunatmac "sudo service qa-fab stop"
 	ssh igunatmac "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
-	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar sam@139.59.19.108:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
+	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar igunatmac:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
 	ssh igunatmac "sudo service qa-fab start"
+	ssh igunatmac "tail -f /home/app/qa-server/facilities-assessment-host/app-servers/log/facilities_assessment.log"
 
-deploy_to_nhsrc_qa:
+deploy_to_nhsrc_qa: build_server
+	ssh gunak-other "sudo service qa-fab stop"
 	ssh gunak-other "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
 	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar gunak-other:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
-#
+	ssh gunak-other "sudo service qa-fab start"
+	ssh gunak-other "tail -f /home/app/qa-server/facilities-assessment-host/app-servers/log/facilities_assessment.log"
