@@ -60,7 +60,7 @@ public class Indicator extends AbstractEntity {
     }
 
     @JsonProperty("facilityAssessmentId")
-    public long _getFacilityAssessmentId() {
+    public Integer _getFacilityAssessmentId() {
         return this.facilityAssessment.getId();
     }
 

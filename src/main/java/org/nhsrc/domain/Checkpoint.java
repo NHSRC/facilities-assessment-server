@@ -17,19 +17,16 @@ public class Checkpoint extends AbstractEntity {
     @Column(name = "means_of_verification", unique = true, nullable = false, length = 1023)
     private String meansOfVerification;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = MeasurableElement.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "measurable_element_id")
     @NotNull
     private MeasurableElement measurableElement;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = Checklist.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "checklist_id")
     @NotNull
     private Checklist checklist;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "state_id")
     private State state;
@@ -81,7 +78,7 @@ public class Checkpoint extends AbstractEntity {
     }
 
     @JsonProperty("checklistId")
-    public long _getChecklistId() {
+    public Integer _getChecklistId() {
         return this.checklist.getId();
     }
 
@@ -167,7 +164,7 @@ public class Checkpoint extends AbstractEntity {
     }
 
     @JsonProperty("measurableElementId")
-    public long _getMeasurableElementId() {
+    public Integer _getMeasurableElementId() {
         return this.measurableElement.getId();
     }
 

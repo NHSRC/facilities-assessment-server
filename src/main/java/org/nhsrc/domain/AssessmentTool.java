@@ -26,7 +26,6 @@ public class AssessmentTool extends AbstractEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = AssessmentToolMode.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "assessment_tool_mode_id")
     @NotNull
@@ -71,7 +70,7 @@ public class AssessmentTool extends AbstractEntity {
     }
 
     @JsonProperty("assessmentToolModeId")
-    public long _getAssessmentToolModeId() {
+    public Integer _getAssessmentToolModeId() {
         return this.assessmentToolMode.getId();
     }
 

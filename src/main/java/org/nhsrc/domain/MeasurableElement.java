@@ -25,13 +25,10 @@ public class MeasurableElement extends AbstractEntity {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "measurableElement")
     private Set<Checkpoint> checkpoints = new HashSet<>();
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = Standard.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "standard_id")
     @NotNull
     private Standard standard;
-
-    private static int BASE_ASCII_VALUE = 'A';
 
     public String getName() {
         return name;
@@ -51,6 +48,7 @@ public class MeasurableElement extends AbstractEntity {
         StringTokenizer stringTokenizer = new StringTokenizer(reference.substring(1), ".");
         String wholeNumberPart = stringTokenizer.nextToken();
         String decimalPart = stringTokenizer.nextToken();
+        final int BASE_ASCII_VALUE = 'A';
         this.refAsNumber = ((ascii - BASE_ASCII_VALUE + 1) * 1000) + (Integer.parseInt(wholeNumberPart) * 100) + Integer.parseInt(decimalPart);
     }
 
@@ -72,22 +70,22 @@ public class MeasurableElement extends AbstractEntity {
     }
 
     @JsonProperty("areaOfConcernId")
-    public long _getAreaOfConcernId() {
+    public Integer _getAreaOfConcernId() {
         return this.standard.getAreaOfConcern().getId();
     }
 
     @JsonProperty("assessmentToolId")
-    public long _getAssessmentToolId() {
-        return this.standard.getAreaOfConcern().getChecklist().getAssessmentTool().getId();
+    public Integer _getAssessmentToolId() {
+        return this.standard.getAreaOfConcern()._getAssessmentToolId();
     }
 
     @JsonProperty("checklistId")
-    public long _getChecklistId() {
-        return this.standard.getAreaOfConcern().getChecklist().getId();
+    public Integer _getChecklistId() {
+        return this.standard.getAreaOfConcern()._getChecklistId();
     }
 
     @JsonProperty("standardId")
-    public long _getStandardId() {
+    public Integer _getStandardId() {
         return this.standard.getId();
     }
 

@@ -88,12 +88,12 @@ public class FacilityAssessment extends AbstractScoreEntity {
     }
 
     @JsonProperty("assessmentToolId")
-    public long _getAssessmentToolId() {
+    public Integer _getAssessmentToolId() {
         return this.assessmentTool.getId();
     }
 
     @JsonProperty("assessmentTypeId")
-    public long _getAssessmentTypeId() {
+    public Integer _getAssessmentTypeId() {
         return this.assessmentType.getId();
     }
 

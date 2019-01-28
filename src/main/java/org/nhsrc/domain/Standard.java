@@ -27,7 +27,6 @@ public class Standard extends AbstractEntity {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "standard")
     private Set<MeasurableElement> measurableElements = new HashSet<>();
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = AreaOfConcern.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "area_of_concern_id")
     @NotNull
@@ -55,18 +54,20 @@ public class Standard extends AbstractEntity {
     }
 
     @JsonProperty("areaOfConcernId")
-    public long _getAreaOfConcernId() {
+    public Integer _getAreaOfConcernId() {
         return this.areaOfConcern.getId();
     }
 
     @JsonProperty("assessmentToolId")
-    public long _getAssessmentToolId() {
-        return this.areaOfConcern.getChecklist().getAssessmentTool().getId();
+    public Integer _getAssessmentToolId() {
+        return this.areaOfConcern._getAssessmentToolId();
     }
 
     @JsonProperty("checklistId")
-    public long _getChecklistId() {
-        return this.areaOfConcern.getChecklist().getId();
+    public Integer _getChecklistId() {
+        Checklist checklist = this.areaOfConcern.getChecklist();
+        if (checklist == null) return null;
+        return checklist.getId();
     }
 
     public void setAreaOfConcern(AreaOfConcern areaOfConcern) {

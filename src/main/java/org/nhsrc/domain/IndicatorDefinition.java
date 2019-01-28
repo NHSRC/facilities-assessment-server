@@ -58,7 +58,7 @@ public class IndicatorDefinition extends AbstractEntity {
     }
 
     @JsonProperty("assessmentToolId")
-    public long _getAssessmentToolId() {
+    public Integer _getAssessmentToolId() {
         return this.assessmentTool.getId();
     }
 

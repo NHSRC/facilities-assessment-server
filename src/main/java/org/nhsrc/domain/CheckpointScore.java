@@ -58,7 +58,7 @@ public class CheckpointScore extends AbstractScoreEntity {
     }
 
     @JsonProperty("facilityAssessmentId")
-    public long _getFacilityAssessmentId() {
+    public Integer _getFacilityAssessmentId() {
         return this.facilityAssessment.getId();
     }
 

@@ -12,7 +12,6 @@ public class Facility extends AbstractEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = District.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "district_id")
     @NotNull
@@ -57,17 +56,17 @@ public class Facility extends AbstractEntity {
     }
 
     @JsonProperty("facilityTypeId")
-    public long _getFacilityTypeId() {
+    public Integer _getFacilityTypeId() {
         return this.facilityType.getId();
     }
 
     @JsonProperty("districtId")
-    public long _getDistrictId() {
+    public Integer _getDistrictId() {
         return this.district.getId();
     }
 
     @JsonProperty("stateId")
-    public long _getStateId() {
+    public Integer _getStateId() {
         return this.district.getState().getId();
     }
 

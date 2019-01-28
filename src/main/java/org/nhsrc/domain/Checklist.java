@@ -59,7 +59,7 @@ public class Checklist extends AbstractEntity {
     }
 
     @JsonProperty("assessmentToolId")
-    public int _getAssessmentToolId() {
+    public Integer _getAssessmentToolId() {
         return this.assessmentTool.getId();
     }
 

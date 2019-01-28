@@ -26,7 +26,6 @@ public class District extends AbstractEntity {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "district")
     private Set<Facility> facilities = new HashSet<>();
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id")
     @NotNull
@@ -45,7 +44,7 @@ public class District extends AbstractEntity {
     }
 
     @JsonProperty("stateId")
-    public long _getStateId() {
+    public Integer _getStateId() {
         return this.state.getId();
     }
 
