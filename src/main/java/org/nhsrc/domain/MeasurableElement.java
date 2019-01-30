@@ -65,6 +65,7 @@ public class MeasurableElement extends AbstractEntity {
         this.checkpoints = checkpoints;
     }
 
+    @JsonIgnore
     public Standard getStandard() {
         return standard;
     }

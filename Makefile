@@ -19,6 +19,14 @@ define _run_server
 	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
 endef
 
+define _deploy_qa
+	ssh $1 "sudo service qa-fab stop"
+	ssh $1 "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
+	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
+	ssh $1 "sudo service qa-fab start"
+	ssh $1 "tail -f /home/app/qa-server/facilities-assessment-host/app-servers/log/facilities_assessment.log"
+endef
+
 define _debug_server
 	java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
 endef
@@ -121,15 +129,7 @@ clean:
 
 # DEPLOY
 deploy_to_jss_qa: build_server
-	ssh igunatmac "sudo service qa-fab stop"
-	ssh igunatmac "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
-	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar igunatmac:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
-	ssh igunatmac "sudo service qa-fab start"
-	ssh igunatmac "tail -f /home/app/qa-server/facilities-assessment-host/app-servers/log/facilities_assessment.log"
+	$(call _deploy_qa,igunatmac)
 
 deploy_to_nhsrc_qa: build_server
-	ssh gunak-other "sudo service qa-fab stop"
-	ssh gunak-other "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
-	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar gunak-other:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
-	ssh gunak-other "sudo service qa-fab start"
-	ssh gunak-other "tail -f /home/app/qa-server/facilities-assessment-host/app-servers/log/facilities_assessment.log"
+	$(call _deploy_qa,gunak-other)

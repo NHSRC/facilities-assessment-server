@@ -168,6 +168,21 @@ public class Checkpoint extends AbstractEntity {
         return this.measurableElement.getId();
     }
 
+    @JsonProperty("standardId")
+    public Integer _getStandardId() {
+        return this.measurableElement._getStandardId();
+    }
+
+    @JsonProperty("areaOfConcernId")
+    public Integer _getAreaOfConcernId() {
+        return this.measurableElement.getStandard()._getAreaOfConcernId();
+    }
+
+    @JsonProperty("assessmentToolId")
+    public Integer _getAssessmentToolId() {
+        return this.measurableElement.getStandard().getAreaOfConcern()._getAssessmentToolId();
+    }
+
     @Override
     public String toString() {
         return "Checkpoint{" +
