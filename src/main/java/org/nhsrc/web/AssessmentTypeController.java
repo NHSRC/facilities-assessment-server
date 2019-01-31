@@ -1,0 +1,37 @@
+package org.nhsrc.web;
+
+import org.nhsrc.domain.AssessmentType;
+import org.nhsrc.domain.Department;
+import org.nhsrc.repository.AssessmentTypeRepository;
+import org.nhsrc.repository.DepartmentRepository;
+import org.nhsrc.repository.Repository;
+import org.nhsrc.web.contract.AssessmentTypeRequest;
+import org.nhsrc.web.contract.DepartmentRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.transaction.Transactional;
+
+@RestController
+@RequestMapping("/api/")
+public class AssessmentTypeController {
+    private AssessmentTypeRepository assessmentTypeRepository;
+
+    @Autowired
+    public AssessmentTypeController(AssessmentTypeRepository assessmentTypeRepository) {
+        this.assessmentTypeRepository = assessmentTypeRepository;
+    }
+
+    @RequestMapping(value = "/assessmentTypes", method = {RequestMethod.POST, RequestMethod.PUT})
+    @Transactional
+    public AssessmentType save(@RequestBody AssessmentTypeRequest request) {
+        AssessmentType assessmentType = Repository.findByUuidOrCreate(request.getUuid(), assessmentTypeRepository, new AssessmentType());
+        assessmentType.setName(request.getName());
+        assessmentType.setShortName(request.getShortName());
+        assessmentType.setInactive(request.getInactive());
+        return assessmentTypeRepository.save(assessmentType);
+    }
+}
