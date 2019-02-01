@@ -1,12 +1,9 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.AssessmentType;
-import org.nhsrc.domain.Department;
 import org.nhsrc.repository.AssessmentTypeRepository;
-import org.nhsrc.repository.DepartmentRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.web.contract.AssessmentTypeRequest;
-import org.nhsrc.web.contract.DepartmentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

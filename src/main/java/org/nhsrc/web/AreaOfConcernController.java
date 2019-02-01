@@ -2,7 +2,6 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.AreaOfConcern;
 import org.nhsrc.domain.Checklist;
-import org.nhsrc.domain.Checkpoint;
 import org.nhsrc.repository.AreaOfConcernRepository;
 import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.Repository;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/")

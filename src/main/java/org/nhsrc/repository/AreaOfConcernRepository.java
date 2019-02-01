@@ -37,6 +37,7 @@ public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
     Page<AreaOfConcern> findDistinctByChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
+//    @Query("SELECT distinct aoc FROM AreaOfConcern aoc inner join aoc.checklists c inner join c.assessmentTool at WHERE c.assessmentTool.id = :assessmentToolId")
     Page<AreaOfConcern> findDistinctByChecklistsAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
     Page<AreaOfConcern> findAllDistinctByChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
