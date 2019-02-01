@@ -94,6 +94,10 @@ public class MeasurableElement extends AbstractEntity {
         this.standard = standard;
     }
 
+    public String getReferenceAndName() {
+        return String.format("%s - %s", this.getReference(), this.getName());
+    }
+
     public String toSummary() {
         String problemText = checkpoints.size() == 0 ? "############################" : "";
         return String.format("%sME=%s  #Checkpoint=%d", problemText, name, checkpoints.size());

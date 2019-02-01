@@ -52,6 +52,10 @@ public class AreaOfConcern extends AbstractEntity {
         return reference;
     }
 
+    public String getReferenceAndName() {
+        return String.format("%s - %s", this.getReference(), this.getName());
+    }
+
     public void setReference(String reference) {
         this.reference = reference;
     }

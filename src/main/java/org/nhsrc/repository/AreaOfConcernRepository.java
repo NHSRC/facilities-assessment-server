@@ -40,6 +40,8 @@ public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
 //    @Query("SELECT distinct aoc FROM AreaOfConcern aoc inner join aoc.checklists c inner join c.assessmentTool at WHERE c.assessmentTool.id = :assessmentToolId")
     Page<AreaOfConcern> findDistinctByChecklistsAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
+    List<AreaOfConcern> findDistinctByChecklistsAssessmentToolIdAndReference(@Param("assessmentToolId") Integer assessmentToolId, @Param("reference") String reference);
+
     Page<AreaOfConcern> findAllDistinctByChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
 
     @RestResource(path = "findByState", rel = "findByState")

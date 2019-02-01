@@ -8,6 +8,8 @@ import org.nhsrc.web.contract.StandardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -26,12 +28,19 @@ public class StandardController {
 
     @RequestMapping(value = "/standards", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    public Standard save(@RequestBody StandardRequest standardRequest) {
+    public ResponseEntity save(@RequestBody StandardRequest standardRequest) {
         Standard standard = Repository.findByUuidOrCreate(standardRequest.getUuid(), standardRepository, new Standard());
+        if (standard.isNew()) {
+            Standard existingStandard = standardRepository.findByAreaOfConcernIdAndReference(standardRequest.getAreaOfConcernId(), standardRequest.getReference().trim());
+            if (existingStandard != null) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Standard with same reference code %s already exists in the area of concern.", standardRequest.getReference()));
+            }
+        }
+
         standard.setName(standardRequest.getName());
-        standard.setReference(standardRequest.getReference());
+        standard.setReference(standardRequest.getReference().trim());
         standard.setAreaOfConcern(Repository.findByUuidOrId(standardRequest.getAreaOfConcernUUID(), standardRequest.getAreaOfConcernId(), areaOfConcernRepository));
-        return standardRepository.save(standard);
+        return new ResponseEntity<>(standardRepository.save(standard), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/standard/search/find", method = {RequestMethod.GET})

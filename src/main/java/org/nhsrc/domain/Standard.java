@@ -70,6 +70,10 @@ public class Standard extends AbstractEntity {
         return checklist.getId();
     }
 
+    public String getReferenceAndName() {
+        return String.format("%s - %s", this.getReference(), this.getName());
+    }
+
     public void setAreaOfConcern(AreaOfConcern areaOfConcern) {
         this.areaOfConcern = areaOfConcern;
     }

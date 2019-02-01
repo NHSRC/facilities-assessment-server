@@ -74,6 +74,10 @@ public class AssessmentTool extends AbstractEntity {
         return this.assessmentToolMode.getId();
     }
 
+    public Set<Checklist> getChecklists() {
+        return checklists;
+    }
+
     @Override
     public String toString() {
         return "AssessmentTool{" +

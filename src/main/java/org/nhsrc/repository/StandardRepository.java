@@ -1,5 +1,6 @@
 package org.nhsrc.repository;
 
+import org.nhsrc.domain.AreaOfConcern;
 import org.nhsrc.domain.Standard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,8 @@ public interface StandardRepository extends BaseRepository<Standard> {
 
     @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
     Page<Standard> findDistinctByAreaOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
+
+    Standard findByAreaOfConcernIdAndReference(@Param("areaOfConcernId") Integer areaOfConcernId, @Param("reference") String reference);
 
     @RestResource(path = "findByChecklist", rel = "findByChecklist")
     Page<Standard> findDistinctByAreaOfConcernChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);

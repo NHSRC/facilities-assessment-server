@@ -9,6 +9,9 @@ import org.nhsrc.web.contract.MeasurableElementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -28,12 +31,18 @@ public class MeasurableElementController {
 
     @RequestMapping(value = "/measurableElements", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    public MeasurableElement save(@RequestBody MeasurableElementRequest request) {
+    public ResponseEntity save(@RequestBody MeasurableElementRequest request) {
         MeasurableElement measurableElement = Repository.findByUuidOrCreate(request.getUuid(), measurableElementRepository, new MeasurableElement());
+        if (measurableElement.isNew()) {
+            MeasurableElement existingMeasurableElement = measurableElementRepository.findByStandardIdAndReference(request.getStandardId(), request.getReference());
+            if (existingMeasurableElement != null) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Measurable element with same reference code %s already exists in the standard.", request.getReference()));
+            }
+        }
         measurableElement.setName(request.getName());
         measurableElement.setReference(request.getReference());
         measurableElement.setStandard(Repository.findByUuidOrId(request.getStandardUUID(), request.getStandardId(), standardRepository));
-        return measurableElementRepository.save(measurableElement);
+        return new ResponseEntity<>(measurableElementRepository.save(measurableElement), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/measurableElement/search/find", method = {RequestMethod.GET})
