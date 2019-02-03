@@ -1,5 +1,6 @@
 package org.nhsrc.web;
 
+import org.nhsrc.domain.ReferencableEntity;
 import org.nhsrc.domain.Standard;
 import org.nhsrc.repository.AreaOfConcernRepository;
 import org.nhsrc.repository.Repository;
@@ -30,11 +31,9 @@ public class StandardController {
     @Transactional
     public ResponseEntity save(@RequestBody StandardRequest standardRequest) {
         Standard standard = Repository.findByUuidOrCreate(standardRequest.getUuid(), standardRepository, new Standard());
-        if (standard.isNew()) {
-            Standard existingStandard = standardRepository.findByAreaOfConcernIdAndReference(standardRequest.getAreaOfConcernId(), standardRequest.getReference().trim());
-            if (existingStandard != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Standard with same reference code %s already exists in the area of concern.", standardRequest.getReference()));
-            }
+        Standard existingStandard = standardRepository.findByAreaOfConcernIdAndReference(standardRequest.getAreaOfConcernId(), standardRequest.getReference().trim());
+        if (ReferencableEntity.isConflicting(existingStandard, standard)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Standard with same reference code %s already exists in the area of concern.", standardRequest.getReference()));
         }
 
         standard.setName(standardRequest.getName());

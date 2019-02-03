@@ -12,7 +12,7 @@ import java.util.*;
 @Entity
 @Table(name = "measurable_element")
 @BatchSize(size = 25)
-public class MeasurableElement extends AbstractEntity {
+public class MeasurableElement extends AbstractEntity implements ReferencableEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 

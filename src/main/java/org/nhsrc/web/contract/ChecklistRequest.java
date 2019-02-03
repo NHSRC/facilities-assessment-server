@@ -9,6 +9,7 @@ public class ChecklistRequest {
     private int departmentId;
     private String departmentUUID;
     private String[] areasOfConcernUUIDs;
+    private Integer stateId;
 
     public String getUuid() {
         return uuid;
@@ -72,5 +73,13 @@ public class ChecklistRequest {
 
     public void setDepartmentId(int departmentId) {
         this.departmentId = departmentId;
+    }
+
+    public Integer getStateId() {
+        return stateId;
+    }
+
+    public void setStateId(Integer stateId) {
+        this.stateId = stateId;
     }
 }

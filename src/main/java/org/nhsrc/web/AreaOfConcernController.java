@@ -3,6 +3,7 @@ package org.nhsrc.web;
 import org.nhsrc.domain.AreaOfConcern;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.ReferencableEntity;
 import org.nhsrc.repository.AreaOfConcernRepository;
 import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.Repository;
@@ -36,13 +37,12 @@ public class AreaOfConcernController {
     public ResponseEntity save(@RequestBody AreaOfConcernRequest request) {
         AreaOfConcern areaOfConcern = Repository.findByUuidOrCreate(request.getUuid(), areaOfConcernRepository, new AreaOfConcern());
         Checklist checklist = checklistRepository.findOne(request.getChecklistId());
-        if (areaOfConcern.isNew()) {
-            AssessmentTool assessmentTool = checklist.getAssessmentTool();
-            List<AreaOfConcern> existingAOCs = areaOfConcernRepository.findDistinctByChecklistsAssessmentToolIdAndReference(assessmentTool.getId(), request.getReference().trim());
-            if (existingAOCs.size() != 0) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Area of concern with same reference code %s already exists.", request.getReference()));
-            }
+        AssessmentTool assessmentTool = checklist.getAssessmentTool();
+        List<AreaOfConcern> existingAOCs = areaOfConcernRepository.findDistinctByChecklistsAssessmentToolIdAndReference(assessmentTool.getId(), request.getReference().trim());
+        if (existingAOCs.size() != 0 && ReferencableEntity.isConflicting(existingAOCs.get(0), areaOfConcern)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Area of concern with same reference code %s already exists.", request.getReference()));
         }
+
         areaOfConcern.setName(request.getName());
         areaOfConcern.setReference(request.getReference().trim());
 

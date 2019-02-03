@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "standard")
 @BatchSize(size = 25)
-public class Standard extends AbstractEntity {
+public class Standard extends AbstractEntity implements ReferencableEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 

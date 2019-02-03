@@ -1,7 +1,6 @@
 package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 
@@ -15,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "area_of_concern")
 @BatchSize(size = 25)
-public class AreaOfConcern extends AbstractEntity {
+public class AreaOfConcern extends AbstractEntity implements ReferencableEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
@@ -48,6 +47,7 @@ public class AreaOfConcern extends AbstractEntity {
         this.checklists = checklists;
     }
 
+    @Override
     public String getReference() {
         return reference;
     }
@@ -56,6 +56,7 @@ public class AreaOfConcern extends AbstractEntity {
         return String.format("%s - %s", this.getReference(), this.getName());
     }
 
+    @Override
     public void setReference(String reference) {
         this.reference = reference;
     }

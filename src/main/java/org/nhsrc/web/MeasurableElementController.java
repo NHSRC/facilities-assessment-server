@@ -1,6 +1,7 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.MeasurableElement;
+import org.nhsrc.domain.ReferencableEntity;
 import org.nhsrc.domain.Standard;
 import org.nhsrc.repository.MeasurableElementRepository;
 import org.nhsrc.repository.Repository;
@@ -33,12 +34,11 @@ public class MeasurableElementController {
     @Transactional
     public ResponseEntity save(@RequestBody MeasurableElementRequest request) {
         MeasurableElement measurableElement = Repository.findByUuidOrCreate(request.getUuid(), measurableElementRepository, new MeasurableElement());
-        if (measurableElement.isNew()) {
-            MeasurableElement existingMeasurableElement = measurableElementRepository.findByStandardIdAndReference(request.getStandardId(), request.getReference());
-            if (existingMeasurableElement != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Measurable element with same reference code %s already exists in the standard.", request.getReference()));
-            }
+        MeasurableElement existingMeasurableElement = measurableElementRepository.findByStandardIdAndReference(request.getStandardId(), request.getReference());
+        if (ReferencableEntity.isConflicting(existingMeasurableElement, measurableElement)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Measurable element with same reference code %s already exists in the standard.", request.getReference()));
         }
+
         measurableElement.setName(request.getName());
         measurableElement.setReference(request.getReference());
         measurableElement.setStandard(Repository.findByUuidOrId(request.getStandardUUID(), request.getStandardId(), standardRepository));
