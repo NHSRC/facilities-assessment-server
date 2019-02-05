@@ -2,7 +2,6 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.Checklist;
 import org.nhsrc.repository.*;
-import org.nhsrc.service.util.ChecklistMatcher;
 import org.nhsrc.web.contract.ChecklistRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/")
@@ -39,9 +38,12 @@ public class ChecklistController {
         checklist.setDepartment(Repository.findByUuidOrId(checklistRequest.getDepartmentUUID(), checklistRequest.getDepartmentId(), departmentRepository));
         checklist.setAssessmentTool(Repository.findByUuidOrId(checklistRequest.getAssessmentToolUUID(), checklistRequest.getAssessmentToolId(), assessmentToolRepository));
 
-        String[] areasOfConcernUUIDs = checklistRequest.getAreasOfConcernUUIDs();
-        for (String areaOfConcernUUID : areasOfConcernUUIDs) {
-            checklist.addAreaOfConcern(areaOfConcernRepository.findByUuid(UUID.fromString(areaOfConcernUUID)));
+        Set<Integer> newAreasOfConcernIds = new HashSet<>(checklistRequest.getAreaOfConcernIds());
+        HashSet<Integer> existingAreaOfConcernIds = new HashSet<>(checklist.getAreaOfConcernIds());
+        existingAreaOfConcernIds.removeAll(newAreasOfConcernIds);
+        existingAreaOfConcernIds.forEach(removedAreaOfConcern -> checklist.removeAreaOfConcern(areaOfConcernRepository.findOne(removedAreaOfConcern)));
+        for (Integer areaOfConcernId : newAreasOfConcernIds) {
+            checklist.addAreaOfConcern(areaOfConcernRepository.findOne(areaOfConcernId));
         }
 
         return new ResponseEntity<>(checklistRepository.save(checklist), HttpStatus.OK);

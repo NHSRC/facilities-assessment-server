@@ -24,31 +24,20 @@ import java.util.Set;
 @RequestMapping("/api/")
 public class AreaOfConcernController {
     private final AreaOfConcernRepository areaOfConcernRepository;
-    private ChecklistRepository checklistRepository;
 
     @Autowired
-    public AreaOfConcernController(AreaOfConcernRepository areaOfConcernRepository, ChecklistRepository checklistRepository) {
+    public AreaOfConcernController(AreaOfConcernRepository areaOfConcernRepository) {
         this.areaOfConcernRepository = areaOfConcernRepository;
-        this.checklistRepository = checklistRepository;
     }
 
     @RequestMapping(value = "/areaOfConcerns", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
     public ResponseEntity save(@RequestBody AreaOfConcernRequest request) {
         AreaOfConcern areaOfConcern = Repository.findByUuidOrCreate(request.getUuid(), areaOfConcernRepository, new AreaOfConcern());
-        Checklist checklist = checklistRepository.findOne(request.getChecklistId());
-        AssessmentTool assessmentTool = checklist.getAssessmentTool();
-        List<AreaOfConcern> existingAOCs = areaOfConcernRepository.findDistinctByChecklistsAssessmentToolIdAndReference(assessmentTool.getId(), request.getReference().trim());
-        if (existingAOCs.size() != 0 && ReferencableEntity.isConflicting(existingAOCs.get(0), areaOfConcern)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Area of concern with same reference code %s already exists.", request.getReference()));
-        }
-
         areaOfConcern.setName(request.getName());
         areaOfConcern.setReference(request.getReference().trim());
-
-        checklist.addAreaOfConcern(areaOfConcern);
         areaOfConcern = areaOfConcernRepository.save(areaOfConcern);
-        return new ResponseEntity<AreaOfConcern>(areaOfConcern, HttpStatus.CREATED);
+        return new ResponseEntity<>(areaOfConcern, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/areaOfConcern/search/find", method = {RequestMethod.GET})

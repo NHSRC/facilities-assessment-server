@@ -1,5 +1,7 @@
 package org.nhsrc.web.contract;
 
+import java.util.List;
+
 public class ChecklistRequest {
     private String uuid;
     private Boolean inactive;
@@ -8,7 +10,7 @@ public class ChecklistRequest {
     private String assessmentToolUUID;
     private int departmentId;
     private String departmentUUID;
-    private String[] areasOfConcernUUIDs;
+    private List<Integer> areaOfConcernIds;
     private Integer stateId;
 
     public String getUuid() {
@@ -51,14 +53,6 @@ public class ChecklistRequest {
         this.departmentUUID = departmentUUID;
     }
 
-    public String[] getAreasOfConcernUUIDs() {
-        return areasOfConcernUUIDs == null ? new String[0] : areasOfConcernUUIDs;
-    }
-
-    public void setAreasOfConcernUUIDs(String[] areasOfConcernUUIDs) {
-        this.areasOfConcernUUIDs = areasOfConcernUUIDs;
-    }
-
     public int getAssessmentToolId() {
         return assessmentToolId;
     }
@@ -81,5 +75,13 @@ public class ChecklistRequest {
 
     public void setStateId(Integer stateId) {
         this.stateId = stateId;
+    }
+
+    public List<Integer> getAreaOfConcernIds() {
+        return areaOfConcernIds;
+    }
+
+    public void setAreaOfConcernIds(List<Integer> areaOfConcernIds) {
+        this.areaOfConcernIds = areaOfConcernIds;
     }
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "checklist")
@@ -109,6 +110,10 @@ public class Checklist extends AbstractEntity {
         return String.format("%s - [%s]", this.getName(), this.getAssessmentTool().getName());
     }
 
+    public List<Integer> getAreaOfConcernIds() {
+        return this.areasOfConcern.stream().map(AbstractTransactionalEntity::getId).collect(Collectors.toList());
+    }
+
     public void addAreaOfConcern(AreaOfConcern areaOfConcern) {
         this.areasOfConcern.add(areaOfConcern);
 //        areaOfConcern.addChecklist(this);
@@ -126,5 +131,9 @@ public class Checklist extends AbstractEntity {
                 "name='" + name + '\'' +
                 ", assessmentTool=" + assessmentTool +
                 '}';
+    }
+
+    public void removeAreaOfConcern(AreaOfConcern areaOfConcern) {
+        this.areasOfConcern.remove(areaOfConcern);
     }
 }
