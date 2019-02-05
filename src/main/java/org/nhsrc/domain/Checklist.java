@@ -55,6 +55,7 @@ public class Checklist extends AbstractEntity {
         this.name = name;
     }
 
+    @JsonIgnore
     public AssessmentTool getAssessmentTool() {
         return assessmentTool;
     }

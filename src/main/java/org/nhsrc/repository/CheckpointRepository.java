@@ -56,4 +56,6 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
     Page<Checkpoint> findDistinctByChecklistAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+
+    Page<Checkpoint> findByChecklistIdAndMeasurableElementId(@Param("checklistId") Integer checklistId, @Param("measurableElementId") Integer measurableElementId, Pageable pageable);
 }

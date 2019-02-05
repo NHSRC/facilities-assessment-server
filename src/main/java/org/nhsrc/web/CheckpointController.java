@@ -70,4 +70,10 @@ public class CheckpointController {
             return checkpointRepository.findDistinctByChecklistStateIdOrChecklistStateIsNullAndChecklistAssessmentToolId(stateId, assessmentToolId, pageable);
         return checkpointRepository.findAll(pageable);
     }
+
+    @RequestMapping(value = "/checkpoint/search/findByCheckpointMeasurableElementIdAndChecklistId", method = RequestMethod.GET)
+    public Page<Checkpoint> findSiblings(@RequestParam(value = "checkpointMeasurableElementIdAndChecklistId") Integer checkpointId, Pageable pageable) {
+        Checkpoint checkpoint = checkpointRepository.findOne(checkpointId);
+        return checkpointRepository.findByChecklistIdAndMeasurableElementId(checkpoint.getChecklist().getId(), checkpoint.getMeasurableElement().getId(), pageable);
+    }
 }
