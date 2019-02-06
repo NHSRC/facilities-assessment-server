@@ -43,6 +43,7 @@ public class CheckpointController {
         checkpoint.setSortOrder(request.getSortOrder());
         checkpoint.setMeasurableElement(Repository.findByUuidOrId(request.getMeasurableElementUUID(), request.getMeasurableElementId(), measurableElementRepository));
         checkpoint.setChecklist(Repository.findByUuidOrId(request.getChecklistUUID(), request.getChecklistId(), checklistRepository));
+        checkpoint.setInactive(request.getInactive());
         return checkpointRepository.save(checkpoint);
     }
 

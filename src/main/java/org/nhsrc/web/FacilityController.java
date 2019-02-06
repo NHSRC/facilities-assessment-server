@@ -36,6 +36,7 @@ public class FacilityController {
         facility.setName(request.getName());
         facility.setDistrict(Repository.findByUuidOrId(request.getDistrictUUID(), request.getDistrictId(), districtRepository));
         facility.setFacilityType(Repository.findByUuidOrId(request.getFacilityTypeUUID(), request.getFacilityTypeId(), facilityTypeRepository));
+        facility.setInactive(request.getInactive());
         return facilityRepository.save(facility);
     }
 

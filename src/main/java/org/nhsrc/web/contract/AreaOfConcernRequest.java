@@ -4,7 +4,15 @@ public class AreaOfConcernRequest {
     private String uuid;
     private String name;
     private String reference;
-    private Integer checklistId;
+    private Boolean inactive;
+
+    public Boolean getInactive() {
+        return inactive;
+    }
+
+    public void setInactive(Boolean inactive) {
+        this.inactive = inactive;
+    }
 
     public String getUuid() {
         return uuid;

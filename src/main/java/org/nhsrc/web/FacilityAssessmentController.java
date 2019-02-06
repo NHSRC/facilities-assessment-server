@@ -101,7 +101,7 @@ public class FacilityAssessmentController {
         facilityAssessmentDTO.setFacilityTypeId(facilityTypeId);
         facilityAssessmentDTO.setFacilityId(facilityId);
         facilityAssessmentDTO.setFacilityName(nonExistentFacilityName);
-        facilityAssessmentDTO.setUuid(uuid);
+        facilityAssessmentDTO.setUuid(uuid == null ? UUID.randomUUID() : uuid);
         facilityAssessmentDTO.setStartDate(startDate);
         facilityAssessmentDTO.setEndDate(endDate);
 

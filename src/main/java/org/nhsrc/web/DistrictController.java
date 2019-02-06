@@ -32,6 +32,7 @@ public class DistrictController {
         District district = Repository.findByUuidOrCreate(districtRequest.getUuid(), districtRepository, new District());
         district.setName(districtRequest.getName());
         district.setState(Repository.findByUuidOrId(districtRequest.getStateUUID(), districtRequest.getStateId(), stateRepository));
+        district.setInactive(districtRequest.getInactive());
         return districtRepository.save(district);
     }
 }

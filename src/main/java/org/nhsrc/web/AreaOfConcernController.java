@@ -36,6 +36,7 @@ public class AreaOfConcernController {
         AreaOfConcern areaOfConcern = Repository.findByUuidOrCreate(request.getUuid(), areaOfConcernRepository, new AreaOfConcern());
         areaOfConcern.setName(request.getName());
         areaOfConcern.setReference(request.getReference().trim());
+        areaOfConcern.setInactive(request.getInactive());
         areaOfConcern = areaOfConcernRepository.save(areaOfConcern);
         return new ResponseEntity<>(areaOfConcern, HttpStatus.CREATED);
     }

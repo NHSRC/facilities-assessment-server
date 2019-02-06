@@ -42,6 +42,7 @@ public class MeasurableElementController {
         measurableElement.setName(request.getName());
         measurableElement.setReference(request.getReference());
         measurableElement.setStandard(Repository.findByUuidOrId(request.getStandardUUID(), request.getStandardId(), standardRepository));
+        measurableElement.setInactive(request.getInactive());
         return new ResponseEntity<>(measurableElementRepository.save(measurableElement), HttpStatus.CREATED);
     }
 

@@ -45,6 +45,7 @@ public class ChecklistController {
         for (Integer areaOfConcernId : newAreasOfConcernIds) {
             checklist.addAreaOfConcern(areaOfConcernRepository.findOne(areaOfConcernId));
         }
+        checklist.setInactive(checklistRequest.getInactive());
 
         return new ResponseEntity<>(checklistRepository.save(checklist), HttpStatus.OK);
     }

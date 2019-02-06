@@ -39,6 +39,7 @@ public class StandardController {
         standard.setName(standardRequest.getName());
         standard.setReference(standardRequest.getReference().trim());
         standard.setAreaOfConcern(Repository.findByUuidOrId(standardRequest.getAreaOfConcernUUID(), standardRequest.getAreaOfConcernId(), areaOfConcernRepository));
+        standard.setInactive(standardRequest.getInactive());
         return new ResponseEntity<>(standardRepository.save(standard), HttpStatus.CREATED);
     }
 
