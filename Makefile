@@ -79,7 +79,7 @@ schema_migrate:
 
 # <server>
 build_server:
-	./gradlew clean build -x test
+	./gradlew clean build -x test --offline
 
 run_server_nhsrc: build_server
 	$(call _run_server,nhsrc,false,true)

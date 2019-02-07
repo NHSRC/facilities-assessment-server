@@ -48,8 +48,10 @@ public class StandardController {
                                @RequestParam(value = "checklistId", required = false) Integer checklistId,
                                @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
                                Pageable pageable) {
-        if (areaOfConcernId != null)
+        if (areaOfConcernId != null && checklistId == null)
             return standardRepository.findDistinctByAreaOfConcernId(areaOfConcernId, pageable);
+        if (areaOfConcernId != null && checklistId != null)
+            return standardRepository.findDistinctByAreaOfConcernIdAndMeasurableElementsCheckpointsChecklistId(areaOfConcernId, checklistId, pageable);
         if (checklistId != null)
             return standardRepository.findDistinctByAreaOfConcernChecklistsId(checklistId, pageable);
         if (assessmentToolId != null)

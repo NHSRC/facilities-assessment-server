@@ -33,6 +33,8 @@ public interface StandardRepository extends BaseRepository<Standard> {
     @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
     Page<Standard> findDistinctByAreaOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
 
+    Page<Standard> findDistinctByAreaOfConcernIdAndMeasurableElementsCheckpointsChecklistId(@Param("areaOfConcernId") Integer areaOfConcernId, @Param("checklistId") Integer checklistId,Pageable pageable);
+
     Standard findByAreaOfConcernIdAndReference(@Param("areaOfConcernId") Integer areaOfConcernId, @Param("reference") String reference);
 
     @RestResource(path = "findByChecklist", rel = "findByChecklist")

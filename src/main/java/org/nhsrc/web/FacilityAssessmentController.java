@@ -1,11 +1,14 @@
 package org.nhsrc.web;
 
-import org.nhsrc.domain.*;
+import org.nhsrc.domain.CheckpointScore;
+import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorListDTO;
-import org.nhsrc.repository.*;
+import org.nhsrc.repository.FacilityAssessmentRepository;
+import org.nhsrc.repository.Repository;
+import org.nhsrc.repository.StateRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
@@ -14,9 +17,6 @@ import org.nhsrc.web.contract.FacilityAssessmentImportResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +34,6 @@ import java.util.UUID;
 public class FacilityAssessmentController {
     private final FacilityAssessmentService facilityAssessmentService;
     private final UserRepository userRepository;
-    private final StateRepository stateRepository;
     private FacilityAssessmentRepository facilityAssessmentRepository;
     private UserService userService;
     private static Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
@@ -44,7 +43,6 @@ public class FacilityAssessmentController {
     public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
-        this.stateRepository = stateRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
         this.userService = userService;
         this.excelImportService = excelImportService;
@@ -82,6 +80,7 @@ public class FacilityAssessmentController {
     @Transactional
     public FacilityAssessmentImportResponse submitAssessment(Principal principal,
                                                              @RequestParam("uploadedFile") MultipartFile file,
+                                                             @RequestParam(value = "id", required = false) Integer id,
                                                              @RequestParam(value = "uuid", required = false) UUID uuid,
                                                              @RequestParam(value = "facilityId", required = false) int facilityId,
                                                              @RequestParam(value = "facilityName", required = false) String nonExistentFacilityName,
@@ -104,11 +103,12 @@ public class FacilityAssessmentController {
         facilityAssessmentDTO.setUuid(uuid == null ? UUID.randomUUID() : uuid);
         facilityAssessmentDTO.setStartDate(startDate);
         facilityAssessmentDTO.setEndDate(endDate);
-
         FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO, user);
-
         FacilityAssessmentImportResponse facilityAssessmentImportResponse = new FacilityAssessmentImportResponse();
         facilityAssessmentImportResponse.setFacilityAssessment(facilityAssessment);
+
+        if (Repository.findByUuidOrId(uuid, id, facilityAssessmentRepository) != null && file == null) return facilityAssessmentImportResponse;
+
         excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, facilityAssessmentImportResponse);
         return facilityAssessmentImportResponse;
     }

@@ -1,7 +1,6 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Checkpoint;
-import org.nhsrc.domain.MeasurableElement;
 import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.CheckpointRepository;
 import org.nhsrc.repository.MeasurableElementRepository;
@@ -10,11 +9,9 @@ import org.nhsrc.web.contract.CheckpointRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/")
@@ -55,12 +52,12 @@ public class CheckpointController {
                                  @RequestParam(value = "checklistId", required = false) Integer checklistId,
                                  @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
                                  Pageable pageable) {
-        if (measurableElementId != null)
-            return checkpointRepository.findDistinctByMeasurableElementId(measurableElementId, pageable);
-        if (standardId != null)
-            return checkpointRepository.findDistinctByMeasurableElementStandardId(standardId, pageable);
-        if (areaOfConcernId != null)
-            return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernId(areaOfConcernId, pageable);
+        if (measurableElementId != null && checklistId != null)
+            return checkpointRepository.findDistinctByMeasurableElementIdAndChecklistId(measurableElementId, checklistId, pageable);
+        if (standardId != null && checklistId != null)
+            return checkpointRepository.findDistinctByMeasurableElementStandardIdAndChecklistId(standardId, checklistId, pageable);
+        if (areaOfConcernId != null && checklistId != null)
+            return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernIdAndChecklistId(areaOfConcernId, checklistId, pageable);
         if (checklistId != null)
             return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernChecklistsId(checklistId, pageable);
         if (assessmentToolId != null && stateId == null)

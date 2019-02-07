@@ -34,7 +34,7 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     List<Checkpoint> findByIdIn(@Param("ids") Integer[] ids);
 
     @RestResource(path = "findByMeasurableElement", rel = "findByMeasurableElement")
-    Page<Checkpoint> findDistinctByMeasurableElementId(@Param("measurableElementId") Integer measurableElementId, Pageable pageable);
+    Page<Checkpoint> findDistinctByMeasurableElementIdAndChecklistId(@Param("measurableElementId") Integer measurableElementId, @Param("checklistId") Integer checklistId, Pageable pageable);
 
     @RestResource(path = "findByState", rel = "findByState")
     Page<Checkpoint> findDistinctByChecklistStateIdOrChecklistStateIsNull(@Param("stateId") Integer stateId, Pageable pageable);
@@ -46,10 +46,10 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     Page<Checkpoint> findByChecklistIdAndStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, @Param("stateId") Integer stateId, Pageable pageable);
 
     @RestResource(path = "findByStandard", rel = "findByStandard")
-    Page<Checkpoint> findDistinctByMeasurableElementStandardId(@Param("standardId") Integer standardId, Pageable pageable);
+    Page<Checkpoint> findDistinctByMeasurableElementStandardIdAndChecklistId(@Param("standardId") Integer standardId, @Param("checklistId") Integer checklistId, Pageable pageable);
 
     @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
-    Page<Checkpoint> findDistinctByMeasurableElementStandardAreaOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
+    Page<Checkpoint> findDistinctByMeasurableElementStandardAreaOfConcernIdAndChecklistId(@Param("areaOfConcernId") Integer areaOfConcernId, @Param("checklistId") Integer checklistId,Pageable pageable);
 
     @RestResource(path = "findByChecklist", rel = "findByChecklist")
     Page<Checkpoint> findDistinctByMeasurableElementStandardAreaOfConcernChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);

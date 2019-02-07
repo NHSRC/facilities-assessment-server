@@ -1,17 +1,18 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.AbstractEntity;
+
 import java.util.UUID;
 
 public class Repository {
-    public static <T> T findByUuidOrId(UUID uuid, int id, BaseRepository<T> baseRepository) {
+    public static <T> T findByUuidOrId(UUID uuid, Integer id, BaseRepository<T> baseRepository) {
         // Simplifying based IntelliJ's suggestion could lead to recursive loop
         return Repository.findByUuidOrId(uuid == null ? null : uuid.toString(), id, baseRepository);
     }
 
-    public static <T> T findByUuidOrId(String uuid, int id, BaseRepository<T> baseRepository) {
+    public static <T> T findByUuidOrId(String uuid, Integer id, BaseRepository<T> baseRepository) {
         if (uuid == null) {
-            return id == 0 ? null : baseRepository.findOne(id);
+            return (id == null || id == 0) ? null : baseRepository.findOne(id);
         } else {
             return baseRepository.findByUuid(UUID.fromString(uuid));
         }

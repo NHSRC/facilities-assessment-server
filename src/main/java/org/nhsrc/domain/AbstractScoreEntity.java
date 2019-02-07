@@ -1,10 +1,8 @@
 package org.nhsrc.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -34,6 +32,11 @@ public abstract class AbstractScoreEntity {
     @Column(name = "last_modified_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date lastModifiedDate;
+
+    @JsonIgnore
+    public boolean isNew() {
+        return this.id == null;
+    }
 
     public Integer getId() {
         return id;

@@ -6,8 +6,8 @@ import org.nhsrc.dto.CheckpointScoreDTO;
 import org.nhsrc.referenceDataImport.AssessmentChecklistData;
 import org.nhsrc.referenceDataImport.ExcelImporter;
 import org.nhsrc.repository.AssessmentToolRepository;
+import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.CheckpointRepository;
-import org.nhsrc.repository.DepartmentRepository;
 import org.nhsrc.web.contract.FacilityAssessmentImportResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,17 +24,17 @@ import java.util.UUID;
 @Service
 public class ExcelImportService {
     private AssessmentToolRepository assessmentToolRepository;
-    private DepartmentRepository departmentRepository;
     private CheckpointRepository checkpointRepository;
     private FacilityAssessmentService facilityAssessmentService;
+    private ChecklistRepository checklistRepository;
     private static Logger logger = LoggerFactory.getLogger(ExcelImportService.class);
 
     @Autowired
-    public ExcelImportService(AssessmentToolRepository assessmentToolRepository, DepartmentRepository departmentRepository, CheckpointRepository checkpointRepository, FacilityAssessmentService facilityAssessmentService) {
+    public ExcelImportService(AssessmentToolRepository assessmentToolRepository, CheckpointRepository checkpointRepository, FacilityAssessmentService facilityAssessmentService, ChecklistRepository checklistRepository) {
         this.assessmentToolRepository = assessmentToolRepository;
-        this.departmentRepository = departmentRepository;
         this.checkpointRepository = checkpointRepository;
         this.facilityAssessmentService = facilityAssessmentService;
+        this.checklistRepository = checklistRepository;
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
@@ -45,37 +45,39 @@ public class ExcelImportService {
         excelImporter.importFile(inputStream, assessmentTool, 0, -1, true, facilityAssessment);
 
         List<Checklist> checklists = assessmentChecklistData.getChecklists();
-        checklists.forEach(checklist -> {
-            ChecklistDTO checklistDTO = new ChecklistDTO();
-            checklistDTO.setFacilityAssessment(facilityAssessment.getUuid());
-            checklistDTO.setDepartment(departmentRepository.findByName(assessmentChecklistData.getDepartments().get(0).getName()).getUuid());
-            checklistDTO.setUuid(checklist.getUuid());
-            checklistDTO.setCheckpointScores(new ArrayList<>());
-            List<CheckpointScore> checkpointScores = assessmentChecklistData.getCheckpointScores(checklist.getName());
-            checkpointScores.forEach(checkpointScore -> {
-                CheckpointScoreDTO checkpointScoreDTO = new CheckpointScoreDTO();
-                String checkpointName = checkpointScore.getCheckpoint().getName();
-                String measurableElementReference = checkpointScore.getCheckpoint().getMeasurableElement().getReference();
-                List<Checkpoint> checkpoints = checkpointRepository.findAllDistinctByNameAndChecklistUuidAndMeasurableElementReference(checkpointName, checklist.getUuid(), measurableElementReference);
-                if (checkpoints.size() == 0) { // additionally try to resolve by looking for checkpoint in Standard
-                    String standardRef = checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference();
-                    checkpoints = checkpointRepository.findAllDistinctByNameAndChecklistUuidAndMeasurableElementStandardReference(checkpointName, checklist.getUuid(), standardRef);
-                }
+        checklists.forEach(x -> {
+            Checklist checklist = checklistRepository.findByNameAndAssessmentTool(x.getName(), assessmentTool);
+            if (checklist != null) {
+                ChecklistDTO checklistDTO = new ChecklistDTO();
+                checklistDTO.setFacilityAssessment(facilityAssessment.getUuid());
+                checklistDTO.setUuid(checklist.getUuid());
+                checklistDTO.setDepartment(checklist.getDepartment().getUuid());
+                checklistDTO.setCheckpointScores(new ArrayList<>());
+                List<CheckpointScore> checkpointScores = assessmentChecklistData.getCheckpointScores(x.getName());
+                checkpointScores.forEach(checkpointScore -> {
+                    CheckpointScoreDTO checkpointScoreDTO = new CheckpointScoreDTO();
+                    String checkpointName = checkpointScore.getCheckpoint().getName();
+                    String measurableElementReference = checkpointScore.getCheckpoint().getMeasurableElement().getReference();
+                    List<Checkpoint> checkpoints = checkpointRepository.findAllDistinctByNameAndChecklistUuidAndMeasurableElementReference(checkpointName, x.getUuid(), measurableElementReference);
+                    if (checkpoints.size() == 0) { // additionally try to resolve by looking for checkpoint in Standard
+                        String standardRef = checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference();
+                        checkpoints = checkpointRepository.findAllDistinctByNameAndChecklistUuidAndMeasurableElementStandardReference(checkpointName, x.getUuid(), standardRef);
+                    }
 
-                if (checkpoints.size() == 1) {
-                    checkpointScoreDTO.setCheckpoint(checkpoints.get(0).getUuid());
-                    checkpointScoreDTO.setNa(false);
-                    checkpointScoreDTO.setRemarks(checkpointScore.getRemarks());
-                    checkpointScoreDTO.setScore(checkpointScore.getScore());
-                    checkpointScoreDTO.setUuid(UUID.randomUUID());
-                    checklistDTO.addCheckpointScore(checkpointScoreDTO);
-                }
-                else {
-                    facilityAssessmentImportResponse.addCheckpointInError(new FacilityAssessmentImportResponse.CheckpointInError(checkpointName, measurableElementReference));
-                    logger.error(String.format("ME:%s. %d checkpoints with same name=%s, found in checklist:%s", measurableElementReference, checkpoints.size(), checkpointName, checklist.getName()));
-                }
-            });
-            facilityAssessmentService.saveChecklist(checklistDTO);
+                    if (checkpoints.size() == 1) {
+                        checkpointScoreDTO.setCheckpoint(checkpoints.get(0).getUuid());
+                        checkpointScoreDTO.setNa(false);
+                        checkpointScoreDTO.setRemarks(checkpointScore.getRemarks());
+                        checkpointScoreDTO.setScore(checkpointScore.getScore());
+                        checkpointScoreDTO.setUuid(UUID.randomUUID());
+                        checklistDTO.addCheckpointScore(checkpointScoreDTO);
+                    } else {
+                        facilityAssessmentImportResponse.addCheckpointInError(new FacilityAssessmentImportResponse.CheckpointInError(checkpointName, measurableElementReference));
+                        logger.error(String.format("ME:%s. %d checkpoints with same name=%s, found in checklist:%s", measurableElementReference, checkpoints.size(), checkpointName, x.getName()));
+                    }
+                });
+                facilityAssessmentService.saveChecklist(checklistDTO);
+            }
         });
     }
 }
