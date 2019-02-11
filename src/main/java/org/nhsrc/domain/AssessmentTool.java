@@ -26,7 +26,7 @@ public class AssessmentTool extends AbstractEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @ManyToOne(targetEntity = AssessmentToolMode.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = AssessmentToolMode.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_mode_id")
     @NotNull
     private AssessmentToolMode assessmentToolMode;

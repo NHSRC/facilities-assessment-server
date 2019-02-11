@@ -15,19 +15,19 @@ import java.util.Set;
 @Table(name = "standard")
 @BatchSize(size = 25)
 public class Standard extends AbstractEntity implements ReferencableEntity {
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "short_name", nullable = true)
     private String shortName;
 
-    @Column(name = "reference", unique = true, nullable = false)
+    @Column(name = "reference", nullable = false)
     private String reference;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "standard")
     private Set<MeasurableElement> measurableElements = new HashSet<>();
 
-    @ManyToOne(targetEntity = AreaOfConcern.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = AreaOfConcern.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "area_of_concern_id")
     @NotNull
     private AreaOfConcern areaOfConcern;

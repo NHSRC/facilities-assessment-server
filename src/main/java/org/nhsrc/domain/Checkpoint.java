@@ -11,23 +11,23 @@ import javax.validation.constraints.NotNull;
 @Table(name = "checkpoint")
 @BatchSize(size = 25)
 public class Checkpoint extends AbstractEntity {
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "means_of_verification", unique = true, nullable = false, length = 1023)
     private String meansOfVerification;
 
-    @ManyToOne(targetEntity = MeasurableElement.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = MeasurableElement.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "measurable_element_id")
     @NotNull
     private MeasurableElement measurableElement;
 
-    @ManyToOne(targetEntity = Checklist.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = Checklist.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "checklist_id")
     @NotNull
     private Checklist checklist;
 
-    @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "state_id")
     private State state;
 

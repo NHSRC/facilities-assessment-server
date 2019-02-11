@@ -54,7 +54,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
     protected void configure(HttpSecurity http) throws Exception {
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.
                 authorizeRequests()
-                .antMatchers("/", "/api/login", "/api/ping", "/api/users/first").permitAll()
+                .antMatchers("/", "/api/login", "/api/ping", "/api/users/first", "/api/error/throw").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist", "/api/facility-assessment/indicator", "/api/facility-assessment/**", "/api/facility-assessment").permitAll();
 
         permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);

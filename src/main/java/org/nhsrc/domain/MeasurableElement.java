@@ -13,10 +13,10 @@ import java.util.*;
 @Table(name = "measurable_element")
 @BatchSize(size = 25)
 public class MeasurableElement extends AbstractEntity implements ReferencableEntity {
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "reference", unique = true, nullable = false)
+    @Column(name = "reference", nullable = false)
     private String reference;
 
     @Column(name = "ref_num", nullable = false)
@@ -25,7 +25,7 @@ public class MeasurableElement extends AbstractEntity implements ReferencableEnt
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "measurableElement")
     private Set<Checkpoint> checkpoints = new HashSet<>();
 
-    @ManyToOne(targetEntity = Standard.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(targetEntity = Standard.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "standard_id")
     @NotNull
     private Standard standard;

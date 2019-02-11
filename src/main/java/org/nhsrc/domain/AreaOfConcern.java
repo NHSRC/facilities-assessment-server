@@ -15,10 +15,10 @@ import java.util.Set;
 @Table(name = "area_of_concern")
 @BatchSize(size = 25)
 public class AreaOfConcern extends AbstractEntity implements ReferencableEntity {
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "reference", unique = true, nullable = false)
+    @Column(name = "reference", nullable = false)
     private String reference;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "areaOfConcern")

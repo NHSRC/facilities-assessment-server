@@ -13,7 +13,6 @@ import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
 import org.nhsrc.service.UserService;
-import org.nhsrc.web.contract.FacilityAssessmentImportResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +77,7 @@ public class FacilityAssessmentController {
 
     @RequestMapping(value = "facilityAssessments", method = {RequestMethod.PUT, RequestMethod.POST})
     @Transactional
-    public FacilityAssessmentImportResponse submitAssessment(Principal principal,
+    public FacilityAssessment submitAssessment(Principal principal,
                                                              @RequestParam("uploadedFile") MultipartFile file,
                                                              @RequestParam(value = "id", required = false) Integer id,
                                                              @RequestParam(value = "uuid", required = false) UUID uuid,
@@ -104,12 +103,10 @@ public class FacilityAssessmentController {
         facilityAssessmentDTO.setStartDate(startDate);
         facilityAssessmentDTO.setEndDate(endDate);
         FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO, user);
-        FacilityAssessmentImportResponse facilityAssessmentImportResponse = new FacilityAssessmentImportResponse();
-        facilityAssessmentImportResponse.setFacilityAssessment(facilityAssessment);
 
-        if (Repository.findByUuidOrId(uuid, id, facilityAssessmentRepository) != null && file == null) return facilityAssessmentImportResponse;
+        if (Repository.findByUuidOrId(uuid, id, facilityAssessmentRepository) != null && file == null) return facilityAssessment;
 
-        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment, facilityAssessmentImportResponse);
-        return facilityAssessmentImportResponse;
+        excelImportService.saveAssessment(file.getInputStream(), facilityAssessment);
+        return facilityAssessment;
     }
 }

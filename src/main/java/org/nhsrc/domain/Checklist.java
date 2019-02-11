@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Table(name = "checklist")
 @BatchSize(size = 25)
 public class Checklist extends AbstractEntity {
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @ManyToOne(targetEntity = AssessmentTool.class, fetch = FetchType.EAGER)

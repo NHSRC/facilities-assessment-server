@@ -9,7 +9,6 @@ help: ## This help dialog.
 	    printf "%-30s %s\n" $$help_command $$help_info ; \
 	done
 
-database := facilities_assessment_$(dbSuffix)
 rr_version := 9
 reference_response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
 client_response_folder := ../facilities-assessment-android-client/nhsrc/output/recorded-response/jsons/$(rr_version)
@@ -31,6 +30,15 @@ define _debug_server
 	java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
 endef
 
+define _restore_db
+	psql postgres -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$1' AND pid <> pg_backend_pid()"
+	-psql postgres -c "create user nhsrc with password 'password'";
+	psql $(database) -c 'create extension if not exists "uuid-ossp"'
+	psql postgres -c 'drop database $1';
+	psql postgres -c 'create database $1 with owner nhsrc';
+	psql $1 < $2
+endef
+
 # <db>
 init_db:
 	-psql postgres -c "create user nhsrc with password 'password'";
@@ -43,10 +51,11 @@ reset_db:
 	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/$(database) -schemas=public clean
 	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/$(database) -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
 
-restore_db:
-	-psql postgres -c 'drop database $(database)';
-	-psql postgres -c 'create database $(database) with owner nhsrc';
-	-psql $(database) < $(dump)
+
+apply_latest_db_local_jss:
+	-mkdir temp
+#	scp igunatmac:/home/app/facilities-assessment-host/backup/facilities_assessment_$(shell date +%a).sql temp/
+	$(call _restore_db,facilities_assessment_cg,temp/facilities_assessment_$(shell date +%a).sql)
 # </db>
 
 # <test_db>
@@ -105,17 +114,6 @@ test_server: reset_test_db
 open_test_results:
 	open build/reports/tests/index.html
 # </server>
-
-
-# <scenario>
-clear_responses:
-	-rm -rf responses
-
-publish_responses:
-	-rm -rf $(reference_response_folder)
-	-mkdir $(reference_response_folder)
-	cp -R responses/* $(reference_response_folder)/
-# </scenario>
 
 
 # <scenario>
