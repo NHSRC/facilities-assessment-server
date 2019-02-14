@@ -10,12 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "facility_assessment_missing_checkpoint")
-public class FacilityAssessmentMissingCheckpoint implements Persistable<Integer> {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
-    private Integer id;
-
+public class FacilityAssessmentMissingCheckpoint extends BaseMissingEntity {
     @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_assessment_id")
     @NotNull
@@ -33,16 +28,6 @@ public class FacilityAssessmentMissingCheckpoint implements Persistable<Integer>
 
     public void setFacilityAssessment(FacilityAssessment facilityAssessment) {
         this.facilityAssessment = facilityAssessment;
-    }
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public boolean isNew() {
-        return id == null || id == 0;
     }
 
     public void setMissingCheckpoint(MissingCheckpoint missingCheckpoint) {

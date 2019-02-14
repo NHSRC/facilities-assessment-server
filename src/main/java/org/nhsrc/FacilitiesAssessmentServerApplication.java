@@ -4,6 +4,7 @@ import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
 import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.missing.FacilityAssessmentMissingCheckpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -189,6 +190,18 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 resource.removeLinks();
                 resource.add(new Link(indicator.getFacilityAssessment().getUuidString(), "facilityAssessmentUUID"));
                 resource.add(new Link(indicator.getIndicatorDefinition().getUuid().toString(), "indicatorUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    public ResourceProcessor<Resource<FacilityAssessmentMissingCheckpoint>> facilityAssessmentMissingCheckpointProcessor() {
+        return new ResourceProcessor<Resource<FacilityAssessmentMissingCheckpoint>>() {
+            @Override
+            public Resource<FacilityAssessmentMissingCheckpoint> process(Resource<FacilityAssessmentMissingCheckpoint> resource) {
+                FacilityAssessmentMissingCheckpoint facilityAssessmentMissingCheckpoint = resource.getContent();
+                resource.removeLinks();
                 return resource;
             }
         };

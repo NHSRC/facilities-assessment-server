@@ -45,7 +45,7 @@ public class AssessmentImport {
         assessmentChecklistData.setAssessment(facilityAssessment);
 
         ExcelImporter excelImporter = new ExcelImporter(assessmentChecklistData);
-        excelImporter.importFile(assessmentFile.getFile(), assessmentTool, startingSheet, numberOfSheetsToImport, true, facilityAssessment);
+        excelImporter.importFile(assessmentFile.getFile(), assessmentTool, true, facilityAssessment);
 
         if (generateVerify) {
             AssessmentSQLGenerator.generateVerifyChecklistSQL(assessmentChecklistData, new File(assessmentsDirectory.toDirectory(), String.format("output/%s_verify_checklists.sql", facility.getName())));

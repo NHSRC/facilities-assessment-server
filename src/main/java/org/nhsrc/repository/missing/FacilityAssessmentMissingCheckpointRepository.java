@@ -3,6 +3,7 @@ package org.nhsrc.repository.missing;
 import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.missing.FacilityAssessmentMissingCheckpoint;
+import org.nhsrc.domain.missing.MissingCheckpoint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -18,6 +19,7 @@ import java.util.List;
 public interface FacilityAssessmentMissingCheckpointRepository extends PagingAndSortingRepository<FacilityAssessmentMissingCheckpoint, Integer> {
     List<FacilityAssessmentMissingCheckpoint> findAllByFacilityAssessmentAndMissingCheckpointChecklist(@Param("facilityAssessment") FacilityAssessment facilityAssessment, @Param("checklist") Checklist checklist);
 
-    @RestResource(path = "findByFacilityAssessmentId", rel = "findByFacilityAssessmentId")
     Page<FacilityAssessmentMissingCheckpoint> findAllByFacilityAssessmentId(@Param("facilityAssessmentId") Integer facilityAssessmentId, Pageable pageable);
+
+    FacilityAssessmentMissingCheckpoint findByFacilityAssessmentAndMissingCheckpoint(@Param("facilityAssessment") FacilityAssessment facilityAssessment, @Param("missingCheckpoint") MissingCheckpoint missingCheckpoint);
 }

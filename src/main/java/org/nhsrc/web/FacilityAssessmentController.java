@@ -5,6 +5,7 @@ import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
+import org.nhsrc.dto.OldFacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.Repository;
@@ -48,10 +49,10 @@ public class FacilityAssessmentController {
     }
 
     @RequestMapping(value = "facility-assessment", method = RequestMethod.POST)
-    public ResponseEntity<FacilityAssessment> syncFacilityAssessment(Principal principal, @RequestBody FacilityAssessmentDTO facilityAssessmentDTO) {
-        logger.info(facilityAssessmentDTO.toString());
+    public ResponseEntity<FacilityAssessment> syncFacilityAssessment(Principal principal, @RequestBody OldFacilityAssessmentDTO oldFacilityAssessmentDTO) {
+        logger.info(oldFacilityAssessmentDTO.toString());
         User user = userService.findSubmissionUser(principal);
-        FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO, user);
+        FacilityAssessment facilityAssessment = facilityAssessmentService.save(oldFacilityAssessmentDTO, user);
         return new ResponseEntity<>(facilityAssessment, HttpStatus.CREATED);
     }
 
@@ -67,30 +68,30 @@ public class FacilityAssessmentController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-//    @RequestMapping(value = "facilityAssessment/byUser", method = RequestMethod.GET)
-//    Page<FacilityAssessment> getAssessmentsForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {
-//        User user = userRepository.findByEmail(principal.getName());
-//        State state = null;
-//        PageRequest pageable = new PageRequest(page, size);
-//        return facilityAssessmentRepository.findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
-//    }
-
     @RequestMapping(value = "facilityAssessments", method = {RequestMethod.PUT, RequestMethod.POST})
     @Transactional
     public FacilityAssessment submitAssessment(Principal principal,
-                                                             @RequestParam("uploadedFile") MultipartFile file,
-                                                             @RequestParam(value = "id", required = false) Integer id,
-                                                             @RequestParam(value = "uuid", required = false) UUID uuid,
-                                                             @RequestParam(value = "facilityId", required = false) int facilityId,
-                                                             @RequestParam(value = "facilityName", required = false) String nonExistentFacilityName,
-                                                             @RequestParam("assessmentTypeId") int assessmentTypeId,
-                                                             @RequestParam("assessmentToolId") int assessmentToolId,
-                                                             @RequestParam("stateId") int stateId,
-                                                             @RequestParam("districtId") int districtId,
-                                                             @RequestParam("facilityTypeId") int facilityTypeId,
-                                                             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-                                                             @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) throws Exception {
+                                               @RequestBody FacilityAssessmentDTO facilityAssessmentDTO) throws Exception {
         User user = userRepository.findByEmail(principal.getName());
+        return facilityAssessmentService.save(facilityAssessmentDTO, user);
+    }
+
+    @RequestMapping(value = "facilityAssessments/withFile", method = {RequestMethod.PUT, RequestMethod.POST})
+    @Transactional
+    public FacilityAssessment submitAssessment(Principal principal,
+                                               @RequestParam("uploadedFile") MultipartFile file,
+                                               @RequestParam(value = "id", required = false) Integer id,
+                                               @RequestParam(value = "uuid", required = false) UUID uuid,
+                                               @RequestParam(value = "facilityId", required = false) int facilityId,
+                                               @RequestParam(value = "facilityName", required = false) String nonExistentFacilityName,
+                                               @RequestParam("assessmentTypeId") int assessmentTypeId,
+                                               @RequestParam("assessmentToolId") int assessmentToolId,
+                                               @RequestParam("stateId") int stateId,
+                                               @RequestParam("districtId") int districtId,
+                                               @RequestParam("facilityTypeId") int facilityTypeId,
+                                               @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+                                               @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) throws Exception {
+
         FacilityAssessmentDTO facilityAssessmentDTO = new FacilityAssessmentDTO();
         facilityAssessmentDTO.setAssessmentTypeId(assessmentTypeId);
         facilityAssessmentDTO.setAssessmentToolId(assessmentToolId);
@@ -102,7 +103,7 @@ public class FacilityAssessmentController {
         facilityAssessmentDTO.setUuid(uuid == null ? UUID.randomUUID() : uuid);
         facilityAssessmentDTO.setStartDate(startDate);
         facilityAssessmentDTO.setEndDate(endDate);
-        FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentDTO, user);
+        FacilityAssessment facilityAssessment = this.submitAssessment(principal, facilityAssessmentDTO);
 
         if (Repository.findByUuidOrId(uuid, id, facilityAssessmentRepository) != null && file == null) return facilityAssessment;
 

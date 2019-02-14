@@ -53,13 +53,13 @@ public class CheckpointController {
                                  @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
                                  Pageable pageable) {
         if (measurableElementId != null && checklistId != null)
-            return checkpointRepository.findDistinctByMeasurableElementIdAndChecklistId(measurableElementId, checklistId, pageable);
+            return checkpointRepository.findByMeasurableElementIdAndChecklistId(measurableElementId, checklistId, pageable);
         if (standardId != null && checklistId != null)
-            return checkpointRepository.findDistinctByMeasurableElementStandardIdAndChecklistId(standardId, checklistId, pageable);
+            return checkpointRepository.findByMeasurableElementStandardIdAndChecklistId(standardId, checklistId, pageable);
         if (areaOfConcernId != null && checklistId != null)
-            return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernIdAndChecklistId(areaOfConcernId, checklistId, pageable);
+            return checkpointRepository.findByMeasurableElementStandardAreaOfConcernIdAndChecklistId(areaOfConcernId, checklistId, pageable);
         if (checklistId != null)
-            return checkpointRepository.findDistinctByMeasurableElementStandardAreaOfConcernChecklistsId(checklistId, pageable);
+            return checkpointRepository.findAllByChecklistId(checklistId, pageable);
         if (assessmentToolId != null && stateId == null)
             return checkpointRepository.findDistinctByChecklistAssessmentToolId(assessmentToolId, pageable);
         if (assessmentToolId == null && stateId != null)

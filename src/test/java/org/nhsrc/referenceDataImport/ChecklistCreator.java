@@ -6,7 +6,7 @@ import java.io.IOException;
 public class ChecklistCreator {
     public void performImport(File inputExcelFile, AssessmentChecklistData data) throws Exception {
         ExcelImporter excelImporter = new ExcelImporter(data);
-        excelImporter.importFile(inputExcelFile, data.getAssessmentTool(), 0, -1, false, null);
+        excelImporter.importFile(inputExcelFile, data.getAssessmentTool(), false, null);
     }
 
     public void generate(AssessmentChecklistData data, File outputFile, boolean assessmentToolExists, boolean checklistExists) throws IOException {

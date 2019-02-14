@@ -7,29 +7,35 @@ import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.Department;
 import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.web.FacilityAssessmentController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class ExcelImporter {
+    private static Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
     private AssessmentChecklistData data;
+    private static String[] RESERVED_SHEET_NAMES = {"Compatibility Report", "Department Wise"};
 
     public ExcelImporter(AssessmentChecklistData data) {
         this.data = data;
     }
 
-    public void importFile(InputStream inputStream, AssessmentTool assessmentTool, int startingSheet, int numberOfSheetsToImport, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
+    public void importFile(InputStream inputStream, AssessmentTool assessmentTool, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         try {
-            int numberOfSheets = numberOfSheetsToImport == -1 ? workbook.getNumberOfSheets() : numberOfSheetsToImport;
-            for (int i = startingSheet; i < numberOfSheets; i++) {
+            int numberOfSheets = workbook.getNumberOfSheets();
+            for (int i = 0; i < numberOfSheets; i++) {
                 XSSFSheet sheet = workbook.getSheetAt(i);
-                System.out.println("READING SHEET: " + sheet.getSheetName());
+                logger.info("READING SHEET: " + sheet.getSheetName());
                 this.sheetImport(sheet, assessmentTool, hasScores, facilityAssessment);
-                System.out.println("COMPLETED SHEET: " + sheet.getSheetName());
+                logger.info("COMPLETED SHEET: " + sheet.getSheetName());
             }
         } finally {
             workbook.close();
@@ -37,18 +43,23 @@ public class ExcelImporter {
         }
     }
 
-    public void importFile(File file, AssessmentTool assessmentTool, int startingSheet, int numberOfSheetsToImport, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
+    public void importFile(File file, AssessmentTool assessmentTool, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
         FileInputStream inputStream = new FileInputStream(file);
-        this.importFile(inputStream, assessmentTool, startingSheet, numberOfSheetsToImport, hasScores, facilityAssessment);
+        this.importFile(inputStream, assessmentTool, hasScores, facilityAssessment);
     }
 
-    public Checklist sheetImport(XSSFSheet sheet, AssessmentTool assessmentTool, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
-        Department department = makeDepartment(sheet.getSheetName().trim());
+    private void sheetImport(XSSFSheet sheet, AssessmentTool assessmentTool, boolean hasScores, FacilityAssessment facilityAssessment) {
+        String sheetName = sheet.getSheetName().trim();
+        if (Arrays.stream(RESERVED_SHEET_NAMES).anyMatch(s -> s.equalsIgnoreCase(sheetName))) {
+            return;
+        }
+
+        Department department = makeDepartment(sheetName);
         data.addDepartment(department);
 
         final Checklist checklist = new Checklist();
         checklist.setDepartment(department);
-        checklist.setName(department.getName());
+        checklist.setName(sheetName);
         checklist.setAssessmentTool(assessmentTool);
         data.addChecklist(checklist);
 
@@ -59,23 +70,22 @@ public class ExcelImporter {
         while (iterator.hasNext()) {
             boolean completed = sheetImporter.importRow(iterator.next(), checklist, hasScores, facilityAssessment);
             if (completed) {
-                System.out.println(String.format("Sheet completed at line number:%d on encountering score row", i));
+                logger.info(String.format("Sheet completed at line number:%d on encountering score row", i));
                 break;
             }
             i++;
         }
         if (checklist.getAreasOfConcern().size() == 0) {
-            System.err.println(String.format("[ERROR] No area of concern were created for the sheet=%s. Ensure that the sheet is right. That is it has area of concerns and standards defined correctly.", checklist.getName()));
+            logger.error(String.format("[ERROR] No area of concern were created for the sheet=%s. Ensure that the sheet is right. That is it has area of concerns and standards defined correctly.", checklist.getName()));
         } else if (checklist.getCheckpoints().size() == 0) {
-            System.err.println(String.format("[ERROR] No checkpoints were created for the sheet=%s. Ensure that the sheet is right. That is it has area of concerns and standards defined correctly.", checklist.getName()));
+            logger.error(String.format("[ERROR] No checkpoints were created for the sheet=%s. Ensure that the sheet is right. That is it has area of concerns and standards defined correctly.", checklist.getName()));
         }
-        return checklist;
     }
 
     private Department makeDepartment(String name) {
         Department department = new Department();
         if (name.contains(".") || name.contains("-") || name.contains("_")) {
-            System.err.println(String.format("[ERROR] Department name=%s doesn't look right. Department name should not contain . - _ characters", name));
+            logger.error(String.format("[ERROR] Department name=%s doesn't look right. Department name should not contain . - _ characters", name));
         }
         department.setName(name);
         return department;

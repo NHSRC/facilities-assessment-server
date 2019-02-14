@@ -1,10 +1,10 @@
 package org.nhsrc.mapper;
 
 import org.nhsrc.domain.*;
-import org.nhsrc.dto.FacilityAssessmentDTO;
+import org.nhsrc.dto.BaseFacilityAssessmentDTO;
 
 public class FacilityAssessmentMapper {
-    public static FacilityAssessment fromDTO(FacilityAssessmentDTO facilityAssessmentDTO,
+    public static FacilityAssessment fromDTO(BaseFacilityAssessmentDTO facilityAssessmentDTO,
                                              Facility facility,
                                              AssessmentTool assessmentTool, AssessmentType assessmentType, State state, District district, FacilityType facilityType) {
         FacilityAssessment facilityAssessment = new FacilityAssessment();

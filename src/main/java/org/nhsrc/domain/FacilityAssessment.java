@@ -189,12 +189,15 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     @JsonIgnore
     public FacilityType getFacilityType() {
-        return this.facilityType;
+        if (this.facilityType != null) return this.facilityType;
+        if (this.facility != null) return this.facility.getFacilityType();
+        return null;
     }
 
     @JsonProperty("facilityTypeId")
     public Integer _getFacilityTypeId() {
-        return this.facilityType == null ? null : this.facilityType.getId();
+        FacilityType facilityType = this.getFacilityType();
+        return facilityType == null ? null : facilityType.getId();
     }
 
     public void setFacilityType(FacilityType facilityType) {

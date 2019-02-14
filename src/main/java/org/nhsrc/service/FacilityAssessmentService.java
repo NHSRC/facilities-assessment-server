@@ -2,8 +2,8 @@ package org.nhsrc.service;
 
 import org.nhsrc.domain.*;
 import org.nhsrc.domain.security.User;
+import org.nhsrc.dto.BaseFacilityAssessmentDTO;
 import org.nhsrc.dto.ChecklistDTO;
-import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.mapper.FacilityAssessmentMapper;
 import org.nhsrc.repository.*;
@@ -61,7 +61,7 @@ public class FacilityAssessmentService {
         this.facilityTypeRepository = facilityTypeRepository;
     }
 
-    public FacilityAssessment save(FacilityAssessmentDTO facilityAssessmentDTO, User user) {
+    public FacilityAssessment save(BaseFacilityAssessmentDTO facilityAssessmentDTO, User user) {
         Facility facility = Repository.findByUuidOrId(facilityAssessmentDTO.getFacility(), facilityAssessmentDTO.getFacilityId(), facilityRepository);
         if (facility == null && (facilityAssessmentDTO.getFacilityName() == null || facilityAssessmentDTO.getFacilityName().isEmpty()))
             throw new ValidationException("Facility not found and facility name is also empty");
