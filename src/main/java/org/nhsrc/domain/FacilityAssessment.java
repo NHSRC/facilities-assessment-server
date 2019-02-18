@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.nhsrc.utils.DateUtils.DATE_FORMAT_STRING;
+
 @Entity
 @Table(name = "facility_assessment")
 public class FacilityAssessment extends AbstractScoreEntity {
@@ -30,12 +32,12 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     @Column(name = "start_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DATE_FORMAT_STRING)
     private java.util.Date startDate;
 
     @Column(name = "end_date", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DATE_FORMAT_STRING)
     private java.util.Date endDate;
 
     @Column(name = "series_name", nullable = true)

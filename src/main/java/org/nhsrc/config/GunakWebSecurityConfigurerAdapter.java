@@ -63,7 +63,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
         registry.antMatchers(new String[]{"/api/currentUser", "/api/loginSuccess"}).hasAuthority("USER");
         if (isSecure) {
-            String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user"};
+            String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user", "facilityAssessmentMissingCheckpoint"};
             permittedResourcesForOneDevice(semiProtectedResources, registry);
             permittedResourcesWithAuthority(semiProtectedResources, registry);
         } else {

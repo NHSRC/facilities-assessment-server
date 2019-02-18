@@ -194,16 +194,4 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
             }
         };
     }
-
-    @Bean
-    public ResourceProcessor<Resource<FacilityAssessmentMissingCheckpoint>> facilityAssessmentMissingCheckpointProcessor() {
-        return new ResourceProcessor<Resource<FacilityAssessmentMissingCheckpoint>>() {
-            @Override
-            public Resource<FacilityAssessmentMissingCheckpoint> process(Resource<FacilityAssessmentMissingCheckpoint> resource) {
-                FacilityAssessmentMissingCheckpoint facilityAssessmentMissingCheckpoint = resource.getContent();
-                resource.removeLinks();
-                return resource;
-            }
-        };
-    }
 }

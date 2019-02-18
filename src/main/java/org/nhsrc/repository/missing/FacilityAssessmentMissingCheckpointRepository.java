@@ -15,11 +15,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-@RepositoryRestResource(collectionResourceRel = "facilityAssessmentMissingCheckpoint", path = "facilityAssessmentMissingCheckpoint")
 public interface FacilityAssessmentMissingCheckpointRepository extends PagingAndSortingRepository<FacilityAssessmentMissingCheckpoint, Integer> {
     List<FacilityAssessmentMissingCheckpoint> findAllByFacilityAssessmentAndMissingCheckpointChecklist(@Param("facilityAssessment") FacilityAssessment facilityAssessment, @Param("checklist") Checklist checklist);
 
-    Page<FacilityAssessmentMissingCheckpoint> findAllByFacilityAssessmentId(@Param("facilityAssessmentId") Integer facilityAssessmentId, Pageable pageable);
+    Page<FacilityAssessmentMissingCheckpoint> findAllByFacilityAssessment(@Param("facilityAssessment") FacilityAssessment facilityAssessment, Pageable pageable);
 
     FacilityAssessmentMissingCheckpoint findByFacilityAssessmentAndMissingCheckpoint(@Param("facilityAssessment") FacilityAssessment facilityAssessment, @Param("missingCheckpoint") MissingCheckpoint missingCheckpoint);
 }

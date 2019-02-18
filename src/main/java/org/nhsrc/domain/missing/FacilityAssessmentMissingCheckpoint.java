@@ -1,9 +1,6 @@
 package org.nhsrc.domain.missing;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.nhsrc.domain.FacilityAssessment;
-import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -21,11 +18,6 @@ public class FacilityAssessmentMissingCheckpoint extends BaseMissingEntity {
     @NotNull
     private MissingCheckpoint missingCheckpoint;
 
-    @JsonIgnore
-    public FacilityAssessment getFacilityAssessment() {
-        return facilityAssessment;
-    }
-
     public void setFacilityAssessment(FacilityAssessment facilityAssessment) {
         this.facilityAssessment = facilityAssessment;
     }
@@ -40,5 +32,13 @@ public class FacilityAssessmentMissingCheckpoint extends BaseMissingEntity {
 
     public int getChecklistId() {
         return missingCheckpoint.getChecklist().getId();
+    }
+
+    public int getFacilityAssessmentId() {
+        return this.facilityAssessment.getId();
+    }
+
+    public String getMeasurableElementReference() {
+        return missingCheckpoint.getMeasurableElementReference();
     }
 }

@@ -27,7 +27,7 @@ public class MissingChecklistItemsService {
     }
 
     void saveMissingCheckpoint(String missingCheckpointName, String measurableElementReference, Checklist checklist, FacilityAssessment facilityAssessment) {
-        MissingCheckpoint missingCheckpoint = missingCheckpointRepository.findByNameAndChecklistAndMeasurableElementReference(missingCheckpointName, measurableElementReference, checklist);
+        MissingCheckpoint missingCheckpoint = missingCheckpointRepository.findByNameAndMeasurableElementReferenceAndChecklist(missingCheckpointName, measurableElementReference, checklist);
         if (missingCheckpoint == null)
             missingCheckpoint = missingCheckpointRepository.findByNameAndChecklist(missingCheckpointName, checklist);
 

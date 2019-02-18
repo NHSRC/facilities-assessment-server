@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface MissingCheckpointRepository extends PagingAndSortingRepository<MissingCheckpoint, Integer> {
     MissingCheckpoint findByNameAndChecklist(@Param("name") String name, @Param("checklist") Checklist checklist);
 
-    MissingCheckpoint findByNameAndChecklistAndMeasurableElementReference(@Param("name") String name, @Param("measurableElementReference") String measurableElementReference, @Param("checklist") Checklist checklist);
+    MissingCheckpoint findByNameAndMeasurableElementReferenceAndChecklist(@Param("name") String name, @Param("measurableElementReference") String measurableElementReference, @Param("checklist") Checklist checklist);
 }
