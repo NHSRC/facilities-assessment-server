@@ -1,7 +1,9 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.repository.*;
+import org.nhsrc.repository.missing.FacilityAssessmentMissingCheckpointRepository;
 import org.nhsrc.web.contract.ChecklistRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,8 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/")
@@ -23,7 +28,7 @@ public class ChecklistController {
     private AreaOfConcernRepository areaOfConcernRepository;
 
     @Autowired
-    public ChecklistController(DepartmentRepository departmentRepository, ChecklistRepository checklistRepository, AssessmentToolRepository assessmentToolRepository, AreaOfConcernRepository areaOfConcernRepository) {
+    public ChecklistController(DepartmentRepository departmentRepository, ChecklistRepository checklistRepository, AssessmentToolRepository assessmentToolRepository, AreaOfConcernRepository areaOfConcernRepository, FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository) {
         this.departmentRepository = departmentRepository;
         this.checklistRepository = checklistRepository;
         this.assessmentToolRepository = assessmentToolRepository;
@@ -50,8 +55,13 @@ public class ChecklistController {
         return new ResponseEntity<>(checklistRepository.save(checklist), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/checklist/search/find", method = {RequestMethod.GET})
+    @RequestMapping(value = "checklist/search/find", method = {RequestMethod.GET})
     public Page<Checklist> findAll(@RequestParam Integer assessmentToolId, @RequestParam Integer stateId, Pageable pageable) {
         return checklistRepository.findByAssessmentToolIdAndStateIdOrStateIsNull(assessmentToolId, stateId, pageable);
+    }
+
+    @RequestMapping(value = "checklist/search/findByFacilityAssessment", method = {RequestMethod.GET})
+    public List<Checklist> findByFacilityAssessment(@RequestParam Integer facilityAssessmentId) {
+        return checklistRepository.findUniqueChecklistsMissingInCheckpointsForFacilityAssessment(facilityAssessmentId).stream().distinct().sorted(Comparator.comparing(Checklist::getName)).collect(Collectors.toList());
     }
 }

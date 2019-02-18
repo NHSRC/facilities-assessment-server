@@ -49,4 +49,7 @@ public interface ChecklistRepository extends BaseRepository<Checklist> {
     Page<Checklist> findByAssessmentToolIdAndStateIdOrStateIsNull(@Param("assessmentToolId") Integer assessmentToolId, @Param("stateId") Integer stateId, Pageable pageable);
 
     Checklist findByNameAndAssessmentTool(@Param("String") String name, @Param("assessmentTool") AssessmentTool assessmentTool);
+
+    @Query("SELECT cl FROM FacilityAssessmentMissingCheckpoint famc inner join famc.missingCheckpoint mc inner join mc.checklist cl WHERE famc.facilityAssessment.id = :facilityAssessmentId")
+    List<Checklist> findUniqueChecklistsMissingInCheckpointsForFacilityAssessment(@Param("facilityAssessmentId") Integer facilityAssessmentId);
 }

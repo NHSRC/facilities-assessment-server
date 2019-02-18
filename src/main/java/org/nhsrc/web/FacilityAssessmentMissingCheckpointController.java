@@ -1,7 +1,9 @@
 package org.nhsrc.web;
 
+import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.missing.FacilityAssessmentMissingCheckpoint;
+import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.missing.FacilityAssessmentMissingCheckpointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class FacilityAssessmentMissingCheckpointController {
     private FacilityAssessmentMissingCheckpointRepository repository;
     private FacilityAssessmentRepository facilityAssessmentRepository;
+    private ChecklistRepository checklistRepository;
 
     @Autowired
-    public FacilityAssessmentMissingCheckpointController(FacilityAssessmentMissingCheckpointRepository repository, FacilityAssessmentRepository facilityAssessmentRepository) {
+    public FacilityAssessmentMissingCheckpointController(FacilityAssessmentMissingCheckpointRepository repository, FacilityAssessmentRepository facilityAssessmentRepository, ChecklistRepository checklistRepository) {
         this.repository = repository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
+        this.checklistRepository = checklistRepository;
     }
 
     @RequestMapping(value = "facilityAssessmentMissingCheckpoint", method = {RequestMethod.GET})
@@ -33,5 +37,12 @@ public class FacilityAssessmentMissingCheckpointController {
     public Page<FacilityAssessmentMissingCheckpoint> findByFacilityAssessmentId(@RequestParam("facilityAssessmentId") Integer facilityAssessmentId, Pageable pageable) {
         FacilityAssessment facilityAssessment = facilityAssessmentRepository.findOne(facilityAssessmentId);
         return repository.findAllByFacilityAssessment(facilityAssessment, pageable);
+    }
+
+    @RequestMapping(value = "facilityAssessmentMissingCheckpoint/search/find", method = {RequestMethod.GET})
+    public Page<FacilityAssessmentMissingCheckpoint> findByFacilityAssessmentId(@RequestParam("facilityAssessmentId") Integer facilityAssessmentId, @RequestParam("checklistId") Integer checklistId, Pageable pageable) {
+        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findOne(facilityAssessmentId);
+        Checklist checklist = checklistRepository.findOne(checklistId);
+        return repository.findAllByFacilityAssessmentAndMissingCheckpointChecklist(facilityAssessment, checklist, pageable);
     }
 }
