@@ -84,7 +84,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
         this.endDate = endDate;
     }
 
-    @JsonIgnore
+    @Deprecated
     public AssessmentTool getAssessmentTool() {
         return assessmentTool;
     }
