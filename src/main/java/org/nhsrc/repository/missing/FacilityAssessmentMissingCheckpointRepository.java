@@ -24,4 +24,6 @@ public interface FacilityAssessmentMissingCheckpointRepository extends PagingAnd
     Page<FacilityAssessmentMissingCheckpoint> findAllByFacilityAssessmentAndMissingCheckpointChecklist(@Param("facilityAssessment") FacilityAssessment facilityAssessment, @Param("checklist") Checklist checklist, Pageable pageable);
 
     FacilityAssessmentMissingCheckpoint findByFacilityAssessmentAndMissingCheckpoint(@Param("facilityAssessment") FacilityAssessment facilityAssessment, @Param("missingCheckpoint") MissingCheckpoint missingCheckpoint);
+
+    void deleteAllByFacilityAssessment(@Param("facilityAssessment") FacilityAssessment facilityAssessment);
 }

@@ -35,4 +35,6 @@ public interface CheckpointScoreRepository extends BaseRepository<CheckpointScor
 
     @RestResource(path = "findAllById", rel = "findAllById")
     List<CheckpointScore> findByIdIn(@Param("ids") Integer[] ids);
+
+    void deleteAllByFacilityAssessmentId(@Param("facilityAssessmentId") Integer facilityAssessmentId);
 }

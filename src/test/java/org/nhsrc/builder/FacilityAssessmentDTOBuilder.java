@@ -1,16 +1,16 @@
 package org.nhsrc.builder;
 
-import org.nhsrc.dto.OldFacilityAssessmentDTO;
+import org.nhsrc.dto.FacilityAssessmentAppDTO;
 
 import java.util.Date;
 import java.util.UUID;
 
 public class FacilityAssessmentDTOBuilder {
 
-    private OldFacilityAssessmentDTO facilityAssessment;
+    private FacilityAssessmentAppDTO facilityAssessment;
 
     public FacilityAssessmentDTOBuilder() {
-        facilityAssessment = new OldFacilityAssessmentDTO();
+        facilityAssessment = new FacilityAssessmentAppDTO();
         facilityAssessment.setUuid(UUID.randomUUID());
         facilityAssessment.setFacility(UUID.fromString("b4d3a2ec-f17f-475c-bca1-b92d13bc469e"));
         facilityAssessment.setAssessmentTool(UUID.fromString("77cceb53-7d71-456c-a9ee-c870774707ad"));
@@ -45,7 +45,7 @@ public class FacilityAssessmentDTOBuilder {
         return this;
     }
 
-    public OldFacilityAssessmentDTO build() {
+    public FacilityAssessmentAppDTO build() {
         return this.facilityAssessment;
     }
 }

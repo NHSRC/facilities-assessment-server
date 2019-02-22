@@ -56,6 +56,9 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @NotNull
     private User user;
 
+    @Column(name = "inactive", nullable = false)
+    private Boolean inactive = false;
+
     public String getAssessmentCode() {
         return assessmentCode;
     }
@@ -162,6 +165,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
         this.facility = facility;
     }
 
+    @JsonIgnore
     public State getState() {
         return this.state;
     }
@@ -251,5 +255,13 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Boolean getInactive() {
+        return inactive;
+    }
+
+    public void setInactive(Boolean inactive) {
+        this.inactive = inactive;
     }
 }

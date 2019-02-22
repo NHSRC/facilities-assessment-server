@@ -7,6 +7,10 @@ import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.mapper.FacilityAssessmentMapper;
 import org.nhsrc.repository.*;
+import org.nhsrc.repository.missing.FacilityAssessmentMissingCheckpointRepository;
+import org.nhsrc.repository.scores.AreaOfConcernScoreRepository;
+import org.nhsrc.repository.scores.ChecklistScoreRepository;
+import org.nhsrc.repository.scores.StandardScoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +35,10 @@ public class FacilityAssessmentService {
     private StateRepository stateRepository;
     private DistrictRepository districtRepository;
     private FacilityTypeRepository facilityTypeRepository;
+    private StandardScoreRepository standardScoreRepository;
+    private AreaOfConcernScoreRepository areaOfConcernScoreRepository;
+    private ChecklistScoreRepository checklistScoreRepository;
+    private FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository;
 
     @Autowired
     public FacilityAssessmentService(FacilityRepository facilityRepository,
@@ -45,7 +53,7 @@ public class FacilityAssessmentService {
                                      IndicatorRepository indicatorRepository,
                                      StateRepository stateRepository,
                                      DistrictRepository districtRepository,
-                                     FacilityTypeRepository facilityTypeRepository) {
+                                     FacilityTypeRepository facilityTypeRepository, StandardScoreRepository standardScoreRepository, AreaOfConcernScoreRepository areaOfConcernScoreRepository, ChecklistScoreRepository checklistScoreRepository, FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository) {
         this.facilityRepository = facilityRepository;
         this.assessmentToolRepository = assessmentToolRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
@@ -59,15 +67,19 @@ public class FacilityAssessmentService {
         this.stateRepository = stateRepository;
         this.districtRepository = districtRepository;
         this.facilityTypeRepository = facilityTypeRepository;
+        this.standardScoreRepository = standardScoreRepository;
+        this.areaOfConcernScoreRepository = areaOfConcernScoreRepository;
+        this.checklistScoreRepository = checklistScoreRepository;
+        this.facilityAssessmentMissingCheckpointRepository = facilityAssessmentMissingCheckpointRepository;
     }
 
-    public FacilityAssessment save(BaseFacilityAssessmentDTO facilityAssessmentDTO, User user) {
+    public FacilityAssessment save(BaseFacilityAssessmentDTO facilityAssessmentDTO, AssessmentTool assessmentTool, User user) {
         Facility facility = Repository.findByUuidOrId(facilityAssessmentDTO.getFacility(), facilityAssessmentDTO.getFacilityId(), facilityRepository);
         if (facility == null && (facilityAssessmentDTO.getFacilityName() == null || facilityAssessmentDTO.getFacilityName().isEmpty()))
             throw new ValidationException("Facility not found and facility name is also empty");
 
-        AssessmentTool assessmentTool = Repository.findByUuidOrId(facilityAssessmentDTO.getAssessmentTool(), facilityAssessmentDTO.getAssessmentToolId(), assessmentToolRepository);
-        AssessmentType assessmentType = Repository.findByUuidOrId(facilityAssessmentDTO.getAssessmentTypeUUID(), facilityAssessmentDTO.getAssessmentToolId(), assessmentTypeRepository);
+        AssessmentType assessmentType = Repository.findByUuidOrId(facilityAssessmentDTO.getAssessmentTypeUUID(), facilityAssessmentDTO.getAssessmentTypeId(), assessmentTypeRepository);
+        FacilityType facilityType = Repository.findByUuidOrId(facilityAssessmentDTO.getFacilityTypeUUID(), facilityAssessmentDTO.getFacilityTypeId(), facilityTypeRepository);
 
         State state;
         District district;
@@ -79,15 +91,26 @@ public class FacilityAssessmentService {
             district = Repository.findByUuidOrId(facilityAssessmentDTO.getDistrict(), facilityAssessmentDTO.getDistrictId(), districtRepository);
         }
 
-        FacilityType facilityType = Repository.findByUuidOrId(facilityAssessmentDTO.getFacilityTypeUUID(), facilityAssessmentDTO.getFacilityId(), facilityTypeRepository);
-
         String lockString = String.format("%s-%d", facility == null ? facilityAssessmentDTO.getFacilityName() : facility.getId(), assessmentTool.getId());
         synchronized (lockString.intern()) {
             FacilityAssessment facilityAssessment = this.assessmentMatchingService.findExistingAssessment(facilityAssessmentDTO.getSeriesName(), facilityAssessmentDTO.getUuid(), facility, facilityAssessmentDTO.getFacilityName(), assessmentTool);
             if (facilityAssessment == null)
-                facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO, facility, assessmentTool, assessmentType, state, district, facilityType);
+                facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO);
             else
                 facilityAssessment.updateEndDate(facilityAssessmentDTO.getEndDate());
+
+            facilityAssessment.setFacility(facility);
+            facilityAssessment.setFacilityName(facilityAssessmentDTO.getFacilityName());
+            facilityAssessment.setState(state);
+            facilityAssessment.setDistrict(district);
+            facilityAssessment.setFacilityType(facilityType);
+            facilityAssessment.setFacilityName(facilityAssessmentDTO.getFacilityName());
+
+            facilityAssessment.setAssessmentTool(assessmentTool);
+            facilityAssessment.setStartDate(facilityAssessmentDTO.getStartDate());
+            facilityAssessment.setSeriesName(facilityAssessmentDTO.getSeriesName());
+            facilityAssessment.setAssessmentType(assessmentType);
+            facilityAssessment.setInactive(facilityAssessmentDTO.getInactive());
 
             facilityAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
             facilityAssessment.setUser(user);
@@ -158,5 +181,16 @@ public class FacilityAssessmentService {
     public void clearCheckpointScores(int facilityAssessmentId, String checklistName) {
         List<CheckpointScore> checkpointScores = checkpointScoreRepository.findByFacilityAssessmentIdAndChecklistName(facilityAssessmentId, checklistName);
         checkpointScoreRepository.delete(checkpointScores);
+    }
+
+    public void deleteAssessment(Integer facilityAssessmentId) {
+        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findOne(facilityAssessmentId);
+        checkpointScoreRepository.deleteAllByFacilityAssessmentId(facilityAssessmentId);
+        standardScoreRepository.deleteAllByFacilityAssessmentId(facilityAssessmentId);
+        areaOfConcernScoreRepository.deleteAllByFacilityAssessmentId(facilityAssessmentId);
+        checklistScoreRepository.deleteAllByFacilityAssessmentId(facilityAssessmentId);
+        indicatorRepository.deleteAllByFacilityAssessmentId(facilityAssessmentId);
+        facilityAssessmentMissingCheckpointRepository.deleteAllByFacilityAssessment(facilityAssessment);
+        facilityAssessmentRepository.delete(facilityAssessmentId);
     }
 }

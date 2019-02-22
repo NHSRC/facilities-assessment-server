@@ -20,12 +20,6 @@ public class AreaOfConcernScore extends AbstractTransactionalEntity {
     @NotNull
     private AreaOfConcern areaOfConcern;
 
-    @Column(name = "numerator")
-    private int numerator;
-
-    @Column(name = "denominator")
-    private int denominator;
-
     public FacilityAssessment getFacilityAssessment() {
         return facilityAssessment;
     }
@@ -40,21 +34,5 @@ public class AreaOfConcernScore extends AbstractTransactionalEntity {
 
     public void setAreaOfConcern(AreaOfConcern areaOfConcern) {
         this.areaOfConcern = areaOfConcern;
-    }
-
-    public int getNumerator() {
-        return numerator;
-    }
-
-    public void setNumerator(int numerator) {
-        this.numerator = numerator;
-    }
-
-    public int getDenominator() {
-        return denominator;
-    }
-
-    public void setDenominator(int denominator) {
-        this.denominator = denominator;
     }
 }

@@ -8,11 +8,13 @@ import java.util.UUID;
 
 import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
 
-public class OldFacilityAssessmentDTO extends BaseFacilityAssessmentDTO {
+public class FacilityAssessmentAppDTO extends BaseFacilityAssessmentDTO {
     @JsonFormat(pattern = DATE_TIME_FORMAT_STRING)
     private Date startDate;
     @JsonFormat(pattern = DATE_TIME_FORMAT_STRING)
     private Date endDate;
+
+    private UUID assessmentTool;
 
     public Date getStartDate() {
         return startDate;
@@ -28,5 +30,13 @@ public class OldFacilityAssessmentDTO extends BaseFacilityAssessmentDTO {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public UUID getAssessmentTool() {
+        return assessmentTool;
+    }
+
+    public void setAssessmentTool(UUID assessmentTool) {
+        this.assessmentTool = assessmentTool;
     }
 }

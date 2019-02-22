@@ -23,7 +23,7 @@ define _tail_server_qa
 endef
 
 define _tail_server_prod
-	ssh $1 "tail -f /home/app/facilities-assessment-host/app-servers/log/facilities_assessment.log"
+	ssh $1 "tail -n 500 -f /home/app/facilities-assessment-host/app-servers/log/facilities_assessment.log"
 endef
 
 define _deploy_qa

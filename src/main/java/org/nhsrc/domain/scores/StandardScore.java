@@ -20,12 +20,6 @@ public class StandardScore extends AbstractTransactionalEntity {
     @NotNull
     private FacilityAssessment facilityAssessment;
 
-    @Column(name = "numerator")
-    private int numerator;
-
-    @Column(name = "denominator")
-    private int denominator;
-
     public Standard getStandard() {
         return standard;
     }
@@ -40,21 +34,5 @@ public class StandardScore extends AbstractTransactionalEntity {
 
     public void setFacilityAssessment(FacilityAssessment facilityAssessment) {
         this.facilityAssessment = facilityAssessment;
-    }
-
-    public int getNumerator() {
-        return numerator;
-    }
-
-    public void setNumerator(int numerator) {
-        this.numerator = numerator;
-    }
-
-    public int getDenominator() {
-        return denominator;
-    }
-
-    public void setDenominator(int denominator) {
-        this.denominator = denominator;
     }
 }

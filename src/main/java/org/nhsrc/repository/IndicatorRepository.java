@@ -30,4 +30,6 @@ public interface IndicatorRepository extends BaseRepository<Indicator> {
 
     @RestResource(path = "findByFacilityAssessment", rel = "findByFacilityAssessment")
     Page<Indicator> findByFacilityAssessmentId(@Param("facilityAssessmentId") Integer stateId, Pageable pageable);
+
+    void deleteAllByFacilityAssessmentId(@Param("facilityAssessmentId") Integer facilityAssessmentId);
 }

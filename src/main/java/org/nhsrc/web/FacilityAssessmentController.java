@@ -1,16 +1,14 @@
 package org.nhsrc.web;
 
+import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.CheckpointScore;
 import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.FacilityAssessmentDTO;
-import org.nhsrc.dto.OldFacilityAssessmentDTO;
+import org.nhsrc.dto.FacilityAssessmentAppDTO;
 import org.nhsrc.dto.IndicatorListDTO;
-import org.nhsrc.repository.FacilityAssessmentRepository;
-import org.nhsrc.repository.FacilityRepository;
-import org.nhsrc.repository.Repository;
-import org.nhsrc.repository.StateRepository;
+import org.nhsrc.repository.*;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
@@ -36,27 +34,40 @@ public class FacilityAssessmentController {
     private final FacilityAssessmentService facilityAssessmentService;
     private final UserRepository userRepository;
     private FacilityAssessmentRepository facilityAssessmentRepository;
+    private AssessmentToolRepository assessmentToolRepository;
     private UserService userService;
     private static Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
     private ExcelImportService excelImportService;
-    private FacilityRepository facilityRepository;
 
     @Autowired
-    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, FacilityRepository facilityRepository) {
+    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, FacilityRepository facilityRepository, AssessmentToolRepository assessmentToolRepository) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
         this.userService = userService;
         this.excelImportService = excelImportService;
-        this.facilityRepository = facilityRepository;
+        this.assessmentToolRepository = assessmentToolRepository;
     }
 
     @RequestMapping(value = "facility-assessment", method = RequestMethod.POST)
-    public ResponseEntity<FacilityAssessment> syncFacilityAssessment(Principal principal, @RequestBody OldFacilityAssessmentDTO oldFacilityAssessmentDTO) {
-        logger.info(oldFacilityAssessmentDTO.toString());
+    public ResponseEntity<FacilityAssessment> syncFacilityAssessment(Principal principal, @RequestBody FacilityAssessmentAppDTO facilityAssessmentAppDTO) {
+        logger.info(facilityAssessmentAppDTO.toString());
         User user = userService.findSubmissionUser(principal);
-        FacilityAssessment facilityAssessment = facilityAssessmentService.save(oldFacilityAssessmentDTO, user);
+        AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentAppDTO.getAssessmentTool());
+        FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentAppDTO, assessmentTool, user);
         return new ResponseEntity<>(facilityAssessment, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "facilityAssessment/{facilityAssessmentId}", method = RequestMethod.DELETE)
+    @Transactional
+    public ResponseEntity<Object> delete(@PathVariable("facilityAssessmentId") Integer id) {
+        facilityAssessmentService.deleteAssessment(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "facilityAssessment/{facilityAssessmentId}", method = RequestMethod.GET)
+    public ResponseEntity<FacilityAssessment> get(@PathVariable("facilityAssessmentId") Integer id) {
+        return new ResponseEntity<>(facilityAssessmentRepository.findOne(id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "facility-assessment/checklist", method = RequestMethod.POST)
@@ -76,7 +87,8 @@ public class FacilityAssessmentController {
     public FacilityAssessment submitAssessment(Principal principal,
                                                @RequestBody FacilityAssessmentDTO facilityAssessmentDTO) throws Exception {
         User user = userRepository.findByEmail(principal.getName());
-        return facilityAssessmentService.save(facilityAssessmentDTO, user);
+        AssessmentTool assessmentTool = assessmentToolRepository.findOne(facilityAssessmentDTO.getAssessmentToolId());
+        return facilityAssessmentService.save(facilityAssessmentDTO, assessmentTool, user);
     }
 
     @RequestMapping(value = "facilityAssessments/withFile", method = {RequestMethod.PUT, RequestMethod.POST})

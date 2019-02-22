@@ -9,7 +9,6 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
     private UUID facility;
     private int facilityId;
     private String facilityName;
-    private UUID assessmentTool;
     private int assessmentToolId;
     private String seriesName;
     private String deviceId;
@@ -21,6 +20,7 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
     private int districtId;
     private UUID facilityTypeUUID;
     private int facilityTypeId;
+    private Boolean inactive;
 
     public UUID getUuid() {
         return uuid;
@@ -36,14 +36,6 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
 
     public void setFacility(UUID facility) {
         this.facility = facility;
-    }
-
-    public UUID getAssessmentTool() {
-        return assessmentTool;
-    }
-
-    public void setAssessmentTool(UUID assessmentTool) {
-        this.assessmentTool = assessmentTool;
     }
 
     public String getSeriesName() {
@@ -150,11 +142,6 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
         this.facilityTypeId = facilityTypeId;
     }
 
-    @Override
-    public String toString() {
-        return String.format("{uuid=%s, facility=%s, facilityName=%s, assessmentTool=%s, seriesName='%s', deviceId='%s', assessmentTypeUUID=%s}", uuid, facility, facilityName, assessmentTool, seriesName, deviceId, assessmentTypeUUID);
-    }
-
     public abstract Date getStartDate();
 
     public abstract void setStartDate(Date startDate);
@@ -162,4 +149,12 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
     public abstract Date getEndDate();
 
     public abstract void setEndDate(Date endDate);
+
+    public Boolean getInactive() {
+        return inactive;
+    }
+
+    public void setInactive(Boolean inactive) {
+        this.inactive = inactive;
+    }
 }

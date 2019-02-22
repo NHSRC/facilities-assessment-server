@@ -1,0 +1,1 @@
+alter table facility_assessment add column inactive boolean default false not null;
