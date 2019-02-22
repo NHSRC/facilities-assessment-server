@@ -66,9 +66,8 @@ public class ExcelImporter {
         SheetRowImporter sheetImporter = new SheetRowImporter(data);
 
         int i = 1;
-        Iterator<Row> iterator = sheet.iterator();
-        while (iterator.hasNext()) {
-            boolean completed = sheetImporter.importRow(iterator.next(), checklist, hasScores, facilityAssessment);
+        for (Row cells : sheet) {
+            boolean completed = sheetImporter.importRow(cells, checklist, hasScores, facilityAssessment);
             if (completed) {
                 logger.info(String.format("Sheet completed at line number:%d on encountering score row", i));
                 break;

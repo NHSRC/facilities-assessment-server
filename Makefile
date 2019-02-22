@@ -152,8 +152,14 @@ deploy_to_nhsrc_qa: build_server
 deploy_to_jss_prod: build_server
 	$(call _deploy_prod,igunatmac)
 
+deploy_to_nhsrc_prod: build_server
+	$(call _deploy_prod,gunak-main)
+
 tail_server_jss_qa:
 	ssh igunatmac "tail -f /home/app/qa-server/facilities-assessment-host/app-servers/log/facilities_assessment.log"
 
 tail_server_jss_prod:
 	$(call _tail_server_prod,igunatmac)
+
+tail_server_nhsrc_prod:
+	$(call _tail_server_prod,gunak-main)

@@ -68,8 +68,17 @@ public class FacilityAssessmentService {
 
         AssessmentTool assessmentTool = Repository.findByUuidOrId(facilityAssessmentDTO.getAssessmentTool(), facilityAssessmentDTO.getAssessmentToolId(), assessmentToolRepository);
         AssessmentType assessmentType = Repository.findByUuidOrId(facilityAssessmentDTO.getAssessmentTypeUUID(), facilityAssessmentDTO.getAssessmentToolId(), assessmentTypeRepository);
-        State state = Repository.findByUuidOrId(facilityAssessmentDTO.getStateUUID(), facilityAssessmentDTO.getStateId(), stateRepository);
-        District district = Repository.findByUuidOrId(facilityAssessmentDTO.getDistrictUUID(), facilityAssessmentDTO.getDistrictId(), districtRepository);
+
+        State state;
+        District district;
+        if (facilityAssessmentDTO.getStateId() == 0 && facility != null) {
+            state = facility.getDistrict().getState();
+            district = facility.getDistrict();
+        } else {
+            state = Repository.findByUuidOrId(facilityAssessmentDTO.getState(), facilityAssessmentDTO.getStateId(), stateRepository);
+            district = Repository.findByUuidOrId(facilityAssessmentDTO.getDistrict(), facilityAssessmentDTO.getDistrictId(), districtRepository);
+        }
+
         FacilityType facilityType = Repository.findByUuidOrId(facilityAssessmentDTO.getFacilityTypeUUID(), facilityAssessmentDTO.getFacilityId(), facilityTypeRepository);
 
         String lockString = String.format("%s-%d", facility == null ? facilityAssessmentDTO.getFacilityName() : facility.getId(), assessmentTool.getId());

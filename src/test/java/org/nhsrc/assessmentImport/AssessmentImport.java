@@ -17,19 +17,19 @@ import java.util.List;
 public class AssessmentImport {
     @Test @Ignore
     public void importAssessments() throws Exception {
-        importAssessmentsFromFiles(1, -1, true, "output/%s.sql", true);
+        importAssessmentsFromFiles(true, "output/%s.sql", true);
     }
 
-    private void importAssessmentsFromFiles(int startingSheet, int numberOfSheetsToImport, boolean generateVerify, String outputFilePattern, boolean generateFacilityAssessmentSQL) throws Exception {
+    private void importAssessmentsFromFiles(boolean generateVerify, String outputFilePattern, boolean generateFacilityAssessmentSQL) throws Exception {
         AssessmentsDirectory assessmentsDirectory = new AssessmentsDirectory("../reference-data/jss/mp/assessments");
         List<AssessmentFile> assessmentFiles = assessmentsDirectory.getAssessmentFiles();
         for (AssessmentFile assessmentFile : assessmentFiles) {
             System.out.println(String.format("PROCESSING FILE: %s", assessmentFile.getFile().getName()));
-            importAssessmentFromFile(startingSheet, numberOfSheetsToImport, generateVerify, outputFilePattern, generateFacilityAssessmentSQL, assessmentsDirectory, assessmentFile);
+            importAssessmentFromFile(generateVerify, outputFilePattern, generateFacilityAssessmentSQL, assessmentsDirectory, assessmentFile);
         }
     }
 
-    public void importAssessmentFromFile(int startingSheet, int numberOfSheetsToImport, boolean generateVerify, String outputFilePattern, boolean generateFacilityAssessmentSQL, AssessmentsDirectory assessmentsDirectory, AssessmentFile assessmentFile) throws Exception {
+    public void importAssessmentFromFile(boolean generateVerify, String outputFilePattern, boolean generateFacilityAssessmentSQL, AssessmentsDirectory assessmentsDirectory, AssessmentFile assessmentFile) throws Exception {
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
         assessmentChecklistData.setState(new State("Madhya Pradesh"));
         AssessmentTool assessmentTool = ShortNames.getAssessmentTool(assessmentFile.getAssessmentToolShortName());
@@ -58,7 +58,7 @@ public class AssessmentImport {
 
     @Test @Ignore
     public void importFirstDepartment() throws Exception {
-        importAssessmentsFromFiles(0, 1, false, "output2/%s_2.sql", false);
+        importAssessmentsFromFiles(false, "output2/%s_2.sql", false);
     }
 
     private Facility createFacility(AssessmentFile assessmentFile) {

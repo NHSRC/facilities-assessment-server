@@ -8,6 +8,7 @@ import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.dto.OldFacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.repository.FacilityAssessmentRepository;
+import org.nhsrc.repository.FacilityRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.repository.security.UserRepository;
@@ -38,14 +39,16 @@ public class FacilityAssessmentController {
     private UserService userService;
     private static Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
     private ExcelImportService excelImportService;
+    private FacilityRepository facilityRepository;
 
     @Autowired
-    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService) {
+    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, FacilityRepository facilityRepository) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
         this.userService = userService;
         this.excelImportService = excelImportService;
+        this.facilityRepository = facilityRepository;
     }
 
     @RequestMapping(value = "facility-assessment", method = RequestMethod.POST)

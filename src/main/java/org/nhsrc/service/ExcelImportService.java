@@ -73,7 +73,7 @@ public class ExcelImportService {
                     CheckpointScoreDTO checkpointScoreDTO = new CheckpointScoreDTO();
                     String checkpointName = checkpointScore.getCheckpoint().getName();
                     String measurableElementReference = checkpointScore.getCheckpoint().getMeasurableElement().getReference();
-                    List<Checkpoint> foundCheckpoints = checkpointRepository.findAllDistinctByNameAndChecklistUuidAndMeasurableElementReference(checkpointName, x.getUuid(), measurableElementReference);
+                    List<Checkpoint> foundCheckpoints = checkpointRepository.findAllByNameAndChecklistUuidAndMeasurableElementReference(checkpointName, checklist.getUuid(), measurableElementReference);
                     if (foundCheckpoints.size() == 0) { // additionally try to resolve by looking for checkpoint in Standard
                         String standardRef = checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference();
                         foundCheckpoints = checkpointRepository.findAllDistinctByNameAndChecklistUuidAndMeasurableElementStandardReference(checkpointName, x.getUuid(), standardRef);

@@ -15,9 +15,9 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
     private String deviceId;
     private UUID assessmentTypeUUID;
     private int assessmentTypeId;
-    private UUID stateUUID;
+    private UUID state;
     private int stateId;
-    private UUID districtUUID;
+    private UUID district;
     private int districtId;
     private UUID facilityTypeUUID;
     private int facilityTypeId;
@@ -78,20 +78,20 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
         this.facilityName = facilityName;
     }
 
-    public UUID getStateUUID() {
-        return stateUUID;
+    public UUID getState() {
+        return state;
     }
 
-    public void setStateUUID(UUID stateUUID) {
-        this.stateUUID = stateUUID;
+    public void setState(UUID state) {
+        this.state = state;
     }
 
-    public UUID getDistrictUUID() {
-        return districtUUID;
+    public UUID getDistrict() {
+        return district;
     }
 
-    public void setDistrictUUID(UUID districtUUID) {
-        this.districtUUID = districtUUID;
+    public void setDistrict(UUID district) {
+        this.district = district;
     }
 
     public UUID getFacilityTypeUUID() {
