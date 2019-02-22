@@ -12,10 +12,14 @@ public class Repository {
 
     public static <T> T findByUuidOrId(String uuid, Integer id, BaseRepository<T> baseRepository) {
         if (uuid == null) {
-            return (id == null || id == 0) ? null : baseRepository.findOne(id);
+            return findById(id, baseRepository);
         } else {
             return baseRepository.findByUuid(UUID.fromString(uuid));
         }
+    }
+
+    public static <T> T findById(Integer id, BaseRepository<T> baseRepository) {
+        return (id == null || id == 0) ? null : baseRepository.findOne(id);
     }
 
     public static <T extends AbstractEntity> T findByUuidOrCreate(String uuid, BaseRepository<T> baseRepository, T newEntity) {

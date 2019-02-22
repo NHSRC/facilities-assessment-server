@@ -16,6 +16,7 @@ public class CheckpointRequest {
     private Integer sortOrder;
     //legacy
     private Boolean isDefault;
+    private Integer stateId;
 
     public String getUuid() {
         return uuid;
@@ -127,5 +128,13 @@ public class CheckpointRequest {
 
     public void setChecklistId(int checklistId) {
         this.checklistId = checklistId;
+    }
+
+    public Integer getStateId() {
+        return stateId;
+    }
+
+    public void setStateId(Integer stateId) {
+        this.stateId = stateId;
     }
 }

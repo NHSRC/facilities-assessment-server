@@ -1,10 +1,7 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Checkpoint;
-import org.nhsrc.repository.ChecklistRepository;
-import org.nhsrc.repository.CheckpointRepository;
-import org.nhsrc.repository.MeasurableElementRepository;
-import org.nhsrc.repository.Repository;
+import org.nhsrc.repository.*;
 import org.nhsrc.web.contract.CheckpointRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,12 +16,14 @@ public class CheckpointController {
     private CheckpointRepository checkpointRepository;
     private final MeasurableElementRepository measurableElementRepository;
     private ChecklistRepository checklistRepository;
+    private StateRepository stateRepository;
 
     @Autowired
-    public CheckpointController(CheckpointRepository checkpointRepository, MeasurableElementRepository measurableElementRepository, ChecklistRepository checklistRepository) {
+    public CheckpointController(CheckpointRepository checkpointRepository, MeasurableElementRepository measurableElementRepository, ChecklistRepository checklistRepository, StateRepository stateRepository) {
         this.checkpointRepository = checkpointRepository;
         this.measurableElementRepository = measurableElementRepository;
         this.checklistRepository = checklistRepository;
+        this.stateRepository = stateRepository;
     }
 
     @RequestMapping(value = "/checkpoints", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -41,6 +40,7 @@ public class CheckpointController {
         checkpoint.setMeasurableElement(Repository.findByUuidOrId(request.getMeasurableElementUUID(), request.getMeasurableElementId(), measurableElementRepository));
         checkpoint.setChecklist(Repository.findByUuidOrId(request.getChecklistUUID(), request.getChecklistId(), checklistRepository));
         checkpoint.setInactive(request.getInactive());
+        checkpoint.setState(Repository.findById(request.getStateId(), stateRepository));
         return checkpointRepository.save(checkpoint);
     }
 

@@ -1,7 +1,9 @@
 package org.nhsrc.repository;
 
+import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.Checkpoint;
 import org.nhsrc.domain.MeasurableElement;
+import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -60,4 +62,7 @@ public interface CheckpointRepository extends BaseRepository<Checkpoint> {
     Page<Checkpoint> findByChecklistIdAndMeasurableElementId(@Param("checklistId") Integer checklistId, @Param("measurableElementId") Integer measurableElementId, Pageable pageable);
 
     Page<Checkpoint> findAllByChecklistId(@Param("checklistId") Integer checklistId, Pageable pageable);
+
+    int countAllByStateAndChecklist(@Param("state") State state, @Param("checklist") Checklist checklist);
+    int countAllByChecklist(@Param("checklist") Checklist checklist);
 }

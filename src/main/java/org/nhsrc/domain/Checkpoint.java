@@ -135,6 +135,11 @@ public class Checkpoint extends AbstractEntity {
         return state;
     }
 
+    @JsonProperty("stateId")
+    public Integer _getStateId() {
+        return state == null ? null : state.getId();
+    }
+
     public void setState(State state) {
         this.state = state;
     }
