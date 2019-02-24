@@ -61,11 +61,11 @@ public class CheckpointController {
         if (checklistId != null)
             return checkpointRepository.findAllByChecklistId(checklistId, pageable);
         if (assessmentToolId != null && stateId == null)
-            return checkpointRepository.findDistinctByChecklistAssessmentToolId(assessmentToolId, pageable);
+            return checkpointRepository.findByChecklistAssessmentToolId(assessmentToolId, pageable);
         if (assessmentToolId == null && stateId != null)
-            return checkpointRepository.findDistinctByChecklistStateIdOrChecklistStateIsNull(stateId, pageable);
+            return checkpointRepository.findByChecklistStateIdOrChecklistStateIsNull(stateId, pageable);
         if (assessmentToolId != null && stateId != null)
-            return checkpointRepository.findDistinctByChecklistStateIdOrChecklistStateIsNullAndChecklistAssessmentToolId(stateId, assessmentToolId, pageable);
+            return checkpointRepository.findByChecklistStateIdOrChecklistStateIsNullAndChecklistAssessmentToolId(stateId, assessmentToolId, pageable);
         return checkpointRepository.findAll(pageable);
     }
 

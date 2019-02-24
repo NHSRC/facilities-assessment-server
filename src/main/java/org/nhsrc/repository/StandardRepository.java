@@ -24,9 +24,6 @@ public interface StandardRepository extends BaseRepository<Standard> {
 
     Standard findByReference(String reference);
 
-    @RestResource(path = "forAreaOfConcern", rel = "forAreaOfConcern")
-    Page<Standard> findDistinctByAreaOfConcernUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("areaOfConcernUuid") UUID areaOfConcernUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
-
     @RestResource(path = "findAllById", rel = "findAllById")
     List<Standard> findByIdIn(@Param("ids") Integer[] ids);
 

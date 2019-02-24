@@ -25,11 +25,6 @@ public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<AreaOfConcern> findDistinctByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
-    AreaOfConcern findDistinctByReference(String reference);
-
-    @RestResource(path = "forChecklist", rel = "forChecklist")
-    Page<AreaOfConcern> findDistinctByChecklistsUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("checklistUuid") UUID checklistUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
-
     @RestResource(path = "findAllById", rel = "findAllById")
     List<AreaOfConcern> findByIdIn(@Param("ids") Integer[] ids);
 
