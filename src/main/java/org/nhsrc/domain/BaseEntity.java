@@ -11,7 +11,7 @@ import java.sql.Date;
 
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
-public abstract class AbstractTransactionalEntity implements Persistable<Integer> {
+public abstract class BaseEntity implements Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)

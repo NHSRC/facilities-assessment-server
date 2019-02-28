@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,7 +30,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
     private String usersQuery;
 
     @Value("${spring.queries.roles-query}")
-    private String rolesQuery;
+    private String privilegesQuery;
 
     @Value("${fa.secure}")
     private boolean isSecure;
@@ -45,7 +43,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
         auth.
                 jdbcAuthentication()
                 .usersByUsernameQuery(usersQuery)
-                .authoritiesByUsernameQuery(rolesQuery)
+                .authoritiesByUsernameQuery(privilegesQuery)
                 .dataSource(dataSource)
                 .passwordEncoder(bCryptPasswordEncoder);
     }

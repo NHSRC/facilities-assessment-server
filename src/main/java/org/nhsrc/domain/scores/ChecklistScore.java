@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "checklist_score")
-public class ChecklistScore extends AbstractTransactionalEntity {
+public class ChecklistScore extends BaseEntity {
     @ManyToOne(targetEntity = AreaOfConcern.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "area_of_concern_id")
     @NotNull

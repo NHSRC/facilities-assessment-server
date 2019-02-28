@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
-public abstract class AbstractEntity extends AbstractTransactionalEntity {
+public abstract class AbstractEntity extends BaseEntity {
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "uuid", updatable = false, unique = true, nullable = false)
