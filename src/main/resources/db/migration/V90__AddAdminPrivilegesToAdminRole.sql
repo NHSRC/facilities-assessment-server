@@ -1,0 +1,4 @@
+insert into role_privilege (role_id, privilege_id) values ((select id from role where name = 'ADMIN'), (select id from privilege where name = 'User_Read'));
+insert into role_privilege (role_id, privilege_id) values ((select id from role where name = 'ADMIN'), (select id from privilege where name = 'User_Write'));
+insert into role_privilege (role_id, privilege_id) values ((select id from role where name = 'ADMIN'), (select id from privilege where name = 'Privilege_Read'));
+insert into role_privilege (role_id, privilege_id) values ((select id from role where name = 'ADMIN'), (select id from privilege where name = 'Privilege_Write'));

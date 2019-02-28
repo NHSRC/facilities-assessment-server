@@ -56,25 +56,6 @@ define _restore_db
 	psql $1 < $2
 endef
 
-# <db>
-init_db:
-	-psql postgres -c "create user nhsrc with password 'password'";
-
-reset_db:
-	psql postgres -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$(database)' AND pid <> pg_backend_pid()"
-	-psql postgres -c 'drop database $(database)';
-	-psql postgres -c 'create database $(database) with owner nhsrc';
-	-psql $(database) -c 'create extension if not exists "uuid-ossp"';
-	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/$(database) -schemas=public clean
-	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/$(database) -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
-
-
-apply_latest_db_local_jss:
-	-mkdir temp
-#	scp igunatmac:/home/app/facilities-assessment-host/backup/facilities_assessment_$(shell date +%a).sql temp/
-	$(call _restore_db,facilities_assessment_cg,temp/facilities_assessment_$(shell date +%a).sql)
-# </db>
-
 # <test_db>
 init_test_db:
 	-psql postgres -c "create user nhsrc with password 'password'";
@@ -131,14 +112,6 @@ test_server: reset_test_db
 open_test_results:
 	open build/reports/tests/index.html
 # </server>
-
-
-# <scenario>
-create_empty_db_nhsrc:
-	make reset_db database=$(database)
-	psql -Unhsrc $(database) < src/test/resources/deleteDefaultData.sql
-# </scenario>
-
 clean:
 	./gradlew clean
 

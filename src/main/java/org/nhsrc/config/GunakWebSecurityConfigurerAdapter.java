@@ -74,7 +74,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
                 .formLogin().loginPage("/api/login").successHandler((request, response, authentication) -> {
             logger.info("Login Successful");
         }).failureHandler((request, response, exception) -> {
-            logger.info("Login Failed");
+            logger.error("Login Failed", exception);
         })
                 .usernameParameter("email")
                 .passwordParameter("password")
