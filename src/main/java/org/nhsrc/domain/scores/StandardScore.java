@@ -1,6 +1,6 @@
 package org.nhsrc.domain.scores;
 
-import org.nhsrc.domain.AbstractTransactionalEntity;
+import org.nhsrc.domain.BaseEntity;
 import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.Standard;
 
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "standard_score")
-public class StandardScore extends AbstractTransactionalEntity {
+public class StandardScore extends BaseEntity {
     @ManyToOne(targetEntity = Standard.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "standard_id")
     @NotNull

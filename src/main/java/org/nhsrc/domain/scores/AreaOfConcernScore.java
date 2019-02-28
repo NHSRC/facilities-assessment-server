@@ -1,6 +1,6 @@
 package org.nhsrc.domain.scores;
 
-import org.nhsrc.domain.AbstractTransactionalEntity;
+import org.nhsrc.domain.BaseEntity;
 import org.nhsrc.domain.AreaOfConcern;
 import org.nhsrc.domain.FacilityAssessment;
 
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "area_of_concern_score")
-public class AreaOfConcernScore extends AbstractTransactionalEntity {
+public class AreaOfConcernScore extends BaseEntity {
     @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_assessment_id")
     @NotNull

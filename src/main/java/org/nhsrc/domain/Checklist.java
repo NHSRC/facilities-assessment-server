@@ -3,11 +3,9 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -112,7 +110,7 @@ public class Checklist extends AbstractEntity {
     }
 
     public List<Integer> getAreaOfConcernIds() {
-        return this.areasOfConcern.stream().map(AbstractTransactionalEntity::getId).collect(Collectors.toList());
+        return this.areasOfConcern.stream().map(BaseEntity::getId).collect(Collectors.toList());
     }
 
     public void addAreaOfConcern(AreaOfConcern areaOfConcern) {
