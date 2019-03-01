@@ -1,6 +1,7 @@
 package org.nhsrc.config;
 
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.security.Role;
 import org.nhsrc.domain.security.User;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -31,5 +32,6 @@ public class RepositoryConfig extends RepositoryRestConfigurerAdapter {
         config.exposeIdsFor(Indicator.class);
 
         config.exposeIdsFor(User.class);
+        config.exposeIdsFor(Role.class);
     }
 }
