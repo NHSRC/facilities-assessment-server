@@ -10,19 +10,19 @@ import java.util.Set;
 @Entity
 @Table(name = "role")
 public class Role extends AbstractEntity {
-    @Column(name="name")
-    private String role;
+    @Column(name = "name")
+    private String name;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "role_privilege", inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"), joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     @JsonIgnore
     private Set<Privilege> privileges = new HashSet<>();
 
-    public String getRole() {
-        return role;
+    public String getName() {
+        return name;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setName(String name) {
+        this.name = name;
     }
 }

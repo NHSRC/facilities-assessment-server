@@ -1,35 +1,34 @@
 package org.nhsrc.domain.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.nhsrc.domain.AbstractEntity;
+import org.nhsrc.domain.BaseEntity;
 import org.springframework.data.annotation.Transient;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
 public class User extends AbstractEntity {
     @Column(name = "email")
-    @Email(message = "*Please provide a valid Email")
-    @NotEmpty(message = "*Please provide an email")
     private String email;
 
     @Column(name = "password")
-    @NotEmpty(message = "*Please provide your password")
     @Transient
     private String password;
 
     @Column(name = "first_name")
-    @NotEmpty(message = "*Please provide your first name")
     private String firstName;
 
     @Column(name = "last_name")
-    @NotEmpty(message = "*Please provide your last name")
     private String lastName;
 
     @ManyToMany
@@ -63,6 +62,10 @@ public class User extends AbstractEntity {
 
     public Set<Role> getRoles() {
         return roles;
+    }
+
+    public List<Integer> getRoleIds() {
+        return this.getRoles().stream().map(BaseEntity::getId).collect(Collectors.toList());
     }
 
     public void setRoles(Set<Role> roles) {
