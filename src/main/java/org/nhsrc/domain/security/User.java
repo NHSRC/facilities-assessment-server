@@ -60,6 +60,7 @@ public class User extends AbstractEntity {
         this.lastName = lastName;
     }
 
+    @JsonIgnore
     public Set<Role> getRoles() {
         return roles;
     }

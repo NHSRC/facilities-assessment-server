@@ -106,8 +106,10 @@ debug_server_jss: build_server
 run_server_nhsrc_in_recording: clear_responses build_server
 	$(call _run_server,nhsrc,true,false)
 
-test_server: reset_test_db
+test_server_only:
 	./gradlew clean build
+
+test_server: reset_test_db test_server_only open_test_results
 
 open_test_results:
 	open build/reports/tests/index.html

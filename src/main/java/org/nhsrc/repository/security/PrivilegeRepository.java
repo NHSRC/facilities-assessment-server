@@ -1,25 +1,22 @@
 package org.nhsrc.repository.security;
 
-import org.nhsrc.domain.security.Role;
-import org.nhsrc.repository.BaseRepository;
+import org.nhsrc.domain.security.Privilege;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
-@RepositoryRestResource(collectionResourceRel = "role", path = "role")
+@RepositoryRestResource(collectionResourceRel = "privilege", path = "privilege")
 @PreAuthorize(value = "hasAnyAuthority('Privilege_Write')")
-public interface RoleRepository extends BaseRepository<Role> {
-    Role findByName(String name);
-
+public interface PrivilegeRepository extends PagingAndSortingRepository<Privilege, Integer> {
     @RestResource(path = "findAllById", rel = "findAllById")
-    List<Role> findByIdIn(@Param("ids") Integer[] ids);
+    List<Privilege> findByIdIn(@Param("ids") Integer[] ids);
 
-    @RestResource(path = "findByUserId", rel = "findByUserId")
-    List<Role> findByIdIn(@Param("userId") Integer userId);
+    @RestResource(path = "findByRoleId", rel = "findByRoleId")
+    List<Privilege> findByIdIn(@Param("userId") Integer userId);
 }

@@ -5,6 +5,7 @@ import org.nhsrc.repository.AssessmentTypeRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.web.contract.AssessmentTypeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +25,7 @@ public class AssessmentTypeController {
 
     @RequestMapping(value = "/assessmentTypes", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
+    @PreAuthorize(value = "hasRole('Checklist_Metadata_Write')")
     public AssessmentType save(@RequestBody AssessmentTypeRequest request) {
         AssessmentType assessmentType = Repository.findByUuidOrCreate(request.getUuid(), assessmentTypeRepository, new AssessmentType());
         assessmentType.setName(request.getName());
