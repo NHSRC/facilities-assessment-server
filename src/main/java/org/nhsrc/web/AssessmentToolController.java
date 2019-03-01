@@ -30,7 +30,7 @@ public class AssessmentToolController {
     @Transactional
     public AssessmentTool save(@RequestBody AssessmentToolRequest request) {
         AssessmentTool assessmentTool = Repository.findByUuidOrCreate(request.getUuid(), assessmentToolRepository, new AssessmentTool());
-        AssessmentToolMode assessmentToolMode = Repository.findByUuidOrId(request.getUuid(), request.getAssessmentToolModeId(), assessmentToolModeRepository);
+        AssessmentToolMode assessmentToolMode = Repository.findById(request.getAssessmentToolModeId(), assessmentToolModeRepository);
         assessmentTool.setName(request.getName());
         assessmentTool.setAssessmentToolMode(assessmentToolMode);
         assessmentTool.setInactive(request.getInactive());
