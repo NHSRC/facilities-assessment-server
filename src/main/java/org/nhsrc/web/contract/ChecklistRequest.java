@@ -1,5 +1,6 @@
 package org.nhsrc.web.contract;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChecklistRequest {
@@ -78,7 +79,7 @@ public class ChecklistRequest {
     }
 
     public List<Integer> getAreaOfConcernIds() {
-        return areaOfConcernIds;
+        return areaOfConcernIds == null ? new ArrayList<>() : areaOfConcernIds;
     }
 
     public void setAreaOfConcernIds(List<Integer> areaOfConcernIds) {

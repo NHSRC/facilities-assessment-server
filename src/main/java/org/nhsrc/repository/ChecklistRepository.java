@@ -39,7 +39,7 @@ public interface ChecklistRepository extends BaseRepository<Checklist> {
     @RestResource(path = "findByState", rel = "findByState")
     Page<Checklist> findByStateId(@Param("stateId") int stateId, Pageable pageable);
 
-    @RestResource(path = "findByAreaOfConcernId", rel = "findByAreaOfConcernId")
+    @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
     Page<Checklist> findByAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
 
     @RestResource(path = "find", rel = "find")
