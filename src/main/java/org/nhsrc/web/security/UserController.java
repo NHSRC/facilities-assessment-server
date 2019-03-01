@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "users", method = {RequestMethod.POST, RequestMethod.PUT})
-    @PreAuthorize(value = "hasAnyAuthority('User_Write')")
+    @PreAuthorize(value = "hasRole('Users_Write')")
     @Transactional
     public User save(@RequestBody UserRequest userRequest) {
         User user = Repository.findByUuidOrId(userRequest.getUuid(), userRequest.getId(), userRepository);
