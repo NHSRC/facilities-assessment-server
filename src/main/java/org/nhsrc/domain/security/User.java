@@ -1,16 +1,12 @@
 package org.nhsrc.domain.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.nhsrc.domain.AbstractEntity;
 import org.nhsrc.domain.BaseEntity;
 import org.springframework.data.annotation.Transient;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,6 +63,14 @@ public class User extends AbstractEntity {
 
     public List<Integer> getRoleIds() {
         return this.getRoles().stream().map(BaseEntity::getId).collect(Collectors.toList());
+    }
+
+    public Set<Privilege> getPrivileges() {
+        Set<Privilege> privileges = new HashSet<>();
+        roles.forEach(role -> {
+            privileges.addAll(role.getPrivileges());
+        });
+        return privileges;
     }
 
     public void setRoles(Set<Role> roles) {

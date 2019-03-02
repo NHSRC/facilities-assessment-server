@@ -63,9 +63,4 @@ public class UserController {
         String name = principal.getName();
         return userService.findUserByEmail(name);
     }
-
-    @RequestMapping(value = "loginSuccess", method = RequestMethod.GET)
-    public String loginSuccess() {
-        return "Successful Login";
-    }
 }
