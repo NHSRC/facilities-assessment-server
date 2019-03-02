@@ -25,7 +25,7 @@ public class AssessmentTypeController {
 
     @RequestMapping(value = "/assessmentTypes", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    @PreAuthorize(value = "hasRole('Checklist_Metadata_Write')")
+    @PreAuthorize("hasRole('Checklist_Metadata_Write')")
     public AssessmentType save(@RequestBody AssessmentTypeRequest request) {
         AssessmentType assessmentType = Repository.findByUuidOrCreate(request.getUuid(), assessmentTypeRepository, new AssessmentType());
         assessmentType.setName(request.getName());

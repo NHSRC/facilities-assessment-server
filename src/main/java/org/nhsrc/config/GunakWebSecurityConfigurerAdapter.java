@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +19,7 @@ import javax.sql.DataSource;
 import java.util.Arrays;
 
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(jsr250Enabled = true, prePostEnabled = true)
 public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     //    With constructor approach of auto-wiring it doesn't work
     @Autowired
@@ -56,17 +58,16 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
                 .antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist", "/api/facility-assessment/indicator", "/api/facility-assessment/**", "/api/facility-assessment").permitAll();
 
         permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
-
-        handleLogin(registry);
-
-        registry.antMatchers(new String[]{"/api/currentUser", "/api/loginSuccess"}).hasAuthority("USER");
+        registry.antMatchers(new String[]{"/api/currentUser", "/api/loginSuccess"}).hasRole("User");
         if (isSecure) {
-            String[] semiProtectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user", "facilityAssessmentMissingCheckpoint"};
-            permittedResourcesForOneDevice(semiProtectedResources, registry);
-            permittedResourcesWithAuthority(semiProtectedResources, registry);
+            String[] protectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user", "facilityAssessmentMissingCheckpoint"};
+            permittedResourcesForOneDevice(protectedResources, registry);
+            permittedResourcesWithAuthority(protectedResources, registry);
         } else {
             registry.antMatchers("/api/**").permitAll().and().csrf().disable();
         }
+
+        handleLogin(registry);
     }
 
     private void handleLogin(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) throws Exception {
@@ -85,7 +86,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
     private void permittedResourcesWithAuthority(String[] patterns, ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
         Arrays.stream(patterns).forEach(s -> {
-            registry.antMatchers(String.format("/api/%s", s)).hasAuthority("USER");
+            registry.antMatchers(String.format("/api/%s", s)).hasRole("User");
         });
     }
 

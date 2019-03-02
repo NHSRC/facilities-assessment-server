@@ -9,6 +9,7 @@ import org.nhsrc.web.contract.RoleRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ public class RoleController {
 
     @RequestMapping(value = "/roles", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
+    @PreAuthorize("hasRole('Privilege_Write')")
     public ResponseEntity save(@RequestBody RoleRequest request) {
         Role role = Repository.findByIdOrCreate(request.getId(), roleRepository, new Role());
         role.setName(request.getName());

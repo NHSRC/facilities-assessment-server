@@ -6,6 +6,7 @@ import org.nhsrc.builder.CheckpointScoreBuilder;
 import org.nhsrc.domain.CheckpointScore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class ScoringServiceTest {
 
     @Test
     @Transactional
+    @WithMockUser(username = "user1", password = "pwd", roles = "Assessment_Read")
     public void noop() {
         scoreService.scoreAssessments();
     }

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -29,6 +30,7 @@ public class StandardController {
 
     @RequestMapping(value = "/standards", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
+    @PreAuthorize("hasRole('Checklist_Write')")
     public ResponseEntity save(@RequestBody StandardRequest standardRequest) {
         Standard standard = Repository.findByUuidOrCreate(standardRequest.getUuid(), standardRepository, new Standard());
         Standard existingStandard = standardRepository.findByAreaOfConcernIdAndReference(standardRequest.getAreaOfConcernId(), standardRequest.getReference().trim());

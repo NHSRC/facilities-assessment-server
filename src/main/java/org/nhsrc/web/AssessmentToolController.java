@@ -7,6 +7,7 @@ import org.nhsrc.repository.*;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.method.P;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +29,7 @@ public class AssessmentToolController {
 
     @RequestMapping(value = "/assessmentTools", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
+    @PreAuthorize("hasRole('Checklist_Metadata_Write')")
     public AssessmentTool save(@RequestBody AssessmentToolRequest request) {
         AssessmentTool assessmentTool = Repository.findByUuidOrCreate(request.getUuid(), assessmentToolRepository, new AssessmentTool());
         AssessmentToolMode assessmentToolMode = Repository.findById(request.getAssessmentToolModeId(), assessmentToolModeRepository);

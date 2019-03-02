@@ -6,6 +6,7 @@ import org.nhsrc.web.contract.CheckpointRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -28,6 +29,7 @@ public class CheckpointController {
 
     @RequestMapping(value = "/checkpoints", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
+    @PreAuthorize("hasRole('Checklist_Write')")
     public Checkpoint save(@RequestBody CheckpointRequest request) {
         Checkpoint checkpoint = Repository.findByUuidOrCreate(request.getUuid(), checkpointRepository, new Checkpoint());
         checkpoint.setName(request.getName());

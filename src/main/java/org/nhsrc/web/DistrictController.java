@@ -6,6 +6,7 @@ import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.web.contract.DistrictRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +29,7 @@ public class DistrictController {
 
     @RequestMapping(value = "/districts", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
+    @PreAuthorize("hasRole('Facility_Metadata_Write')")
     public District save(@RequestBody DistrictRequest districtRequest) {
         District district = Repository.findByUuidOrCreate(districtRequest.getUuid(), districtRepository, new District());
         district.setName(districtRequest.getName());

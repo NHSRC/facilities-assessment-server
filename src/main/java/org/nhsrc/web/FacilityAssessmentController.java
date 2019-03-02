@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,11 +61,13 @@ public class FacilityAssessmentController {
 
     @RequestMapping(value = "facilityAssessment/{facilityAssessmentId}", method = RequestMethod.DELETE)
     @Transactional
+    @PreAuthorize("hasRole('Assessment_Write')")
     public ResponseEntity<Object> delete(@PathVariable("facilityAssessmentId") Integer id) {
         facilityAssessmentService.deleteAssessment(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('Assessment_Read')")
     @RequestMapping(value = "facilityAssessment/{facilityAssessmentId}", method = RequestMethod.GET)
     public ResponseEntity<FacilityAssessment> get(@PathVariable("facilityAssessmentId") Integer id) {
         return new ResponseEntity<>(facilityAssessmentRepository.findOne(id), HttpStatus.OK);
@@ -84,6 +87,7 @@ public class FacilityAssessmentController {
 
     @RequestMapping(value = "facilityAssessments", method = {RequestMethod.PUT, RequestMethod.POST})
     @Transactional
+    @PreAuthorize("hasRole('Assessment_Write')")
     public FacilityAssessment submitAssessment(Principal principal,
                                                @RequestBody FacilityAssessmentDTO facilityAssessmentDTO) throws Exception {
         User user = userRepository.findByEmail(principal.getName());
@@ -93,6 +97,7 @@ public class FacilityAssessmentController {
 
     @RequestMapping(value = "facilityAssessments/withFile", method = {RequestMethod.PUT, RequestMethod.POST})
     @Transactional
+    @PreAuthorize("hasRole('Assessment_Write')")
     public FacilityAssessment submitAssessment(Principal principal,
                                                @RequestParam("uploadedFile") MultipartFile file,
                                                @RequestParam(value = "id", required = false) Integer id,

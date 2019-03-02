@@ -10,6 +10,7 @@ import org.nhsrc.web.contract.FacilityRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -31,6 +32,7 @@ public class FacilityController {
 
     @RequestMapping(value = "/facilitys", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
+    @PreAuthorize("hasRole('Facility_Write')")
     public Facility save(@RequestBody FacilityRequest request) {
         Facility facility = Repository.findByUuidOrCreate(request.getUuid(), facilityRepository, new Facility());
         facility.setName(request.getName());

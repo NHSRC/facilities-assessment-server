@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.method.P;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -32,6 +33,7 @@ public class MeasurableElementController {
 
     @RequestMapping(value = "/measurableElements", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
+    @PreAuthorize("hasRole('Checklist_Write')")
     public ResponseEntity save(@RequestBody MeasurableElementRequest request) {
         MeasurableElement measurableElement = Repository.findByUuidOrCreate(request.getUuid(), measurableElementRepository, new MeasurableElement());
         MeasurableElement existingMeasurableElement = measurableElementRepository.findByStandardIdAndReference(request.getStandardId(), request.getReference());

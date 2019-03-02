@@ -5,6 +5,7 @@ import org.nhsrc.repository.FacilityTypeRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.web.contract.AssessmentTypeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +25,7 @@ public class FacilityTypeController {
 
     @RequestMapping(value = "/facilityTypes", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
+    @PreAuthorize("hasRole('Facility_Metadata_Write')")
     public FacilityType save(@RequestBody AssessmentTypeRequest request) {
         FacilityType facilityType = Repository.findByUuidOrCreate(request.getUuid(), facilityTypeRepository, new FacilityType());
         facilityType.setName(request.getName());

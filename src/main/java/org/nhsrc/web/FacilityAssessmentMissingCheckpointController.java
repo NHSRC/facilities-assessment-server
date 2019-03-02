@@ -9,6 +9,7 @@ import org.nhsrc.repository.missing.FacilityAssessmentMissingCheckpointRepositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,17 +30,20 @@ public class FacilityAssessmentMissingCheckpointController {
     }
 
     @RequestMapping(value = "facilityAssessmentMissingCheckpoint", method = {RequestMethod.GET})
+    @PreAuthorize("hasRole('Assessment_Read')")
     public Page<FacilityAssessmentMissingCheckpoint> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
     @RequestMapping(value = "facilityAssessmentMissingCheckpoint/search/findByFacilityAssessment", method = {RequestMethod.GET})
+    @PreAuthorize("hasRole('Assessment_Read')")
     public Page<FacilityAssessmentMissingCheckpoint> findByFacilityAssessmentId(@RequestParam("facilityAssessmentId") Integer facilityAssessmentId, Pageable pageable) {
         FacilityAssessment facilityAssessment = facilityAssessmentRepository.findOne(facilityAssessmentId);
         return repository.findAllByFacilityAssessment(facilityAssessment, pageable);
     }
 
     @RequestMapping(value = "facilityAssessmentMissingCheckpoint/search/find", method = {RequestMethod.GET})
+    @PreAuthorize("hasRole('Assessment_Read')")
     public Page<FacilityAssessmentMissingCheckpoint> findByFacilityAssessmentId(@RequestParam("facilityAssessmentId") Integer facilityAssessmentId, @RequestParam("checklistId") Integer checklistId, Pageable pageable) {
         FacilityAssessment facilityAssessment = facilityAssessmentRepository.findOne(facilityAssessmentId);
         Checklist checklist = checklistRepository.findOne(checklistId);

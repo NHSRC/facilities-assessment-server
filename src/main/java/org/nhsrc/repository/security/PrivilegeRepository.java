@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 @RepositoryRestResource(collectionResourceRel = "privilege", path = "privilege")
-@PreAuthorize(value = "hasAnyAuthority('Privilege_Write')")
+@PreAuthorize("hasRole('Privilege_Write')")
 public interface PrivilegeRepository extends PagingAndSortingRepository<Privilege, Integer> {
     @RestResource(path = "findAllById", rel = "findAllById")
     List<Privilege> findByIdIn(@Param("ids") Integer[] ids);
