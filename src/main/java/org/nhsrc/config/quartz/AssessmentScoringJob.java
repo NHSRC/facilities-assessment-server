@@ -18,15 +18,12 @@ import org.springframework.stereotype.Component;
 @Component
 @DisallowConcurrentExecution
 public class AssessmentScoringJob implements Job {
-    private final ScoringService scoringService;
+    //    Quartz cannot instantiate if auto-wired via constructor
+    @Autowired
+    private ScoringService scoringService;
     @Value("${cron.assessmentScoring}")
     private String cronExpression;
     private static Logger logger = LoggerFactory.getLogger(AssessmentScoringJob.class);
-
-    @Autowired
-    public AssessmentScoringJob(ScoringService scoringService) {
-        this.scoringService = scoringService;
-    }
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {

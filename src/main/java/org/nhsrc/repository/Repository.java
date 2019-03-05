@@ -53,14 +53,14 @@ public class Repository {
         return entity;
     }
 
-    public static <T extends BaseEntity> void mergeChildren(List<Integer> proposedChildrenIds, List<Integer> existingChildrenIds, CrudRepository<T, Integer> childRepository, Consumer<BaseEntity> childRemover, Consumer<BaseEntity> childAdder) {
+    public static <T extends BaseEntity> void mergeChildren(List<Integer> proposedChildrenIds, List<Integer> existingChildrenIds, CrudRepository<T, Integer> childRepository, Consumer<BaseEntity> removeChild, Consumer<BaseEntity> addChild) {
         Set<Integer> proposedChildrenIdSet = new HashSet<>(proposedChildrenIds);
         HashSet<Integer> toRemoveChildrenIds = new HashSet<>(existingChildrenIds);
         toRemoveChildrenIds.removeAll(proposedChildrenIdSet);
-        toRemoveChildrenIds.forEach(existingChildId -> childRemover.accept(childRepository.findOne(existingChildId)));
+        toRemoveChildrenIds.forEach(existingChildId -> removeChild.accept(childRepository.findOne(existingChildId)));
 
         for (Integer proposedChildId : proposedChildrenIdSet) {
-            childAdder.accept(childRepository.findOne(proposedChildId));
+            addChild.accept(childRepository.findOne(proposedChildId));
         }
     }
 }

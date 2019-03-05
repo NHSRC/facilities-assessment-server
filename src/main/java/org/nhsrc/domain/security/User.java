@@ -77,11 +77,19 @@ public class User extends AbstractEntity {
         this.roles = roles;
     }
 
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
     }
 }

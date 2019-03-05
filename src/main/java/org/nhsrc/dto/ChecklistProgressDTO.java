@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 @Entity
 public class ChecklistProgressDTO {
+    private int id;
     protected String uuid;
     private int completed;
     private int total;
@@ -40,6 +41,14 @@ public class ChecklistProgressDTO {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

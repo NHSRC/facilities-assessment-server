@@ -1,5 +1,7 @@
 package org.nhsrc.web.contract;
 
+import java.util.List;
+
 public class UserRequest {
     private int id;
     private String firstName;
@@ -8,6 +10,7 @@ public class UserRequest {
     private String password;
     private Boolean inactive;
     private String uuid;
+    private List<Integer> roleIds;
 
     public String getFirstName() {
         return firstName;
@@ -63,5 +66,13 @@ public class UserRequest {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public List<Integer> getRoleIds() {
+        return roleIds;
+    }
+
+    public void setRoleIds(List<Integer> roleIds) {
+        this.roleIds = roleIds;
     }
 }

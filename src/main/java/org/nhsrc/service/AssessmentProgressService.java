@@ -64,6 +64,7 @@ public class AssessmentProgressService {
             "GROUP BY ch.id, aoc.id";
 
     private static final String checklistTotalForAssessmentTool = "SELECT\n" +
+            "  ch.id        AS id,\n" +
             "  ch.uuid              AS uuid,\n" +
             "  count(DISTINCT aoc.id) AS total,\n" +
             "  0                    AS completed\n" +
@@ -119,7 +120,6 @@ public class AssessmentProgressService {
         return checklistProgressDTOS.parallelStream()
                 .peek(checklistProgressDTO -> checklistProgressDTO.setCompleted((int) aocProgressByChecklist.get(checklistProgressDTO.getUuid()).stream().filter(aocProgressDTO -> aocProgressDTO.getTotal() == aocProgressDTO.getCompleted()).count())).collect(Collectors.toList());
     }
-
 
 //    @RequestMapping(value = "facilityAssessmentProgress", method = RequestMethod.GET)
 //    Page<FacilityAssessment> getAssessmentsForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {

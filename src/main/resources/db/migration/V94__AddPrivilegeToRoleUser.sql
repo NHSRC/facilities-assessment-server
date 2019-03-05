@@ -1,0 +1,1 @@
+insert into role_privilege (role_id, privilege_id) values ((select id from role where name = 'USER'), (select id from privilege where name = 'User'));

@@ -12,5 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RepositoryRestResource(collectionResourceRel = "user", path = "user")
 @PreAuthorize("hasRole('Users_Write')")
 public interface UserRepository extends BaseRepository<User> {
+    @PreAuthorize("hasRole('User')")
     User findByEmail(String email);
 }

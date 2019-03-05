@@ -1,7 +1,9 @@
 package org.nhsrc.web.security;
 
+import org.nhsrc.domain.security.Role;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.repository.Repository;
+import org.nhsrc.repository.security.RoleRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.UserService;
 import org.nhsrc.web.contract.UserRequest;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class UserController {
     private UserService userService;
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
@@ -36,14 +39,13 @@ public class UserController {
     @Transactional
     @PreAuthorize("hasRole('Users_Write')")
     public User save(@RequestBody UserRequest userRequest) {
-        User user = Repository.findByUuidOrId(userRequest.getUuid(), userRequest.getId(), userRepository);
-        if (user == null) {
-            user = new User();
-            user.setUuid(UUID.randomUUID());
-        }
+        User newEntity = new User();
+        newEntity.setUuid(UUID.randomUUID());
+        final User user = Repository.findByIdOrCreate(userRequest.getId(), userRepository, newEntity);
         if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
             user.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
         }
+        Repository.mergeChildren(userRequest.getRoleIds(), user.getRoleIds(), roleRepository, role -> user.removeRole((Role)role), role -> user.addRole((Role) role));
         user.setEmail(userRequest.getEmail());
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
