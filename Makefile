@@ -85,6 +85,9 @@ schema_migrate:
 # </schema>
 
 # <server>
+build_server_online:
+	./gradlew clean build -x test
+
 build_server:
 	./gradlew clean build -x test --offline
 

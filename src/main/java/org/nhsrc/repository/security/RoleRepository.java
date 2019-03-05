@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 @RepositoryRestResource(collectionResourceRel = "role", path = "role")
-@PreAuthorize("hasRole('Users_Read')")
+@PreAuthorize("hasRole('Users_Write')")
 public interface RoleRepository extends BaseRepository<Role> {
     Role findByName(String name);
 

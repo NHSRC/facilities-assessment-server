@@ -1,29 +1,21 @@
-package org.nhsrc.web;
+package org.nhsrc.service;
 
 import org.nhsrc.domain.FacilityAssessment;
-import org.nhsrc.domain.State;
-import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.AreaOfConcernProgressDTO;
 import org.nhsrc.dto.ChecklistProgressDTO;
 import org.nhsrc.dto.FacilityAssessmentProgressDTO;
 import org.nhsrc.dto.StandardProgressDTO;
 import org.nhsrc.repository.FacilityAssessmentRepository;
-import org.nhsrc.repository.StateRepository;
-import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.security.Principal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,13 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@RestController
-@RequestMapping("/api/facilityAssessmentProgress/")
-public class FacilityAssessmentProgressController {
-    private FacilityAssessmentRepository facilityAssessmentRepository;
+@Service
+public class AssessmentProgressService {
     private EntityManager entityManager;
-    private final UserRepository userRepository;
-    private final StateRepository stateRepository;
+    private FacilityAssessmentRepository facilityAssessmentRepository;
 
     private static final String standardProgressPerAssessment = "SELECT\n" +
             "  fa.id AS facility_assessment_id,\n" +
@@ -89,63 +78,12 @@ public class FacilityAssessmentProgressController {
             "GROUP BY ch.id";
 
     @Autowired
-    public FacilityAssessmentProgressController(FacilityAssessmentRepository facilityAssessmentRepository, EntityManager entityManager, UserRepository userRepository, StateRepository stateRepository) {
-        this.facilityAssessmentRepository = facilityAssessmentRepository;
+    public AssessmentProgressService(EntityManager entityManager, FacilityAssessmentRepository facilityAssessmentRepository) {
         this.entityManager = entityManager;
-        this.userRepository = userRepository;
-        this.stateRepository = stateRepository;
+        this.facilityAssessmentRepository = facilityAssessmentRepository;
     }
 
-    @RequestMapping(value = "search/lastModifiedByDeviceId", method = RequestMethod.GET)
-    public ResponseEntity<List<FacilityAssessmentProgressDTO>> getFacilityAssessmentProgress(@RequestParam String lastModifiedDate, @RequestParam String deviceId) throws ParseException {
-        Date result = DateUtils.ISO_8601_DATE_FORMAT.parse(lastModifiedDate);
-        List<FacilityAssessment> facilityAssessments = facilityAssessmentRepository.findByFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThan(deviceId, result);
-        return getProgressFor(facilityAssessments);
-    }
-
-    @RequestMapping(value = "search/byAssessmentId", method = RequestMethod.GET)
-    public ResponseEntity<List<FacilityAssessmentProgressDTO>> getFacilityAssessmentProgress(@RequestParam int assessmentId) {
-        List<FacilityAssessment> facilityAssessments = new ArrayList<>();
-        facilityAssessments.add(facilityAssessmentRepository.findById(assessmentId));
-        return getProgressFor(facilityAssessments);
-    }
-
-//    @RequestMapping(value = "facilityAssessmentProgress", method = RequestMethod.GET)
-//    Page<FacilityAssessment> getAssessmentsForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {
-//        User user = userRepository.findByEmail(principal.getName());
-//        State state = stateRepository.findOne(user.getUserTypeReferenceId());
-//        PageRequest pageable = new PageRequest(page, size);
-//        return facilityAssessmentRepository.findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
-//    }
-
-    private ResponseEntity<List<FacilityAssessmentProgressDTO>> getProgressFor(List<FacilityAssessment> facilityAssessments) {
-        List<FacilityAssessmentProgressDTO> facilityAssessmentsProgress = new ArrayList<>();
-        facilityAssessments.forEach(facilityAssessment -> {
-            FacilityAssessmentProgressDTO assessmentProgress = new FacilityAssessmentProgressDTO();
-            assessmentProgress.setUuid(facilityAssessment.getUuid().toString());
-
-            //Standard
-            List<StandardProgressDTO> standardResultList = new ArrayList<>();
-            standardResultList.addAll(getStandardProgressDTO(facilityAssessment));
-            assessmentProgress.setStandardsProgress(standardResultList);
-
-            //Area Of Concern
-            List<AreaOfConcernProgressDTO> areasOfConcernProgressDTO = new ArrayList<>();
-            areasOfConcernProgressDTO.addAll(getAreaOfConcernProgressDTO(facilityAssessment, standardResultList));
-            assessmentProgress.setAreaOfConcernsProgress(areasOfConcernProgressDTO);
-
-            //Checklist
-            List<ChecklistProgressDTO> checklistProgressDTOs = new ArrayList<>();
-            checklistProgressDTOs.addAll(getChecklistProgress(facilityAssessment, areasOfConcernProgressDTO));
-            assessmentProgress.setChecklistsProgress(checklistProgressDTOs);
-
-            facilityAssessmentsProgress.add(assessmentProgress);
-        });
-        return ResponseEntity.ok(facilityAssessmentsProgress);
-    }
-
-    @RequestMapping(value = "search/lastModified", method = RequestMethod.GET)
-    public ResponseEntity<List<FacilityAssessmentProgressDTO>> getFacilityAssessmentProgress(@RequestParam String lastModifiedDate) throws ParseException {
+    public List<FacilityAssessmentProgressDTO> getFacilityAssessmentProgress(@RequestParam String lastModifiedDate) throws ParseException {
         Date result = DateUtils.ISO_8601_DATE_FORMAT.parse(lastModifiedDate);
         List<FacilityAssessment> facilityAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(result);
         return getProgressFor(facilityAssessments);
@@ -180,5 +118,40 @@ public class FacilityAssessmentProgressController {
 
         return checklistProgressDTOS.parallelStream()
                 .peek(checklistProgressDTO -> checklistProgressDTO.setCompleted((int) aocProgressByChecklist.get(checklistProgressDTO.getUuid()).stream().filter(aocProgressDTO -> aocProgressDTO.getTotal() == aocProgressDTO.getCompleted()).count())).collect(Collectors.toList());
+    }
+
+
+//    @RequestMapping(value = "facilityAssessmentProgress", method = RequestMethod.GET)
+//    Page<FacilityAssessment> getAssessmentsForState(Principal principal, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDate, @RequestParam int size, @RequestParam int page) {
+//        User user = userRepository.findByEmail(principal.getName());
+//        State state = stateRepository.findOne(user.getUserTypeReferenceId());
+//        PageRequest pageable = new PageRequest(page, size);
+//        return facilityAssessmentRepository.findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(state, lastModifiedDate, pageable);
+//    }
+
+    public List<FacilityAssessmentProgressDTO> getProgressFor(List<FacilityAssessment> facilityAssessments) {
+        List<FacilityAssessmentProgressDTO> facilityAssessmentsProgress = new ArrayList<>();
+        facilityAssessments.forEach(facilityAssessment -> {
+            FacilityAssessmentProgressDTO assessmentProgress = new FacilityAssessmentProgressDTO();
+            assessmentProgress.setUuid(facilityAssessment.getUuid().toString());
+
+            //Standard
+            List<StandardProgressDTO> standardResultList = new ArrayList<>();
+            standardResultList.addAll(getStandardProgressDTO(facilityAssessment));
+            assessmentProgress.setStandardsProgress(standardResultList);
+
+            //Area Of Concern
+            List<AreaOfConcernProgressDTO> areasOfConcernProgressDTO = new ArrayList<>();
+            areasOfConcernProgressDTO.addAll(getAreaOfConcernProgressDTO(facilityAssessment, standardResultList));
+            assessmentProgress.setAreaOfConcernsProgress(areasOfConcernProgressDTO);
+
+            //Checklist
+            List<ChecklistProgressDTO> checklistProgressDTOs = new ArrayList<>();
+            checklistProgressDTOs.addAll(getChecklistProgress(facilityAssessment, areasOfConcernProgressDTO));
+            assessmentProgress.setChecklistsProgress(checklistProgressDTOs);
+
+            facilityAssessmentsProgress.add(assessmentProgress);
+        });
+        return facilityAssessmentsProgress;
     }
 }

@@ -1,6 +1,5 @@
 package org.nhsrc.service;
 
-import org.nhsrc.config.quartz.AssessmentScoringJob;
 import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.scores.ScoringProcessDetail;
 import org.nhsrc.repository.FacilityAssessmentRepository;
@@ -9,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
