@@ -32,9 +32,9 @@ public class CheckpointController {
         Checkpoint checkpoint = Repository.findByUuidOrCreate(request.getUuid(), checkpointRepository, new Checkpoint());
         checkpoint.setName(request.getName());
         checkpoint.setAssessmentMethodObservation(request.getAssessmentMethodObservation());
-        checkpoint.setAssessmentMethodPatientInterview(request.getAssessmentMethodStaffInterview());
-        checkpoint.setAssessmentMethodRecordReview(request.getAssessmentMethodPatientInterview());
-        checkpoint.setAssessmentMethodStaffInterview(request.getAssessmentMethodRecordReview());
+        checkpoint.setAssessmentMethodPatientInterview(request.getAssessmentMethodPatientInterview());
+        checkpoint.setAssessmentMethodRecordReview(request.getAssessmentMethodRecordReview());
+        checkpoint.setAssessmentMethodStaffInterview(request.getAssessmentMethodStaffInterview());
         checkpoint.setMeansOfVerification(request.getMeansOfVerification());
         checkpoint.setSortOrder(request.getSortOrder());
         checkpoint.setMeasurableElement(Repository.findByUuidOrId(request.getMeasurableElementUUID(), request.getMeasurableElementId(), measurableElementRepository));
