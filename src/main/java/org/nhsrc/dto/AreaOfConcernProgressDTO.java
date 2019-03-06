@@ -8,7 +8,9 @@ import java.io.Serializable;
 @Entity
 public class AreaOfConcernProgressDTO implements Serializable {
     private String checklistUUID;
+    private int checklistId;
     protected String uuid;
+    private int id;
     private int completed;
     private int total;
 
@@ -54,6 +56,22 @@ public class AreaOfConcernProgressDTO implements Serializable {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    public int getChecklistId() {
+        return checklistId;
+    }
+
+    public void setChecklistId(int checklistId) {
+        this.checklistId = checklistId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.nhsrc.web.progress;
 
 import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.dto.AreaOfConcernProgressDTO;
 import org.nhsrc.dto.ChecklistProgressDTO;
 import org.nhsrc.dto.FacilityAssessmentProgressDTO;
 import org.nhsrc.repository.FacilityAssessmentRepository;
@@ -30,9 +31,9 @@ public class ChecklistProgressController {
 
     @RequestMapping(value = "search/findByFacilityAssessment", method = RequestMethod.GET)
     @PreAuthorize("hasRole('Assessment_Read')")
-    public ResponseEntity<List<ChecklistProgressDTO>> getFacilityAssessmentProgress(@RequestParam("facilityAssessmentId") Integer assessmentId) {
+    public ResponseEntity<List<AreaOfConcernProgressDTO>> getFacilityAssessmentProgress(@RequestParam("facilityAssessmentId") Integer assessmentId) {
         List<FacilityAssessment> facilityAssessments = new ArrayList<>();
         facilityAssessments.add(facilityAssessmentRepository.findById(assessmentId));
-        return ResponseEntity.ok(assessmentProgressService.getProgressFor(facilityAssessments).get(0).getChecklistsProgress());
+        return ResponseEntity.ok(assessmentProgressService.getProgressFor(facilityAssessments).get(0).getAreaOfConcernsProgress());
     }
 }

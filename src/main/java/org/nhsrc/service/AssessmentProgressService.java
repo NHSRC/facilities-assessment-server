@@ -49,8 +49,10 @@ public class AssessmentProgressService {
             "GROUP BY std.id, ch.id, aoc.id, fa.id";
 
     private static final String areaOfConcernTotalForAssessmentTool = "SELECT\n" +
+            "  ch.id              AS checklist_id,\n" +
             "  ch.uuid              AS checklistUUID,\n" +
             "  aoc.uuid             AS uuid,\n" +
+            "  aoc.id             AS id,\n" +
             "  count(DISTINCT s.id) AS total,\n" +
             "  0                    AS completed\n" +
             "FROM checkpoint c\n" +
@@ -61,7 +63,7 @@ public class AssessmentProgressService {
             "  INNER JOIN checklist ch ON ch.id=c.checklist_id AND (ch.state_id=:stid OR ch.state_id is NULL) AND ch.id = caoc.checklist_id\n" +
             "  INNER JOIN assessment_tool at ON ch.assessment_tool_id = at.id\n" +
             "  WHERE at.id=:id AND c.id IS NOT NULL\n" +
-            "GROUP BY ch.id, aoc.id";
+            "GROUP BY ch.id, aoc.id order by ch.id, aoc.id";
 
     private static final String checklistTotalForAssessmentTool = "SELECT\n" +
             "  ch.id        AS id,\n" +
