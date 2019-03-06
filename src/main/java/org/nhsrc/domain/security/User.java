@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 public class User extends AbstractEntity {
+    public static final String ANONYMOUS_USERS_EMAIL = "anonymous@example.com";
+    public static final String BACKGROUND_SERVICE_USERS_EMAIL = "backgroundservice@example.com";
+
     @Column(name = "email")
     private String email;
 

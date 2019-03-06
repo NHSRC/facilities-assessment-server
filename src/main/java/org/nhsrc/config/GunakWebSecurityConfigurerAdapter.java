@@ -1,5 +1,6 @@
 package org.nhsrc.config;
 
+import org.nhsrc.domain.security.Privilege;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
                 .antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist", "/api/facility-assessment/indicator", "/api/facility-assessment/**", "/api/facility-assessment").permitAll();
 
         permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
-        registry.antMatchers(new String[]{"/api/currentUser", "/api/loginSuccess"}).hasRole("User");
+        registry.antMatchers(new String[]{"/api/currentUser", "/api/loginSuccess"}).hasRole(Privilege.USER_WITHOUT_PREFIX);
         if (isSecure) {
             String[] protectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user", "facilityAssessmentMissingCheckpoint"};
             permittedResourcesForOneDevice(protectedResources, registry);
@@ -86,7 +87,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
     private void permittedResourcesWithAuthority(String[] patterns, ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
         Arrays.stream(patterns).forEach(s -> {
-            registry.antMatchers(String.format("/api/%s", s)).hasRole("User");
+            registry.antMatchers(String.format("/api/%s", s)).hasRole(Privilege.USER_WITHOUT_PREFIX);
         });
     }
 

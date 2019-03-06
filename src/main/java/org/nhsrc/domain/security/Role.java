@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "role")
 public class Role extends AbstractEntity {
+    public static final String USER = "USER";
+
     @Column(name = "name")
     private String name;
 

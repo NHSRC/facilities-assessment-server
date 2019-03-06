@@ -9,6 +9,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "privilege")
 public class Privilege extends BaseEntity {
+    public static final String USER_WITHOUT_PREFIX = "User";
+    public static final String USER = "ROLE_User";
+    public static final String ASSESSMENT_READ = "ROLE_Assessment_Read";
+    public static final String ASSESSMENT_WRITE = "ROLE_Assessment_Write";
+
     @Column(name = "name")
     private String name;
 

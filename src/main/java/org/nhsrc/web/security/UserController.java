@@ -9,7 +9,6 @@ import org.nhsrc.service.UserService;
 import org.nhsrc.web.contract.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,11 +44,11 @@ public class UserController {
         if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
             user.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
         }
-        Repository.mergeChildren(userRequest.getRoleIds(), user.getRoleIds(), roleRepository, role -> user.removeRole((Role)role), role -> user.addRole((Role) role));
         user.setEmail(userRequest.getEmail());
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setInactive(userRequest.getInactive());
+        Repository.mergeChildren(userRequest.getRoleIds(), user.getRoleIds(), roleRepository, role -> user.removeRole((Role)role), role -> user.addRole((Role) role));
         return userService.saveUser(user);
     }
 
