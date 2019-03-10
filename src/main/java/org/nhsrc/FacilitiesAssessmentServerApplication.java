@@ -4,7 +4,6 @@ import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
 import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.*;
-import org.nhsrc.domain.missing.FacilityAssessmentMissingCheckpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +19,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import java.io.File;
 import java.util.TimeZone;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
@@ -189,7 +187,7 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 Indicator indicator = resource.getContent();
                 resource.removeLinks();
                 resource.add(new Link(indicator.getFacilityAssessment().getUuidString(), "facilityAssessmentUUID"));
-                resource.add(new Link(indicator.getIndicatorDefinition().getUuid().toString(), "indicatorUUID"));
+                resource.add(new Link(indicator.getIndicatorDefinition().getUuid().toString(), "indicatorDefinitionUUID"));
                 return resource;
             }
         };

@@ -9,13 +9,8 @@ help: ## This help dialog.
 	    printf "%-30s %s\n" $$help_command $$help_info ; \
 	done
 
-rr_version := 9
-reference_response_folder := ../reference-data/nhsrc/output/recorded-response/jsons/$(rr_version)
-client_response_folder := ../facilities-assessment-android-client/nhsrc/output/recorded-response/jsons/$(rr_version)
-port := 6001
-
 define _run_server
-	java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
+	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3
 endef
 
 define _tail_server_qa

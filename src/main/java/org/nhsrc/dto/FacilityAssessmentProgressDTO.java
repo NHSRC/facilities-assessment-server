@@ -1,6 +1,7 @@
 package org.nhsrc.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FacilityAssessmentProgressDTO {
@@ -8,6 +9,7 @@ public class FacilityAssessmentProgressDTO {
     private List<ChecklistProgressDTO> checklistsProgress = new ArrayList<>();
     private List<AreaOfConcernProgressDTO> areaOfConcernsProgress = new ArrayList<>();
     private List<StandardProgressDTO> standardsProgress = new ArrayList<>();
+    private java.util.Date lastModifiedDate;
 
     public String getUuid() {
         return uuid;
@@ -51,5 +53,13 @@ public class FacilityAssessmentProgressDTO {
 
     public void addStandardProgress(StandardProgressDTO standardProgressDTO) {
         this.standardsProgress.add(standardProgressDTO);
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 }

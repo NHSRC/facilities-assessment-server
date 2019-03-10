@@ -151,6 +151,7 @@ public class AssessmentProgressService {
             List<ChecklistProgressDTO> checklistProgressDTOs = new ArrayList<>();
             checklistProgressDTOs.addAll(getChecklistProgress(facilityAssessment, areasOfConcernProgressDTO));
             assessmentProgress.setChecklistsProgress(checklistProgressDTOs);
+            assessmentProgress.setLastModifiedDate(facilityAssessment.getLastModifiedDate());
 
             facilityAssessmentsProgress.add(assessmentProgress);
         });
