@@ -8,10 +8,7 @@ import org.nhsrc.dto.StandardProgressDTO;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.EntityManager;
@@ -28,25 +25,28 @@ public class AssessmentProgressService {
     private EntityManager entityManager;
     private FacilityAssessmentRepository facilityAssessmentRepository;
 
-    private static final String standardProgressPerAssessment = "SELECT\n" +
-            "  fa.id AS facility_assessment_id,\n" +
-            "  std.uuid           uuid,\n" +
-            "  aoc.uuid           aocUUID,\n" +
-            "  ch.uuid            checklistUUID,\n" +
-            "  count(c.id)     AS total,\n" +
-            "  sum(CASE WHEN cs.checkpoint_id IS NULL\n" +
-            "    THEN 0\n" +
-            "      ELSE 1 END) AS completed\n" +
-            "FROM checkpoint c\n" +
-            "  INNER JOIN measurable_element me ON c.measurable_element_id = me.id\n" +
-            "  INNER JOIN standard std ON me.standard_id = std.id\n" +
-            "  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id\n" +
-            "  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = :atid AND (ch.state_id=:stid OR ch.state_id is NULL)\n" +
-            "  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id\n" +
-            "                   FROM checkpoint_score\n" +
-            "                   WHERE checkpoint_score.facility_assessment_id = :faid) AS cs ON c.id = cs.checkpoint_id\n" +
-            "  LEFT OUTER JOIN facility_assessment fa ON fa.id = :faid\n" +
-            "GROUP BY std.id, ch.id, aoc.id, fa.id";
+    private static final String standardProgressPerAssessment =
+            "SELECT * from ( " +
+            " SELECT" +
+            "  fa.id AS facility_assessment_id," +
+            "  std.uuid           uuid," +
+            "  aoc.uuid           aocUUID," +
+            "  ch.uuid            checklistUUID," +
+            "  count(c.id)     AS total," +
+            "  sum(CASE WHEN cs.checkpoint_id IS NULL" +
+            "    THEN 0" +
+            "      ELSE 1 END) AS completed" +
+            " FROM checkpoint c" +
+            "  INNER JOIN measurable_element me ON c.measurable_element_id = me.id" +
+            "  INNER JOIN standard std ON me.standard_id = std.id" +
+            "  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id" +
+            "  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = :atid AND (ch.state_id=:stid OR ch.state_id is NULL)" +
+            "  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id" +
+            "                   FROM checkpoint_score" +
+            "                   WHERE checkpoint_score.facility_assessment_id = :faid) AS cs ON c.id = cs.checkpoint_id" +
+            "  LEFT OUTER JOIN facility_assessment fa ON fa.id = :faid" +
+            " GROUP BY std.id, ch.id, aoc.id, fa.id) foo" +
+                    " where completed != 0";
 
     private static final String areaOfConcernTotalForAssessmentTool = "SELECT\n" +
             "  ch.id              AS checklist_id,\n" +
@@ -108,7 +108,14 @@ public class AssessmentProgressService {
 
         Map<String, List<StandardProgressDTO>> standardProgressByAOC = standardsProgressDTO.stream().collect(Collectors.groupingBy(standardProgressDTO -> standardProgressDTO.getAocUUID() + standardProgressDTO.getChecklistUUID()));
 
-        return areasOfConcernProgress.parallelStream().peek(areaOfConcernProgressDTO -> areaOfConcernProgressDTO.setCompleted((int) standardProgressByAOC.get(areaOfConcernProgressDTO.getUuid() + areaOfConcernProgressDTO.getChecklistUUID()).stream().filter(standardProgressDTO -> standardProgressDTO.getTotal() == standardProgressDTO.getCompleted()).count())).collect(Collectors.toList());
+        return areasOfConcernProgress.parallelStream().peek(areaOfConcernProgressDTO -> {
+            List<StandardProgressDTO> standardProgressDTOS = standardProgressByAOC.get(areaOfConcernProgressDTO.getUuid() + areaOfConcernProgressDTO.getChecklistUUID());
+            if (standardProgressDTOS != null) {
+                int count = (int) standardProgressDTOS.stream().filter(standardProgressDTO -> standardProgressDTO.getTotal() == standardProgressDTO.getCompleted()).count();
+                areaOfConcernProgressDTO.setCompleted(count);
+                areaOfConcernProgressDTO.setAnyStandardScored(true);
+            }
+        }).filter(AreaOfConcernProgressDTO::isAnyStandardScored).collect(Collectors.toList());
     }
 
     private List<ChecklistProgressDTO> getChecklistProgress(FacilityAssessment facilityAssessment, List<AreaOfConcernProgressDTO> areasOfConcernProgressDTO) {
@@ -120,7 +127,14 @@ public class AssessmentProgressService {
         Map<String, List<AreaOfConcernProgressDTO>> aocProgressByChecklist = areasOfConcernProgressDTO.stream().collect(Collectors.groupingBy(AreaOfConcernProgressDTO::getChecklistUUID));
 
         return checklistProgressDTOS.parallelStream()
-                .peek(checklistProgressDTO -> checklistProgressDTO.setCompleted((int) aocProgressByChecklist.get(checklistProgressDTO.getUuid()).stream().filter(aocProgressDTO -> aocProgressDTO.getTotal() == aocProgressDTO.getCompleted()).count())).collect(Collectors.toList());
+                .peek(checklistProgressDTO -> {
+                    List<AreaOfConcernProgressDTO> areaOfConcernProgressDTOS = aocProgressByChecklist.get(checklistProgressDTO.getUuid());
+                    if (areaOfConcernProgressDTOS != null) {
+                        int count = (int) areaOfConcernProgressDTOS.stream().filter(aocProgressDTO -> aocProgressDTO.getTotal() == aocProgressDTO.getCompleted()).count();
+                        checklistProgressDTO.setCompleted(count);
+                        checklistProgressDTO.setAocFilled(true);
+                    }
+                }).filter(ChecklistProgressDTO::isAocFilled).collect(Collectors.toList());
     }
 
 //    @RequestMapping(value = "facilityAssessmentProgress", method = RequestMethod.GET)

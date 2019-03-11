@@ -1,5 +1,7 @@
 package org.nhsrc.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,6 +10,7 @@ public class ChecklistProgressDTO {
     protected String uuid;
     private int completed;
     private int total;
+    private boolean aocFilled;
 
     public ChecklistProgressDTO() {
     }
@@ -73,5 +76,16 @@ public class ChecklistProgressDTO {
     @Override
     public int hashCode() {
         return uuid.hashCode();
+    }
+
+    @Transient
+    @JsonIgnore
+    public boolean isAocFilled() {
+        return aocFilled;
+    }
+
+    @Transient
+    public void setAocFilled(boolean aocFilled) {
+        this.aocFilled = aocFilled;
     }
 }

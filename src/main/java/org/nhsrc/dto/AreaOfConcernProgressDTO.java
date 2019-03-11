@@ -1,8 +1,10 @@
 package org.nhsrc.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Entity
@@ -13,6 +15,7 @@ public class AreaOfConcernProgressDTO implements Serializable {
     private int id;
     private int completed;
     private int total;
+    private boolean anyStandardScored;
 
     public AreaOfConcernProgressDTO(String uuid, int completed, int total, String checklistUUID) {
         this.checklistUUID = checklistUUID;
@@ -98,5 +101,16 @@ public class AreaOfConcernProgressDTO implements Serializable {
                 ", completed=" + completed +
                 ", total=" + total +
                 '}';
+    }
+
+    @Transient
+    @JsonIgnore
+    public boolean isAnyStandardScored() {
+        return anyStandardScored;
+    }
+
+    @Transient
+    public void setAnyStandardScored(boolean anyStandardScored) {
+        this.anyStandardScored = anyStandardScored;
     }
 }

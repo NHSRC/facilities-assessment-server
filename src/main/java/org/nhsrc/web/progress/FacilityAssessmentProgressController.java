@@ -37,7 +37,7 @@ public class FacilityAssessmentProgressController {
     @PreAuthorize("permitAll()")
     public ResponseEntity getFacilityAssessmentProgress(@RequestParam String lastModifiedDate, @RequestParam String deviceId, Pageable pageable) throws ParseException {
         Page<FacilityAssessment> facilityAssessments = facilityAssessmentRepository.findByFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThan(deviceId, DateUtils.ISO_8601_DATE_FORMAT.parse(lastModifiedDate), pageable);
-        PageImpl body = new PageImpl(assessmentProgressService.getProgressFor(facilityAssessments.getContent()));
+        PageImpl body = new PageImpl<>(assessmentProgressService.getProgressFor(facilityAssessments.getContent()), pageable, facilityAssessments.getTotalElements());
         return ResponseEntity.ok(body);
     }
 
