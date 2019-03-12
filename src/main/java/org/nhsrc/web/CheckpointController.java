@@ -10,6 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/")
@@ -44,6 +46,19 @@ public class CheckpointController {
         checkpoint.setInactive(request.getInactive());
         checkpoint.setState(Repository.findById(request.getStateId(), stateRepository));
         return checkpointRepository.save(checkpoint);
+    }
+
+    @RequestMapping(value = "/checkpoints", method = {RequestMethod.PATCH})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Write')")
+    public List<Checkpoint> save(@RequestBody List<CheckpointRequest> requests) {
+        List<Checkpoint> checkpoints = requests.stream().map(request -> {
+            Checkpoint checkpoint = checkpointRepository.findOne(request.getId());
+            checkpoint.setInactive(request.getInactive());
+            return checkpoint;
+        }).collect(Collectors.toList());
+        checkpointRepository.save(checkpoints);
+        return checkpoints;
     }
 
     @RequestMapping(value = "/checkpoint/search/find", method = {RequestMethod.GET})

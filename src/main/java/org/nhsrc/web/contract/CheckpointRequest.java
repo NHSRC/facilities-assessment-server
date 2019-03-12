@@ -1,6 +1,7 @@
 package org.nhsrc.web.contract;
 
 public class CheckpointRequest {
+    private Integer id;
     private String uuid;
     private Boolean inactive;
     private String name;
@@ -136,5 +137,13 @@ public class CheckpointRequest {
 
     public void setStateId(Integer stateId) {
         this.stateId = stateId;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
