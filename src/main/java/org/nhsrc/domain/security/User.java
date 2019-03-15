@@ -32,7 +32,7 @@ public class User extends AbstractEntity {
 
     @ManyToMany
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     @JsonIgnore
     public String getPassword() {
@@ -61,11 +61,12 @@ public class User extends AbstractEntity {
 
     @JsonIgnore
     public Set<Role> getRoles() {
-        return roles;
+        return this.roles == null ? new HashSet<>() : this.roles;
     }
 
     public List<Integer> getRoleIds() {
-        return this.getRoles().stream().map(BaseEntity::getId).collect(Collectors.toList());
+        Set<Role> roles = this.getRoles() == null ? new HashSet<>() : this.getRoles();
+        return roles.stream().map(BaseEntity::getId).collect(Collectors.toList());
     }
 
     public Set<Privilege> getPrivileges() {

@@ -22,19 +22,32 @@ define _tail_server_prod
 endef
 
 define _deploy_qa
-	ssh $1 "sudo service qa-fab stop"
+	$(call _stop_service,$1,qa-fab)
 	ssh $1 "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
 	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
-	ssh $1 "sudo service qa-fab start"
+	$(call _start_service,$1,qa-fab)
+endef
+
+define _stop_service
+	-ssh $1 "sudo systemctl stop $2"
+endef
+
+define _start_service
+	ssh $1 "sudo systemctl start $2"
 	$(call _tail_server_qa,$1)
 endef
 
+define _restart_service
+	$(call _stop_service,$1,qa-fab)
+	$(call _start_service,$1,qa-fab)
+endef
+
 define _deploy_prod
-	ssh $1 "sudo service fab stop"
+	ssh $1 "sudo systemctl stop fab"
 	ssh $1 "cp -f /home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar /tmp/"
 	ssh $1 "rm -rf /home/app/facilities-assessment-host/app-servers/*.jar"
 	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
-	ssh $1 "sudo service fab start"
+	ssh $1 "sudo systemctl start fab"
 	$(call _tail_server_prod,$1)
 endef
 
@@ -128,11 +141,19 @@ deploy_to_jss_prod: build_server
 deploy_to_nhsrc_prod: build_server
 	$(call _deploy_prod,gunak-main)
 
+# Tail
 tail_server_jss_qa:
-	ssh igunatmac "tail -f /home/app/qa-server/facilities-assessment-host/app-servers/log/facilities_assessment.log"
+	$(call _tail_server_qa,igunatmac)
 
 tail_server_jss_prod:
 	$(call _tail_server_prod,igunatmac)
 
 tail_server_nhsrc_prod:
 	$(call _tail_server_prod,gunak-main)
+
+tail_server_nhsrc_qa:
+	$(call _tail_server_qa,gunak-other)
+
+# Service stop/start/restart
+restart_service_nhsrc_qa:
+	$(call _restart_service,gunak-other,qa-fab)
