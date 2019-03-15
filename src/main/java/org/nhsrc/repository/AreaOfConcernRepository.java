@@ -1,9 +1,6 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.AreaOfConcern;
-import org.nhsrc.domain.Checklist;
-import org.nhsrc.domain.District;
-import org.nhsrc.domain.Standard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -16,12 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "areaOfConcern", path = "areaOfConcern")
-public interface AreaOfConcernRepository extends BaseRepository<AreaOfConcern> {
+public interface AreaOfConcernRepository extends NonTxDataRepository<AreaOfConcern> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<AreaOfConcern> findDistinctByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 

@@ -1,17 +1,12 @@
 package org.nhsrc.service;
 
-import org.nhsrc.domain.security.Role;
 import org.nhsrc.domain.security.User;
-import org.nhsrc.repository.Repository;
-import org.nhsrc.repository.security.RoleRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.HashSet;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -29,12 +24,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findSubmissionUser(Principal principal) {
-        String email = principal == null ? User.ANONYMOUS_USERS_EMAIL : principal.getName();
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            user = userRepository.findByEmail(User.ANONYMOUS_USERS_EMAIL);
+        if (principal == null) {
+            return userRepository.findByEmail(User.ANONYMOUS_USERS_EMAIL);
+        } else {
+            return userRepository.findByEmail(principal.getName());
         }
-        return user;
     }
 
     @Override

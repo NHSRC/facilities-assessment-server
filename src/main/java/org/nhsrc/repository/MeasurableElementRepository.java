@@ -1,10 +1,8 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.MeasurableElement;
-import org.nhsrc.domain.Standard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -19,7 +17,7 @@ import java.util.UUID;
 @Transactional
 @Repository
 @RepositoryRestResource(collectionResourceRel = "measurableElement", path = "measurableElement")
-public interface MeasurableElementRepository extends BaseRepository<MeasurableElement> {
+public interface MeasurableElementRepository extends NonTxDataRepository<MeasurableElement> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<MeasurableElement> findDistinctByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 

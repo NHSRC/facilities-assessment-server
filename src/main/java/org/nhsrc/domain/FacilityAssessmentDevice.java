@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "facility_assessment_device")
-public class FacilityAssessmentDevice extends AbstractEntity {
+public class FacilityAssessmentDevice extends BaseEntity {
     @Column(name = "device_id", nullable = true)
     private String deviceId;
 

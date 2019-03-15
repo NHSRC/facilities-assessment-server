@@ -151,7 +151,7 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
     public abstract void setEndDate(Date endDate);
 
     public Boolean getInactive() {
-        return inactive;
+        return inactive == null ? false : inactive;
     }
 
     public void setInactive(Boolean inactive) {

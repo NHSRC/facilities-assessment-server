@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "state", path = "state")
-public interface StateRepository extends BaseRepository<State> {
+public interface StateRepository extends NonTxDataRepository<State> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<State> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 

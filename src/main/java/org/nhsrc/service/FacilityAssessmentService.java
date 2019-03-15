@@ -23,7 +23,6 @@ import java.util.List;
 @Transactional
 public class FacilityAssessmentService {
     private final FacilityRepository facilityRepository;
-    private final AssessmentToolRepository assessmentToolRepository;
     private final FacilityAssessmentRepository facilityAssessmentRepository;
     private final ChecklistRepository checklistRepository;
     private final CheckpointScoreRepository checkpointScoreRepository;
@@ -42,7 +41,6 @@ public class FacilityAssessmentService {
 
     @Autowired
     public FacilityAssessmentService(FacilityRepository facilityRepository,
-                                     AssessmentToolRepository assessmentToolRepository,
                                      FacilityAssessmentRepository facilityAssessmentRepository,
                                      ChecklistRepository checklistRepository,
                                      CheckpointScoreRepository checkpointScoreRepository,
@@ -55,7 +53,6 @@ public class FacilityAssessmentService {
                                      DistrictRepository districtRepository,
                                      FacilityTypeRepository facilityTypeRepository, StandardScoreRepository standardScoreRepository, AreaOfConcernScoreRepository areaOfConcernScoreRepository, ChecklistScoreRepository checklistScoreRepository, FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository) {
         this.facilityRepository = facilityRepository;
-        this.assessmentToolRepository = assessmentToolRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
         this.checklistRepository = checklistRepository;
         this.checkpointScoreRepository = checkpointScoreRepository;

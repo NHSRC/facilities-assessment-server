@@ -1,5 +1,6 @@
 package org.nhsrc.web;
 
+import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.CheckpointScore;
 import org.nhsrc.domain.FacilityAssessment;
@@ -20,11 +21,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;

@@ -2,7 +2,6 @@ package org.nhsrc.repository;
 
 import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.Checkpoint;
-import org.nhsrc.domain.MeasurableElement;
 import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +20,7 @@ import java.util.UUID;
 @Transactional
 @Repository
 @RepositoryRestResource(collectionResourceRel = "checkpoint", path = "checkpoint")
-public interface CheckpointRepository extends BaseRepository<Checkpoint> {
+public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<Checkpoint> findDistinctByLastModifiedDateGreaterThanAndInactiveFalseOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 

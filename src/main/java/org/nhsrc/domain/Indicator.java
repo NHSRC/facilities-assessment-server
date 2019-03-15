@@ -2,14 +2,16 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "indicator")
-public class Indicator extends AbstractEntity {
+public class Indicator extends BaseEntity {
     @Column(name = "numeric_value")
     private Integer numericValue;
 
@@ -28,6 +30,11 @@ public class Indicator extends AbstractEntity {
     @JoinColumn(name = "facility_assessment_id")
     @NotNull
     private FacilityAssessment facilityAssessment;
+
+    @GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "uuid", updatable = false, unique = true, nullable = false)
+    private UUID uuid;
 
     public Integer getNumericValue() {
         return numericValue;
@@ -74,5 +81,13 @@ public class Indicator extends AbstractEntity {
 
     public void setCodedValue(String codedValue) {
         this.codedValue = codedValue;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 }

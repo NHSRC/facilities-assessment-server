@@ -18,7 +18,7 @@ import java.util.List;
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "facilityAssessment", path = "facilityAssessment")
 @PreAuthorize("hasRole('Assessment_Read')")
-public interface FacilityAssessmentRepository extends BaseRepository<FacilityAssessment> {
+public interface FacilityAssessmentRepository extends TxDataRepository<FacilityAssessment> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<FacilityAssessment> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
@@ -26,22 +26,21 @@ public interface FacilityAssessmentRepository extends BaseRepository<FacilityAss
     @PreAuthorize("permitAll()")
     Page<FacilityAssessment> findByFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("deviceId") String deviceId, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
-    FacilityAssessment findByFacilityAndAssessmentToolAndStartDateBeforeAndStartDateAfter(Facility facility, AssessmentTool assessmentTool, Date startDateBefore, Date startDateAfter);
-
     List<FacilityAssessment> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(Date lastModifiedDateTime);
 
     @PreAuthorize("permitAll()")
     Page<FacilityAssessment> findByFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThan(String deviceId, Date lastModifiedDateTime, Pageable pageable);
 
+    @PreAuthorize("permitAll()")
     FacilityAssessment findByFacilityAndAssessmentToolAndSeriesName(Facility facility, AssessmentTool assessmentTool, String seriesName);
 
+    @PreAuthorize("permitAll()")
     FacilityAssessment findByFacilityNameAndAssessmentToolAndSeriesName(String facilityName, AssessmentTool assessmentTool, String seriesName);
-
-    Page<FacilityAssessment> findByFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(State state, Date lastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "byAssessmentId", rel = "byAssessmentId")
     Page<FacilityAssessment> findById(@Param("assessmentId") int assessmentId, Pageable pageable);
 
+    @PreAuthorize("permitAll()")
     FacilityAssessment findById(int assessmentId);
 
     @RestResource(path = "findAllById", rel = "findAllById")

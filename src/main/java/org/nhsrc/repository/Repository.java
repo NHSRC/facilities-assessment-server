@@ -2,7 +2,6 @@ package org.nhsrc.repository;
 
 import org.nhsrc.domain.AbstractEntity;
 import org.nhsrc.domain.BaseEntity;
-import org.nhsrc.domain.Checklist;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.HashSet;
@@ -25,15 +24,15 @@ public class Repository {
         }
     }
 
-    public static <T> T findById(Integer id, BaseRepository<T> baseRepository) {
-        return (id == null || id == 0) ? null : baseRepository.findOne(id);
+    public static <T> T findById(Integer id, CrudRepository<T, Integer> crudRepository) {
+        return (id == null || id == 0) ? null : crudRepository.findOne(id);
     }
 
-    public static <T extends BaseEntity> T findByIdOrCreate(Integer id, BaseRepository<T> baseRepository, T newEntity) {
+    public static <T extends BaseEntity> T findByIdOrCreate(Integer id, CrudRepository<T, Integer> repository, T newEntity) {
         if (id == null || id == 0) {
             return newEntity;
         }
-        T t = findById(id, baseRepository);
+        T t = findById(id, repository);
         if (t == null) {
             return newEntity;
         }

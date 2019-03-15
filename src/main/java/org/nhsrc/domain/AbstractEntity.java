@@ -17,8 +17,8 @@ public abstract class AbstractEntity extends BaseEntity {
     @Column(name = "uuid", updatable = false, unique = true, nullable = false)
     private UUID uuid;
 
-    @Column(name = "inactive", nullable = false)
-    private Boolean inactive = false;
+    @Column(name = "inactive")
+    private Boolean inactive;
 
     public AbstractEntity() {
         this.uuid = UUID.randomUUID();

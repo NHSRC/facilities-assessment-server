@@ -18,7 +18,7 @@ import java.util.List;
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "indicator", path = "indicator")
 @PreAuthorize("hasRole('Assessment_Read')")
-public interface IndicatorRepository extends BaseRepository<Indicator> {
+public interface IndicatorRepository extends TxDataRepository<Indicator> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<Indicator> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
@@ -26,6 +26,7 @@ public interface IndicatorRepository extends BaseRepository<Indicator> {
     @PreAuthorize("permitAll()")
     Page<Indicator> findByFacilityAssessmentFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("deviceId") String deviceId, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
+    @PreAuthorize("permitAll()")
     Indicator findByIndicatorDefinitionAndFacilityAssessment(IndicatorDefinition indicatorDefinition, FacilityAssessment facilityAssessment);
 
     @RestResource(path = "findAllById", rel = "findAllById")
@@ -34,5 +35,6 @@ public interface IndicatorRepository extends BaseRepository<Indicator> {
     @RestResource(path = "findByFacilityAssessment", rel = "findByFacilityAssessment")
     Page<Indicator> findByFacilityAssessmentId(@Param("facilityAssessmentId") Integer stateId, Pageable pageable);
 
+    @PreAuthorize("permitAll()")
     void deleteAllByFacilityAssessmentId(@Param("facilityAssessmentId") Integer facilityAssessmentId);
 }

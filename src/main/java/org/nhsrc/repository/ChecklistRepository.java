@@ -18,7 +18,7 @@ import java.util.UUID;
 @Repository
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "checklist", path = "checklist")
-public interface ChecklistRepository extends BaseRepository<Checklist> {
+public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<Checklist> findByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 

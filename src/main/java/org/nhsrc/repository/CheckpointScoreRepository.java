@@ -18,7 +18,7 @@ import java.util.List;
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "checkpointScore", path = "checkpointScore")
 @PreAuthorize("hasRole('Assessment_Read')")
-public interface CheckpointScoreRepository extends BaseRepository<CheckpointScore> {
+public interface CheckpointScoreRepository extends TxDataRepository<CheckpointScore> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<CheckpointScore> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
@@ -26,18 +26,18 @@ public interface CheckpointScoreRepository extends BaseRepository<CheckpointScor
     @PreAuthorize("permitAll()")
     Page<CheckpointScore> findByFacilityAssessmentFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("deviceId") String deviceId, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
+    @PreAuthorize("permitAll()")
     CheckpointScore findByCheckpointAndFacilityAssessmentAndChecklist(Checkpoint checkpoint, FacilityAssessment facilityAssessment, Checklist checklist);
-
-    Page<CheckpointScore> findByFacilityAssessmentFacilityDistrictStateAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(State state, Date lastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "byAssessmentId", rel = "byAssessmentId")
     Page<CheckpointScore> findByFacilityAssessmentId(@Param("assessmentId") int assessmentId, Pageable pageable);
 
+    @PreAuthorize("permitAll()")
     List<CheckpointScore> findByFacilityAssessmentIdAndChecklistName(int assessmentId, String checklistName);
-    CheckpointScore findFirstByFacilityAssessmentId(int assessmentId);
 
     @RestResource(path = "findAllById", rel = "findAllById")
     List<CheckpointScore> findByIdIn(@Param("ids") Integer[] ids);
 
+    @PreAuthorize("permitAll()")
     void deleteAllByFacilityAssessmentId(@Param("facilityAssessmentId") Integer facilityAssessmentId);
 }

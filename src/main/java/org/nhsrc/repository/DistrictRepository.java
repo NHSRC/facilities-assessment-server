@@ -1,7 +1,6 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.District;
-import org.nhsrc.domain.MeasurableElement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +16,7 @@ import java.util.List;
 @Repository
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "district", path = "district")
-public interface DistrictRepository extends BaseRepository<District> {
+public interface DistrictRepository extends NonTxDataRepository<District> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<District> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 

@@ -56,8 +56,12 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @NotNull
     private User user;
 
-    @Column(name = "inactive", nullable = false)
-    private Boolean inactive = false;
+    @Column(name = "inactive")
+    private boolean inactive;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "facilityAssessment")
+    private Set<FacilityAssessmentDevice> facilityAssessmentDevices = new HashSet<>();
 
     public String getAssessmentCode() {
         return assessmentCode;
@@ -66,10 +70,6 @@ public class FacilityAssessment extends AbstractScoreEntity {
     public void setAssessmentCode(String assessmentCode) {
         this.assessmentCode = assessmentCode;
     }
-
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "facilityAssessment")
-    private Set<FacilityAssessmentDevice> facilityAssessmentDevices = new HashSet<>();
 
     public Date getStartDate() {
         return startDate;
@@ -124,7 +124,6 @@ public class FacilityAssessment extends AbstractScoreEntity {
     public void incorporateDevice(String deviceId) {
         if (deviceId != null && !deviceId.isEmpty() && facilityAssessmentDevices.stream().noneMatch(facilityAssessmentDevice -> facilityAssessmentDevice.getDeviceId().equals(deviceId))) {
             FacilityAssessmentDevice facilityAssessmentDevice = new FacilityAssessmentDevice();
-            facilityAssessmentDevice.setUuid(UUID.randomUUID());
             facilityAssessmentDevice.setDeviceId(deviceId);
             facilityAssessmentDevice.setFacilityAssessment(this);
             facilityAssessmentDevices.add(facilityAssessmentDevice);
@@ -256,11 +255,11 @@ public class FacilityAssessment extends AbstractScoreEntity {
         this.user = user;
     }
 
-    public Boolean getInactive() {
+    public boolean getInactive() {
         return inactive;
     }
 
-    public void setInactive(Boolean inactive) {
+    public void setInactive(boolean inactive) {
         this.inactive = inactive;
     }
 }
