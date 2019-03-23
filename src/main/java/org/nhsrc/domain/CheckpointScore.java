@@ -99,7 +99,7 @@ public class CheckpointScore extends AbstractScoreEntity {
     }
 
     public Boolean getNa() {
-        return na;
+        return na == null ? false : na;
     }
 
     public void setNa(Boolean na) {

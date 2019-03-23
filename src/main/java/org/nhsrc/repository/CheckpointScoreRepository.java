@@ -32,6 +32,8 @@ public interface CheckpointScoreRepository extends TxDataRepository<CheckpointSc
     @RestResource(path = "byAssessmentId", rel = "byAssessmentId")
     Page<CheckpointScore> findByFacilityAssessmentId(@Param("assessmentId") int assessmentId, Pageable pageable);
 
+    List<CheckpointScore> findByFacilityAssessmentId(int assessmentId);
+
     @PreAuthorize("permitAll()")
     List<CheckpointScore> findByFacilityAssessmentIdAndChecklistName(int assessmentId, String checklistName);
 

@@ -262,4 +262,8 @@ public class FacilityAssessment extends AbstractScoreEntity {
     public void setInactive(boolean inactive) {
         this.inactive = inactive;
     }
+
+    public String getEffectiveFacilityName() {
+        return facility == null ? this.getFacilityName() : this.getFacility().getName();
+    }
 }

@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.Expression
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.util.Arrays;
 
@@ -64,6 +65,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
             String[] protectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user", "facilityAssessmentMissingCheckpoint"};
             permittedResourcesForOneDevice(protectedResources, registry);
             permittedResourcesWithAuthority(protectedResources, registry);
+            registry.antMatchers("/api/**").permitAll();
         } else {
             registry.antMatchers("/api/**").permitAll().and().csrf().disable();
         }
@@ -74,8 +76,10 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
     private void handleLogin(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) throws Exception {
         registry.anyRequest().authenticated().and().csrf().disable()
                 .formLogin().loginPage("/api/login").successHandler((request, response, authentication) -> {
+            response.setStatus(HttpServletResponse.SC_OK);
             logger.info("Login Successful");
         }).failureHandler((request, response, exception) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             logger.error("Login Failed", exception);
         })
                 .usernameParameter("email")

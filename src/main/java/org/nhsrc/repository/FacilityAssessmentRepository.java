@@ -24,7 +24,7 @@ public interface FacilityAssessmentRepository extends TxDataRepository<FacilityA
 
     @RestResource(path = "lastModifiedByDeviceId", rel = "lastModifiedByDeviceId")
     @PreAuthorize("permitAll()")
-    Page<FacilityAssessment> findByFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("deviceId") String deviceId, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<FacilityAssessment> findByFacilityAssessmentDevicesDeviceIdAndLastModifiedDateGreaterThanEqualOrderByLastModifiedDateAscIdAsc(@Param("deviceId") String deviceId, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     List<FacilityAssessment> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(Date lastModifiedDateTime);
 
@@ -48,6 +48,8 @@ public interface FacilityAssessmentRepository extends TxDataRepository<FacilityA
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
     Page<FacilityAssessment> findByAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+
+    Page<FacilityAssessment> findByAssessmentToolIdAndEndDateGreaterThanEqualOrderByEndDateAscIdAsc(Integer assessmentToolId, Date endDateTime, Pageable pageable);
 
     @RestResource(path = "findByFacility", rel = "findByFacility")
     Page<FacilityAssessment> findByFacilityId(@Param("facilityId") Integer facilityId, Pageable pageable);

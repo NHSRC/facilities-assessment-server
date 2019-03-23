@@ -1,35 +1,40 @@
 package org.nhsrc.web;
 
-import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.AssessmentTool;
+import org.nhsrc.domain.AssessmentToolMode;
 import org.nhsrc.domain.CheckpointScore;
 import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
-import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.dto.FacilityAssessmentAppDTO;
+import org.nhsrc.dto.FacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.repository.*;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
 import org.nhsrc.service.UserService;
+import org.nhsrc.utils.CollectionUtil;
+import org.nhsrc.web.contract.ext.AssessmentResponse;
+import org.nhsrc.web.contract.ext.AssessmentSummaryResponse;
+import org.nhsrc.web.mapper.AssessmentMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -42,17 +47,21 @@ public class FacilityAssessmentController {
     private FacilityAssessmentRepository facilityAssessmentRepository;
     private AssessmentToolRepository assessmentToolRepository;
     private UserService userService;
+    private AssessmentToolModeRepository assessmentToolModeRepository;
     private static Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
     private ExcelImportService excelImportService;
+    private CheckpointScoreRepository checkpointScoreRepository;
 
     @Autowired
-    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, FacilityRepository facilityRepository, AssessmentToolRepository assessmentToolRepository) {
+    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, FacilityRepository facilityRepository, AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, CheckpointScoreRepository checkpointScoreRepository) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
         this.userService = userService;
         this.excelImportService = excelImportService;
         this.assessmentToolRepository = assessmentToolRepository;
+        this.assessmentToolModeRepository = assessmentToolModeRepository;
+        this.checkpointScoreRepository = checkpointScoreRepository;
     }
 
     @RequestMapping(value = "facility-assessment", method = RequestMethod.POST)
@@ -134,5 +143,48 @@ public class FacilityAssessmentController {
 
         excelImportService.saveAssessment(file.getInputStream(), facilityAssessment);
         return facilityAssessment;
+    }
+
+    @RequestMapping(value = "ext/assessmentSummary", method = {RequestMethod.GET})
+    // TODO: Find appropriate status code for privilege denied; Test with null values. Fix district/state in the db or put a null check.
+    public Page<AssessmentSummaryResponse> listAssessments(Principal principal, @Param("assessmentEndDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date assessmentEndDateTime, @Param("assessmentToolName") @NotNull String assessmentToolName, @Param("programName") @NotNull String programName, Pageable pageable) {
+        AssessmentTool assessmentTool = assessmentToolRepository.findByNameAndAssessmentToolModeName(assessmentToolName, programName);
+        if (assessmentTool == null) {
+            AssessmentToolMode program = assessmentToolModeRepository.findByName(programName);
+            throw new GunakAPIException(program == null ? GunakAPIException.INVALID_PROGRAM_NAME : GunakAPIException.INVALID_ASSESSMENT_TOOL_NAME);
+        }
+        checkAccess(principal, programName);
+        return facilityAssessmentRepository.findByAssessmentToolIdAndEndDateGreaterThanEqualOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentEndDateTime, pageable).map(source -> AssessmentMapper.map(new AssessmentSummaryResponse(), source, assessmentTool));
+    }
+
+    private void checkAccess(Principal principal, @NotNull @Param("programName") String programName) {
+        User user = userService.findSubmissionUser(principal);
+        if (user.hasPrivilege(Privilege.ASSESSMENT_READ, programName)) {
+            throw new GunakAPIException("");
+        }
+    }
+
+    @RequestMapping(value = "ext/assessment/{systemId}", method = {RequestMethod.GET})
+    public AssessmentResponse getAssessmentResponse(Principal principal, @PathVariable("systemId") String systemId) {
+        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(UUID.fromString(systemId));
+        if (facilityAssessment == null) throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_SYSTEM_ID);
+        checkAccess(principal, facilityAssessment.getAssessmentTool().getAssessmentToolMode().getName());
+
+        AssessmentResponse assessmentResponse = (AssessmentResponse) AssessmentMapper.map(new AssessmentResponse(), facilityAssessment, facilityAssessment.getAssessmentTool());
+        List<CheckpointScore> scores = checkpointScoreRepository.findByFacilityAssessmentId(facilityAssessment.getId());
+        scores.forEach(checkpointScore -> {
+            AssessmentResponse.ChecklistAssessment checklistAssessment = CollectionUtil.addIfNotExists(assessmentResponse.getChecklists(), x -> x.getName().equals(checkpointScore.getCheckpoint().getChecklist().getName()), new AssessmentResponse.ChecklistAssessment());
+            AssessmentResponse.AreaOfConcernAssessment areaOfConcernAssessment = CollectionUtil.addIfNotExists(checklistAssessment.getAreaOfConcerns(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getReference()), new AssessmentResponse.AreaOfConcernAssessment());
+            AssessmentResponse.StandardAssessment standardAssessment = CollectionUtil.addIfNotExists(areaOfConcernAssessment.getStandards(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference()), new AssessmentResponse.StandardAssessment());
+            AssessmentResponse.MeasurableElementAssessment measurableElementAssessment = CollectionUtil.addIfNotExists(standardAssessment.getMeasurableElements(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getReference()), new AssessmentResponse.MeasurableElementAssessment());
+
+            AssessmentResponse.CheckpointAssessment checkpointAssessment = new AssessmentResponse.CheckpointAssessment();
+            checkpointAssessment.setCheckpoint(checkpointScore.getCheckpoint().getName());
+            checkpointAssessment.setMarkedNotApplicable(checkpointScore.getNa());
+            checkpointAssessment.setRemarks(checkpointScore.getRemarks());
+            checkpointAssessment.setScore(checkpointScore.getScore());
+            measurableElementAssessment.addCheckpointAssessment(checkpointAssessment);
+        });
+        return assessmentResponse;
     }
 }

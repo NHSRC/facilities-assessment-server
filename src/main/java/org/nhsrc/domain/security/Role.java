@@ -46,4 +46,9 @@ public class Role extends AbstractEntity {
     public void addPrivilege(Privilege privilege) {
         this.privileges.add(privilege);
     }
+
+    public boolean hasPrivilege(String privilegeName, String programName) {
+        Privilege matchingPrivilege = this.getPrivileges().stream().filter(privilege -> privilege.satisfies(privilegeName, programName)).findFirst().orElse(null);
+        return matchingPrivilege != null;
+    }
 }
