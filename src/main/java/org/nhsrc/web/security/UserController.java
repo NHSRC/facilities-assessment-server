@@ -8,6 +8,8 @@ import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.UserService;
 import org.nhsrc.web.contract.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +35,13 @@ public class UserController {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    @RequestMapping(value = "login", method = {RequestMethod.GET})
+    public ResponseEntity login(Principal principal) {
+        if (principal == null)
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "users", method = {RequestMethod.POST, RequestMethod.PUT})

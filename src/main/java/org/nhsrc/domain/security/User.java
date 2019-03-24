@@ -15,7 +15,8 @@ import java.util.stream.Collectors;
 @Table(name = "users")
 public class User extends AbstractEntity {
     public static final String ANONYMOUS_USERS_EMAIL = "anonymous@example.com";
-    public static final String BACKGROUND_SERVICE_USERS_EMAIL = "backgroundservice@example.com";
+    public static final String BACKGROUND_SERVICE_USER_EMAIL = "backgroundservice@example.com";
+    public static final String INTEGRATION_TEST_USER_EMAIL = "intergrationtest@example.com";
 
     @Column(name = "email")
     private String email;
@@ -64,6 +65,7 @@ public class User extends AbstractEntity {
         return this.roles == null ? new HashSet<>() : this.roles;
     }
 
+    @JsonIgnore
     public List<Integer> getRoleIds() {
         Set<Role> roles = this.getRoles() == null ? new HashSet<>() : this.getRoles();
         return roles.stream().map(BaseEntity::getId).collect(Collectors.toList());

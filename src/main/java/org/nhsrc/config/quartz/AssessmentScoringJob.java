@@ -18,11 +18,9 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -37,17 +35,14 @@ public class AssessmentScoringJob implements Job {
     private static List<GrantedAuthority> backgroundJobAuthorities;
 
     static {
-        backgroundJobAuthorities = new ArrayList<>();
-        backgroundJobAuthorities.add(new SimpleGrantedAuthority(Privilege.USER));
-        backgroundJobAuthorities.add(new SimpleGrantedAuthority(Privilege.ASSESSMENT_READ));
-        backgroundJobAuthorities.add(new SimpleGrantedAuthority(Privilege.ASSESSMENT_WRITE));
+        backgroundJobAuthorities = Privilege.createAuthorities(Privilege.USER, Privilege.ASSESSMENT_READ, Privilege.ASSESSMENT_WRITE);
     }
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
         logger.info("Starting job.", cronExpression);
 
-        Authentication auth = new UsernamePasswordAuthenticationToken(User.BACKGROUND_SERVICE_USERS_EMAIL, "", backgroundJobAuthorities);
+        Authentication auth = new UsernamePasswordAuthenticationToken(User.BACKGROUND_SERVICE_USER_EMAIL, "", backgroundJobAuthorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
         scoringService.scoreAssessments();
         logger.info("Completed Scoring");

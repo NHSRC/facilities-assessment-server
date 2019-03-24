@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @Table(name = "role")
 public class Role extends AbstractEntity {
     public static final String USER = "USER";
+    public static final String ADMIN = "ADMIN";
 
     @Column(name = "name")
     private String name;
@@ -35,6 +36,7 @@ public class Role extends AbstractEntity {
         this.name = name;
     }
 
+    @JsonIgnore
     public List<Integer> getPrivilegeIds() {
         return this.getPrivileges().stream().map(BaseEntity::getId).collect(Collectors.toList());
     }

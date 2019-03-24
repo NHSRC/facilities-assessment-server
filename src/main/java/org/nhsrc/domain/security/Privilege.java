@@ -1,11 +1,19 @@
 package org.nhsrc.domain.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.nhsrc.domain.AssessmentToolMode;
 import org.nhsrc.domain.BaseEntity;
 import org.nhsrc.domain.State;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "privilege")
@@ -14,18 +22,17 @@ public class Privilege extends BaseEntity {
     public static final String USER = "ROLE_User";
     public static final String ASSESSMENT_READ = "ROLE_Assessment_Read";
     public static final String ASSESSMENT_WRITE = "ROLE_Assessment_Write";
+    public static final String USERS_WRITE = "ROLE_Users_Write";
 
     @Column(name = "name")
     private String name;
 
     @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id")
-    @NotNull
     private State state;
 
     @ManyToOne(targetEntity = AssessmentToolMode.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_mode_id")
-    @NotNull
     private AssessmentToolMode assessmentToolMode;
 
     public String getName() {
@@ -36,14 +43,26 @@ public class Privilege extends BaseEntity {
         this.name = name;
     }
 
+    @JsonIgnore
     public State getState() {
         return state;
+    }
+
+    @JsonProperty("stateId")
+    public Integer _getStateId() {
+        return state == null ? null : state.getId();
+    }
+
+    @JsonProperty("assessmentToolModeId")
+    public Integer _getAssessmentToolModeId() {
+        return state == null ? null : state.getId();
     }
 
     public void setState(State state) {
         this.state = state;
     }
 
+    @JsonIgnore
     public AssessmentToolMode getAssessmentToolMode() {
         return assessmentToolMode;
     }
@@ -54,5 +73,9 @@ public class Privilege extends BaseEntity {
 
     public boolean satisfies(String privilegeName, String programName) {
         return this.getName().equals(privilegeName) && (this.getAssessmentToolMode() == null || this.getAssessmentToolMode().getName().equals(programName));
+    }
+
+    public static List<GrantedAuthority> createAuthorities(String ... privileges) {
+        return Arrays.stream(privileges).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 }
