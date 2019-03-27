@@ -151,7 +151,7 @@ public class FacilityAssessmentController {
         AssessmentTool assessmentTool = assessmentToolRepository.findByNameAndAssessmentToolModeName(assessmentToolName, programName);
         if (assessmentTool == null) {
             AssessmentToolMode program = assessmentToolModeRepository.findByName(programName);
-            throw new GunakAPIException(program == null ? GunakAPIException.INVALID_PROGRAM_NAME : GunakAPIException.INVALID_ASSESSMENT_TOOL_NAME);
+            throw new GunakAPIException(program == null ? GunakAPIException.INVALID_PROGRAM_NAME : GunakAPIException.INVALID_ASSESSMENT_TOOL_NAME, HttpStatus.BAD_REQUEST);
         }
         checkAccess(principal, programName);
         return facilityAssessmentRepository.findByAssessmentToolIdAndEndDateGreaterThanEqualOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentEndDateTime, pageable).map(source -> AssessmentMapper.map(new AssessmentSummaryResponse(), source, assessmentTool));
@@ -160,23 +160,30 @@ public class FacilityAssessmentController {
     private void checkAccess(Principal principal, @NotNull @Param("programName") String programName) {
         User user = userService.findSubmissionUser(principal);
         if (user.hasPrivilege(Privilege.ASSESSMENT_READ, programName)) {
-            throw new GunakAPIException("");
+            throw new GunakAPIException("", HttpStatus.FORBIDDEN);
         }
     }
 
     @RequestMapping(value = "ext/assessment/{systemId}", method = {RequestMethod.GET})
-    public AssessmentResponse getAssessmentResponse(Principal principal, @PathVariable("systemId") String systemId) {
-        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(UUID.fromString(systemId));
-        if (facilityAssessment == null) throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_SYSTEM_ID);
+    public AssessmentResponse getAssessmentResponse(Principal principal, @PathVariable("systemId") @NotNull String systemId) {
+        UUID uuid = null;
+        try {
+            uuid = UUID.fromString(systemId);
+        } catch (IllegalArgumentException e) {
+            throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_SYSTEM_ID, HttpStatus.BAD_REQUEST);
+        }
+
+        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(uuid);
+        if (facilityAssessment == null) throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_SYSTEM_ID, HttpStatus.BAD_REQUEST);
         checkAccess(principal, facilityAssessment.getAssessmentTool().getAssessmentToolMode().getName());
 
         AssessmentResponse assessmentResponse = (AssessmentResponse) AssessmentMapper.map(new AssessmentResponse(), facilityAssessment, facilityAssessment.getAssessmentTool());
         List<CheckpointScore> scores = checkpointScoreRepository.findByFacilityAssessmentId(facilityAssessment.getId());
         scores.forEach(checkpointScore -> {
-            AssessmentResponse.ChecklistAssessment checklistAssessment = CollectionUtil.addIfNotExists(assessmentResponse.getChecklists(), x -> x.getName().equals(checkpointScore.getCheckpoint().getChecklist().getName()), new AssessmentResponse.ChecklistAssessment());
-            AssessmentResponse.AreaOfConcernAssessment areaOfConcernAssessment = CollectionUtil.addIfNotExists(checklistAssessment.getAreaOfConcerns(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getReference()), new AssessmentResponse.AreaOfConcernAssessment());
-            AssessmentResponse.StandardAssessment standardAssessment = CollectionUtil.addIfNotExists(areaOfConcernAssessment.getStandards(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference()), new AssessmentResponse.StandardAssessment());
-            AssessmentResponse.MeasurableElementAssessment measurableElementAssessment = CollectionUtil.addIfNotExists(standardAssessment.getMeasurableElements(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getReference()), new AssessmentResponse.MeasurableElementAssessment());
+            AssessmentResponse.ChecklistAssessment checklistAssessment = CollectionUtil.addIfNotExists(assessmentResponse.getChecklists(), x -> x.getName().equals(checkpointScore.getCheckpoint().getChecklist().getName()), new AssessmentResponse.ChecklistAssessment(checkpointScore.getCheckpoint().getChecklist().getName()));
+            AssessmentResponse.AreaOfConcernAssessment areaOfConcernAssessment = CollectionUtil.addIfNotExists(checklistAssessment.getAreaOfConcerns(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getReference()), new AssessmentResponse.AreaOfConcernAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getReference()));
+            AssessmentResponse.StandardAssessment standardAssessment = CollectionUtil.addIfNotExists(areaOfConcernAssessment.getStandards(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference()), new AssessmentResponse.StandardAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference()));
+            AssessmentResponse.MeasurableElementAssessment measurableElementAssessment = CollectionUtil.addIfNotExists(standardAssessment.getMeasurableElements(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getReference()), new AssessmentResponse.MeasurableElementAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getReference()));
 
             AssessmentResponse.CheckpointAssessment checkpointAssessment = new AssessmentResponse.CheckpointAssessment();
             checkpointAssessment.setCheckpoint(checkpointScore.getCheckpoint().getName());

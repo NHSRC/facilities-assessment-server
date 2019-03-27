@@ -47,14 +47,15 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
 
     public static class ChecklistAssessment {
         private String name;
+
+        public ChecklistAssessment(String name) {
+            this.name = name;
+        }
+
         private List<AreaOfConcernAssessment> areaOfConcerns = new ArrayList<>();
 
         public String getName() {
             return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
         }
 
         public List<AreaOfConcernAssessment> getAreaOfConcerns() {
@@ -66,12 +67,12 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         private String reference;
         private List<StandardAssessment> standards = new ArrayList<>();
 
-        public String getReference() {
-            return reference;
+        public AreaOfConcernAssessment(String reference) {
+            this.reference = reference;
         }
 
-        public void setReference(String reference) {
-            this.reference = reference;
+        public String getReference() {
+            return reference;
         }
 
         public List<StandardAssessment> getStandards() {
@@ -83,12 +84,12 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         private String reference;
         private List<MeasurableElementAssessment> measurableElements = new ArrayList<>();
 
-        public String getReference() {
-            return reference;
+        public StandardAssessment(String reference) {
+            this.reference = reference;
         }
 
-        public void setReference(String reference) {
-            this.reference = reference;
+        public String getReference() {
+            return reference;
         }
 
         public List<MeasurableElementAssessment> getMeasurableElements() {
@@ -100,12 +101,12 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         private String reference;
         private List<CheckpointAssessment> checkpointAssessments = new ArrayList<>();
 
-        public String getReference() {
-            return reference;
+        public MeasurableElementAssessment(String reference) {
+            this.reference = reference;
         }
 
-        public void setReference(String reference) {
-            this.reference = reference;
+        public String getReference() {
+            return reference;
         }
 
         public List<CheckpointAssessment> getCheckpointAssessments() {

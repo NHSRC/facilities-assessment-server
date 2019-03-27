@@ -17,9 +17,9 @@ import java.util.List;
 @Repository
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "checkpointScore", path = "checkpointScore")
-@PreAuthorize("hasRole('Assessment_Read')")
 public interface CheckpointScoreRepository extends TxDataRepository<CheckpointScore> {
     @RestResource(path = "lastModified", rel = "lastModified")
+    @PreAuthorize("hasRole('Assessment_Read')")
     Page<CheckpointScore> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "lastModifiedByDeviceId", rel = "lastModifiedByDeviceId")
@@ -30,6 +30,7 @@ public interface CheckpointScoreRepository extends TxDataRepository<CheckpointSc
     CheckpointScore findByCheckpointAndFacilityAssessmentAndChecklist(Checkpoint checkpoint, FacilityAssessment facilityAssessment, Checklist checklist);
 
     @RestResource(path = "byAssessmentId", rel = "byAssessmentId")
+    @PreAuthorize("hasRole('Assessment_Read')")
     Page<CheckpointScore> findByFacilityAssessmentId(@Param("assessmentId") int assessmentId, Pageable pageable);
 
     List<CheckpointScore> findByFacilityAssessmentId(int assessmentId);
@@ -38,6 +39,7 @@ public interface CheckpointScoreRepository extends TxDataRepository<CheckpointSc
     List<CheckpointScore> findByFacilityAssessmentIdAndChecklistName(int assessmentId, String checklistName);
 
     @RestResource(path = "findAllById", rel = "findAllById")
+    @PreAuthorize("hasRole('Assessment_Read')")
     List<CheckpointScore> findByIdIn(@Param("ids") Integer[] ids);
 
     @PreAuthorize("permitAll()")

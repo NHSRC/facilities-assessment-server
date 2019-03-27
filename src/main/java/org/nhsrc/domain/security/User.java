@@ -65,22 +65,9 @@ public class User extends AbstractEntity {
         return this.roles == null ? new HashSet<>() : this.roles;
     }
 
-    @JsonIgnore
     public List<Integer> getRoleIds() {
         Set<Role> roles = this.getRoles() == null ? new HashSet<>() : this.getRoles();
         return roles.stream().map(BaseEntity::getId).collect(Collectors.toList());
-    }
-
-    public Set<Privilege> getPrivileges() {
-        Set<Privilege> privileges = new HashSet<>();
-        roles.forEach(role -> {
-            privileges.addAll(role.getPrivileges());
-        });
-        return privileges;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
     }
 
     public void removeRole(Role role) {

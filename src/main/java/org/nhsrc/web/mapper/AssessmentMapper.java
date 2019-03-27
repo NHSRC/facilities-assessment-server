@@ -1,7 +1,6 @@
 package org.nhsrc.web.mapper;
 
-import org.nhsrc.domain.AssessmentTool;
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.*;
 import org.nhsrc.web.contract.ext.AssessmentSummaryResponse;
 
 public class AssessmentMapper {
@@ -11,10 +10,13 @@ public class AssessmentMapper {
         summary.setAssessmentStartDate(source.getStartDate());
         summary.setAssessmentTool(assessmentTool.getName());
         summary.setAssessmentType(source.getAssessmentType().getName());
-        summary.setDistrict(source.getDistrict().getName());
-        summary.setState(source.getState().getName());
+        District district = source.getDistrict();
+        summary.setDistrict(district == null ? "" : district.getName());
+        State state = source.getState();
+        summary.setState(state == null ? "" : state.getName());
         summary.setFacility(source.getEffectiveFacilityName());
-        summary.setFacilityType(source.getFacilityType().getName());
+        FacilityType facilityType = source.getFacilityType();
+        summary.setFacilityType(facilityType == null ? "" : facilityType.getName());
         summary.setProgram(source.getAssessmentTool().getAssessmentToolMode().getName());
         summary.setSystemId(source.getUuidString());
         return summary;
