@@ -1,6 +1,7 @@
 package org.nhsrc.domain.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.nhsrc.domain.AbstractEntity;
 import org.nhsrc.domain.BaseEntity;
 import org.springframework.data.annotation.Transient;
@@ -68,6 +69,15 @@ public class User extends AbstractEntity {
     public List<Integer> getRoleIds() {
         Set<Role> roles = this.getRoles() == null ? new HashSet<>() : this.getRoles();
         return roles.stream().map(BaseEntity::getId).collect(Collectors.toList());
+    }
+
+    // Used by web app to get the privileges for the user
+    public Set<Privilege> getPrivileges() {
+        Set<Privilege> privileges = new HashSet<>();
+        roles.forEach(role -> {
+            privileges.addAll(role.getPrivileges());
+        });
+        return privileges;
     }
 
     public void removeRole(Role role) {
