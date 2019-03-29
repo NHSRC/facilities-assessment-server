@@ -165,7 +165,7 @@ public class FacilityAssessmentController {
 
     private void checkAccess(Principal principal, @NotNull @Param("programName") String programName) {
         User user = userService.findSubmissionUser(principal);
-        if (!user.hasPrivilege(Privilege.ASSESSMENT_READ.getName(), programName)) {
+        if (!user.hasPrivilege(Privilege.ASSESSMENT_READ, programName)) {
             throw new GunakAPIException("Either you have not lo", HttpStatus.UNAUTHORIZED);
         }
     }

@@ -96,8 +96,8 @@ public class User extends AbstractEntity {
         roles.add(role);
     }
 
-    public boolean hasPrivilege(String privilegeName, String programName) {
-        Role role = this.getRoles().stream().filter(x -> x.hasPrivilege(privilegeName, programName)).findFirst().orElse(null);
+    public boolean hasPrivilege(PrivilegeName privilegeName, String programName) {
+        Role role = this.getRoles().stream().filter(x -> x.hasPrivilege(privilegeName.getName(), programName)).findFirst().orElse(null);
         return role != null;
     }
 }
