@@ -60,7 +60,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
                 .antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist", "/api/facility-assessment/indicator", "/api/facility-assessment/**", "/api/facility-assessment").permitAll();
 
         permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
-        registry.antMatchers(new String[]{"/api/currentUser", "/api/loginSuccess"}).hasRole(Privilege.USER_WITHOUT_PREFIX);
+        registry.antMatchers(new String[]{"/api/currentUser", "/api/loginSuccess"}).hasRole(Privilege.USER.getName());
         if (isSecure) {
             String[] protectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user", "facilityAssessmentMissingCheckpoint"};
             permittedResourcesForOneDevice(protectedResources, registry);
@@ -91,7 +91,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
     private void permittedResourcesWithAuthority(String[] patterns, ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
         Arrays.stream(patterns).forEach(s -> {
-            registry.antMatchers(String.format("/api/%s", s)).hasRole(Privilege.USER_WITHOUT_PREFIX);
+            registry.antMatchers(String.format("/api/%s", s)).hasRole(Privilege.USER.getName());
         });
     }
 

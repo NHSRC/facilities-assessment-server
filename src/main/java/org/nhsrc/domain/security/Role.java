@@ -36,7 +36,7 @@ public class Role extends BaseEntity {
         this.name = name;
     }
 
-    @JsonIgnore
+    // Used by the web app
     public List<Integer> getPrivilegeIds() {
         return this.getPrivileges().stream().map(BaseEntity::getId).collect(Collectors.toList());
     }

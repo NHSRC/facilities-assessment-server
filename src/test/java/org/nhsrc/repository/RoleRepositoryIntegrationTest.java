@@ -21,7 +21,7 @@ public class RoleRepositoryIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void privilegesMapping() {
-        this.provideAuthority(Privilege.USERS_WRITE);
+        this.provideAuthority(Privilege.USERS_WRITE.getSpringName());
         Role adminRole = roleRepository.findByName(Role.ADMIN);
         assertNotEquals(0, adminRole.getPrivileges().size());
     }

@@ -146,8 +146,10 @@ public class FacilityAssessmentController {
     }
 
     @RequestMapping(value = "ext/assessmentSummary", method = {RequestMethod.GET})
+    @PreAuthorize("hasRole('User')")
     // TODO: Find appropriate status code for privilege denied; Test with null values. Fix district/state in the db or put a null check.
     public Page<AssessmentSummaryResponse> listAssessments(Principal principal, @Param("assessmentEndDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date assessmentEndDateTime, @Param("assessmentToolName") @NotNull String assessmentToolName, @Param("programName") @NotNull String programName, Pageable pageable) {
+        verifyLoggedIn(principal);
         AssessmentTool assessmentTool = assessmentToolRepository.findByNameAndAssessmentToolModeName(assessmentToolName, programName);
         if (assessmentTool == null) {
             AssessmentToolMode program = assessmentToolModeRepository.findByName(programName);
@@ -157,14 +159,19 @@ public class FacilityAssessmentController {
         return facilityAssessmentRepository.findByAssessmentToolIdAndEndDateGreaterThanEqualOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentEndDateTime, pageable).map(source -> AssessmentMapper.map(new AssessmentSummaryResponse(), source, assessmentTool));
     }
 
+    private void verifyLoggedIn(Principal principal) {
+
+    }
+
     private void checkAccess(Principal principal, @NotNull @Param("programName") String programName) {
         User user = userService.findSubmissionUser(principal);
-        if (user.hasPrivilege(Privilege.ASSESSMENT_READ, programName)) {
-            throw new GunakAPIException("", HttpStatus.FORBIDDEN);
+        if (!user.hasPrivilege(Privilege.ASSESSMENT_READ.getName(), programName)) {
+            throw new GunakAPIException("Either you have not lo", HttpStatus.UNAUTHORIZED);
         }
     }
 
     @RequestMapping(value = "ext/assessment/{systemId}", method = {RequestMethod.GET})
+    @PreAuthorize("hasRole('User')")
     public AssessmentResponse getAssessmentResponse(Principal principal, @PathVariable("systemId") @NotNull String systemId) {
         UUID uuid = null;
         try {

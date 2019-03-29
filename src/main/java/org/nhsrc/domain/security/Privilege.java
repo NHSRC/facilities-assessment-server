@@ -18,11 +18,10 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "privilege")
 public class Privilege extends BaseEntity {
-    public static final String USER_WITHOUT_PREFIX = "User";
-    public static final String USER = "ROLE_User";
-    public static final String ASSESSMENT_READ = "ROLE_Assessment_Read";
-    public static final String ASSESSMENT_WRITE = "ROLE_Assessment_Write";
-    public static final String USERS_WRITE = "ROLE_Users_Write";
+    public static final PrivilegeName USER = new PrivilegeName("User");
+    public static final PrivilegeName ASSESSMENT_READ = new PrivilegeName("Assessment_Read");
+    public static final PrivilegeName ASSESSMENT_WRITE = new PrivilegeName("Assessment_Write");
+    public static final PrivilegeName USERS_WRITE = new PrivilegeName("Users_Write");
 
     @Column(name = "name")
     private String name;
@@ -55,7 +54,7 @@ public class Privilege extends BaseEntity {
 
     @JsonProperty("assessmentToolModeId")
     public Integer _getAssessmentToolModeId() {
-        return state == null ? null : state.getId();
+        return assessmentToolMode == null ? null : assessmentToolMode.getId();
     }
 
     public void setState(State state) {

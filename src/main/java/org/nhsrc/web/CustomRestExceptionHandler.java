@@ -39,7 +39,7 @@ public class CustomRestExceptionHandler {
             logger.info(apiError.toString());
             return new ResponseEntity<>(apiError, gunakAPIException.getHttpStatusCode());
         } else if (e instanceof AccessDeniedException) {
-            return handleException(e, HttpStatus.UNAUTHORIZED, "You are not authorised to access the API. Please contact support if you need help.");
+            return handleException(e, HttpStatus.UNAUTHORIZED, "You are not authorised to access the API. Ensure that you have logged in. Else please contact support if you need help.");
         } else if (e instanceof InvalidDataAccessApiUsageException) {
             return handleException(e, HttpStatus.BAD_REQUEST, "One or more request parameter is missing");
         } else if (e instanceof ConversionFailedException) {

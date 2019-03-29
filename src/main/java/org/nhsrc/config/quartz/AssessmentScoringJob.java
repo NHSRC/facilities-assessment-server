@@ -35,7 +35,7 @@ public class AssessmentScoringJob implements Job {
     private static List<GrantedAuthority> backgroundJobAuthorities;
 
     static {
-        backgroundJobAuthorities = Privilege.createAuthorities(Privilege.USER, Privilege.ASSESSMENT_READ, Privilege.ASSESSMENT_WRITE);
+        backgroundJobAuthorities = Privilege.createAuthorities(Privilege.USER.getSpringName(), Privilege.ASSESSMENT_READ.getSpringName(), Privilege.ASSESSMENT_WRITE.getSpringName());
     }
 
     @Override
