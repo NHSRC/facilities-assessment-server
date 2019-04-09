@@ -43,11 +43,10 @@ define _restart_service
 endef
 
 define _deploy_prod
-	ssh $1 "sudo systemctl stop fab"
 	ssh $1 "cp -f /home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar /tmp/"
 	ssh $1 "rm -rf /home/app/facilities-assessment-host/app-servers/*.jar"
 	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
-	ssh $1 "sudo systemctl start fab"
+	ssh $1 "sudo systemctl restart fab"
 	$(call _tail_server_prod,$1)
 endef
 
