@@ -13,19 +13,23 @@ define _run_server
 	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3
 endef
 
-define _tail_server_qa
-	ssh $1 "tail -f /home/app/qa-server/facilities-assessment-host/app-servers/log/facilities_assessment.log"
-endef
-
-define _tail_server_prod
-	ssh $1 "tail -n 500 -f /home/app/facilities-assessment-host/app-servers/log/facilities_assessment.log"
+define _tail_server
+	ssh $1 "tail -n 500 -f /home/app/$2/facilities-assessment-host/app-servers/log/facilities_assessment.log"
 endef
 
 define _deploy_qa
-	$(call _stop_service,$1,qa-fab)
 	ssh $1 "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
 	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
-	$(call _start_service,$1,qa-fab)
+	$(call _restart_service,$1,qa-fab)
+	$(call _tail_server,$1,qa-fab)
+endef
+
+define _deploy_prod
+	ssh $1 "cp -f /home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar /tmp/"
+	ssh $1 "rm -rf /home/app/facilities-assessment-host/app-servers/*.jar"
+	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
+	$(call _restart_service,$1,fab)
+	$(call _tail_server,$1,)
 endef
 
 define _stop_service
@@ -34,20 +38,10 @@ endef
 
 define _start_service
 	ssh $1 "sudo systemctl start $2"
-	$(call _tail_server_qa,$1)
 endef
 
 define _restart_service
-	$(call _stop_service,$1,qa-fab)
-	$(call _start_service,$1,qa-fab)
-endef
-
-define _deploy_prod
-	ssh $1 "cp -f /home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar /tmp/"
-	ssh $1 "rm -rf /home/app/facilities-assessment-host/app-servers/*.jar"
-	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
-	ssh $1 "sudo systemctl restart fab"
-	$(call _tail_server_prod,$1)
+	-ssh $1 "sudo systemctl restart $2"
 endef
 
 define _debug_server
@@ -142,16 +136,16 @@ deploy_to_nhsrc_prod: build_server
 
 # Tail
 tail_server_jss_qa:
-	$(call _tail_server_qa,igunatmac)
+	$(call _tail_server,igunatmac,qa-server)
 
 tail_server_jss_prod:
-	$(call _tail_server_prod,igunatmac)
+	$(call _tail_server,igunatmac,)
 
 tail_server_nhsrc_prod:
-	$(call _tail_server_prod,gunak-main)
+	$(call _tail_server,gunak-main,)
 
 tail_server_nhsrc_qa:
-	$(call _tail_server_qa,gunak-other)
+	$(call _tail_server,gunak-other,qa-server)
 
 # Service stop/start/restart
 restart_service_nhsrc_qa:
