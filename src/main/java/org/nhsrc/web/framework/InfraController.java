@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class InfraController {
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.HEAD})
     public void root(HttpServletResponse httpServletResponse) {
         httpServletResponse.setHeader("Location", "/app/index.html");
         httpServletResponse.setStatus(302);

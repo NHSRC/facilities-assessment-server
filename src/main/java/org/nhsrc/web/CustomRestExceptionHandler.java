@@ -2,6 +2,7 @@ package org.nhsrc.web;
 
 import com.bugsnag.Bugsnag;
 import com.bugsnag.Report;
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.nhsrc.web.contract.ext.APIError;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -44,6 +46,11 @@ public class CustomRestExceptionHandler {
             return handleException(e, HttpStatus.BAD_REQUEST, "One or more request parameter is missing");
         } else if (e instanceof ConversionFailedException) {
             return handleException(e, HttpStatus.BAD_REQUEST, "Data type conversion failed. Possible reasons could be - date format being incorrect.");
+        } else if (e instanceof NoHandlerFoundException) {
+            return handleException(e, HttpStatus.BAD_REQUEST, "No such URL and HTTP method combination exists.");
+        } else if (e instanceof ClientAbortException) {
+            logger.error(e.getMessage(), e);
+            return null;
         } else {
             Report report = bugsnag.buildReport(e);
             bugsnag.notify(report);
