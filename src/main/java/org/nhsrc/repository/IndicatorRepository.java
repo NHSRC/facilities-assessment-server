@@ -33,7 +33,9 @@ public interface IndicatorRepository extends TxDataRepository<Indicator> {
     List<Indicator> findByIdIn(@Param("ids") Integer[] ids);
 
     @RestResource(path = "findByFacilityAssessment", rel = "findByFacilityAssessment")
-    Page<Indicator> findByFacilityAssessmentId(@Param("facilityAssessmentId") Integer stateId, Pageable pageable);
+    Page<Indicator> findByFacilityAssessmentId(@Param("facilityAssessmentId") Integer facilityAssessmentId, Pageable pageable);
+
+    List<Indicator> findByFacilityAssessmentIdOrderByIndicatorDefinitionSortOrder(Integer facilityAssessmentId);
 
     @PreAuthorize("permitAll()")
     void deleteAllByFacilityAssessmentId(@Param("facilityAssessmentId") Integer facilityAssessmentId);

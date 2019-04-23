@@ -1,12 +1,64 @@
 package org.nhsrc.web.contract.ext;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.nhsrc.domain.AssessmentTool;
+import org.nhsrc.domain.AssessmentToolType;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AssessmentResponse extends AssessmentSummaryResponse {
     private List<ChecklistAssessment> checklists = new ArrayList<>();
-    private int numberOfChecklists;
-    private int totalNumberOfScoredCheckpoints;
+    private List<IndicatorAssessment> indicators = new ArrayList<>();
+    private Integer numberOfIndicators;
+    private Integer numberOfChecklists;
+    private Integer totalNumberOfScoredCheckpoints;
+
+    public static AssessmentResponse createNew(AssessmentTool assessmentTool) {
+        AssessmentResponse assessmentResponse = new AssessmentResponse();
+        // The response is polymorphic in nature, for API UX set values to null so that they do not show up in the response body as empty/0
+        if (assessmentTool.getAssessmentToolType().equals(AssessmentToolType.INDICATOR)) {
+            assessmentResponse.checklists = null;
+            assessmentResponse.numberOfChecklists = assessmentResponse.totalNumberOfScoredCheckpoints = null;
+        } else {
+            assessmentResponse.indicators = null;
+            assessmentResponse.numberOfIndicators = null;
+        }
+
+        return assessmentResponse;
+    }
+
+    public static class IndicatorAssessment {
+        private String name;
+        private String dataType;
+        private String value;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDataType() {
+            return dataType;
+        }
+
+        public void setDataType(String dataType) {
+            this.dataType = dataType;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+    }
 
     public static class CheckpointAssessment {
         private String checkpoint;
@@ -50,6 +102,7 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
     public static class ChecklistAssessment {
         private String name;
         private int numberOfAreaOfConcerns;
+        private int numberOfCheckpoints;
 
         public ChecklistAssessment(String name) {
             this.name = name;
@@ -73,9 +126,14 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
             this.numberOfAreaOfConcerns = numberOfAreaOfConcerns;
         }
 
+        public int getNumberOfCheckpoints() {
+            return numberOfCheckpoints;
+        }
+
         public void updateCounts() {
             this.numberOfAreaOfConcerns = this.getAreaOfConcerns().size();
             this.getAreaOfConcerns().forEach(AreaOfConcernAssessment::updateCounts);
+            this.numberOfCheckpoints = this.getAreaOfConcerns().stream().map(AreaOfConcernAssessment::getCheckpointCount).reduce((a, b) -> a + b).get();
         }
     }
 
@@ -108,6 +166,10 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
             this.numberOfStandards = this.getStandards().size();
             this.standards.forEach(StandardAssessment::updateCounts);
         }
+
+        public int getCheckpointCount() {
+            return this.getStandards().stream().map(standardAssessment -> standardAssessment.getCheckpointCount()).reduce((a, b) -> a + b).get();
+        }
     }
 
     public static class StandardAssessment {
@@ -138,6 +200,10 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         public void updateCounts() {
             this.numberOfMeasurableElements = this.getMeasurableElements().size();
             this.measurableElements.forEach(MeasurableElementAssessment::updateCounts);
+        }
+
+        public int getCheckpointCount() {
+            return this.getMeasurableElements().stream().map(MeasurableElementAssessment::getNumberOfCheckpoints).reduce((a, b) -> a + b).get();
         }
     }
 
@@ -179,7 +245,7 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         this.checklists = checklists;
     }
 
-    public int getNumberOfChecklists() {
+    public Integer getNumberOfChecklists() {
         return numberOfChecklists;
     }
 
@@ -189,7 +255,23 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         this.totalNumberOfScoredCheckpoints = size;
     }
 
-    public int getTotalNumberOfScoredCheckpoints() {
+    public Integer getTotalNumberOfScoredCheckpoints() {
         return totalNumberOfScoredCheckpoints;
+    }
+
+    public List<IndicatorAssessment> getIndicators() {
+        return indicators;
+    }
+
+    public void setIndicators(List<IndicatorAssessment> indicators) {
+        this.indicators = indicators;
+    }
+
+    public Integer getNumberOfIndicators() {
+        return numberOfIndicators;
+    }
+
+    public void setNumberOfIndicators(Integer numberOfIndicators) {
+        this.numberOfIndicators = numberOfIndicators;
     }
 }

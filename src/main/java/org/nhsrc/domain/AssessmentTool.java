@@ -78,6 +78,10 @@ public class AssessmentTool extends AbstractEntity {
         return checklists;
     }
 
+    public AssessmentToolType getAssessmentToolType() {
+        return assessmentToolType;
+    }
+
     @Override
     public String toString() {
         return "AssessmentTool{" +

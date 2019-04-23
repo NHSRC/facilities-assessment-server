@@ -1,9 +1,6 @@
 package org.nhsrc.web;
 
-import org.nhsrc.domain.AssessmentTool;
-import org.nhsrc.domain.AssessmentToolMode;
-import org.nhsrc.domain.CheckpointScore;
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.*;
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
@@ -15,7 +12,6 @@ import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
 import org.nhsrc.service.UserService;
-import org.nhsrc.utils.CollectionUtil;
 import org.nhsrc.web.contract.ext.AssessmentResponse;
 import org.nhsrc.web.contract.ext.AssessmentSummaryResponse;
 import org.nhsrc.web.mapper.AssessmentMapper;
@@ -51,9 +47,10 @@ public class FacilityAssessmentController {
     private static Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
     private ExcelImportService excelImportService;
     private CheckpointScoreRepository checkpointScoreRepository;
+    private IndicatorRepository indicatorRepository;
 
     @Autowired
-    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, StateRepository stateRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, FacilityRepository facilityRepository, AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, CheckpointScoreRepository checkpointScoreRepository) {
+    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, CheckpointScoreRepository checkpointScoreRepository, IndicatorRepository indicatorRepository) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
@@ -62,6 +59,7 @@ public class FacilityAssessmentController {
         this.assessmentToolRepository = assessmentToolRepository;
         this.assessmentToolModeRepository = assessmentToolModeRepository;
         this.checkpointScoreRepository = checkpointScoreRepository;
+        this.indicatorRepository = indicatorRepository;
     }
 
     @RequestMapping(value = "facility-assessment", method = RequestMethod.POST)
@@ -149,7 +147,6 @@ public class FacilityAssessmentController {
     @PreAuthorize("hasRole('User')")
     // TODO: Find appropriate status code for privilege denied; Test with null values. Fix district/state in the db or put a null check.
     public Page<AssessmentSummaryResponse> listAssessments(Principal principal, @Param("assessmentEndDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date assessmentEndDateTime, @Param("assessmentToolName") @NotNull String assessmentToolName, @Param("programName") @NotNull String programName, Pageable pageable) {
-        verifyLoggedIn(principal);
         AssessmentTool assessmentTool = assessmentToolRepository.findByNameAndAssessmentToolModeName(assessmentToolName, programName);
         if (assessmentTool == null) {
             AssessmentToolMode program = assessmentToolModeRepository.findByName(programName);
@@ -157,10 +154,6 @@ public class FacilityAssessmentController {
         }
         checkAccess(principal, programName);
         return facilityAssessmentRepository.findByAssessmentToolIdAndEndDateGreaterThanEqualOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentEndDateTime, pageable).map(source -> AssessmentMapper.map(new AssessmentSummaryResponse(), source, assessmentTool));
-    }
-
-    private void verifyLoggedIn(Principal principal) {
-
     }
 
     private void checkAccess(Principal principal, @NotNull @Param("programName") String programName) {
@@ -184,22 +177,12 @@ public class FacilityAssessmentController {
         if (facilityAssessment == null) throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_SYSTEM_ID, HttpStatus.BAD_REQUEST);
         checkAccess(principal, facilityAssessment.getAssessmentTool().getAssessmentToolMode().getName());
 
-        AssessmentResponse assessmentResponse = (AssessmentResponse) AssessmentMapper.map(new AssessmentResponse(), facilityAssessment, facilityAssessment.getAssessmentTool());
-        List<CheckpointScore> scores = checkpointScoreRepository.findByFacilityAssessmentId(facilityAssessment.getId());
-        scores.forEach(checkpointScore -> {
-            AssessmentResponse.ChecklistAssessment checklistAssessment = CollectionUtil.addIfNotExists(assessmentResponse.getChecklists(), x -> x.getName().equals(checkpointScore.getCheckpoint().getChecklist().getName()), new AssessmentResponse.ChecklistAssessment(checkpointScore.getCheckpoint().getChecklist().getName()));
-            AssessmentResponse.AreaOfConcernAssessment areaOfConcernAssessment = CollectionUtil.addIfNotExists(checklistAssessment.getAreaOfConcerns(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getReference()), new AssessmentResponse.AreaOfConcernAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getReference()));
-            AssessmentResponse.StandardAssessment standardAssessment = CollectionUtil.addIfNotExists(areaOfConcernAssessment.getStandards(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference()), new AssessmentResponse.StandardAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference()));
-            AssessmentResponse.MeasurableElementAssessment measurableElementAssessment = CollectionUtil.addIfNotExists(standardAssessment.getMeasurableElements(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getReference()), new AssessmentResponse.MeasurableElementAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getReference()));
-
-            AssessmentResponse.CheckpointAssessment checkpointAssessment = new AssessmentResponse.CheckpointAssessment();
-            checkpointAssessment.setCheckpoint(checkpointScore.getCheckpoint().getName());
-            checkpointAssessment.setMarkedNotApplicable(checkpointScore.getNa());
-            checkpointAssessment.setRemarks(checkpointScore.getRemarks());
-            checkpointAssessment.setScore(checkpointScore.getScore());
-            measurableElementAssessment.addCheckpointAssessment(checkpointAssessment);
-        });
-        assessmentResponse.updateCounts(scores.size());
-        return assessmentResponse;
+        AssessmentResponse assessmentResponse = AssessmentResponse.createNew(facilityAssessment.getAssessmentTool());
+        AssessmentMapper.map(assessmentResponse, facilityAssessment, facilityAssessment.getAssessmentTool());
+        if (facilityAssessment.getAssessmentTool().getAssessmentToolType().equals(AssessmentToolType.COMPLIANCE)) {
+            return AssessmentMapper.mapAssessmentScores(facilityAssessment, assessmentResponse, checkpointScoreRepository);
+        } else {
+            return AssessmentMapper.mapIndicators(facilityAssessment, assessmentResponse, indicatorRepository);
+        }
     }
 }

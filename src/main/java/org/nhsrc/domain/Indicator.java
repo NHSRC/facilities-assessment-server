@@ -6,12 +6,15 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Table(name = "indicator")
 public class Indicator extends BaseEntity {
+    private static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
     @Column(name = "numeric_value")
     private Integer numericValue;
 
@@ -89,5 +92,20 @@ public class Indicator extends BaseEntity {
 
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
+    }
+
+    public String getValue() {
+        IndicatorDataType dataType = this.getIndicatorDefinition().getDataType();
+        switch (dataType) {
+            case Date:
+            case Month:
+                return dateFormatter.format(dateValue);
+            case Coded:
+                return codedValue;
+            case Numeric:
+            case Percentage:
+                return numericValue.toString();
+        }
+        throw new RuntimeException(String.format("Indicator with data type:%s that is not support", dataType));
     }
 }
