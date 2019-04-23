@@ -199,6 +199,7 @@ public class FacilityAssessmentController {
             checkpointAssessment.setScore(checkpointScore.getScore());
             measurableElementAssessment.addCheckpointAssessment(checkpointAssessment);
         });
+        assessmentResponse.updateCounts(scores.size());
         return assessmentResponse;
     }
 }
