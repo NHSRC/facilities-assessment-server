@@ -16,6 +16,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -48,6 +49,8 @@ public class CustomRestExceptionHandler {
             return handleException(e, HttpStatus.BAD_REQUEST, "Data type conversion failed. Possible reasons could be - date format being incorrect.");
         } else if (e instanceof NoHandlerFoundException) {
             return handleException(e, HttpStatus.BAD_REQUEST, "No such URL and HTTP method combination exists.");
+        } else if (e instanceof MethodArgumentTypeMismatchException) {
+            return handleException(e, HttpStatus.BAD_REQUEST, "Invalid method parameter values.");
         } else if (e instanceof ClientAbortException) {
             logger.error(e.getMessage(), e);
             return null;

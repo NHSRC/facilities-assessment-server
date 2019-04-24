@@ -156,10 +156,10 @@ public class FacilityAssessmentController {
         return facilityAssessmentRepository.findByAssessmentToolIdAndEndDateGreaterThanEqualOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentEndDateTime, pageable).map(source -> AssessmentMapper.map(new AssessmentSummaryResponse(), source, assessmentTool));
     }
 
-    private void checkAccess(Principal principal, @NotNull @Param("programName") String programName) {
+    private void checkAccess(Principal principal, String programName) {
         User user = userService.findSubmissionUser(principal);
         if (!user.hasPrivilege(Privilege.ASSESSMENT_READ, programName)) {
-            throw new GunakAPIException("Either you have not lo", HttpStatus.UNAUTHORIZED);
+            throw new GunakAPIException("Either you have not logged in or you do not have the right permission. If you have logged in please contact support.", HttpStatus.UNAUTHORIZED);
         }
     }
 

@@ -77,4 +77,9 @@ public class Privilege extends BaseEntity {
     public static List<GrantedAuthority> createAuthorities(String ... privileges) {
         return Arrays.stream(privileges).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return String.format("{name='%s', state=%s, assessmentToolMode=%s}", name, state, assessmentToolMode);
+    }
 }

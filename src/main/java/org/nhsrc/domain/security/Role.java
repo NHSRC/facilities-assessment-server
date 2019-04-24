@@ -53,4 +53,9 @@ public class Role extends BaseEntity {
         Privilege matchingPrivilege = this.getPrivileges().stream().filter(privilege -> privilege.satisfies(privilegeName, programName)).findFirst().orElse(null);
         return matchingPrivilege != null;
     }
+
+    @Override
+    public String toString() {
+        return String.format("name='%s'", name);
+    }
 }
