@@ -119,60 +119,64 @@ public class FacilityAssessmentService {
     }
 
     public List<CheckpointScore> saveChecklist(ChecklistDTO checklistDTO) {
-        Checklist checklist = checklistRepository.findByUuid(checklistDTO.getUuid());
-        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(checklistDTO.getFacilityAssessment());
-        this.clearCheckpointScores(facilityAssessment.getId(), checklist.getName());
-        List<CheckpointScore> checkpointScores = new ArrayList<>();
-        checklistDTO.getCheckpointScores().forEach(checkpointScoreDTO -> {
-            Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
-            CheckpointScore checkpointScore = checkpointScoreRepository.findByUuid(checkpointScoreDTO.getUuid());
-            if (checkpointScore == null)
-                checkpointScore = checkpointScoreRepository.findByCheckpointAndFacilityAssessmentAndChecklist(checkpoint, facilityAssessment, checklist);
+        synchronized (checklistDTO.getFacilityAssessment().toString().intern()) {
+            Checklist checklist = checklistRepository.findByUuid(checklistDTO.getUuid());
+            FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(checklistDTO.getFacilityAssessment());
+            this.clearCheckpointScores(facilityAssessment.getId(), checklist.getName());
+            List<CheckpointScore> checkpointScores = new ArrayList<>();
+            checklistDTO.getCheckpointScores().forEach(checkpointScoreDTO -> {
+                Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
+                CheckpointScore checkpointScore = checkpointScoreRepository.findByUuid(checkpointScoreDTO.getUuid());
+                if (checkpointScore == null)
+                    checkpointScore = checkpointScoreRepository.findByCheckpointAndFacilityAssessmentAndChecklist(checkpoint, facilityAssessment, checklist);
 
-            if (checkpointScore == null) {
-                checkpointScore = new CheckpointScore();
-                checkpointScore.setFacilityAssessment(facilityAssessment);
-                checkpointScore.setChecklist(checklist);
-                checkpointScore.setCheckpoint(checkpoint);
-                checkpointScore.setUuid(checkpointScoreDTO.getUuid());
-            }
-            checkpointScore.setScore(checkpointScoreDTO.getScore());
-            checkpointScore.setNa(checkpointScoreDTO.getNa());
-            checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
-            checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
-        });
-        checkpointScores.forEach(checkpointScore -> {
-            checkpointScore.getScoreNumerator();
-            checkpointScore.getScoreDenominator();
-        });
-        return checkpointScores;
+                if (checkpointScore == null) {
+                    checkpointScore = new CheckpointScore();
+                    checkpointScore.setFacilityAssessment(facilityAssessment);
+                    checkpointScore.setChecklist(checklist);
+                    checkpointScore.setCheckpoint(checkpoint);
+                    checkpointScore.setUuid(checkpointScoreDTO.getUuid());
+                }
+                checkpointScore.setScore(checkpointScoreDTO.getScore());
+                checkpointScore.setNa(checkpointScoreDTO.getNa());
+                checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
+                checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
+            });
+            checkpointScores.forEach(checkpointScore -> {
+                checkpointScore.getScoreNumerator();
+                checkpointScore.getScoreDenominator();
+            });
+            return checkpointScores;
+        }
     }
 
     public void saveIndicatorList(IndicatorListDTO indicatorListDTO) {
-        FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(indicatorListDTO.getFacilityAssessment());
-        List<Indicator> indicators = new ArrayList<>();
-        indicatorListDTO.getIndicators().forEach(indicatorDTO -> {
-            Indicator indicator = indicatorRepository.findByUuid(indicatorDTO.getUuid());
-            IndicatorDefinition indicatorDefinition = indicatorDefinitionRepository.findByUuid(indicatorDTO.getIndicatorDefinition());
-            if (indicator == null)
-                indicator = indicatorRepository.findByIndicatorDefinitionAndFacilityAssessment(indicatorDefinition, facilityAssessment);
+        synchronized (indicatorListDTO.getFacilityAssessment().toString().intern()) {
+            FacilityAssessment facilityAssessment = facilityAssessmentRepository.findByUuid(indicatorListDTO.getFacilityAssessment());
+            List<Indicator> indicators = new ArrayList<>();
+            indicatorListDTO.getIndicators().forEach(indicatorDTO -> {
+                Indicator indicator = indicatorRepository.findByUuid(indicatorDTO.getUuid());
+                IndicatorDefinition indicatorDefinition = indicatorDefinitionRepository.findByUuid(indicatorDTO.getIndicatorDefinition());
+                if (indicator == null)
+                    indicator = indicatorRepository.findByIndicatorDefinitionAndFacilityAssessment(indicatorDefinition, facilityAssessment);
 
-            if (indicator == null) {
-                indicator = new Indicator();
-                indicator.setFacilityAssessment(facilityAssessment);
-                indicator.setIndicatorDefinition(indicatorDefinition);
-                indicator.setUuid(indicatorDTO.getUuid());
-            }
-            if (indicatorDefinition.getDataType().equals(IndicatorDataType.Coded))
-                indicator.setCodedValue(indicatorDTO.getCodedValue());
-            else if (indicatorDefinition.getDataType().equals(IndicatorDataType.Date) || indicatorDefinition.getDataType().equals(IndicatorDataType.Month))
-                indicator.setDateValue(indicatorDTO.getDateValue());
-            else
-                indicator.setNumericValue(indicatorDTO.getNumericValue());
+                if (indicator == null) {
+                    indicator = new Indicator();
+                    indicator.setFacilityAssessment(facilityAssessment);
+                    indicator.setIndicatorDefinition(indicatorDefinition);
+                    indicator.setUuid(indicatorDTO.getUuid());
+                }
+                if (indicatorDefinition.getDataType().equals(IndicatorDataType.Coded))
+                    indicator.setCodedValue(indicatorDTO.getCodedValue());
+                else if (indicatorDefinition.getDataType().equals(IndicatorDataType.Date) || indicatorDefinition.getDataType().equals(IndicatorDataType.Month))
+                    indicator.setDateValue(indicatorDTO.getDateValue());
+                else
+                    indicator.setNumericValue(indicatorDTO.getNumericValue());
 
-            indicators.add(indicator);
-        });
-        indicatorRepository.save(indicators);
+                indicators.add(indicator);
+            });
+            indicatorRepository.save(indicators);
+        }
     }
 
     public void clearCheckpointScores(int facilityAssessmentId, String checklistName) {
