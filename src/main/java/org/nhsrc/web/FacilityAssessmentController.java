@@ -1,5 +1,7 @@
 package org.nhsrc.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.nhsrc.domain.*;
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
@@ -18,6 +20,7 @@ import org.nhsrc.web.mapper.AssessmentMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -48,6 +51,7 @@ public class FacilityAssessmentController {
     private ExcelImportService excelImportService;
     private CheckpointScoreRepository checkpointScoreRepository;
     private IndicatorRepository indicatorRepository;
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, CheckpointScoreRepository checkpointScoreRepository, IndicatorRepository indicatorRepository) {
@@ -86,9 +90,14 @@ public class FacilityAssessmentController {
     }
 
     @RequestMapping(value = "facility-assessment/checklist", method = RequestMethod.POST)
-    public ResponseEntity<List<CheckpointScore>> syncFacilityAssessment(@RequestBody ChecklistDTO checklist) {
-        List<CheckpointScore> checkpointScores = this.facilityAssessmentService.saveChecklist(checklist);
-        return new ResponseEntity<>(checkpointScores, HttpStatus.CREATED);
+    public ResponseEntity<List<CheckpointScore>> syncFacilityAssessment(@RequestBody ChecklistDTO checklist) throws JsonProcessingException {
+        try {
+            List<CheckpointScore> checkpointScores = this.facilityAssessmentService.saveChecklist(checklist);
+            return new ResponseEntity<>(checkpointScores, HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException e) {
+            logger.debug(objectMapper.writeValueAsString(checklist));
+            throw e;
+        }
     }
 
     @RequestMapping(value = "facility-assessment/indicator", method = RequestMethod.POST)
