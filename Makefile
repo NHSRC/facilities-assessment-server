@@ -9,12 +9,19 @@ help: ## This help dialog.
 	    printf "%-30s %s\n" $$help_command $$help_info ; \
 	done
 
-define _run_server
-	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3
+# HOST DIR
+define _set_host_dir
+	$(eval host_dir := /home/app/$1/facilities-assessment-host)
 endef
 
-define _tail_server
-	ssh $1 "tail -n 500 -f /home/app/$2/facilities-assessment-host/app-servers/log/facilities_assessment.log"
+set_host_dir_prod:
+	$(call _set_host_dir,)
+
+set_host_dir_qa:
+	$(call _set_host_dir,qa)
+
+define _run_server
+	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3
 endef
 
 define _deploy_qa
@@ -133,7 +140,11 @@ deploy_to_jss_prod: build_server
 deploy_to_nhsrc_prod: build_server
 	$(call _deploy_prod,gunak-main)
 
-# Tail
+# Logs
+define _tail_server
+	ssh $1 "tail -n 500 -f /home/app/$2/facilities-assessment-host/app-servers/log/facilities_assessment.log"
+endef
+
 tail_server_jss_qa:
 	$(call _tail_server,igunatmac,qa-server)
 
@@ -145,6 +156,12 @@ tail_server_nhsrc_prod:
 
 tail_server_nhsrc_qa:
 	$(call _tail_server,gunak-other,qa-server)
+
+inspect_log_nhsrc_prod: set_host_dir_prod
+	ssh gunak-main "ls -lt $(host_dir)/app-servers/log"
+
+download_log_nhsrc_prod: set_host_dir_prod
+	scp gunak-main:$(host_dir)/app-servers/log/$(file) log/
 
 # Service stop/start/restart
 restart_service_nhsrc_qa:
