@@ -18,6 +18,7 @@ public class CheckpointRequest {
     //legacy
     private Boolean isDefault;
     private Integer stateId;
+    private boolean isOptional;
 
     public String getUuid() {
         return uuid;
@@ -145,5 +146,13 @@ public class CheckpointRequest {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public boolean isOptional() {
+        return isOptional;
+    }
+
+    public void setOptional(boolean optional) {
+        isOptional = optional;
     }
 }
