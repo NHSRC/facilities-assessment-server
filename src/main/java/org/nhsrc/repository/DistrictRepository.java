@@ -1,6 +1,7 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.District;
+import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -34,4 +35,7 @@ public interface DistrictRepository extends NonTxDataRepository<District> {
 
     @RestResource(path = "find", rel = "find")
     Page<District> findByNameStartingWithOrderByName(@Param("q") String q, Pageable pageable);
+
+    List<District> findByNameContainingIgnoreCaseAndState(@Param("name") String name, @Param("state") State state);
+    List<District> findByNameAndState(@Param("name") String name, @Param("state") State state);
 }

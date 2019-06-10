@@ -95,7 +95,7 @@ public class FacilityAssessmentController {
             List<CheckpointScore> checkpointScores = this.facilityAssessmentService.saveChecklist(checklist);
             return new ResponseEntity<>(checkpointScores, HttpStatus.CREATED);
         } catch (DataIntegrityViolationException e) {
-            logger.debug(objectMapper.writeValueAsString(checklist));
+            logger.info(objectMapper.writeValueAsString(checklist));
             throw e;
         }
     }

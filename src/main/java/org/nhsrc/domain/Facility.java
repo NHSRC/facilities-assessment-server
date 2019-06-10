@@ -5,10 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 
 @Entity
 @Table(name = "facility")
 public class Facility extends AbstractEntity {
+    private static String[] nameQualifiers = {"Sub-District Hospital", "DISTRICT HOSPITAL", "DMO", "MCH", "GOVT", "Community Health Centre", "District Women Hospital", "DWH", "DCH", "Area Hospital", "DH", "CHC", "BPHC", "(PHC)", "PHC", "UFWC", "COMMUNITY HEALTH CENTER", "SDCH", "(FRU)", "FRU", "RH", "SDH", "DMCH", "MCH", "GH"};
+    private static String[] unnecessaryCharacters = {".", ","};
+
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -72,5 +76,15 @@ public class Facility extends AbstractEntity {
 
     public void setFacilityType(FacilityType facilityType) {
         this.facilityType = facilityType;
+    }
+
+    public static String sanitiseName(String name) {
+        for (String nameQualifier : nameQualifiers) {
+            name = name.replace(nameQualifier, "");
+        }
+        for (String unnecessaryCharacter : unnecessaryCharacters) {
+            name = name.replace(unnecessaryCharacter, "");
+        }
+        return name.trim();
     }
 }

@@ -160,9 +160,16 @@ tail_server_nhsrc_qa:
 inspect_log_nhsrc_prod: set_host_dir_prod
 	ssh gunak-main "ls -lt $(host_dir)/app-servers/log"
 
-download_log_nhsrc_prod: set_host_dir_prod
-	scp gunak-main:$(host_dir)/app-servers/log/$(file) log/
+download_log_nhsrc_prod: set_host_dir_prod ## Param [{extension: additional extension for the file like .1, .2}]
+	scp gunak-main:$(host_dir)/app-servers/log/facilities_assessment.log$(extension) log/
+	open log/facilities_assessment.log$(extension)
 
 # Service stop/start/restart
 restart_service_nhsrc_qa:
 	$(call _restart_service,gunak-other,qa-fab)
+
+.foo:
+	@echo ".foo"
+
+bar:
+	@echo "bar"

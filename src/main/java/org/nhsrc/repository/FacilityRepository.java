@@ -1,6 +1,8 @@
 package org.nhsrc.repository;
 
+import org.nhsrc.domain.District;
 import org.nhsrc.domain.Facility;
+import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -44,4 +46,10 @@ public interface FacilityRepository extends NonTxDataRepository<Facility> {
     Page<Facility> findByDistrictStateId(@Param("stateId") Integer stateId, Pageable pageable);
 
     Page<Facility> findByDistrictStateIdAndFacilityTypeId(@Param("stateId") Integer stateId, @Param("facilityTypeId") Integer facilityTypeId, Pageable pageable);
+
+    List<Facility> findByNameContainingIgnoreCaseAndDistrictState(@Param("name") String name, @Param("state") State state);
+    List<Facility> findByNameAndDistrictState(@Param("name") String name, @Param("state") State state);
+    List<Facility> findByNameContainingIgnoreCaseAndDistrict(@Param("name") String name, @Param("district") District district);
+    List<Facility> findByNameAndDistrict(@Param("name") String name, @Param("district") District district);
+    List<Facility> findByNameContainingIgnoreCaseAndDistrictAndFacilityTypeName(@Param("name") String name, @Param("district") District district, @Param("facilityTypeName") String facilityTypeName);
 }
