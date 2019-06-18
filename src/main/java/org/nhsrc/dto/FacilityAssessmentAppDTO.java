@@ -39,4 +39,9 @@ public class FacilityAssessmentAppDTO extends BaseFacilityAssessmentDTO {
     public void setAssessmentTool(UUID assessmentTool) {
         this.assessmentTool = assessmentTool;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s, {startDate=%s, endDate=%s, assessmentTool=%s}", super.toString(), startDate, endDate, assessmentTool);
+    }
 }

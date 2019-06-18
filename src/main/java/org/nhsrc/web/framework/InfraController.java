@@ -19,7 +19,7 @@ public class InfraController {
         return "pong";
     }
 
-    @RequestMapping(value = "/api/error/throw", method = {RequestMethod.GET})
+    @RequestMapping(value = "/api/error/throw", method = {RequestMethod.GET, RequestMethod.POST})
     public void throwError() {
         throw new RuntimeException("Throwing error to check whether Bugsnag records it");
     }

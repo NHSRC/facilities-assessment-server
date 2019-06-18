@@ -157,4 +157,26 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
     public void setInactive(Boolean inactive) {
         this.inactive = inactive;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "uuid=" + uuid +
+                ", facility=" + facility +
+                ", facilityId=" + facilityId +
+                ", facilityName='" + facilityName + '\'' +
+                ", assessmentToolId=" + assessmentToolId +
+                ", seriesName='" + seriesName + '\'' +
+                ", deviceId='" + deviceId + '\'' +
+                ", assessmentTypeUUID=" + assessmentTypeUUID +
+                ", assessmentTypeId=" + assessmentTypeId +
+                ", state=" + state +
+                ", stateId=" + stateId +
+                ", district=" + district +
+                ", districtId=" + districtId +
+                ", facilityTypeUUID=" + facilityTypeUUID +
+                ", facilityTypeId=" + facilityTypeId +
+                ", inactive=" + inactive +
+                '}';
+    }
 }

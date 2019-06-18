@@ -1,5 +1,6 @@
 package org.nhsrc.service;
 
+import com.bugsnag.Bugsnag;
 import org.nhsrc.domain.*;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.BaseFacilityAssessmentDTO;
@@ -38,6 +39,7 @@ public class FacilityAssessmentService {
     private AreaOfConcernScoreRepository areaOfConcernScoreRepository;
     private ChecklistScoreRepository checklistScoreRepository;
     private FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository;
+    private Bugsnag bugsnag;
 
     @Autowired
     public FacilityAssessmentService(FacilityRepository facilityRepository,
@@ -51,7 +53,7 @@ public class FacilityAssessmentService {
                                      IndicatorRepository indicatorRepository,
                                      StateRepository stateRepository,
                                      DistrictRepository districtRepository,
-                                     FacilityTypeRepository facilityTypeRepository, StandardScoreRepository standardScoreRepository, AreaOfConcernScoreRepository areaOfConcernScoreRepository, ChecklistScoreRepository checklistScoreRepository, FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository) {
+                                     FacilityTypeRepository facilityTypeRepository, StandardScoreRepository standardScoreRepository, AreaOfConcernScoreRepository areaOfConcernScoreRepository, ChecklistScoreRepository checklistScoreRepository, FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository, Bugsnag bugsnag) {
         this.facilityRepository = facilityRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
         this.checklistRepository = checklistRepository;
@@ -68,6 +70,7 @@ public class FacilityAssessmentService {
         this.areaOfConcernScoreRepository = areaOfConcernScoreRepository;
         this.checklistScoreRepository = checklistScoreRepository;
         this.facilityAssessmentMissingCheckpointRepository = facilityAssessmentMissingCheckpointRepository;
+        this.bugsnag = bugsnag;
     }
 
     public FacilityAssessment save(BaseFacilityAssessmentDTO facilityAssessmentDTO, AssessmentTool assessmentTool, User user) {
@@ -126,21 +129,25 @@ public class FacilityAssessmentService {
             List<CheckpointScore> checkpointScores = new ArrayList<>();
             checklistDTO.getCheckpointScores().forEach(checkpointScoreDTO -> {
                 Checkpoint checkpoint = checkpointRepository.findByUuid(checkpointScoreDTO.getCheckpoint());
-                CheckpointScore checkpointScore = checkpointScoreRepository.findByUuid(checkpointScoreDTO.getUuid());
-                if (checkpointScore == null)
-                    checkpointScore = checkpointScoreRepository.findByCheckpointAndFacilityAssessmentAndChecklist(checkpoint, facilityAssessment, checklist);
+                if (checkpoint == null) {
+                    bugsnag.notify(new Exception(String.format("Couldn't find the checkpoint=%s in the request. Continuing", checkpointScoreDTO.getCheckpoint())));
+                } else {
+                    CheckpointScore checkpointScore = checkpointScoreRepository.findByUuid(checkpointScoreDTO.getUuid());
+                    if (checkpointScore == null)
+                        checkpointScore = checkpointScoreRepository.findByCheckpointAndFacilityAssessmentAndChecklist(checkpoint, facilityAssessment, checklist);
 
-                if (checkpointScore == null) {
-                    checkpointScore = new CheckpointScore();
-                    checkpointScore.setFacilityAssessment(facilityAssessment);
-                    checkpointScore.setChecklist(checklist);
-                    checkpointScore.setCheckpoint(checkpoint);
-                    checkpointScore.setUuid(checkpointScoreDTO.getUuid());
+                    if (checkpointScore == null) {
+                        checkpointScore = new CheckpointScore();
+                        checkpointScore.setFacilityAssessment(facilityAssessment);
+                        checkpointScore.setChecklist(checklist);
+                        checkpointScore.setCheckpoint(checkpoint);
+                        checkpointScore.setUuid(checkpointScoreDTO.getUuid());
+                    }
+                    checkpointScore.setScore(checkpointScoreDTO.getScore());
+                    checkpointScore.setNa(checkpointScoreDTO.getNa());
+                    checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
+                    checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
                 }
-                checkpointScore.setScore(checkpointScoreDTO.getScore());
-                checkpointScore.setNa(checkpointScoreDTO.getNa());
-                checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
-                checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
             });
             checkpointScores.forEach(checkpointScore -> {
                 checkpointScore.getScoreNumerator();
