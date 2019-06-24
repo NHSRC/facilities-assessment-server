@@ -1,7 +1,5 @@
 package org.nhsrc.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -15,7 +13,6 @@ public class AssessmentType extends AbstractEntity {
     @Column(name = "short_name")
     private String shortName;
 
-    @JsonIgnore
     public String getShortName() {
         return shortName;
     }
