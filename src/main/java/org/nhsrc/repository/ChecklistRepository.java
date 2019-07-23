@@ -41,6 +41,7 @@ public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
 
     @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
     Page<Checklist> findByAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
+    List<Checklist> findByAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId);
 
     @RestResource(path = "find", rel = "find")
     Page<Checklist> findByStateIdAndAssessmentToolId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);

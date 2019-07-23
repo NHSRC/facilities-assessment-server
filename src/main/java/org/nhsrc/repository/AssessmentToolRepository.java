@@ -1,6 +1,7 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.AssessmentTool;
+import org.nhsrc.domain.Checklist;
 import org.nhsrc.web.contract.ext.AssessmentSummaryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,4 +37,7 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
 
     @RestResource(path = "findByAssessmentToolMode", rel = "findByAssessmentToolMode")
     Page<AssessmentTool> findByAssessmentToolModeId(@Param("assessmentToolModeId") Integer assessmentToolModeId, Pageable pageable);
+
+    @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
+    Page<AssessmentTool> findDistinctByChecklistsAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
 }

@@ -106,7 +106,7 @@ public class Checklist extends AbstractEntity {
 
     @JsonProperty("fullReference")
     public String getFullReference() {
-        return String.format("%s - [%s]", this.getName(), this.getAssessmentTool().getName());
+        return String.format("%s - %s - %s", this.getAssessmentTool().getAssessmentToolMode().getName(), this.getAssessmentTool().getName(), this.getName());
     }
 
     public List<Integer> getAreaOfConcernIds() {

@@ -91,7 +91,7 @@ public class AreaOfConcern extends AbstractEntity implements ReferencableEntity 
     @JsonProperty("fullReference")
     public String getFullReference() {
         Checklist checklist = this.getChecklist();
-        return String.format("%s - [%s]", this.getReference(), checklist == null ? null : checklist.getAssessmentTool().getName());
+        return String.format("%s - %s", checklist == null ? null : checklist.getAssessmentTool().getName(), this.getReference());
     }
 
     public void addStandard(Standard standard) {

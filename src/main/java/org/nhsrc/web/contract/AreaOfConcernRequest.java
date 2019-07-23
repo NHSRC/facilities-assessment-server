@@ -5,6 +5,7 @@ public class AreaOfConcernRequest {
     private String name;
     private String reference;
     private Boolean inactive;
+    private Integer checklistId;
 
     public Boolean getInactive() {
         return inactive;
@@ -36,5 +37,13 @@ public class AreaOfConcernRequest {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public Integer getChecklistId() {
+        return checklistId;
+    }
+
+    public void setChecklistId(Integer checklistId) {
+        this.checklistId = checklistId;
     }
 }

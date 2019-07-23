@@ -5,6 +5,7 @@ import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.State;
 import org.nhsrc.repository.*;
 import org.nhsrc.repository.missing.FacilityAssessmentMissingCheckpointRepository;
+import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.ChecklistRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,18 +28,18 @@ public class ChecklistController {
     private DepartmentRepository departmentRepository;
     private ChecklistRepository checklistRepository;
     private AssessmentToolRepository assessmentToolRepository;
-    private AreaOfConcernRepository areaOfConcernRepository;
     private StateRepository stateRepository;
     private CheckpointRepository checkpointRepository;
+    private ChecklistService checklistService;
 
     @Autowired
-    public ChecklistController(DepartmentRepository departmentRepository, ChecklistRepository checklistRepository, AssessmentToolRepository assessmentToolRepository, AreaOfConcernRepository areaOfConcernRepository, FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository, StateRepository stateRepository, CheckpointRepository checkpointRepository) {
+    public ChecklistController(DepartmentRepository departmentRepository, ChecklistRepository checklistRepository, AssessmentToolRepository assessmentToolRepository, StateRepository stateRepository, CheckpointRepository checkpointRepository, ChecklistService checklistService) {
         this.departmentRepository = departmentRepository;
         this.checklistRepository = checklistRepository;
         this.assessmentToolRepository = assessmentToolRepository;
-        this.areaOfConcernRepository = areaOfConcernRepository;
         this.stateRepository = stateRepository;
         this.checkpointRepository = checkpointRepository;
+        this.checklistService = checklistService;
     }
 
     @RequestMapping(value = "checklists", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -60,13 +61,8 @@ public class ChecklistController {
         checklist.setDepartment(Repository.findByUuidOrId(checklistRequest.getDepartmentUUID(), checklistRequest.getDepartmentId(), departmentRepository));
         checklist.setAssessmentTool(Repository.findByUuidOrId(checklistRequest.getAssessmentToolUUID(), checklistRequest.getAssessmentToolId(), assessmentToolRepository));
 
-        Set<Integer> newAreasOfConcernIds = new HashSet<>(checklistRequest.getAreaOfConcernIds());
-        HashSet<Integer> existingAreaOfConcernIds = new HashSet<>(checklist.getAreaOfConcernIds());
-        existingAreaOfConcernIds.removeAll(newAreasOfConcernIds);
-        existingAreaOfConcernIds.forEach(removedAreaOfConcern -> checklist.removeAreaOfConcern(areaOfConcernRepository.findOne(removedAreaOfConcern)));
-        for (Integer areaOfConcernId : newAreasOfConcernIds) {
-            checklist.addAreaOfConcern(areaOfConcernRepository.findOne(areaOfConcernId));
-        }
+        checklistService.mergeAreaOfConcerns(checklist, new HashSet<>(checklistRequest.getAreaOfConcernIds()));
+
         checklist.setInactive(checklistRequest.getInactive());
 
         return new ResponseEntity<>(checklistRepository.save(checklist), HttpStatus.OK);
