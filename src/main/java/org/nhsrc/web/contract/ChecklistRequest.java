@@ -7,11 +7,11 @@ public class ChecklistRequest {
     private String uuid;
     private Boolean inactive;
     private String name;
-    private List<Integer> assessmentToolIds;
+    private List<Integer> assessmentToolIds = new ArrayList<>();
     private String assessmentToolUUID;
     private int departmentId;
     private String departmentUUID;
-    private List<Integer> areaOfConcernIds;
+    private List<Integer> areaOfConcernIds = new ArrayList<>();
     private Integer stateId;
 
     public String getUuid() {

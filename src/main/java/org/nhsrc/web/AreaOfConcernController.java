@@ -67,7 +67,7 @@ public class AreaOfConcernController {
         });
     }
 
-    @RequestMapping(value = "/areaOfConcern/search/find", method = {RequestMethod.GET})
+    @RequestMapping(value = {"/areaOfConcern/search/findByAssessmentTool", "/areaOfConcern/search/find"}, method = {RequestMethod.GET})
     public Page<AreaOfConcern> find(@RequestParam(value = "stateId", required = false) Integer stateId,
                                  @RequestParam(value = "checklistId", required = false) Integer checklistId,
                                  @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,

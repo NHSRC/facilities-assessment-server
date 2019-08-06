@@ -1,5 +1,6 @@
 package org.nhsrc.web.contract;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AreaOfConcernRequest {
@@ -7,7 +8,7 @@ public class AreaOfConcernRequest {
     private String name;
     private String reference;
     private Boolean inactive;
-    private List<Integer> checklistIds;
+    private List<Integer> checklistIds = new ArrayList<>();
 
     public Boolean getInactive() {
         return inactive;
