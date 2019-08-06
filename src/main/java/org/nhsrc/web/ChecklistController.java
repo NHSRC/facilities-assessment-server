@@ -59,13 +59,15 @@ public class ChecklistController {
         checklist.setDepartment(Repository.findByUuidOrId(checklistRequest.getDepartmentUUID(), checklistRequest.getDepartmentId(), departmentRepository));
         checklist.setInactive(checklistRequest.getInactive());
         checklistService.mergeAreaOfConcerns(checklist, new HashSet<>(checklistRequest.getAreaOfConcernIds()));
+        checklist = checklistRepository.save(checklist);
 
+        Checklist finalChecklist = checklist;
         checklistRequest.getAssessmentToolIds().forEach(assessmentToolId -> {
             AssessmentTool assessmentTool = Repository.findByUuidOrId(checklistRequest.getAssessmentToolUUID(), assessmentToolId, assessmentToolRepository);
-            checklist.addAssessmentTool(assessmentTool);
+            finalChecklist.addAssessmentTool(assessmentTool);
             assessmentToolRepository.save(assessmentTool);
         });
-        return new ResponseEntity<>(checklistRepository.save(checklist), HttpStatus.OK);
+        return new ResponseEntity<>(checklist, HttpStatus.OK);
     }
 
     @RequestMapping(value = "checklist/search/find", method = {RequestMethod.GET})
