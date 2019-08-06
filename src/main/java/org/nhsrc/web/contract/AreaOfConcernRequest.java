@@ -1,11 +1,13 @@
 package org.nhsrc.web.contract;
 
+import java.util.List;
+
 public class AreaOfConcernRequest {
     private String uuid;
     private String name;
     private String reference;
     private Boolean inactive;
-    private Integer checklistId;
+    private List<Integer> checklistIds;
 
     public Boolean getInactive() {
         return inactive;
@@ -39,11 +41,11 @@ public class AreaOfConcernRequest {
         this.reference = reference;
     }
 
-    public Integer getChecklistId() {
-        return checklistId;
+    public List<Integer> getChecklistIds() {
+        return checklistIds;
     }
 
-    public void setChecklistId(Integer checklistId) {
-        this.checklistId = checklistId;
+    public void setChecklistId(List<Integer> checklistId) {
+        this.checklistIds = checklistId;
     }
 }

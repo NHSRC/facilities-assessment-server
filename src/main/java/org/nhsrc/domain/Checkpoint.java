@@ -6,6 +6,7 @@ import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Table(name = "checkpoint")
@@ -184,8 +185,8 @@ public class Checkpoint extends AbstractEntity {
     }
 
     @JsonProperty("assessmentToolId")
-    public Integer _getAssessmentToolId() {
-        return this.measurableElement.getStandard().getAreaOfConcern()._getAssessmentToolId();
+    public List<Integer> _getAssessmentToolId() {
+        return this.measurableElement.getStandard().getAreaOfConcern()._getAssessmentToolIds();
     }
 
     @Override

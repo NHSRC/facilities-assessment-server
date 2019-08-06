@@ -23,18 +23,18 @@ public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
     Page<Checklist> findByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "forAssessmentTool", rel = "forAssessmentTool")
-    Page<Checklist> findByAssessmentToolUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("assessmentToolUuid") UUID assessmentToolUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<Checklist> findByAssessmentToolsUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("assessmentToolUuid") UUID assessmentToolUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "byAssessmentTool", rel = "byAssessmentTool")
-    Page<Checklist> findByAssessmentToolNameAndInactiveFalseOrderByName(@Param("assessmentToolName") String assessmentToolName, Pageable pageable);
+    Page<Checklist> findByAssessmentToolsNameAndInactiveFalseOrderByName(@Param("assessmentToolName") String assessmentToolName, Pageable pageable);
 
     @RestResource(path = "findAllById", rel = "findAllById")
     List<Checklist> findByIdIn(@Param("ids") Integer[] ids);
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
-    Page<Checklist> findByAssessmentToolId(@Param("assessmentToolId") int assessmentToolId, Pageable pageable);
+    Page<Checklist> findByAssessmentToolsId(@Param("assessmentToolId") int assessmentToolId, Pageable pageable);
 
-    List<Checklist> findAllByAssessmentToolIdAndName(@Param("assessmentToolId") int assessmentToolId, @Param("name") String name);
+    List<Checklist> findAllByAssessmentToolsIdAndName(@Param("assessmentToolId") int assessmentToolId, @Param("name") String name);
 
     @RestResource(path = "findByState", rel = "findByState")
     Page<Checklist> findByStateId(@Param("stateId") int stateId, Pageable pageable);
@@ -44,12 +44,12 @@ public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
     List<Checklist> findByAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId);
 
     @RestResource(path = "find", rel = "find")
-    Page<Checklist> findByStateIdAndAssessmentToolId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+    Page<Checklist> findByStateIdAndAssessmentToolsId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
-    @Query("SELECT c FROM Checklist c inner join c.assessmentTool as at WHERE (c.state.id = :stateId or c.state is null) and c.assessmentTool.id = :assessmentToolId order by at.name, c.name")
-    Page<Checklist> findByAssessmentToolIdAndStateIdOrStateIsNull(@Param("assessmentToolId") Integer assessmentToolId, @Param("stateId") Integer stateId, Pageable pageable);
+    @Query("SELECT c FROM Checklist c inner join c.assessmentTools as at WHERE (c.state.id = :stateId or c.state is null) and at.id = :assessmentToolId order by at.name, c.name")
+    Page<Checklist> findByAssessmentToolsIdAndStateIdOrStateIsNull(@Param("assessmentToolId") Integer assessmentToolId, @Param("stateId") Integer stateId, Pageable pageable);
 
-    Checklist findByNameAndAssessmentTool(@Param("String") String name, @Param("assessmentTool") AssessmentTool assessmentTool);
+    Checklist findByNameAndAssessmentTools(@Param("String") String name, @Param("assessmentTool") AssessmentTool assessmentTool);
 
     @Query("SELECT cl FROM FacilityAssessmentMissingCheckpoint famc inner join famc.missingCheckpoint mc inner join mc.checklist cl WHERE famc.facilityAssessment.id = :facilityAssessmentId")
     List<Checklist> findUniqueChecklistsMissingInCheckpointsForFacilityAssessment(@Param("facilityAssessmentId") Integer facilityAssessmentId);

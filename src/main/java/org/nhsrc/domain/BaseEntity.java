@@ -8,10 +8,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
 public abstract class BaseEntity implements Persistable<Integer> {
+    public static final String QUALIFIED_NAME_SEPARATOR = "->";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
@@ -81,5 +85,5 @@ public abstract class BaseEntity implements Persistable<Integer> {
         if (id == null) return super.hashCode();
         return id.hashCode();
     }
-}
 
+}

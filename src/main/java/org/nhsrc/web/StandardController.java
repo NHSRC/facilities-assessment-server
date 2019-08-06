@@ -52,12 +52,12 @@ public class StandardController {
                                Pageable pageable) {
         if (areaOfConcernId != null && checklistId == null)
             return standardRepository.findDistinctByAreaOfConcernId(areaOfConcernId, pageable);
-        if (areaOfConcernId != null && checklistId != null)
+        if (areaOfConcernId != null)
             return standardRepository.findDistinctByAreaOfConcernIdAndMeasurableElementsCheckpointsChecklistId(areaOfConcernId, checklistId, pageable);
         if (checklistId != null)
             return standardRepository.findDistinctByAreaOfConcernChecklistsId(checklistId, pageable);
         if (assessmentToolId != null)
-            return standardRepository.findDistinctByAreaOfConcernChecklistsAssessmentToolId(assessmentToolId, pageable);
+            return standardRepository.findDistinctByAreaOfConcernChecklistsAssessmentToolsId(assessmentToolId, pageable);
         return standardRepository.findAll(pageable);
     }
 }

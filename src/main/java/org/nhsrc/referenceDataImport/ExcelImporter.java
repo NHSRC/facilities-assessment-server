@@ -60,7 +60,7 @@ public class ExcelImporter {
         final Checklist checklist = new Checklist();
         checklist.setDepartment(department);
         checklist.setName(sheetName);
-        checklist.setAssessmentTool(assessmentTool);
+        checklist.addAssessmentTool(assessmentTool);
         data.addChecklist(checklist);
 
         SheetRowImporter sheetImporter = new SheetRowImporter(data);

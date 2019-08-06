@@ -43,7 +43,7 @@ public interface MeasurableElementRepository extends NonTxDataRepository<Measura
     Page<MeasurableElement> findDistinctByStandardAreaOfConcernChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
-    Page<MeasurableElement> findDistinctByStandardAreaOfConcernChecklistsAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+    Page<MeasurableElement> findDistinctByStandardAreaOfConcernChecklistsAssessmentToolsId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
     @RestResource(path = "find", rel = "find")
     Page<MeasurableElement> findDistinctByReferenceContaining(@Param("q") String q, Pageable pageable);
@@ -51,5 +51,5 @@ public interface MeasurableElementRepository extends NonTxDataRepository<Measura
     @RestResource(path = "findByState", rel = "findByState")
     Page<MeasurableElement> findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNull(@Param("stateId") Integer stateId, Pageable pageable);
 
-    Page<MeasurableElement> findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNullAndStandardAreaOfConcernChecklistsAssessmentToolId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+    Page<MeasurableElement> findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNullAndStandardAreaOfConcernChecklistsAssessmentToolsId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 }

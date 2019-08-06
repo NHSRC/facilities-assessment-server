@@ -3,13 +3,12 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "standard")
@@ -18,9 +17,6 @@ public class Standard extends AbstractEntity implements ReferencableEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "short_name", nullable = true)
-    private String shortName;
-
     @Column(name = "reference", nullable = false)
     private String reference;
 
@@ -28,6 +24,7 @@ public class Standard extends AbstractEntity implements ReferencableEntity {
     private Set<MeasurableElement> measurableElements = new HashSet<>();
 
     @ManyToOne(targetEntity = AreaOfConcern.class, fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "area_of_concern_id")
     @NotNull
     private AreaOfConcern areaOfConcern;
@@ -58,20 +55,23 @@ public class Standard extends AbstractEntity implements ReferencableEntity {
         return this.areaOfConcern.getId();
     }
 
-    @JsonProperty("assessmentToolId")
-    public Integer _getAssessmentToolId() {
-        return this.areaOfConcern._getAssessmentToolId();
+    @JsonProperty("assessmentToolIds")
+    public List<Integer> _getAssessmentToolId() {
+        return this.areaOfConcern._getAssessmentToolIds();
     }
 
-    @JsonProperty("checklistId")
-    public Integer _getChecklistId() {
-        Checklist checklist = this.areaOfConcern.getChecklist();
-        if (checklist == null) return null;
-        return checklist.getId();
+    @JsonProperty("assessmentToolNames")
+    public String getAssessmentToolNames() {
+        return this.areaOfConcern.getAssessmentToolNames();
+    }
+
+    @JsonProperty("checklistIds")
+    public List<Integer> getChecklistIds() {
+        return this.areaOfConcern._getChecklistIds();
     }
 
     public String getReferenceAndName() {
-        return String.format("%s - %s", this.getReference(), this.getName());
+        return String.format("%s %s %s", this.getReference(), BaseEntity.QUALIFIED_NAME_SEPARATOR, this.getName());
     }
 
     public void setAreaOfConcern(AreaOfConcern areaOfConcern) {
@@ -83,12 +83,6 @@ public class Standard extends AbstractEntity implements ReferencableEntity {
         return measurableElements;
     }
 
-    @JsonProperty("fullReference")
-    public String getFullReference() {
-        Checklist checklist = this.getAreaOfConcern().getChecklist();
-        return String.format("%s - [%s]", this.getReference(), checklist == null ? null : checklist.getAssessmentTool().getName());
-    }
-
     public void addMeasurableElement(MeasurableElement measurableElement) {
         if (this.measurableElements.stream().noneMatch(std -> std.getReference().equals(measurableElement.getReference()))) {
             this.measurableElements.add(measurableElement);
@@ -98,7 +92,7 @@ public class Standard extends AbstractEntity implements ReferencableEntity {
 
     public String toSummary() {
         StringBuffer stringBuffer = new StringBuffer();
-        measurableElements.stream().sorted((o1, o2) -> o1.getReference().compareTo(o2.getReference())).forEach(measurableElement -> stringBuffer.append(measurableElement.toSummary()).append("\n\t"));
+        measurableElements.stream().sorted(Comparator.comparing(MeasurableElement::getReference)).forEach(measurableElement -> stringBuffer.append(measurableElement.toSummary()).append("\n\t"));
         return String.format("EST_COUNT=%d  STD_REF=%s  STD=%s  #ME=%d  \n\t%s", this.estimatedCount(), reference, name, measurableElements.size(), stringBuffer.toString());
     }
 

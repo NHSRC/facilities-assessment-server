@@ -6,10 +6,10 @@ import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "assessment_tool")
@@ -31,8 +31,9 @@ public class AssessmentTool extends AbstractEntity {
     @NotNull
     private AssessmentToolMode assessmentToolMode;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "assessment_tool_checklist", joinColumns = @JoinColumn(name = "assessment_tool_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "checklist_id", referencedColumnName = "id"))
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "assessmentTool")
     private Set<Checklist> checklists = new HashSet<>();
 
     @Column(name = "type")
@@ -45,7 +46,7 @@ public class AssessmentTool extends AbstractEntity {
 
     @JsonProperty("fullName")
     public String _getFullName() {
-        return String.format("%s - %s", this.getAssessmentToolMode().getName(), this.getName());
+        return String.format("%s %s %s", this.getAssessmentToolMode().getName(), BaseEntity.QUALIFIED_NAME_SEPARATOR, this.getName());
     }
 
     public void setName(String name) {
@@ -74,8 +75,13 @@ public class AssessmentTool extends AbstractEntity {
         return this.assessmentToolMode.getId();
     }
 
+    @JsonIgnore
     public Set<Checklist> getChecklists() {
         return checklists;
+    }
+
+    public List<Integer> getChecklistIds() {
+        return checklists.stream().map(BaseEntity::getId).collect(Collectors.toList());
     }
 
     public AssessmentToolType getAssessmentToolType() {
@@ -87,5 +93,13 @@ public class AssessmentTool extends AbstractEntity {
         return "AssessmentTool{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    public void removeChecklist(Checklist checklist) {
+        checklists.remove(checklist);
+    }
+
+    public void addChecklist(Checklist checklist) {
+        checklists.add(checklist);
     }
 }

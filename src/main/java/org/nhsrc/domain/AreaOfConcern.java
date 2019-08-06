@@ -3,6 +3,8 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "area_of_concern")
@@ -24,8 +27,10 @@ public class AreaOfConcern extends AbstractEntity implements ReferencableEntity 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "areaOfConcern")
     private Set<Standard> standards = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-    @JoinTable(name = "checklist_area_of_concern", joinColumns = @JoinColumn(name = "area_of_concern_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "checklist_id", referencedColumnName = "id"))
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    }, mappedBy = "areasOfConcern")
     @NotNull
     @JsonIgnore
     private Set<Checklist> checklists = new HashSet<>();
@@ -53,7 +58,11 @@ public class AreaOfConcern extends AbstractEntity implements ReferencableEntity 
     }
 
     public String getReferenceAndName() {
-        return String.format("%s - %s", this.getReference(), this.getName());
+        return String.format("%s %s %s", this.getReference(), BaseEntity.QUALIFIED_NAME_SEPARATOR, this.getName());
+    }
+
+    public String getFullyQualifiedName() {
+        return String.format("%s %s %s %s %s", this.getAssessmentToolNames(), BaseEntity.QUALIFIED_NAME_SEPARATOR, this.getReference(), BaseEntity.QUALIFIED_NAME_SEPARATOR, this.getName());
     }
 
     @Override
@@ -70,28 +79,19 @@ public class AreaOfConcern extends AbstractEntity implements ReferencableEntity 
         this.standards = standards;
     }
 
-    @JsonProperty("assessmentToolId")
-    public Integer _getAssessmentToolId() {
-        Checklist checklist = getChecklist();
-        if (checklist == null) return null;
-        return checklist._getAssessmentToolId();
+    @JsonProperty("assessmentToolIds")
+    public List<Integer> _getAssessmentToolIds() {
+        return getChecklists().stream().flatMap(checklist -> checklist.getAssessmentTools().stream()).distinct().map(BaseEntity::getId).collect(Collectors.toList());
     }
 
-    @JsonIgnore
-    public Checklist getChecklist() {
-        return this.getChecklists().stream().findFirst().orElse(null);
+    @JsonProperty("assessmentToolNames")
+    public String getAssessmentToolNames() {
+        return getChecklists().stream().flatMap(checklist -> checklist.getAssessmentTools().stream()).distinct().map(AssessmentTool::getName).collect(Collectors.joining("/"));
     }
 
-    @JsonProperty("checklistId")
-    public Integer _getChecklistId() {
-        Checklist checklist = this.getChecklist();
-        return checklist == null ? null : checklist.getId();
-    }
-
-    @JsonProperty("fullReference")
-    public String getFullReference() {
-        Checklist checklist = this.getChecklist();
-        return String.format("%s - %s", checklist == null ? null : checklist.getAssessmentTool().getName(), this.getReference());
+    @JsonProperty("checklistIds")
+    public List<Integer> _getChecklistIds() {
+        return this.getChecklists().stream().map(BaseEntity::getId).collect(Collectors.toList());
     }
 
     public void addStandard(Standard standard) {

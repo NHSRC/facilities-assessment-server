@@ -3,6 +3,8 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -18,10 +20,13 @@ public class Checklist extends AbstractEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(targetEntity = AssessmentTool.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "assessment_tool_id")
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    }, mappedBy = "checklists")
     @NotNull
-    private AssessmentTool assessmentTool;
+    @JsonIgnore
+    private Set<AssessmentTool> assessmentTools = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
@@ -32,8 +37,8 @@ public class Checklist extends AbstractEntity {
     @JoinColumn(name = "state_id")
     private State state;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "checklist_area_of_concern", inverseJoinColumns = @JoinColumn(name = "area_of_concern_id", referencedColumnName = "id"), joinColumns = @JoinColumn(name = "checklist_id", referencedColumnName = "id"))
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "checklist_area_of_concern", joinColumns = @JoinColumn(name = "checklist_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "area_of_concern_id", referencedColumnName = "id"))
     @JsonIgnore
     private Set<AreaOfConcern> areasOfConcern = new HashSet<>();
 
@@ -46,7 +51,11 @@ public class Checklist extends AbstractEntity {
 
     @JsonProperty("fullName")
     public String getFullName() {
-        return String.format("%s - [%s]", this.getName(), this.state == null ? "ALL" : this.state.getName());
+        StringBuilder stringBuilder = new StringBuilder(this.getAssessmentToolNames());
+        stringBuilder.append(BaseEntity.QUALIFIED_NAME_SEPARATOR).append(this.getName());
+        if (this.state != null)
+            stringBuilder.append(BaseEntity.QUALIFIED_NAME_SEPARATOR).append(this.state.getName());
+        return stringBuilder.toString();
     }
 
     public void setName(String name) {
@@ -54,13 +63,18 @@ public class Checklist extends AbstractEntity {
     }
 
     @JsonIgnore
-    public AssessmentTool getAssessmentTool() {
-        return assessmentTool;
+    public Set<AssessmentTool> getAssessmentTools() {
+        return assessmentTools;
     }
 
-    @JsonProperty("assessmentToolId")
-    public Integer _getAssessmentToolId() {
-        return this.assessmentTool.getId();
+    @JsonProperty("assessmentToolNames")
+    public String getAssessmentToolNames() {
+        return this.getAssessmentTools().stream().map(AssessmentTool::getName).collect(Collectors.joining("/"));
+    }
+
+    @JsonProperty("assessmentToolIds")
+    public List<Integer> getAssessmentToolIds() {
+        return this.assessmentTools.stream().map(BaseEntity::getId).collect(Collectors.toList());
     }
 
     @JsonProperty("stateId")
@@ -68,8 +82,9 @@ public class Checklist extends AbstractEntity {
         return this.state == null ? null : this.state.getId();
     }
 
-    public void setAssessmentTool(AssessmentTool assessmentTool) {
-        this.assessmentTool = assessmentTool;
+    public void addAssessmentTool(AssessmentTool assessmentTool) {
+        this.assessmentTools.add(assessmentTool);
+        assessmentTool.addChecklist(this);
     }
 
     @JsonIgnore
@@ -104,11 +119,6 @@ public class Checklist extends AbstractEntity {
         this.state = state;
     }
 
-    @JsonProperty("fullReference")
-    public String getFullReference() {
-        return String.format("%s - %s - %s", this.getAssessmentTool().getAssessmentToolMode().getName(), this.getAssessmentTool().getName(), this.getName());
-    }
-
     public List<Integer> getAreaOfConcernIds() {
         return this.areasOfConcern.stream().map(BaseEntity::getId).collect(Collectors.toList());
     }
@@ -128,7 +138,7 @@ public class Checklist extends AbstractEntity {
     public String toString() {
         return "Checklist{" +
                 "name='" + name + '\'' +
-                ", assessmentTool=" + assessmentTool +
+                ", assessmentTool=" + this.getAssessmentToolNames() +
                 '}';
     }
 

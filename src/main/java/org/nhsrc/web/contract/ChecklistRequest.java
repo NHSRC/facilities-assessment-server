@@ -7,7 +7,7 @@ public class ChecklistRequest {
     private String uuid;
     private Boolean inactive;
     private String name;
-    private int assessmentToolId;
+    private List<Integer> assessmentToolIds;
     private String assessmentToolUUID;
     private int departmentId;
     private String departmentUUID;
@@ -54,12 +54,12 @@ public class ChecklistRequest {
         this.departmentUUID = departmentUUID;
     }
 
-    public int getAssessmentToolId() {
-        return assessmentToolId;
+    public List<Integer> getAssessmentToolIds() {
+        return assessmentToolIds;
     }
 
-    public void setAssessmentToolId(int assessmentToolId) {
-        this.assessmentToolId = assessmentToolId;
+    public void setAssessmentToolIds(List<Integer> assessmentToolIds) {
+        this.assessmentToolIds = assessmentToolIds;
     }
 
     public int getDepartmentId() {

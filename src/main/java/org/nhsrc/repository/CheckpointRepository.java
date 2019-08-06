@@ -38,7 +38,7 @@ public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
     Page<Checkpoint> findByChecklistStateIdOrChecklistStateIsNull(@Param("stateId") Integer stateId, Pageable pageable);
 
     @RestResource(path = "findByStateAndAssessmentTool", rel = "findByStateAndAssessmentTool")
-    Page<Checkpoint> findByChecklistStateIdOrChecklistStateIsNullAndChecklistAssessmentToolId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+    Page<Checkpoint> findByChecklistStateIdOrChecklistStateIsNullAndChecklistAssessmentToolsId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
     @Query("SELECT distinct c FROM Checkpoint c inner join c.measurableElement as me WHERE (c.state.id = :stateId or c.state is null) and c.checklist.id = :checklistId")
     Page<Checkpoint> findByChecklistIdAndStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, @Param("stateId") Integer stateId, Pageable pageable);
@@ -50,7 +50,7 @@ public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
     Page<Checkpoint> findByMeasurableElementStandardAreaOfConcernIdAndChecklistId(@Param("areaOfConcernId") Integer areaOfConcernId, @Param("checklistId") Integer checklistId, Pageable pageable);
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
-    Page<Checkpoint> findByChecklistAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+    Page<Checkpoint> findByChecklistAssessmentToolsId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
     Page<Checkpoint> findByChecklistIdAndMeasurableElementId(@Param("checklistId") Integer checklistId, @Param("measurableElementId") Integer measurableElementId, Pageable pageable);
 

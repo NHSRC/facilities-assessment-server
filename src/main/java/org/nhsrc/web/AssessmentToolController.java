@@ -3,6 +3,7 @@ package org.nhsrc.web;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.AssessmentToolMode;
 import org.nhsrc.domain.AssessmentToolType;
+import org.nhsrc.domain.Checklist;
 import org.nhsrc.repository.*;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,13 @@ import javax.transaction.Transactional;
 public class AssessmentToolController {
     private AssessmentToolRepository assessmentToolRepository;
     private AssessmentToolModeRepository assessmentToolModeRepository;
+    private ChecklistRepository checklistRepository;
 
     @Autowired
-    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository) {
+    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository) {
         this.assessmentToolRepository = assessmentToolRepository;
         this.assessmentToolModeRepository = assessmentToolModeRepository;
+        this.checklistRepository = checklistRepository;
     }
 
     @RequestMapping(value = "/assessmentTools", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -41,6 +44,7 @@ public class AssessmentToolController {
         } else {
             assessmentTool.setAssessmentToolType(AssessmentToolType.INDICATOR);
         }
+        Repository.mergeChildren(request.getChecklistIds(), assessmentTool.getChecklistIds(), checklistRepository, checklist -> assessmentTool.removeChecklist((Checklist) checklist), checklist -> assessmentTool.addChecklist((Checklist) checklist));
         return assessmentToolRepository.save(assessmentTool);
     }
 }

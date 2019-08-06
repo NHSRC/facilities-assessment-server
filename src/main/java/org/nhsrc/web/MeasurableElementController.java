@@ -2,7 +2,6 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.MeasurableElement;
 import org.nhsrc.domain.ReferencableEntity;
-import org.nhsrc.domain.Standard;
 import org.nhsrc.repository.MeasurableElementRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StandardRepository;
@@ -12,12 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/")
@@ -64,11 +61,11 @@ public class MeasurableElementController {
         if (checklistId != null)
             return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsId(checklistId, pageable);
         if (assessmentToolId != null && stateId == null)
-            return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsAssessmentToolId(assessmentToolId, pageable);
+            return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsAssessmentToolsId(assessmentToolId, pageable);
         if (assessmentToolId == null && stateId != null)
             return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNull(stateId, pageable);
         if (assessmentToolId != null && stateId != null)
-            return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNullAndStandardAreaOfConcernChecklistsAssessmentToolId(stateId, assessmentToolId, pageable);
+            return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNullAndStandardAreaOfConcernChecklistsAssessmentToolsId(stateId, assessmentToolId, pageable);
         return measurableElementRepository.findAll(pageable);
     }
 }

@@ -1,10 +1,9 @@
 package org.nhsrc.web;
 
+import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Checklist;
-import org.nhsrc.domain.FacilityAssessment;
 import org.nhsrc.domain.State;
 import org.nhsrc.repository.*;
-import org.nhsrc.repository.missing.FacilityAssessmentMissingCheckpointRepository;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.ChecklistRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -59,18 +57,20 @@ public class ChecklistController {
 
         checklist.setName(checklistRequest.getName());
         checklist.setDepartment(Repository.findByUuidOrId(checklistRequest.getDepartmentUUID(), checklistRequest.getDepartmentId(), departmentRepository));
-        checklist.setAssessmentTool(Repository.findByUuidOrId(checklistRequest.getAssessmentToolUUID(), checklistRequest.getAssessmentToolId(), assessmentToolRepository));
-
+        checklist.setInactive(checklistRequest.getInactive());
         checklistService.mergeAreaOfConcerns(checklist, new HashSet<>(checklistRequest.getAreaOfConcernIds()));
 
-        checklist.setInactive(checklistRequest.getInactive());
-
+        checklistRequest.getAssessmentToolIds().forEach(assessmentToolId -> {
+            AssessmentTool assessmentTool = Repository.findByUuidOrId(checklistRequest.getAssessmentToolUUID(), assessmentToolId, assessmentToolRepository);
+            checklist.addAssessmentTool(assessmentTool);
+            assessmentToolRepository.save(assessmentTool);
+        });
         return new ResponseEntity<>(checklistRepository.save(checklist), HttpStatus.OK);
     }
 
     @RequestMapping(value = "checklist/search/find", method = {RequestMethod.GET})
     public Page<Checklist> findAll(@RequestParam Integer assessmentToolId, @RequestParam Integer stateId, Pageable pageable) {
-        return checklistRepository.findByAssessmentToolIdAndStateIdOrStateIsNull(assessmentToolId, stateId, pageable);
+        return checklistRepository.findByAssessmentToolsIdAndStateIdOrStateIsNull(assessmentToolId, stateId, pageable);
     }
 
     @RequestMapping(value = "checklist/search/findByFacilityAssessment", method = {RequestMethod.GET})

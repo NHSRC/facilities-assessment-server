@@ -53,7 +53,7 @@ public class ExcelImportService {
 
         List<Checklist> checklists = assessmentChecklistData.getChecklists();
         checklists.forEach(x -> {
-            Checklist checklist = checklistRepository.findByNameAndAssessmentTool(x.getName(), assessmentTool);
+            Checklist checklist = checklistRepository.findByNameAndAssessmentTools(x.getName(), assessmentTool);
             logger.info(String.format("Clearing missing checkpoints for checklist: %s from previous export of assessment: %d", x.getName(), facilityAssessment.getId()));
             missingChecklistItemsService.clearMissingCheckpoints(facilityAssessment, checklist);
             logger.info(String.format("Missing checkpoints for checklist: %s from previous export cleared of assessment: %d", x.getName(), facilityAssessment.getId()));

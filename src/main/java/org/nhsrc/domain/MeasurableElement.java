@@ -75,14 +75,19 @@ public class MeasurableElement extends AbstractEntity implements ReferencableEnt
         return this.standard.getAreaOfConcern().getId();
     }
 
-    @JsonProperty("assessmentToolId")
-    public Integer _getAssessmentToolId() {
-        return this.standard.getAreaOfConcern()._getAssessmentToolId();
+    @JsonProperty("assessmentToolIds")
+    public List<Integer> _getAssessmentToolId() {
+        return this.standard.getAreaOfConcern()._getAssessmentToolIds();
+    }
+
+    @JsonProperty("assessmentToolNames")
+    public String getAssessmentToolNames() {
+        return this.standard.getAreaOfConcern().getAssessmentToolNames();
     }
 
     @JsonProperty("checklistId")
-    public Integer _getChecklistId() {
-        return this.standard.getAreaOfConcern()._getChecklistId();
+    public List<Integer> getChecklistIds() {
+        return this.standard.getAreaOfConcern()._getChecklistIds();
     }
 
     @JsonProperty("standardId")
@@ -95,7 +100,7 @@ public class MeasurableElement extends AbstractEntity implements ReferencableEnt
     }
 
     public String getReferenceAndName() {
-        return String.format("%s - %s", this.getReference(), this.getName());
+        return String.format("%s %s %s", this.getReference(), BaseEntity.QUALIFIED_NAME_SEPARATOR, this.getName());
     }
 
     public String toSummary() {
@@ -120,7 +125,6 @@ public class MeasurableElement extends AbstractEntity implements ReferencableEnt
     }
 
     public boolean containsCheckpoint(Checkpoint checkpoint) {
-        Checklist checklist = checkpoint.getChecklist();
         return findCheckpoint(checkpoint.getName(), checkpoint.getChecklist()) != null;
     }
 

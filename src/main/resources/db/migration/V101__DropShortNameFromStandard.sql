@@ -1,0 +1,1 @@
+alter table standard drop column short_name;

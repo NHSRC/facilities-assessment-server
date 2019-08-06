@@ -119,7 +119,11 @@ run_server_nhsrc_in_recording: clear_responses build_server
 test_server_only:
 	-./gradlew clean build --offline
 
+test_server_only_online:
+	-./gradlew clean build
+
 test_server: reset_test_db test_server_only open_test_results
+test_server_online: reset_test_db test_server_only_online open_test_results
 
 open_test_results:
 	open build/reports/tests/index.html

@@ -1,5 +1,7 @@
 package org.nhsrc.web.contract;
 
+import java.util.List;
+
 public class AssessmentToolRequest {
     private String uuid;
     private int id;
@@ -7,6 +9,7 @@ public class AssessmentToolRequest {
     private String name;
     private int assessmentToolModeId;
     private String assessmentType;
+    private List<Integer> checklistIds;
 
     public String getUuid() {
         return uuid;
@@ -54,5 +57,13 @@ public class AssessmentToolRequest {
 
     public void setAssessmentType(String assessmentType) {
         this.assessmentType = assessmentType;
+    }
+
+    public List<Integer> getChecklistIds() {
+        return checklistIds;
+    }
+
+    public void setChecklistIds(List<Integer> checklistIds) {
+        this.checklistIds = checklistIds;
     }
 }

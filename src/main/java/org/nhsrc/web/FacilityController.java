@@ -74,7 +74,6 @@ public class FacilityController {
             if (sanitisedStatus.equals("Found"))
                 status = "SanFound";
         }
-//        return String.format("%d:%s\n", request.getItem(), status);
         return String.format("%s\n", status);
     }
 
