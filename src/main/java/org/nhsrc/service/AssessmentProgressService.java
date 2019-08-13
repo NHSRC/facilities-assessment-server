@@ -40,7 +40,8 @@ public class AssessmentProgressService {
             "  INNER JOIN measurable_element me ON c.measurable_element_id = me.id" +
             "  INNER JOIN standard std ON me.standard_id = std.id" +
             "  INNER JOIN area_of_concern aoc ON std.area_of_concern_id = aoc.id" +
-            "  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.assessment_tool_id = :atid AND (ch.state_id=:stid OR ch.state_id is NULL)" +
+            "  INNER JOIN assessment_tool_checklist atc ON atc.assessment_tool_id = :atid" +
+            "  INNER JOIN checklist ch ON c.checklist_id = ch.id AND ch.id = atc.checklist_id AND (ch.state_id=:stid OR ch.state_id is NULL)" +
             "  LEFT OUTER JOIN (SELECT DISTINCT checkpoint_id" +
             "                   FROM checkpoint_score" +
             "                   WHERE checkpoint_score.facility_assessment_id = :faid) AS cs ON c.id = cs.checkpoint_id" +
@@ -61,7 +62,8 @@ public class AssessmentProgressService {
             "  INNER JOIN area_of_concern aoc ON s.area_of_concern_id = aoc.id\n" +
             "  INNER JOIN checklist_area_of_concern caoc ON caoc.area_of_concern_id = aoc.id\n" +
             "  INNER JOIN checklist ch ON ch.id=c.checklist_id AND (ch.state_id=:stid OR ch.state_id is NULL) AND ch.id = caoc.checklist_id\n" +
-            "  INNER JOIN assessment_tool at ON ch.assessment_tool_id = at.id\n" +
+            "  INNER JOIN assessment_tool_checklist atc ON atc.checklist_id = ch.id" +
+            "  INNER JOIN assessment_tool at ON at.id = atc.assessment_tool_id\n" +
             "  WHERE at.id=:id AND c.id IS NOT NULL\n" +
             "GROUP BY ch.id, aoc.id order by ch.id, aoc.id";
 
@@ -76,7 +78,8 @@ public class AssessmentProgressService {
             "  INNER JOIN area_of_concern aoc ON s.area_of_concern_id = aoc.id\n" +
             "  INNER JOIN checklist_area_of_concern caoc ON caoc.area_of_concern_id = aoc.id\n" +
             "  INNER JOIN checklist ch ON ch.id=c.checklist_id AND (ch.state_id=:stid OR ch.state_id is NULL) AND ch.id = caoc.checklist_id\n" +
-            "  INNER JOIN assessment_tool at ON ch.assessment_tool_id = at.id\n" +
+            "  INNER JOIN assessment_tool_checklist atc ON ch.id = atc.checklist_id\n" +
+            "  INNER JOIN assessment_tool at ON atc.assessment_tool_id = at.id\n" +
             "WHERE at.id=:id AND c.id IS NOT NULL\n" +
             "GROUP BY ch.id";
 
