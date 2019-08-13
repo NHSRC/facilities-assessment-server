@@ -5,6 +5,7 @@ import org.nhsrc.domain.ReferencableEntity;
 import org.nhsrc.repository.MeasurableElementRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StandardRepository;
+import org.nhsrc.web.contract.ErrorResponse;
 import org.nhsrc.web.contract.MeasurableElementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,7 +36,7 @@ public class MeasurableElementController {
         MeasurableElement measurableElement = Repository.findByUuidOrCreate(request.getUuid(), measurableElementRepository, new MeasurableElement());
         MeasurableElement existingMeasurableElement = measurableElementRepository.findByStandardIdAndReference(request.getStandardId(), request.getReference());
         if (ReferencableEntity.isConflicting(existingMeasurableElement, measurableElement)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Measurable element with same reference code %s already exists in the standard.", request.getReference()));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(String.format("Measurable element with same reference code %s already exists in the standard.", request.getReference())));
         }
 
         measurableElement.setName(request.getName());

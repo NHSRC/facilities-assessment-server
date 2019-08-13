@@ -5,6 +5,7 @@ import org.nhsrc.domain.Standard;
 import org.nhsrc.repository.AreaOfConcernRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StandardRepository;
+import org.nhsrc.web.contract.ErrorResponse;
 import org.nhsrc.web.contract.StandardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,7 +36,7 @@ public class StandardController {
         Standard standard = Repository.findByUuidOrCreate(standardRequest.getUuid(), standardRepository, new Standard());
         Standard existingStandard = standardRepository.findByAreaOfConcernIdAndReference(standardRequest.getAreaOfConcernId(), standardRequest.getReference().trim());
         if (ReferencableEntity.isConflicting(existingStandard, standard)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("Standard with same reference code %s already exists in the area of concern.", standardRequest.getReference()));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(String.format("Standard with same reference code %s already exists in the area of concern.", standardRequest.getReference())));
         }
 
         standard.setName(standardRequest.getName());
