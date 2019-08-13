@@ -1,7 +1,10 @@
 package org.nhsrc.repository;
 
-import org.nhsrc.domain.*;
+import org.nhsrc.domain.AreaOfConcern;
+import org.nhsrc.domain.AssessmentTool;
+import org.nhsrc.domain.Checklist;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,9 +14,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 @Transactional
@@ -53,4 +58,13 @@ public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
 
     @Query("SELECT cl FROM FacilityAssessmentMissingCheckpoint famc inner join famc.missingCheckpoint mc inner join mc.checklist cl WHERE famc.facilityAssessment.id = :facilityAssessmentId")
     List<Checklist> findUniqueChecklistsMissingInCheckpointsForFacilityAssessment(@Param("facilityAssessmentId") Integer facilityAssessmentId);
+
+    List<Checklist> findAllBy(Pageable pageable);
+
+    @Override
+    default Page<Checklist> findAll(Pageable pageable) {
+        List<Checklist> all = findAllBy(pageable);
+        List<Checklist> list = all.stream().distinct().collect(Collectors.toList());
+        return new PageImpl<>(list, pageable, list.size());
+    }
 }

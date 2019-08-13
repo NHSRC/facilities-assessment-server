@@ -6,6 +6,7 @@ import org.nhsrc.domain.State;
 import org.nhsrc.repository.*;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.ChecklistRequest;
+import org.nhsrc.web.contract.ErrorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +52,7 @@ public class ChecklistController {
             // ...and the checklist has checkpoints belonging to common or other state (or doesn't have all checkpoints belonging to the to be state)
             state = stateRepository.findOne(checklistRequest.getStateId());
             if (checkpointRepository.countAllByStateAndChecklist(state, checklist) != checkpointRepository.countAllByChecklist(checklist))
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("This checklist cannot be moved to the state: %s because it has checkpoints belonging to common or to another state", state.getName()));
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(String.format("This checklist cannot be moved to the state: %s because it has checkpoints belonging to common or to another state", state.getName())));
         }
         checklist.setState(state);
 
