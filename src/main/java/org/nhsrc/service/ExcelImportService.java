@@ -47,7 +47,7 @@ public class ExcelImportService {
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
         ExcelImporter excelImporter = new ExcelImporter(assessmentChecklistData);
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessment.getAssessmentTool().getUuid());
-        excelImporter.importFile(inputStream, assessmentTool,true, facilityAssessment);
+        excelImporter.importFile(inputStream, true);
 
         missingChecklistItemsService.clearMissingChecklists(facilityAssessment);
 

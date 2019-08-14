@@ -23,4 +23,6 @@ public class Department extends AbstractEntity {
         this.name = name;
     }
 
+    public Department() {
+    }
 }

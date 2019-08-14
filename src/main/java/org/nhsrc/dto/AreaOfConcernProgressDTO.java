@@ -12,10 +12,11 @@ public class AreaOfConcernProgressDTO implements Serializable {
     private String checklistUUID;
     private int checklistId;
     protected String uuid;
-    private int id;
+    private int areaOfConcernId;
     private int completed;
     private int total;
     private boolean anyStandardScored;
+    private int id;
 
     public AreaOfConcernProgressDTO(String uuid, int completed, int total, String checklistUUID) {
         this.checklistUUID = checklistUUID;
@@ -67,6 +68,14 @@ public class AreaOfConcernProgressDTO implements Serializable {
 
     public void setChecklistId(int checklistId) {
         this.checklistId = checklistId;
+    }
+
+    public int getAreaOfConcernId() {
+        return areaOfConcernId;
+    }
+
+    public void setAreaOfConcernId(int areaOfConcernId) {
+        this.areaOfConcernId = areaOfConcernId;
     }
 
     public int getId() {

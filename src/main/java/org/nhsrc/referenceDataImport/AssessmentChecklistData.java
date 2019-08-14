@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 public class AssessmentChecklistData {
     private List<Checklist> checklists = new ArrayList<>();
-    private List<Department> departments = new ArrayList<>();
     private List<AreaOfConcern> areaOfConcerns = new ArrayList<>();
     private List<CheckpointScore> checkpointScores = new ArrayList<>();
     private AssessmentTool assessmentTool;
@@ -16,10 +15,6 @@ public class AssessmentChecklistData {
     private State state;
 
     public AssessmentChecklistData() {
-    }
-
-    public void addDepartment(Department department) {
-        this.departments.add(department);
     }
 
     public void addChecklist(Checklist checklist) {
@@ -40,10 +35,6 @@ public class AssessmentChecklistData {
 
     public List<Checklist> getChecklists() {
         return this.checklists;
-    }
-
-    public List<Department> getDepartments() {
-        return departments;
     }
 
     public AssessmentTool getAssessmentTool() {

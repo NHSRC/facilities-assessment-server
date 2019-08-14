@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 @Table(name = "checklist")
 @BatchSize(size = 25)
 public class Checklist extends AbstractEntity {
+    public Checklist() {
+    }
+
     @Column(name = "name", nullable = false)
     private String name;
 

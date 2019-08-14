@@ -56,7 +56,7 @@ public class ChecklistProgressDTO {
 
     @Override
     public String toString() {
-        return "EntityProgressDTO{" +
+        return "{" +
                 "uuid='" + uuid + '\'' +
                 ", completed=" + completed +
                 ", total=" + total +

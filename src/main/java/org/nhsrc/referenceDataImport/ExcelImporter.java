@@ -3,20 +3,13 @@ package org.nhsrc.referenceDataImport;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.Department;
-import org.nhsrc.domain.FacilityAssessment;
-import org.nhsrc.web.FacilityAssessmentController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Iterator;
 
 public class ExcelImporter {
     private static Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
@@ -27,14 +20,14 @@ public class ExcelImporter {
         this.data = data;
     }
 
-    public void importFile(InputStream inputStream, AssessmentTool assessmentTool, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
+    public void importFile(InputStream inputStream, boolean hasScores) throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         try {
             int numberOfSheets = workbook.getNumberOfSheets();
             for (int i = 0; i < numberOfSheets; i++) {
                 XSSFSheet sheet = workbook.getSheetAt(i);
                 logger.info("READING SHEET: " + sheet.getSheetName());
-                this.sheetImport(sheet, assessmentTool, hasScores, facilityAssessment);
+                this.sheetImport(sheet, hasScores);
                 logger.info("COMPLETED SHEET: " + sheet.getSheetName());
             }
         } finally {
@@ -43,31 +36,21 @@ public class ExcelImporter {
         }
     }
 
-    public void importFile(File file, AssessmentTool assessmentTool, boolean hasScores, FacilityAssessment facilityAssessment) throws Exception {
-        FileInputStream inputStream = new FileInputStream(file);
-        this.importFile(inputStream, assessmentTool, hasScores, facilityAssessment);
-    }
-
-    private void sheetImport(XSSFSheet sheet, AssessmentTool assessmentTool, boolean hasScores, FacilityAssessment facilityAssessment) {
+    private void sheetImport(XSSFSheet sheet, boolean hasScores) {
         String sheetName = sheet.getSheetName().trim();
         if (Arrays.stream(RESERVED_SHEET_NAMES).anyMatch(s -> s.equalsIgnoreCase(sheetName))) {
             return;
         }
 
-        Department department = makeDepartment(sheetName);
-        data.addDepartment(department);
-
         final Checklist checklist = new Checklist();
-        checklist.setDepartment(department);
         checklist.setName(sheetName);
-        checklist.addAssessmentTool(assessmentTool);
         data.addChecklist(checklist);
 
         SheetRowImporter sheetImporter = new SheetRowImporter(data);
 
         int i = 1;
         for (Row cells : sheet) {
-            boolean completed = sheetImporter.importRow(cells, checklist, hasScores, facilityAssessment);
+            boolean completed = sheetImporter.importRow(cells, checklist, hasScores);
             if (completed) {
                 logger.info(String.format("Sheet completed at line number:%d on encountering score row", i));
                 break;

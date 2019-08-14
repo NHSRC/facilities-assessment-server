@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -116,6 +117,9 @@ public class FacilityAssessmentService {
             facilityAssessment.setUser(user);
             if (facilityAssessment.getAssessmentCode() == null) {
                 facilityAssessment.setupCode();
+            }
+            if (facilityAssessmentDTO.getUuid() == null) {
+                facilityAssessment.setUuid(UUID.randomUUID());
             }
             return facilityAssessmentRepository.save(facilityAssessment);
         }
