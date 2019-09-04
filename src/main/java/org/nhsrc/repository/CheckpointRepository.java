@@ -22,7 +22,7 @@ import java.util.UUID;
 @RepositoryRestResource(collectionResourceRel = "checkpoint", path = "checkpoint")
 public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<Checkpoint> findDistinctByLastModifiedDateGreaterThanAndInactiveFalseOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<Checkpoint> findDistinctByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     List<Checkpoint> findAllByNameAndChecklistUuidAndMeasurableElementReference(String name, UUID checklistUuid, String measurableElementReference);
 
