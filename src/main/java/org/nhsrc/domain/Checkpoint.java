@@ -3,10 +3,14 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
+import org.springframework.security.access.method.P;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "checkpoint")
@@ -31,6 +35,9 @@ public class Checkpoint extends AbstractEntity {
     @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "state_id")
     private State state;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "checkpoint", orphanRemoval = true)
+    private Set<ExcludedCheckpointState> excludedCheckpointStates = new HashSet<>();
 
     @Column(name = "am_observation")
     @NotNull
@@ -141,8 +148,16 @@ public class Checkpoint extends AbstractEntity {
         return state == null ? null : state.getId();
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setStateApplicability(State applicableState, Set<ExcludedCheckpointState> incidentExcludedCheckpointStates) {
+        this.state = applicableState;
+        if (applicableState != null) {
+            this.excludedCheckpointStates.forEach(excludedCheckpointState -> excludedCheckpointState.setInactive(true));
+        } else {
+            this.excludedCheckpointStates.forEach(currentExcludedCheckpointState -> {
+                if (!incidentExcludedCheckpointStates.contains(currentExcludedCheckpointState)) currentExcludedCheckpointState.setInactive(true);
+            });
+            this.excludedCheckpointStates.addAll(incidentExcludedCheckpointStates);
+        }
     }
 
     public Integer getSortOrder() {
@@ -189,6 +204,19 @@ public class Checkpoint extends AbstractEntity {
         return this.measurableElement.getStandard().getAreaOfConcern()._getAssessmentToolIds();
     }
 
+    @JsonIgnore
+    public Set<ExcludedCheckpointState> getExcludedCheckpointStates() {
+        return excludedCheckpointStates;
+    }
+
+    public void setExcludedCheckpointStates(Set<ExcludedCheckpointState> excludedCheckpointStates) {
+        this.excludedCheckpointStates = excludedCheckpointStates;
+    }
+
+    public List<Integer> getExcludedStateIds() {
+        return excludedCheckpointStates.stream().filter(excludedCheckpointState -> !excludedCheckpointState.getInactive()).map(excludedCheckpointState -> excludedCheckpointState.getState().getId()).collect(Collectors.toList());
+    }
+
     @Override
     public String toString() {
         return "Checkpoint{" +
@@ -196,5 +224,13 @@ public class Checkpoint extends AbstractEntity {
                 ", " + checklist + '\'' +
                 ", " + measurableElement +
                 '}';
+    }
+
+    public void removeExcludedCheckpointState(ExcludedCheckpointState excludedCheckpointState) {
+        excludedCheckpointStates.remove(excludedCheckpointState);
+    }
+
+    public void addExcludedCheckpointState(ExcludedCheckpointState excludedCheckpointState) {
+        excludedCheckpointStates.add(excludedCheckpointState);
     }
 }

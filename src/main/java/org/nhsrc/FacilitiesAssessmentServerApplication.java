@@ -103,6 +103,7 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 resource.add(new Link(checkpoint.getMeasurableElement().getUuid().toString(), "measurableElementUUID"));
                 if (checkpoint.getState() != null)
                     resource.add(new Link(checkpoint.getState().getUuid().toString(), "stateUUID"));
+                resource.add(checkpoint.getExcludedCheckpointStates().stream().map(excludedCheckpointState -> new Link(excludedCheckpointState.getUuid().toString(), "excludedCheckpointStateUUIDs")).collect(Collectors.toList()));
                 return resource;
             }
         };

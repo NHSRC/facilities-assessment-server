@@ -4,13 +4,15 @@ import org.nhsrc.domain.AbstractEntity;
 import org.nhsrc.domain.BaseEntity;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class Repository {
+    public static <T> Set<T> findByIds(List<Integer> ids, BaseRepository<T> baseRepository) {
+        return ids.stream().map(id -> Repository.findById(id, baseRepository)).collect(Collectors.toSet());
+    }
+
     public static <T> T findByUuidOrId(UUID uuid, Integer id, BaseRepository<T> baseRepository) {
         // Simplifying based IntelliJ's suggestion could lead to recursive loop
         return Repository.findByUuidOrId(uuid == null ? null : uuid.toString(), id, baseRepository);

@@ -1,5 +1,8 @@
 package org.nhsrc.web.contract;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CheckpointRequest {
     private Integer id;
     private String uuid;
@@ -19,6 +22,7 @@ public class CheckpointRequest {
     private Boolean isDefault;
     private Integer stateId;
     private boolean isOptional;
+    private List<Integer> excludedStateIds = new ArrayList<>();
 
     public String getUuid() {
         return uuid;
@@ -154,5 +158,13 @@ public class CheckpointRequest {
 
     public void setOptional(boolean optional) {
         isOptional = optional;
+    }
+
+    public List<Integer> getExcludedStateIds() {
+        return excludedStateIds;
+    }
+
+    public void setExcludedStateIds(List<Integer> excludedStateIds) {
+        this.excludedStateIds = excludedStateIds;
     }
 }
