@@ -1,5 +1,6 @@
 package org.nhsrc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -26,6 +27,11 @@ public abstract class AbstractEntity extends BaseEntity {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    @JsonIgnore
+    public String getUuidString() {
+        return this.getUuid().toString();
     }
 
     public void setUuid(UUID uuid) {

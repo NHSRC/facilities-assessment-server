@@ -188,7 +188,21 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 Indicator indicator = resource.getContent();
                 resource.removeLinks();
                 resource.add(new Link(indicator.getFacilityAssessment().getUuidString(), "facilityAssessmentUUID"));
-                resource.add(new Link(indicator.getIndicatorDefinition().getUuid().toString(), "indicatorDefinitionUUID"));
+                resource.add(new Link(indicator.getIndicatorDefinition().getUuidString(), "indicatorDefinitionUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    public ResourceProcessor<Resource<ExcludedCheckpointState>> ExcludedCheckpointStateProcessor() {
+        return new ResourceProcessor<Resource<ExcludedCheckpointState>>() {
+            @Override
+            public Resource<ExcludedCheckpointState> process(Resource<ExcludedCheckpointState> resource) {
+                ExcludedCheckpointState excludedCheckpointState = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(excludedCheckpointState.getState().getUuidString(), "stateUUID"));
+                resource.add(new Link(excludedCheckpointState.getCheckpoint().getUuidString(), "checkpointUUID"));
                 return resource;
             }
         };
