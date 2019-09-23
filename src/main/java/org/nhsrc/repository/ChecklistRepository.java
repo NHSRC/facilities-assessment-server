@@ -42,17 +42,11 @@ public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
     List<Checklist> findAllByAssessmentToolsIdAndName(@Param("assessmentToolId") int assessmentToolId, @Param("name") String name);
 
     @RestResource(path = "findByState", rel = "findByState")
-    Page<Checklist> findByStateId(@Param("stateId") int stateId, Pageable pageable);
+    Page<Checklist> findByStateIdOrStateIsNull(@Param("stateId") int stateId, Pageable pageable);
 
     @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
     Page<Checklist> findByAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
     List<Checklist> findByAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId);
-
-    @RestResource(path = "find", rel = "find")
-    Page<Checklist> findByStateIdAndAssessmentToolsId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
-
-    @Query("SELECT c FROM Checklist c inner join c.assessmentTools as at WHERE (c.state.id = :stateId or c.state is null) and at.id = :assessmentToolId order by at.name, c.name")
-    Page<Checklist> findByAssessmentToolsIdAndStateIdOrStateIsNull(@Param("assessmentToolId") Integer assessmentToolId, @Param("stateId") Integer stateId, Pageable pageable);
 
     Checklist findByNameAndAssessmentTools(@Param("String") String name, @Param("assessmentTool") AssessmentTool assessmentTool);
 

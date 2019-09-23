@@ -72,8 +72,9 @@ public class ChecklistController {
     }
 
     @RequestMapping(value = "checklist/search/find", method = {RequestMethod.GET})
-    public Page<Checklist> findAll(@RequestParam Integer assessmentToolId, @RequestParam Integer stateId, Pageable pageable) {
-        return checklistRepository.findByAssessmentToolsIdAndStateIdOrStateIsNull(assessmentToolId, stateId, pageable);
+    public List<Checklist> findAll(@RequestParam Integer assessmentToolId, @RequestParam Integer stateId, Pageable pageable) {
+        Page<Checklist> checklists = checklistRepository.findByAssessmentToolsId(assessmentToolId, pageable);
+        return checklists.getContent().stream().filter(checklist -> stateId.equals(checklist._getStateId()) || checklist._getStateId() == null).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "checklist/search/findByFacilityAssessment", method = {RequestMethod.GET})
