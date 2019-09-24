@@ -48,6 +48,9 @@ public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
     Page<Checklist> findByAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
     List<Checklist> findByAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId);
 
+    @RestResource(path = "findByDepartment", rel = "findByDepartment")
+    Page<Checklist> findByDepartmentId(@Param("departmentId") Integer departmentId, Pageable pageable);
+
     Checklist findByNameAndAssessmentTools(@Param("String") String name, @Param("assessmentTool") AssessmentTool assessmentTool);
 
     @Query("SELECT cl FROM FacilityAssessmentMissingCheckpoint famc inner join famc.missingCheckpoint mc inner join mc.checklist cl WHERE famc.facilityAssessment.id = :facilityAssessmentId")
