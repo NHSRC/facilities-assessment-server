@@ -64,4 +64,10 @@ public class Repository {
             addChild.accept(childRepository.findOne(proposedChildId));
         }
     }
+
+    public static <T extends BaseEntity> T delete(Integer id, CrudRepository<T, Integer> repository) {
+        T t = repository.findOne(id);
+        repository.delete(id);
+        return t;
+    }
 }

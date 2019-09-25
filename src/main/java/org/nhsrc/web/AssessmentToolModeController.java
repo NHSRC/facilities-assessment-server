@@ -6,10 +6,7 @@ import org.nhsrc.repository.Repository;
 import org.nhsrc.web.contract.AssessmentToolModeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 
@@ -31,5 +28,12 @@ public class AssessmentToolModeController {
         assessmentToolMode.setName(request.getName());
         assessmentToolMode.setInactive(request.getInactive());
         return assessmentToolModeRepository.save(assessmentToolMode);
+    }
+
+    @RequestMapping(value = "/assessmentToolModes/{id}", method = {RequestMethod.DELETE})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Metadata_Write')")
+    public AssessmentToolMode delete(@PathVariable("id") Integer id) {
+        return Repository.delete(id, assessmentToolModeRepository);
     }
 }

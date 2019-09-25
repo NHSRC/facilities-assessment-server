@@ -67,4 +67,11 @@ public class MeasurableElementController {
             return measurableElementRepository.findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNullAndStandardAreaOfConcernChecklistsAssessmentToolsId(stateId, assessmentToolId, pageable);
         return measurableElementRepository.findAll(pageable);
     }
+
+    @RequestMapping(value = "/measurableElements/{id}", method = {RequestMethod.DELETE})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Write')")
+    public MeasurableElement delete(@PathVariable("id") Integer id) {
+        return Repository.delete(id, measurableElementRepository);
+    }
 }

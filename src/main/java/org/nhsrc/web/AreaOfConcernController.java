@@ -89,4 +89,11 @@ public class AreaOfConcernController {
             return areaOfConcernRepository.findAllDistinctByChecklistsStateIdOrChecklistsStateIdIsNull(stateId, pageable);
         return areaOfConcernRepository.findAllByStateAndAssessmentTool(assessmentToolId, stateId, pageable);
     }
+
+    @RequestMapping(value = "/areaOfConcerns/{id}", method = {RequestMethod.DELETE})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Write')")
+    public AreaOfConcern delete(@PathVariable("id") Integer id) {
+        return Repository.delete(id, areaOfConcernRepository);
+    }
 }

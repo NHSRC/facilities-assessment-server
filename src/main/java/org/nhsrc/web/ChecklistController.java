@@ -81,4 +81,11 @@ public class ChecklistController {
     public List<Checklist> findByFacilityAssessment(@RequestParam Integer facilityAssessmentId) {
         return checklistRepository.findUniqueChecklistsMissingInCheckpointsForFacilityAssessment(facilityAssessmentId).stream().distinct().sorted(Comparator.comparing(Checklist::getName)).collect(Collectors.toList());
     }
+
+    @RequestMapping(value = "/checklists/{id}", method = {RequestMethod.DELETE})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Write')")
+    public Checklist delete(@PathVariable("id") Integer id) {
+        return Repository.delete(id, checklistRepository);
+    }
 }

@@ -110,4 +110,11 @@ public class CheckpointController {
         Checkpoint checkpoint = checkpointRepository.findOne(checkpointId);
         return checkpointRepository.findByChecklistIdAndMeasurableElementId(checkpoint.getChecklist().getId(), checkpoint.getMeasurableElement().getId(), pageable);
     }
+    
+    @RequestMapping(value = "/checkpoints/{id}", method = {RequestMethod.DELETE})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Metadata_Write')")
+    public Checkpoint delete(@PathVariable("id") Integer id) {
+        return Repository.delete(id, checkpointRepository);
+    }
 }

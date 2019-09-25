@@ -6,10 +6,7 @@ import org.nhsrc.repository.Repository;
 import org.nhsrc.web.contract.AssessmentTypeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 
@@ -32,5 +29,12 @@ public class AssessmentTypeController {
         assessmentType.setShortName(request.getShortName());
         assessmentType.setInactive(request.getInactive());
         return assessmentTypeRepository.save(assessmentType);
+    }
+
+    @RequestMapping(value = "/assessmentTypes/{id}", method = {RequestMethod.DELETE})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Metadata_Write')")
+    public AssessmentType delete(@PathVariable("id") Integer id) {
+        return Repository.delete(id, assessmentTypeRepository);
     }
 }

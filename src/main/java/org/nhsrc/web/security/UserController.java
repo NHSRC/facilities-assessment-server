@@ -12,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.security.Principal;
@@ -73,5 +70,12 @@ public class UserController {
     public User loggedInUser(Principal principal) {
         String name = principal.getName();
         return userService.findUserByEmail(name);
+    }
+
+    @RequestMapping(value = "/users/{id}", method = {RequestMethod.DELETE})
+    @Transactional
+    @PreAuthorize("hasRole('Users_Write')")
+    public User delete(@PathVariable("id") Integer id) {
+        return Repository.delete(id, userRepository);
     }
 }

@@ -6,10 +6,7 @@ import org.nhsrc.repository.StateRepository;
 import org.nhsrc.web.contract.StateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 
@@ -32,5 +29,12 @@ public class StateController {
         state.setShortName(request.getShortName());
         state.setInactive(request.getInactive());
         return stateRepository.save(state);
+    }
+
+    @RequestMapping(value = "/states/{id}", method = {RequestMethod.DELETE})
+    @Transactional
+    @PreAuthorize("hasRole('Facility_Metadata_Write')")
+    public State delete(@PathVariable("id") Integer id) {
+        return Repository.delete(id, stateRepository);
     }
 }

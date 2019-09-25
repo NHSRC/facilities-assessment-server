@@ -113,4 +113,11 @@ public class FacilityController {
 
         return "MultipleInDistrict";
     }
+
+    @RequestMapping(value = "/facilitys/{id}", method = {RequestMethod.DELETE})
+    @Transactional
+    @PreAuthorize("hasRole('Facility_Metadata_Write')")
+    public Facility delete(@PathVariable("id") Integer id) {
+        return Repository.delete(id, facilityRepository);
+    }
 }

@@ -59,4 +59,11 @@ public class StandardController {
             return standardRepository.findDistinctByAreaOfConcernChecklistsAssessmentToolsId(assessmentToolId, pageable);
         return standardRepository.findAll(pageable);
     }
+
+    @RequestMapping(value = "/standards/{id}", method = {RequestMethod.DELETE})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Write')")
+    public Standard delete(@PathVariable("id") Integer id) {
+        return Repository.delete(id, standardRepository);
+    }
 }
