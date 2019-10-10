@@ -59,9 +59,21 @@ public interface FacilityAssessmentRepository extends TxDataRepository<FacilityA
     @PreAuthorize("hasRole('Assessment_Read')")
     Page<FacilityAssessment> findByFacilityDistrictId(@Param("districtId") Integer districtId, Pageable pageable);
 
+    @RestResource(path = "findByState", rel = "findByState")
+    @PreAuthorize("hasRole('Assessment_Read')")
+    Page<FacilityAssessment> findFacilityAssessmentsByStateId (@Param("stateId") Integer stateId, Pageable pageable);
+
     @RestResource(path = "findByAssessmentType", rel = "findByAssessmentType")
     @PreAuthorize("hasRole('Assessment_Read')")
     Page<FacilityAssessment> findByAssessmentTypeId(@Param("assessmentTypeId") Integer assessmentTypeId, Pageable pageable);
+
+    @RestResource(path = "findByFacilityType", rel = "findByFacilityType")
+    @PreAuthorize("hasRole('Assessment_Read')")
+    Page<FacilityAssessment> findFacilityAssessmentsByFacilityTypeId (@Param("facilityTypeId") Integer facilityTypeId, Pageable pageable);
+
+    @RestResource(path = "findByFacilityName", rel = "findByFacilityName")
+    @PreAuthorize("hasRole('Assessment_Read')")
+    Page<FacilityAssessment> findFacilityAssessmentsByFacilityNameContainingIgnoreCase (@Param("facilityName") String facilityName, Pageable pageable);
 
     @RestResource(path = "find", rel = "find")
     @PreAuthorize("hasRole('Assessment_Read')")
