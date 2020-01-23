@@ -207,4 +207,18 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
             }
         };
     }
+
+    @Bean
+    public ResourceProcessor<Resource<ExcludedAssessmentToolState>> ExcludedAssessmentToolStateProcessor() {
+        return new ResourceProcessor<Resource<ExcludedAssessmentToolState>>() {
+            @Override
+            public Resource<ExcludedAssessmentToolState> process(Resource<ExcludedAssessmentToolState> resource) {
+                ExcludedAssessmentToolState excludedCheckpointState = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(excludedCheckpointState.getState().getUuidString(), "stateUUID"));
+                resource.add(new Link(excludedCheckpointState.getAssessmentTool().getUuidString(), "assessmentToolUUID"));
+                return resource;
+            }
+        };
+    }
 }

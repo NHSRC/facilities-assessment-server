@@ -40,6 +40,13 @@ public class AssessmentTool extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private AssessmentToolType assessmentToolType;
 
+    @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "state_id")
+    private State state;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "assessmentTool", orphanRemoval = true)
+    private Set<ExcludedAssessmentToolState> excludedAssessmentToolStates = new HashSet<>();
+
     public String getName() {
         return name;
     }
@@ -88,6 +95,16 @@ public class AssessmentTool extends AbstractEntity {
         return assessmentToolType;
     }
 
+    @JsonIgnore
+    public State getState() {
+        return state;
+    }
+
+    @JsonProperty("stateId")
+    public Integer _getStateId() {
+        return state == null ? null : state.getId();
+    }
+
     @Override
     public String toString() {
         return "AssessmentTool{" +
@@ -101,5 +118,30 @@ public class AssessmentTool extends AbstractEntity {
 
     public void addChecklist(Checklist checklist) {
         checklists.add(checklist);
+    }
+
+    @JsonIgnore
+    public Set<ExcludedAssessmentToolState> getExcludedAssessmentToolStates() {
+        return excludedAssessmentToolStates;
+    }
+
+    public void setExcludedAssessmentToolStates(Set<ExcludedAssessmentToolState> excludedAssessmentToolStates) {
+        this.excludedAssessmentToolStates = excludedAssessmentToolStates;
+    }
+
+    public List<Integer> getExcludedStateIds() {
+        return excludedAssessmentToolStates.stream().filter(excludedAssessmentToolState -> !excludedAssessmentToolState.getInactive()).map(excludedAssessmentToolState -> excludedAssessmentToolState.getState().getId()).collect(Collectors.toList());
+    }
+
+    public void setStateApplicability(State applicableState, Set<ExcludedAssessmentToolState> incidentExcludedAssessmentToolStates) {
+        this.state = applicableState;
+        if (applicableState != null) {
+            this.excludedAssessmentToolStates.forEach(excludedCheckpointState -> excludedCheckpointState.setInactive(true));
+        } else {
+            this.excludedAssessmentToolStates.forEach(currentExcludedCheckpointState -> {
+                if (!incidentExcludedAssessmentToolStates.contains(currentExcludedCheckpointState)) currentExcludedCheckpointState.setInactive(true);
+            });
+            this.excludedAssessmentToolStates.addAll(incidentExcludedAssessmentToolStates);
+        }
     }
 }

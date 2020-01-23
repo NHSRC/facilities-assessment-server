@@ -11,6 +11,16 @@ public class AssessmentToolRequest {
     private int assessmentToolModeId;
     private String assessmentType;
     private List<Integer> checklistIds = new ArrayList<>();
+    private List<Integer> excludedStateIds = new ArrayList<>();
+    private Integer stateId;
+
+    public Integer getStateId() {
+        return stateId;
+    }
+
+    public void setStateId(Integer stateId) {
+        this.stateId = stateId;
+    }
 
     public String getUuid() {
         return uuid;
@@ -66,5 +76,13 @@ public class AssessmentToolRequest {
 
     public void setChecklistIds(List<Integer> checklistIds) {
         this.checklistIds = checklistIds;
+    }
+
+    public List<Integer> getExcludedStateIds() {
+        return excludedStateIds;
+    }
+
+    public void setExcludedStateIds(List<Integer> excludedStateIds) {
+        this.excludedStateIds = excludedStateIds;
     }
 }

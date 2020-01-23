@@ -1,9 +1,6 @@
 package org.nhsrc.web;
 
-import org.nhsrc.domain.AssessmentTool;
-import org.nhsrc.domain.AssessmentToolMode;
-import org.nhsrc.domain.AssessmentToolType;
-import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.*;
 import org.nhsrc.repository.*;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,19 +12,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/")
 public class AssessmentToolController {
+    private final ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository;
+    private StateRepository stateRepository;
     private AssessmentToolRepository assessmentToolRepository;
     private AssessmentToolModeRepository assessmentToolModeRepository;
     private ChecklistRepository checklistRepository;
 
     @Autowired
-    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository) {
+    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository) {
         this.assessmentToolRepository = assessmentToolRepository;
         this.assessmentToolModeRepository = assessmentToolModeRepository;
         this.checklistRepository = checklistRepository;
+        this.excludedAssessmentToolStateRepository = excludedAssessmentToolStateRepository;
+        this.stateRepository = stateRepository;
     }
 
     @RequestMapping(value = "/assessmentTools", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -45,6 +50,21 @@ public class AssessmentToolController {
             assessmentTool.setAssessmentToolType(AssessmentToolType.INDICATOR);
         }
         Repository.mergeChildren(request.getChecklistIds(), assessmentTool.getChecklistIds(), checklistRepository, checklist -> assessmentTool.removeChecklist((Checklist) checklist), checklist -> assessmentTool.addChecklist((Checklist) checklist));
+
+        Set<State> incidentExcludedStates = Repository.findByIds(request.getExcludedStateIds(), stateRepository);
+        Set<ExcludedAssessmentToolState> excludedAssessmentToolStates;
+        if (assessmentTool.isNew()) {
+            excludedAssessmentToolStates = incidentExcludedStates.stream().map(state -> new ExcludedAssessmentToolState(assessmentTool, state)).collect(Collectors.toSet());
+        } else {
+            excludedAssessmentToolStates = incidentExcludedStates.stream().map(state -> {
+                ExcludedAssessmentToolState excludedAssessmentToolState = excludedAssessmentToolStateRepository.findFirstByAssessmentToolAndState(assessmentTool, state);
+                if (excludedAssessmentToolState == null) excludedAssessmentToolState = new ExcludedAssessmentToolState(assessmentTool, state);
+                else excludedAssessmentToolState.setInactive(false);
+                return excludedAssessmentToolState;
+            }).collect(Collectors.toSet());
+        }
+        assessmentTool.setStateApplicability(Repository.findById(request.getStateId(), stateRepository), excludedAssessmentToolStates);
+
         return assessmentToolRepository.save(assessmentTool);
     }
 }
