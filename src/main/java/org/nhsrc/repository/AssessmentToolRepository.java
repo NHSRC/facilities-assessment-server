@@ -1,8 +1,6 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.AssessmentTool;
-import org.nhsrc.domain.Checklist;
-import org.nhsrc.web.contract.ext.AssessmentSummaryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +20,9 @@ import java.util.UUID;
 public interface AssessmentToolRepository extends NonTxDataRepository<AssessmentTool> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<AssessmentTool> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
+
+    @RestResource(path = "lastModifiedByState", rel = "lastModifiedByState")
+    Page<AssessmentTool> findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "forAssessmentToolMode", rel = "forAssessmentToolMode")
     Page<AssessmentTool> findByAssessmentToolModeUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("assessmentToolModeUuid") UUID assessmentToolModeUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
