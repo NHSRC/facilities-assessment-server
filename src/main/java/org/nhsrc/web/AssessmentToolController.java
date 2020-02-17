@@ -4,15 +4,10 @@ import org.nhsrc.domain.*;
 import org.nhsrc.repository.*;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,5 +61,12 @@ public class AssessmentToolController {
         assessmentTool.setStateApplicability(Repository.findById(request.getStateId(), stateRepository), excludedAssessmentToolStates);
 
         return assessmentToolRepository.save(assessmentTool);
+    }
+
+    @RequestMapping(value = "/assessmentTool/search/findByState", method = {RequestMethod.GET})
+    public List<AssessmentTool> findByState(@RequestParam(value = "stateId", required = false) Integer stateId) {
+        List<AssessmentTool> assessmentTools = assessmentToolRepository.findByStateIdOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(stateId);
+        List<ExcludedAssessmentToolState> excluded = excludedAssessmentToolStateRepository.findByStateId(stateId);
+        return assessmentTools.stream().filter(assessmentTool -> excluded.stream().filter(assessmentToolState -> assessmentToolState.getAssessmentTool().equals(assessmentTool)).findAny().orElse(null) == null).collect(Collectors.toList());
     }
 }

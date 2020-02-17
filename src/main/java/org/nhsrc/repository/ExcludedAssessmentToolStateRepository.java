@@ -14,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 @Repository
 @RepositoryRestResource(collectionResourceRel = "excludedAssessmentToolState", path = "excludedAssessmentToolState")
@@ -22,4 +23,6 @@ public interface ExcludedAssessmentToolStateRepository extends PagingAndSortingR
 
     @RestResource(path = "lastModifiedByState", rel = "lastModifiedByState")
     Page<ExcludedAssessmentToolState> findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
+    List<ExcludedAssessmentToolState> findByStateId(int stateId);
 }

@@ -41,4 +41,6 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
 
     @RestResource(path = "findByAreaOfConcern", rel = "findByAreaOfConcern")
     Page<AssessmentTool> findDistinctByChecklistsAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
+
+    List<AssessmentTool> findByStateIdOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(int stateId);
 }
