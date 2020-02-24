@@ -35,7 +35,6 @@ define _deploy_prod
 	ssh $1 "cp -f /home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar /tmp/"
 	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
 	$(call _restart_service,$1,fab)
-	$(call _tail_server,$1,)
 endef
 
 define _stop_service
@@ -48,6 +47,7 @@ endef
 
 define _restart_service
 	-ssh $1 "sudo systemctl restart $2"
+	$(call _tail_server,$1)
 endef
 
 define _debug_server
@@ -171,6 +171,9 @@ download_log_nhsrc_prod: set_host_dir_prod ## Param [{extension: additional exte
 # Service stop/start/restart
 restart_service_nhsrc_qa:
 	$(call _restart_service,gunak-other,qa-fab)
+
+restart_service_jss_prod:
+	$(call _restart_service,igunatmac,fab)
 
 .foo:
 	@echo ".foo"
