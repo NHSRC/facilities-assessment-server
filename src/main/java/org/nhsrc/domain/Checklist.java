@@ -3,8 +3,6 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -96,7 +94,7 @@ public class Checklist extends AbstractEntity {
     }
 
     @JsonProperty("departmentId")
-        public Integer _getDepartmentId() {
+    public Integer _getDepartmentId() {
         return this.department.getId();
     }
 
@@ -147,5 +145,25 @@ public class Checklist extends AbstractEntity {
 
     public void removeAreaOfConcern(AreaOfConcern areaOfConcern) {
         this.areasOfConcern.remove(areaOfConcern);
+    }
+
+    @JsonProperty
+    public String getDepartmentUUID() {
+        return department.getUuidString();
+    }
+
+    @JsonProperty
+    public String getStateUUID() {
+        return state == null ? null : state.getUuidString();
+    }
+
+    @JsonProperty
+    public List<String> getAssessmentToolUUIDs() {
+        return getAssessmentTools().stream().map(at -> at.getUuid().toString()).collect(Collectors.toList());
+    }
+
+    @JsonProperty
+    public List<String> getAreasOfConcernUUIDs() {
+        return getAreasOfConcern().stream().map(at -> at.getUuid().toString()).collect(Collectors.toList());
     }
 }

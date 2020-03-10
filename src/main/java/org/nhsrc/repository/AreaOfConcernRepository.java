@@ -1,6 +1,7 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.AreaOfConcern;
+import org.nhsrc.domain.MeasurableElement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,9 +23,6 @@ import java.util.stream.Collectors;
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "areaOfConcern", path = "areaOfConcern")
 public interface AreaOfConcernRepository extends NonTxDataRepository<AreaOfConcern> {
-    @RestResource(path = "lastModified", rel = "lastModified")
-    Page<AreaOfConcern> findDistinctByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
-
     Page<AreaOfConcern> findDistinctByInactiveFalseAndChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(String name, List<Integer> ids, Date lastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "findAllById", rel = "findAllById")
@@ -52,4 +50,6 @@ public interface AreaOfConcernRepository extends NonTxDataRepository<AreaOfConce
         List<AreaOfConcern> list = all.stream().sorted(Comparator.comparing(AreaOfConcern::getAssessmentToolNames).thenComparing(AreaOfConcern::getReference)).collect(Collectors.toList());
         return new PageImpl<>(list, p, list.size());
     }
+
+    Page<AreaOfConcern> findAllByChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(List<Integer> checklistIds, Date lastModifiedDate, Pageable pageable);
 }

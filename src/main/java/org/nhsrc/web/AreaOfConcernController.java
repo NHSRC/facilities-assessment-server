@@ -6,11 +6,13 @@ import org.nhsrc.domain.Checklist;
 import org.nhsrc.repository.AreaOfConcernRepository;
 import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.Repository;
+import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.AreaOfConcernRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,11 +27,13 @@ import java.util.stream.Collectors;
 public class AreaOfConcernController {
     private final AreaOfConcernRepository areaOfConcernRepository;
     private ChecklistRepository checklistRepository;
+    private ChecklistService checklistService;
 
     @Autowired
-    public AreaOfConcernController(AreaOfConcernRepository areaOfConcernRepository, ChecklistRepository checklistRepository) {
+    public AreaOfConcernController(AreaOfConcernRepository areaOfConcernRepository, ChecklistRepository checklistRepository, ChecklistService checklistService) {
         this.areaOfConcernRepository = areaOfConcernRepository;
         this.checklistRepository = checklistRepository;
+        this.checklistService = checklistService;
     }
 
     @RequestMapping(value = "/areaOfConcerns", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -95,5 +99,11 @@ public class AreaOfConcernController {
     @PreAuthorize("hasRole('Checklist_Write')")
     public AreaOfConcern delete(@PathVariable("id") Integer id) {
         return Repository.delete(id, areaOfConcernRepository);
+    }
+
+    @RequestMapping(value = "/areaOfConcern/search/lastModifiedByState", method = {RequestMethod.GET})
+    public Page<AreaOfConcern> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        List<Integer> checklists = checklistService.getChecklistsForState(name);
+        return areaOfConcernRepository.findAllByChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(checklists, lastModifiedDateTime, pageable);
     }
 }

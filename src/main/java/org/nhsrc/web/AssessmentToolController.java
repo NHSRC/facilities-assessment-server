@@ -5,10 +5,15 @@ import org.nhsrc.repository.*;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,5 +74,10 @@ public class AssessmentToolController {
     @RequestMapping(value = "/assessmentTool/search/findByState", method = {RequestMethod.GET})
     public List<AssessmentTool> findByState(@RequestParam(value = "stateId", required = false) Integer stateId) {
         return checklistService.getAssessmentToolsForState(stateId);
+    }
+
+    @RequestMapping(value = "/assessmentTool/search/lastModifiedByState", method = {RequestMethod.GET})
+    public Page<AssessmentTool> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        return new PageImpl<AssessmentTool>(checklistService.getAssessmentToolsForState(name));
     }
 }

@@ -48,6 +48,11 @@ public class ChecklistService {
         return getAssessmentToolsForState(state);
     }
 
+    public List<AssessmentTool> getAssessmentToolsForState(String stateName) {
+        State state = stateRepository.findByName(stateName);
+        return this.getAssessmentToolsForState(state);
+    }
+
     public List<AssessmentTool> getAssessmentToolsForState(State state) {
         List<AssessmentTool> assessmentTools = assessmentToolRepository.findByStateOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(state);
         List<ExcludedAssessmentToolState> excluded = excludedAssessmentToolStateRepository.findByState(state);

@@ -2,6 +2,7 @@ package org.nhsrc.repository;
 
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.MeasurableElement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,9 +23,6 @@ import java.util.stream.Collectors;
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "checklist", path = "checklist")
 public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
-    @RestResource(path = "lastModified", rel = "lastModified")
-    Page<Checklist> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
-
     @RestResource(path = "forAssessmentTool", rel = "forAssessmentTool")
     Page<Checklist> findByAssessmentToolsUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("assessmentToolUuid") UUID assessmentToolUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
@@ -57,6 +55,8 @@ public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
     List<Checklist> findUniqueChecklistsMissingInCheckpointsForFacilityAssessment(@Param("facilityAssessmentId") Integer facilityAssessmentId);
 
     List<Checklist> findAllBy(Pageable pageable);
+
+    Page<Checklist> findAllByIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(List<Integer> checklistIds, Date lastModifiedDate, Pageable pageable);
 
     @Override
     default Page<Checklist> findAll(Pageable pageable) {
