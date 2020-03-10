@@ -49,7 +49,10 @@ public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
 
     Page<Checkpoint> findAllByChecklistId(@Param("checklistId") Integer checklistId, Pageable pageable);
 
-    Page<Checkpoint> findAllByChecklistIdIn(List<Integer> checklistIds, Pageable pageable);
+//    @RestResource(path = "lastModified", rel = "lastModified")
+//    Page<Checkpoint> findDistinctByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
+    Page<Checkpoint> findAllByChecklistIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(List<Integer> checklistIds, Date lastModifiedDate, Pageable pageable);
 
     int countAllByChecklist(@Param("checklist") Checklist checklist);
 }
