@@ -80,19 +80,6 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
     }
 
     @Bean
-    public ResourceProcessor<Resource<MeasurableElement>> measurableElementProcessor() {
-        return new ResourceProcessor<Resource<MeasurableElement>>() {
-            @Override
-            public Resource<MeasurableElement> process(Resource<MeasurableElement> resource) {
-                MeasurableElement measurableElement = resource.getContent();
-                resource.removeLinks();
-                resource.add(new Link(measurableElement.getStandard().getUuid().toString(), "standardUUID"));
-                return resource;
-            }
-        };
-    }
-
-    @Bean
     public ResourceProcessor<Resource<Checklist>> checklistProcessor() {
         return new ResourceProcessor<Resource<Checklist>>() {
             @Override

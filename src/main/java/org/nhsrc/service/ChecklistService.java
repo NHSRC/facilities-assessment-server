@@ -1,10 +1,7 @@
 package org.nhsrc.service;
 
 import org.nhsrc.domain.*;
-import org.nhsrc.repository.AreaOfConcernRepository;
-import org.nhsrc.repository.AssessmentToolRepository;
-import org.nhsrc.repository.ChecklistRepository;
-import org.nhsrc.repository.ExcludedAssessmentToolStateRepository;
+import org.nhsrc.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +16,15 @@ public class ChecklistService {
     private ChecklistRepository checklistRepository;
     private AssessmentToolRepository assessmentToolRepository;
     private ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository;
+    private StateRepository stateRepository;
 
     @Autowired
-    public ChecklistService(AreaOfConcernRepository areaOfConcernRepository, ChecklistRepository checklistRepository, AssessmentToolRepository assessmentToolRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository) {
+    public ChecklistService(AreaOfConcernRepository areaOfConcernRepository, ChecklistRepository checklistRepository, AssessmentToolRepository assessmentToolRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository) {
         this.areaOfConcernRepository = areaOfConcernRepository;
         this.checklistRepository = checklistRepository;
         this.assessmentToolRepository = assessmentToolRepository;
         this.excludedAssessmentToolStateRepository = excludedAssessmentToolStateRepository;
+        this.stateRepository = stateRepository;
     }
 
     public void mergeAreaOfConcerns(Checklist checklist, Set<Integer> incidentAreaOfConcernIds) {
@@ -37,15 +36,21 @@ public class ChecklistService {
         }
     }
 
-    public List<Integer> getChecklistsForState(State state) {
-        List<AssessmentTool> assessmentTools = this.getAssessmentToolsForState(state.getId());
+    public List<Integer> getChecklistsForState(String stateName) {
+        State state = stateRepository.findByName(stateName);
+        List<AssessmentTool> assessmentTools = this.getAssessmentToolsForState(state);
         List<Checklist> checklistsForAllStates = checklistRepository.findByAssessmentToolsIdIn(assessmentTools.stream().map(BaseEntity::getId).collect(Collectors.toList()));
         return checklistsForAllStates.stream().filter(checklist -> checklist.getState() == null || checklist.getState().equals(state)).map(BaseEntity::getId).collect(Collectors.toList());
     }
 
     public List<AssessmentTool> getAssessmentToolsForState(Integer stateId) {
-        List<AssessmentTool> assessmentTools = assessmentToolRepository.findByStateIdOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(stateId);
-        List<ExcludedAssessmentToolState> excluded = excludedAssessmentToolStateRepository.findByStateId(stateId);
+        State state = stateRepository.findOne(stateId);
+        return getAssessmentToolsForState(state);
+    }
+
+    public List<AssessmentTool> getAssessmentToolsForState(State state) {
+        List<AssessmentTool> assessmentTools = assessmentToolRepository.findByStateOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(state);
+        List<ExcludedAssessmentToolState> excluded = excludedAssessmentToolStateRepository.findByState(state);
         return assessmentTools.stream().filter(assessmentTool -> excluded.stream().filter(assessmentToolState -> assessmentToolState.getAssessmentTool().equals(assessmentTool)).findAny().orElse(null) == null).collect(Collectors.toList());
     }
 }

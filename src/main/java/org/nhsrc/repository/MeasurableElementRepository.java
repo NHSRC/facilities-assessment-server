@@ -52,4 +52,6 @@ public interface MeasurableElementRepository extends NonTxDataRepository<Measura
     Page<MeasurableElement> findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNull(@Param("stateId") Integer stateId, Pageable pageable);
 
     Page<MeasurableElement> findDistinctByStandardAreaOfConcernChecklistsStateIdOrStandardAreaOfConcernChecklistsStateIsNullAndStandardAreaOfConcernChecklistsAssessmentToolsId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+
+    Page<MeasurableElement> findAllByStandardAreaOfConcernChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(List<Integer> checklistIds, Date lastModifiedDate, Pageable pageable);
 }

@@ -135,4 +135,9 @@ public class MeasurableElement extends AbstractEntity implements ReferencableEnt
             }
         }).findAny().orElse(null);
     }
+
+    @JsonProperty
+    public String getStandardUUID() {
+        return getStandard().getUuidString();
+    }
 }

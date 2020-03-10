@@ -5,28 +5,34 @@ import org.nhsrc.domain.ReferencableEntity;
 import org.nhsrc.repository.MeasurableElementRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StandardRepository;
+import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.ErrorResponse;
 import org.nhsrc.web.contract.MeasurableElementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
 public class MeasurableElementController {
     private final StandardRepository standardRepository;
     private final MeasurableElementRepository measurableElementRepository;
+    private ChecklistService checklistService;
 
     @Autowired
-    public MeasurableElementController(StandardRepository standardRepository, MeasurableElementRepository measurableElementRepository) {
+    public MeasurableElementController(StandardRepository standardRepository, MeasurableElementRepository measurableElementRepository, ChecklistService checklistService) {
         this.standardRepository = standardRepository;
         this.measurableElementRepository = measurableElementRepository;
+        this.checklistService = checklistService;
     }
 
     @RequestMapping(value = "/measurableElements", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -73,5 +79,11 @@ public class MeasurableElementController {
     @PreAuthorize("hasRole('Checklist_Write')")
     public MeasurableElement delete(@PathVariable("id") Integer id) {
         return Repository.delete(id, measurableElementRepository);
+    }
+
+    @RequestMapping(value = "/measurableElement/search/lastModifiedByState", method = {RequestMethod.GET})
+    public Page<MeasurableElement> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        List<Integer> checklists = checklistService.getChecklistsForState(name);
+        return measurableElementRepository.findAllByStandardAreaOfConcernChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(checklists, lastModifiedDateTime, pageable);
     }
 }

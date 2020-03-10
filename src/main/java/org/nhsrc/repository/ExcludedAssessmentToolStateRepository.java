@@ -23,5 +23,5 @@ public interface ExcludedAssessmentToolStateRepository extends PagingAndSortingR
     @RestResource(path = "lastModifiedByState", rel = "lastModifiedByState")
     Page<ExcludedAssessmentToolState> findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
-    List<ExcludedAssessmentToolState> findByStateId(int stateId);
+    List<ExcludedAssessmentToolState> findByState(State state);
 }

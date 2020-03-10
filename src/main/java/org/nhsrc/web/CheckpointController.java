@@ -112,8 +112,7 @@ public class CheckpointController {
 
     @RequestMapping(value = "/checkpoint/search/lastModifiedByState", method = {RequestMethod.GET})
     public Page<Checkpoint> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
-        State state = stateRepository.findByName(name);
-        List<Integer> checklists = checklistService.getChecklistsForState(state);
+        List<Integer> checklists = checklistService.getChecklistsForState(name);
         return checkpointRepository.findAllByChecklistIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(checklists, lastModifiedDateTime, pageable);
     }
 }
