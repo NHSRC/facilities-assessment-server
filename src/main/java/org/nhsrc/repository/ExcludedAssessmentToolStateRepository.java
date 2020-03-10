@@ -2,7 +2,6 @@ package org.nhsrc.repository;
 
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.ExcludedAssessmentToolState;
-import org.nhsrc.domain.ExcludedCheckpointState;
 import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

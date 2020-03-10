@@ -2,6 +2,7 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.*;
 import org.nhsrc.repository.*;
+import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,17 +18,19 @@ import java.util.stream.Collectors;
 public class AssessmentToolController {
     private final ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository;
     private StateRepository stateRepository;
+    private ChecklistService checklistService;
     private AssessmentToolRepository assessmentToolRepository;
     private AssessmentToolModeRepository assessmentToolModeRepository;
     private ChecklistRepository checklistRepository;
 
     @Autowired
-    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository) {
+    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository, ChecklistService checklistService) {
         this.assessmentToolRepository = assessmentToolRepository;
         this.assessmentToolModeRepository = assessmentToolModeRepository;
         this.checklistRepository = checklistRepository;
         this.excludedAssessmentToolStateRepository = excludedAssessmentToolStateRepository;
         this.stateRepository = stateRepository;
+        this.checklistService = checklistService;
     }
 
     @RequestMapping(value = "/assessmentTools", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -65,8 +68,6 @@ public class AssessmentToolController {
 
     @RequestMapping(value = "/assessmentTool/search/findByState", method = {RequestMethod.GET})
     public List<AssessmentTool> findByState(@RequestParam(value = "stateId", required = false) Integer stateId) {
-        List<AssessmentTool> assessmentTools = assessmentToolRepository.findByStateIdOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(stateId);
-        List<ExcludedAssessmentToolState> excluded = excludedAssessmentToolStateRepository.findByStateId(stateId);
-        return assessmentTools.stream().filter(assessmentTool -> excluded.stream().filter(assessmentToolState -> assessmentToolState.getAssessmentTool().equals(assessmentTool)).findAny().orElse(null) == null).collect(Collectors.toList());
+        return checklistService.getAssessmentToolsForState(stateId);
     }
 }

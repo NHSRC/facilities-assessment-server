@@ -2,7 +2,6 @@ package org.nhsrc.repository;
 
 import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.Checkpoint;
-import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -21,12 +20,6 @@ import java.util.UUID;
 @Repository
 @RepositoryRestResource(collectionResourceRel = "checkpoint", path = "checkpoint")
 public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
-    @RestResource(path = "lastModified", rel = "lastModified")
-    Page<Checkpoint> findDistinctByStateNullAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
-
-    @RestResource(path = "lastModifiedByState", rel = "lastModifiedByState")
-    Page<Checkpoint> findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
-
     List<Checkpoint> findAllByNameAndChecklistUuidAndMeasurableElementReference(String name, UUID checklistUuid, String measurableElementReference);
 
     List<Checkpoint> findAllDistinctByNameAndChecklistUuidAndMeasurableElementStandardReference(String name, UUID checklistUuid, String standardReference);
@@ -43,9 +36,6 @@ public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
     @RestResource(path = "findByStateAndAssessmentTool", rel = "findByStateAndAssessmentTool")
     Page<Checkpoint> findByChecklistStateIdOrChecklistStateIsNullAndChecklistAssessmentToolsId(@Param("stateId") Integer stateId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
-    @Query("SELECT distinct c FROM Checkpoint c inner join c.measurableElement as me WHERE (c.state.id = :stateId or c.state is null) and c.checklist.id = :checklistId")
-    Page<Checkpoint> findByChecklistIdAndStateIdOrStateIsNullOrderByMeasurableElementRefAsNumberAscSortOrderAsc(@Param("checklistId") Integer checklistId, @Param("stateId") Integer stateId, Pageable pageable);
-
     @RestResource(path = "findByStandard", rel = "findByStandard")
     Page<Checkpoint> findByMeasurableElementStandardIdAndChecklistId(@Param("standardId") Integer standardId, @Param("checklistId") Integer checklistId, Pageable pageable);
 
@@ -59,6 +49,7 @@ public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
 
     Page<Checkpoint> findAllByChecklistId(@Param("checklistId") Integer checklistId, Pageable pageable);
 
-    int countAllByStateAndChecklist(@Param("state") State state, @Param("checklist") Checklist checklist);
+    Page<Checkpoint> findAllByChecklistIdIn(List<Integer> checklistIds, Pageable pageable);
+
     int countAllByChecklist(@Param("checklist") Checklist checklist);
 }

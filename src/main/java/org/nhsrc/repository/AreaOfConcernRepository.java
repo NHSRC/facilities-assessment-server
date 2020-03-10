@@ -25,6 +25,8 @@ public interface AreaOfConcernRepository extends NonTxDataRepository<AreaOfConce
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<AreaOfConcern> findDistinctByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
+    Page<AreaOfConcern> findDistinctByInactiveFalseAndChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(String name, List<Integer> ids, Date lastModifiedDateTime, Pageable pageable);
+
     @RestResource(path = "findAllById", rel = "findAllById")
     List<AreaOfConcern> findByIdIn(@Param("ids") Integer[] ids);
 

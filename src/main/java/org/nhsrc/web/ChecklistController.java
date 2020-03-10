@@ -51,7 +51,7 @@ public class ChecklistController {
         if (!checklist.isNew() && checklistRequest.getStateId() != null && checklistRequest.getStateId() != 0) {
             // ...and the checklist has checkpoints belonging to common or other state (or doesn't have all checkpoints belonging to the to be state)
             state = stateRepository.findOne(checklistRequest.getStateId());
-            if (checkpointRepository.countAllByStateAndChecklist(state, checklist) != checkpointRepository.countAllByChecklist(checklist))
+            if (checkpointRepository.countAllByChecklist(checklist) != checkpointRepository.countAllByChecklist(checklist))
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(String.format("This checklist cannot be moved to the state: %s because it has checkpoints belonging to common or to another state", state.getName())));
         }
         checklist.setState(state);

@@ -47,7 +47,6 @@ endef
 
 define _restart_service
 	-ssh $1 "sudo systemctl restart $2"
-	$(call _tail_server,$1)
 endef
 
 define _debug_server

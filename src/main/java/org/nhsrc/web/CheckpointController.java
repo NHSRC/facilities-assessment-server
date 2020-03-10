@@ -1,19 +1,25 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Checkpoint;
-import org.nhsrc.domain.ExcludedCheckpointState;
 import org.nhsrc.domain.State;
 import org.nhsrc.repository.*;
+import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.CheckpointRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.webmvc.RepositoryLinksResource;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.ResourceProcessor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -23,15 +29,15 @@ public class CheckpointController {
     private final MeasurableElementRepository measurableElementRepository;
     private ChecklistRepository checklistRepository;
     private StateRepository stateRepository;
-    private ExcludedCheckpointStateRepository excludedCheckpointStateRepository;
+    private ChecklistService checklistService;
 
     @Autowired
-    public CheckpointController(CheckpointRepository checkpointRepository, MeasurableElementRepository measurableElementRepository, ChecklistRepository checklistRepository, StateRepository stateRepository, ExcludedCheckpointStateRepository excludedCheckpointStateRepository) {
+    public CheckpointController(CheckpointRepository checkpointRepository, MeasurableElementRepository measurableElementRepository, ChecklistRepository checklistRepository, StateRepository stateRepository, ChecklistService checklistService) {
         this.checkpointRepository = checkpointRepository;
         this.measurableElementRepository = measurableElementRepository;
         this.checklistRepository = checklistRepository;
         this.stateRepository = stateRepository;
-        this.excludedCheckpointStateRepository = excludedCheckpointStateRepository;
+        this.checklistService = checklistService;
     }
 
     @RequestMapping(value = "/checkpoints", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -50,20 +56,6 @@ public class CheckpointController {
         checkpoint.setChecklist(Repository.findByUuidOrId(request.getChecklistUUID(), request.getChecklistId(), checklistRepository));
         checkpoint.setOptional(request.isOptional());
         checkpoint.setInactive(request.getInactive());
-
-        Set<State> incidentExcludedStates = Repository.findByIds(request.getExcludedStateIds(), stateRepository);
-        Set<ExcludedCheckpointState> incidentExcludedCheckpointStates;
-        if (checkpoint.isNew()) {
-            incidentExcludedCheckpointStates = incidentExcludedStates.stream().map(state -> new ExcludedCheckpointState(checkpoint, state)).collect(Collectors.toSet());
-        } else {
-            incidentExcludedCheckpointStates = incidentExcludedStates.stream().map(state -> {
-                ExcludedCheckpointState excludedCheckpointState = excludedCheckpointStateRepository.findFirstByCheckpointAndState(checkpoint, state);
-                if (excludedCheckpointState == null) excludedCheckpointState = new ExcludedCheckpointState(checkpoint, state);
-                else excludedCheckpointState.setInactive(false);
-                return excludedCheckpointState;
-            }).collect(Collectors.toSet());
-        }
-        checkpoint.setStateApplicability(Repository.findById(request.getStateId(), stateRepository), incidentExcludedCheckpointStates);
         return checkpointRepository.save(checkpoint);
     }
 
@@ -116,5 +108,12 @@ public class CheckpointController {
     @PreAuthorize("hasRole('Checklist_Metadata_Write')")
     public Checkpoint delete(@PathVariable("id") Integer id) {
         return Repository.delete(id, checkpointRepository);
+    }
+
+    @RequestMapping(value = "/checkpoint/search/lastModifiedByState", method = {RequestMethod.GET})
+    public Page<Checkpoint> findLastModifiedByState(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        State state = stateRepository.findByName(name);
+        List<Integer> checklists = checklistService.getChecklistsForState(state);
+        return checkpointRepository.findAllByChecklistIdIn(checklists, pageable);
     }
 }

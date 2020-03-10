@@ -93,23 +93,6 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
     }
 
     @Bean
-    public ResourceProcessor<Resource<Checkpoint>> checkpointProcessor() {
-        return new ResourceProcessor<Resource<Checkpoint>>() {
-            @Override
-            public Resource<Checkpoint> process(Resource<Checkpoint> resource) {
-                Checkpoint checkpoint = resource.getContent();
-                resource.removeLinks();
-                resource.add(new Link(checkpoint.getChecklist().getUuid().toString(), "checklistUUID"));
-                resource.add(new Link(checkpoint.getMeasurableElement().getUuid().toString(), "measurableElementUUID"));
-                if (checkpoint.getState() != null)
-                    resource.add(new Link(checkpoint.getState().getUuid().toString(), "stateUUID"));
-                resource.add(checkpoint.getExcludedCheckpointStates().stream().map(excludedCheckpointState -> new Link(excludedCheckpointState.getUuid().toString(), "excludedCheckpointStateUUIDs")).collect(Collectors.toList()));
-                return resource;
-            }
-        };
-    }
-
-    @Bean
     public ResourceProcessor<Resource<Checklist>> checklistProcessor() {
         return new ResourceProcessor<Resource<Checklist>>() {
             @Override
@@ -189,20 +172,6 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 resource.removeLinks();
                 resource.add(new Link(indicator.getFacilityAssessment().getUuidString(), "facilityAssessmentUUID"));
                 resource.add(new Link(indicator.getIndicatorDefinition().getUuidString(), "indicatorDefinitionUUID"));
-                return resource;
-            }
-        };
-    }
-
-    @Bean
-    public ResourceProcessor<Resource<ExcludedCheckpointState>> ExcludedCheckpointStateProcessor() {
-        return new ResourceProcessor<Resource<ExcludedCheckpointState>>() {
-            @Override
-            public Resource<ExcludedCheckpointState> process(Resource<ExcludedCheckpointState> resource) {
-                ExcludedCheckpointState excludedCheckpointState = resource.getContent();
-                resource.removeLinks();
-                resource.add(new Link(excludedCheckpointState.getState().getUuidString(), "stateUUID"));
-                resource.add(new Link(excludedCheckpointState.getCheckpoint().getUuidString(), "checkpointUUID"));
                 return resource;
             }
         };

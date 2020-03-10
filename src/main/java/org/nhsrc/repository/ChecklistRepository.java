@@ -1,6 +1,5 @@
 package org.nhsrc.repository;
 
-import org.nhsrc.domain.AreaOfConcern;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Checklist;
 import org.springframework.data.domain.Page;
@@ -14,7 +13,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -52,6 +50,8 @@ public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
     Page<Checklist> findByDepartmentId(@Param("departmentId") Integer departmentId, Pageable pageable);
 
     Checklist findByNameAndAssessmentTools(@Param("String") String name, @Param("assessmentTool") AssessmentTool assessmentTool);
+
+    List<Checklist> findByAssessmentToolsIdIn(List<Integer> assessmentToolIds);
 
     @Query("SELECT cl FROM FacilityAssessmentMissingCheckpoint famc inner join famc.missingCheckpoint mc inner join mc.checklist cl WHERE famc.facilityAssessment.id = :facilityAssessmentId")
     List<Checklist> findUniqueChecklistsMissingInCheckpointsForFacilityAssessment(@Param("facilityAssessmentId") Integer facilityAssessmentId);
