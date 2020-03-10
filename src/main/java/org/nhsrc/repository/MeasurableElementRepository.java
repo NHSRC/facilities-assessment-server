@@ -18,9 +18,6 @@ import java.util.UUID;
 @Repository
 @RepositoryRestResource(collectionResourceRel = "measurableElement", path = "measurableElement")
 public interface MeasurableElementRepository extends NonTxDataRepository<MeasurableElement> {
-    @RestResource(path = "lastModified", rel = "lastModified")
-    Page<MeasurableElement> findDistinctByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
-
     MeasurableElement findByReference(String reference);
 
     @RestResource(path = "forMeasurableElement", rel = "forMeasurableElement")

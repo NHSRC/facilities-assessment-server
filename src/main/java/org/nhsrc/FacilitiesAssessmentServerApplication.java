@@ -67,19 +67,6 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
     }
 
     @Bean
-    public ResourceProcessor<Resource<Standard>> standardProcessor() {
-        return new ResourceProcessor<Resource<Standard>>() {
-            @Override
-            public Resource<Standard> process(Resource<Standard> resource) {
-                Standard standard = resource.getContent();
-                resource.removeLinks();
-                resource.add(new Link(standard.getAreaOfConcern().getUuid().toString(), "areaOfConcernUUID"));
-                return resource;
-            }
-        };
-    }
-
-    @Bean
     public ResourceProcessor<Resource<Checklist>> checklistProcessor() {
         return new ResourceProcessor<Resource<Checklist>>() {
             @Override

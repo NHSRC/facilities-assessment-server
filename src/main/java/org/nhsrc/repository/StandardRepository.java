@@ -3,7 +3,6 @@ package org.nhsrc.repository;
 import org.nhsrc.domain.Standard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -39,4 +38,6 @@ public interface StandardRepository extends NonTxDataRepository<Standard> {
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
     Page<Standard> findDistinctByAreaOfConcernChecklistsAssessmentToolsId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+
+    Page<Standard> findAllByAreaOfConcernChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(List<Integer> checklistIds, Date lastModifiedDate, Pageable pageable);
 }

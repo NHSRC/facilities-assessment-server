@@ -121,4 +121,9 @@ public class Standard extends AbstractEntity implements ReferencableEntity {
                 "reference='" + reference + '\'' +
                 '}';
     }
+
+    @JsonProperty
+    public String getAreaOfConcernUUID() {
+        return this.areaOfConcern.getUuidString();
+    }
 }
