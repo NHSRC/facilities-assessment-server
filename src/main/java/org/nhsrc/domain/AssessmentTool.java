@@ -105,6 +105,11 @@ public class AssessmentTool extends AbstractEntity {
         return state == null ? null : state.getId();
     }
 
+    @JsonProperty("stateUUID")
+    public String _getStateUUID() {
+        return state == null ? null : state.getUuidString();
+    }
+
     @Override
     public String toString() {
         return "AssessmentTool{" +
