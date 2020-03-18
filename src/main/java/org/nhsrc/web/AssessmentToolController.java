@@ -76,8 +76,10 @@ public class AssessmentToolController {
         return checklistService.getAssessmentToolsForState(stateId);
     }
 
+    // Always provide default assessment tools for the convenience of client
     @RequestMapping(value = "/assessmentTool/search/lastModifiedByState", method = {RequestMethod.GET})
     public Page<AssessmentTool> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
-        return new PageImpl<AssessmentTool>(checklistService.getAssessmentToolsForState(name));
+        State state = stateRepository.findByName(name);
+        return new PageImpl<>(assessmentToolRepository.findByStateOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(state));
     }
 }
