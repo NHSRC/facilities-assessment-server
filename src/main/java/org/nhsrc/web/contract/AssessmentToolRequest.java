@@ -13,6 +13,7 @@ public class AssessmentToolRequest {
     private List<Integer> checklistIds = new ArrayList<>();
     private List<Integer> excludedStateIds = new ArrayList<>();
     private Integer stateId;
+    private Integer sortOrder;
 
     public Integer getStateId() {
         return stateId;
@@ -84,5 +85,13 @@ public class AssessmentToolRequest {
 
     public void setExcludedStateIds(List<Integer> excludedStateIds) {
         this.excludedStateIds = excludedStateIds;
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

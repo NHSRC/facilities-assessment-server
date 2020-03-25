@@ -1,0 +1,1 @@
+alter table assessment_tool add column sort_order int null;

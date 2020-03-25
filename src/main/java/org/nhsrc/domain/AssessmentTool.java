@@ -6,6 +6,7 @@ import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,10 @@ public class AssessmentTool extends AbstractEntity {
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "assessmentTool", orphanRemoval = true)
     private Set<ExcludedAssessmentToolState> excludedAssessmentToolStates = new HashSet<>();
+
+    @Column(name = "sort_order")
+    @Null
+    private Integer sortOrder;
 
     public String getName() {
         return name;
@@ -148,5 +153,13 @@ public class AssessmentTool extends AbstractEntity {
             });
             this.excludedAssessmentToolStates.addAll(incidentExcludedAssessmentToolStates);
         }
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

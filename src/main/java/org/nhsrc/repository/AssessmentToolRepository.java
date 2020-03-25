@@ -22,9 +22,6 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<AssessmentTool> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
 
-    @RestResource(path = "lastModifiedByState", rel = "lastModifiedByState")
-    Page<AssessmentTool> findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
-
     @RestResource(path = "forAssessmentToolMode", rel = "forAssessmentToolMode")
     Page<AssessmentTool> findByAssessmentToolModeUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("assessmentToolModeUuid") UUID assessmentToolModeUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
