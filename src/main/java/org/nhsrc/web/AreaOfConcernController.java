@@ -54,7 +54,7 @@ public class AreaOfConcernController {
     }
 
     private void removeAreaOfConcernFromRemovedChecklists(Set<Checklist> existingAssociatedChecklists, AreaOfConcernRequest request, AreaOfConcern areaOfConcern) {
-        List<Integer> checklistIdsNotAssociated = existingAssociatedChecklists.stream().map(BaseEntity::getId).filter(existingAssociatedChecklistId -> request.getChecklistIds().contains(existingAssociatedChecklistId)).collect(Collectors.toList());
+        List<Integer> checklistIdsNotAssociated = existingAssociatedChecklists.stream().map(BaseEntity::getId).filter(existingAssociatedChecklistId -> !request.getChecklistIds().contains(existingAssociatedChecklistId)).collect(Collectors.toList());
         checklistIdsNotAssociated.forEach(checklistIdNotAssociated -> {
             Checklist checklistNotAssociated = checklistRepository.findOne(checklistIdNotAssociated);
             checklistNotAssociated.removeAreaOfConcern(areaOfConcern);

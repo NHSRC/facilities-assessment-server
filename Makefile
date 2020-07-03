@@ -171,6 +171,9 @@ download_log_nhsrc_prod: set_host_dir_prod ## Param [{extension: additional exte
 restart_service_nhsrc_qa:
 	$(call _restart_service,gunak-other,qa-fab)
 
+restart_service_nhsrc_prod:
+	$(call _restart_service,gunak-main,fab)
+
 stop_service_nhsrc_qa:
 	$(call _stop_service,gunak-other,qa-fab)
 
