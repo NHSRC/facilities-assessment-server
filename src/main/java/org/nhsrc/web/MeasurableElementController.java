@@ -59,6 +59,8 @@ public class MeasurableElementController {
                                         @RequestParam(value = "checklistId", required = false) Integer checklistId,
                                         @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
                                         Pageable pageable) {
+        if (standardId != null && checklistId != null)
+            return measurableElementRepository.findDistinctByStandardIdAndCheckpointsChecklistId(standardId, checklistId, pageable);
         if (standardId != null)
             return measurableElementRepository.findDistinctByStandardId(standardId, pageable);
         if (areaOfConcernId != null)

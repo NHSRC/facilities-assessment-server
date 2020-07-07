@@ -52,11 +52,7 @@ public class Checklist extends AbstractEntity {
 
     @JsonProperty("fullName")
     public String getFullName() {
-        StringBuilder stringBuilder = new StringBuilder(this.getAssessmentToolNames());
-        stringBuilder.append(BaseEntity.QUALIFIED_NAME_SEPARATOR).append(this.getName());
-        if (this.state != null)
-            stringBuilder.append(BaseEntity.QUALIFIED_NAME_SEPARATOR).append(this.state.getName());
-        return stringBuilder.toString();
+        return this.getAssessmentToolNames() + BaseEntity.QUALIFIED_NAME_SEPARATOR + this.getName();
     }
 
     public void setName(String name) {
