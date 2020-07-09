@@ -39,6 +39,8 @@ public interface MeasurableElementRepository extends NonTxDataRepository<Measura
     @RestResource(path = "findByChecklist", rel = "findByChecklist")
     Page<MeasurableElement> findDistinctByStandardAreaOfConcernChecklistsId(@Param("checklistId") Integer checklistId, Pageable pageable);
 
+    Page<MeasurableElement> findDistinctByStandardIdAndStandardAreaOfConcernChecklistsId(@Param("standardId") Integer standardId, @Param("checklistId") Integer checklistId, Pageable pageable);
+
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
     Page<MeasurableElement> findDistinctByStandardAreaOfConcernChecklistsAssessmentToolsId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
