@@ -79,21 +79,22 @@ public class CheckpointController {
                                  @RequestParam(value = "areaOfConcernId", required = false) Integer areaOfConcernId,
                                  @RequestParam(value = "checklistId", required = false) Integer checklistId,
                                  @RequestParam(value = "assessmentToolId", required = false) Integer assessmentToolId,
+                                 @RequestParam(value = "inactive", required = false) Boolean inactive,
                                  Pageable pageable) {
         if (measurableElementId != null && checklistId != null)
-            return checkpointRepository.findByMeasurableElementIdAndChecklistId(measurableElementId, checklistId, pageable);
+            return checkpointRepository.findByMeasurableElementIdAndChecklistIdAndInactive(measurableElementId, checklistId, inactive, pageable);
         if (standardId != null && checklistId != null)
-            return checkpointRepository.findByMeasurableElementStandardIdAndChecklistId(standardId, checklistId, pageable);
+            return checkpointRepository.findByMeasurableElementStandardIdAndChecklistIdAndInactive(standardId, checklistId, inactive, pageable);
         if (areaOfConcernId != null && checklistId != null)
-            return checkpointRepository.findByMeasurableElementStandardAreaOfConcernIdAndChecklistId(areaOfConcernId, checklistId, pageable);
+            return checkpointRepository.findByMeasurableElementStandardAreaOfConcernIdAndChecklistIdAndInactive(areaOfConcernId, checklistId, inactive, pageable);
         if (checklistId != null)
-            return checkpointRepository.findAllByChecklistId(checklistId, pageable);
+            return checkpointRepository.findAllByChecklistIdAndInactive(checklistId, inactive, pageable);
         if (assessmentToolId != null && stateId == null)
-            return checkpointRepository.findByChecklistAssessmentToolsId(assessmentToolId, pageable);
+            return checkpointRepository.findByChecklistAssessmentToolsIdAndInactive(assessmentToolId, inactive, pageable);
         if (assessmentToolId == null && stateId != null)
-            return checkpointRepository.findByChecklistStateIdOrChecklistStateIsNull(stateId, pageable);
+            return checkpointRepository.findByInactiveAndChecklistStateIdOrChecklistStateIsNull(inactive, stateId, pageable);
         if (assessmentToolId != null && stateId != null)
-            return checkpointRepository.findByChecklistStateIdOrChecklistStateIsNullAndChecklistAssessmentToolsId(stateId, assessmentToolId, pageable);
+            return checkpointRepository.findByChecklistStateIdOrChecklistStateIsNullAndChecklistAssessmentToolsIdAndInactive(stateId, assessmentToolId, inactive, pageable);
         return checkpointRepository.findAll(pageable);
     }
 

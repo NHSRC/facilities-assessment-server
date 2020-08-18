@@ -71,7 +71,10 @@ public class Standard extends AbstractEntity implements ReferencableEntity {
     }
 
     public String getReferenceAndName() {
-        return String.format("%s %s %s", this.getReference(), BaseEntity.QUALIFIED_NAME_SEPARATOR, this.getName());
+        String referenceAndName = String.format("%s %s %s", this.getReference(), BaseEntity.QUALIFIED_NAME_SEPARATOR, this.getName());
+        if (this.getInactive())
+            return String.format("%s (INACTIVE)", referenceAndName);
+        return referenceAndName;
     }
 
     public void setAreaOfConcern(AreaOfConcern areaOfConcern) {
