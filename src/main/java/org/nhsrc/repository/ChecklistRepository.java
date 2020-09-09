@@ -23,6 +23,10 @@ import java.util.stream.Collectors;
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "checklist", path = "checklist")
 public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
+    @Deprecated // "For backward compatibility"
+    @RestResource(path = "lastModified", rel = "lastModified")
+    Page<Checklist> findByLastModifiedDateGreaterThanAndStateIsNullOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
     @RestResource(path = "forAssessmentTool", rel = "forAssessmentTool")
     Page<Checklist> findByAssessmentToolsUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("assessmentToolUuid") UUID assessmentToolUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 

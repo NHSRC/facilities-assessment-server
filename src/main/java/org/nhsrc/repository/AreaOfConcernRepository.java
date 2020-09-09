@@ -23,6 +23,10 @@ import java.util.stream.Collectors;
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "areaOfConcern", path = "areaOfConcern")
 public interface AreaOfConcernRepository extends NonTxDataRepository<AreaOfConcern> {
+    @Deprecated // "For backward compatibility"
+    @RestResource(path = "lastModified", rel = "lastModified")
+    Page<AreaOfConcern> findDistinctByInactiveFalseAndLastModifiedDateGreaterThanAndChecklistsStateIdIsNullOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+
     Page<AreaOfConcern> findDistinctByInactiveFalseAndChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(String name, List<Integer> ids, Date lastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "findAllById", rel = "findAllById")

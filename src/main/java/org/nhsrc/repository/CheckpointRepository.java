@@ -65,8 +65,9 @@ public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
 
     Page<Checkpoint> findByInactive(@Param("inactive") Boolean inactive, Pageable pageable);
 
-//    @RestResource(path = "lastModified", rel = "lastModified")
-//    Page<Checkpoint> findDistinctByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    @Deprecated // "For backward compatibility"
+    @RestResource(path = "lastModified", rel = "lastModified")
+    Page<Checkpoint> findDistinctByLastModifiedDateGreaterThanAndChecklistStateIsNullOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     Page<Checkpoint> findAllByChecklistIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(List<Integer> checklistIds, Date lastModifiedDate, Pageable pageable);
 

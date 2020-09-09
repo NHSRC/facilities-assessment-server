@@ -40,6 +40,67 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
     }
 
     @Bean
+    @Deprecated // "For backward compatibility"
+    public ResourceProcessor<Resource<Checklist>> checklistProcessor() {
+        return new ResourceProcessor<Resource<Checklist>>() {
+            @Override
+            public Resource<Checklist> process(Resource<Checklist> resource) {
+                Checklist checklist = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(checklist.getDepartment().getUuid().toString(), "departmentUUID"));
+                if (checklist.getState() != null)
+                    resource.add(new Link(checklist.getState().getUuid().toString(), "stateUUID"));
+                resource.add(checklist.getAssessmentTools().stream().map(at -> new Link(at.getUuid().toString(), "assessmentToolUUIDs")).collect(Collectors.toList()));
+                resource.add(checklist.getAreasOfConcern().stream().map(aoc -> new Link(aoc.getUuid().toString(), "areasOfConcernUUIDs")).collect(Collectors.toList()));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    @Deprecated // "For backward compatibility"
+    public ResourceProcessor<Resource<Standard>> standardProcessor() {
+        return new ResourceProcessor<Resource<Standard>>() {
+            @Override
+            public Resource<Standard> process(Resource<Standard> resource) {
+                Standard standard = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(standard.getAreaOfConcern().getUuid().toString(), "areaOfConcernUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    @Deprecated // "For backward compatibility"
+    public ResourceProcessor<Resource<MeasurableElement>> measurableElementProcessor() {
+        return new ResourceProcessor<Resource<MeasurableElement>>() {
+            @Override
+            public Resource<MeasurableElement> process(Resource<MeasurableElement> resource) {
+                MeasurableElement measurableElement = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(measurableElement.getStandard().getUuid().toString(), "standardUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
+    @Deprecated // "For backward compatibility"
+    public ResourceProcessor<Resource<Checkpoint>> checkpointProcessor() {
+        return new ResourceProcessor<Resource<Checkpoint>>() {
+            @Override
+            public Resource<Checkpoint> process(Resource<Checkpoint> resource) {
+                Checkpoint checkpoint = resource.getContent();
+                resource.removeLinks();
+                resource.add(new Link(checkpoint.getChecklist().getUuid().toString(), "checklistUUID"));
+                resource.add(new Link(checkpoint.getMeasurableElement().getUuid().toString(), "measurableElementUUID"));
+                return resource;
+            }
+        };
+    }
+
+    @Bean
     public ResourceProcessor<Resource<Facility>> facilityProcessor() {
         return new ResourceProcessor<Resource<Facility>>() {
             @Override
