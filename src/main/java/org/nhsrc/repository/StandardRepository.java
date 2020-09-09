@@ -18,7 +18,7 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "standard", path = "standard")
 public interface StandardRepository extends NonTxDataRepository<Standard> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<Standard> findDistinctByInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<Standard> findDistinctByInactiveFalseAndLastModifiedDateGreaterThanAndAreaOfConcernChecklistsStateIsNullOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
 
     Standard findByReference(String reference);
 
