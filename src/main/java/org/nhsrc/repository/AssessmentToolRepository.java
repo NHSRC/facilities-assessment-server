@@ -20,7 +20,7 @@ import java.util.UUID;
 @RepositoryRestResource(collectionResourceRel = "assessmentTool", path = "assessmentTool")
 public interface AssessmentToolRepository extends NonTxDataRepository<AssessmentTool> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<AssessmentTool> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
+    Page<AssessmentTool> findByLastModifiedDateGreaterThanAndStateIsNullOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "forAssessmentToolMode", rel = "forAssessmentToolMode")
     Page<AssessmentTool> findByAssessmentToolModeUuidAndInactiveFalseAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("assessmentToolModeUuid") UUID assessmentToolModeUuid, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
