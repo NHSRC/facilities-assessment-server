@@ -101,7 +101,6 @@ public class FacilityAssessmentService {
                 facilityAssessment.updateEndDate(facilityAssessmentDTO.getEndDate());
 
             facilityAssessment.setFacility(facility);
-            facilityAssessment.setFacilityName(facilityAssessmentDTO.getFacilityName());
             facilityAssessment.setState(state);
             facilityAssessment.setDistrict(district);
             facilityAssessment.setFacilityType(facilityType);
@@ -110,6 +109,7 @@ public class FacilityAssessmentService {
             facilityAssessment.setAssessmentTool(assessmentTool);
             facilityAssessment.setStartDate(facilityAssessmentDTO.getStartDate());
             facilityAssessment.setSeriesName(facilityAssessmentDTO.getSeriesName());
+            facilityAssessment.setAssessorName(facilityAssessmentDTO.getAssessorName());
             facilityAssessment.setAssessmentType(assessmentType);
             facilityAssessment.setInactive(facilityAssessmentDTO.getInactive());
 

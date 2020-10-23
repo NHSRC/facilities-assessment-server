@@ -43,6 +43,9 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @Column(name = "series_name", nullable = true)
     private String seriesName;
 
+    @Column(name = "assessor_name", nullable = true)
+    private String assessorName;
+
     @Column(name = "assessment_code")
     private String assessmentCode;
 
@@ -265,5 +268,13 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     public String getEffectiveFacilityName() {
         return facility == null ? this.getFacilityName() : this.getFacility().getName();
+    }
+
+    public String getAssessorName() {
+        return assessorName;
+    }
+
+    public void setAssessorName(String assessorName) {
+        this.assessorName = assessorName;
     }
 }
