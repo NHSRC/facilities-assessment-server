@@ -21,6 +21,7 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
     private UUID facilityTypeUUID;
     private int facilityTypeId;
     private Boolean inactive;
+    private String assessorName;
 
     public UUID getUuid() {
         return uuid;
@@ -158,6 +159,14 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
         this.inactive = inactive;
     }
 
+    public String getAssessorName() {
+        return assessorName;
+    }
+
+    public void setAssessorName(String assessorName) {
+        this.assessorName = assessorName;
+    }
+
     @Override
     public String toString() {
         return "{" +
@@ -167,6 +176,7 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
                 ", facilityName='" + facilityName + '\'' +
                 ", assessmentToolId=" + assessmentToolId +
                 ", seriesName='" + seriesName + '\'' +
+                ", assessorName='" + assessorName + '\'' +
                 ", deviceId='" + deviceId + '\'' +
                 ", assessmentTypeUUID=" + assessmentTypeUUID +
                 ", assessmentTypeId=" + assessmentTypeId +
