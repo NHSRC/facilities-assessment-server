@@ -14,6 +14,7 @@ public class AssessmentToolRequest {
     private List<Integer> excludedStateIds = new ArrayList<>();
     private Integer stateId;
     private Integer sortOrder;
+    private Integer level;
 
     public Integer getStateId() {
         return stateId;
@@ -93,5 +94,13 @@ public class AssessmentToolRequest {
 
     public void setSortOrder(Integer sortOrder) {
         this.sortOrder = sortOrder;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 }
