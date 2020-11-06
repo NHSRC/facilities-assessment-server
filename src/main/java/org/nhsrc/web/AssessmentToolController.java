@@ -48,7 +48,6 @@ public class AssessmentToolController {
         assessmentTool.setAssessmentToolMode(assessmentToolMode);
         assessmentTool.setInactive(request.getInactive());
         assessmentTool.setSortOrder(request.getSortOrder());
-        assessmentTool.setLevel(request.getLevel());
         if (request.getAssessmentType() == null || request.getAssessmentType().isEmpty()) {
             assessmentTool.setAssessmentToolType(AssessmentToolType.COMPLIANCE);
         } else {

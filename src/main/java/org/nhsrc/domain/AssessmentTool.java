@@ -52,10 +52,6 @@ public class AssessmentTool extends AbstractEntity {
     @Null
     private Integer sortOrder;
 
-    @Column(name = "level")
-    @NotNull
-    private Integer level = 0;
-
     public String getName() {
         return name;
     }
@@ -165,13 +161,5 @@ public class AssessmentTool extends AbstractEntity {
 
     public void setSortOrder(Integer sortOrder) {
         this.sortOrder = sortOrder;
-    }
-
-    public Integer getLevel() {
-        return level;
-    }
-
-    public void setLevel(Integer level) {
-        this.level = level;
     }
 }
