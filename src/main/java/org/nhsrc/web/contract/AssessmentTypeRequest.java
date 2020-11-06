@@ -6,6 +6,7 @@ public class AssessmentTypeRequest {
     private Boolean inactive;
     private String name;
     private String shortName;
+    private int assessmentToolModeId;
 
     public String getUuid() {
         return uuid;
@@ -45,5 +46,13 @@ public class AssessmentTypeRequest {
 
     public void setShortName(String shortName) {
         this.shortName = shortName;
+    }
+
+    public int getAssessmentToolModeId() {
+        return assessmentToolModeId;
+    }
+
+    public void setAssessmentToolModeId(int assessmentToolModeId) {
+        this.assessmentToolModeId = assessmentToolModeId;
     }
 }

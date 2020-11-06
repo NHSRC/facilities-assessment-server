@@ -1,6 +1,8 @@
 package org.nhsrc.web;
 
+import org.nhsrc.domain.AssessmentToolMode;
 import org.nhsrc.domain.AssessmentType;
+import org.nhsrc.repository.AssessmentToolModeRepository;
 import org.nhsrc.repository.AssessmentTypeRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.web.contract.AssessmentTypeRequest;
@@ -14,10 +16,12 @@ import javax.transaction.Transactional;
 @RequestMapping("/api/")
 public class AssessmentTypeController {
     private AssessmentTypeRepository assessmentTypeRepository;
+    private AssessmentToolModeRepository assessmentToolModeRepository;
 
     @Autowired
-    public AssessmentTypeController(AssessmentTypeRepository assessmentTypeRepository) {
+    public AssessmentTypeController(AssessmentTypeRepository assessmentTypeRepository, AssessmentToolModeRepository assessmentToolModeRepository) {
         this.assessmentTypeRepository = assessmentTypeRepository;
+        this.assessmentToolModeRepository = assessmentToolModeRepository;
     }
 
     @RequestMapping(value = "/assessmentTypes", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -28,6 +32,8 @@ public class AssessmentTypeController {
         assessmentType.setName(request.getName());
         assessmentType.setShortName(request.getShortName());
         assessmentType.setInactive(request.getInactive());
+        AssessmentToolMode assessmentToolMode = Repository.findById(request.getAssessmentToolModeId(), assessmentToolModeRepository);
+        assessmentType.setAssessmentToolMode(assessmentToolMode);
         return assessmentTypeRepository.save(assessmentType);
     }
 
