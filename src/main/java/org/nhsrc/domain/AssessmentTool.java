@@ -49,7 +49,7 @@ public class AssessmentTool extends AbstractEntity {
     private Set<ExcludedAssessmentToolState> excludedAssessmentToolStates = new HashSet<>();
 
     @Column(name = "sort_order")
-    @Null
+    @NotNull
     private Integer sortOrder;
 
     public String getName() {
