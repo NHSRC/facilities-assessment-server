@@ -50,16 +50,20 @@ public class ScoringService {
             deleteScore(facilityAssessment.getId(), Delete_Checklist_Scores, entityManager);
             deleteScore(facilityAssessment.getId(), Delete_Standard_Scores, entityManager);
             deleteScore(facilityAssessment.getId(), Delete_AreaOfConcern_Scores, entityManager);
+            deleteScore(facilityAssessment.getId(), Delete_Assessment_Scores, entityManager);
 
             createScore(facilityAssessment.getId(), Create_Checklist_Scores, entityManager);
             createScore(facilityAssessment.getId(), Create_Standard_Scores, entityManager);
             createScore(facilityAssessment.getId(), Create_AreaOfConcern_Scores, entityManager);
+            createScore(facilityAssessment.getId(), Create_Assessment_Scores, entityManager);
 
             scoringProcessDetail.setLastScoredUntil(facilityAssessment.getLastModifiedDate());
             scoringProcessDetailRepository.save(scoringProcessDetail);
             transaction.commit();
         } catch (Exception e) {
+            logger.error(String.format("Couldn't score assessment: %s", facilityAssessment.getUuid()), e);
             transaction.rollback();
+            throw e;
         }
     }
 

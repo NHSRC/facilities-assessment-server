@@ -14,6 +14,7 @@ import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
 import org.nhsrc.service.UserService;
+import org.nhsrc.utils.JsonUtil;
 import org.nhsrc.web.contract.ext.AssessmentResponse;
 import org.nhsrc.web.contract.ext.AssessmentSummaryResponse;
 import org.nhsrc.web.mapper.AssessmentMapper;
@@ -51,7 +52,6 @@ public class FacilityAssessmentController {
     private ExcelImportService excelImportService;
     private CheckpointScoreRepository checkpointScoreRepository;
     private IndicatorRepository indicatorRepository;
-    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, CheckpointScoreRepository checkpointScoreRepository, IndicatorRepository indicatorRepository) {
@@ -95,7 +95,7 @@ public class FacilityAssessmentController {
             List<CheckpointScore> checkpointScores = this.facilityAssessmentService.saveChecklist(checklist);
             return new ResponseEntity<>(checkpointScores, HttpStatus.CREATED);
         } catch (DataIntegrityViolationException e) {
-            logger.info(objectMapper.writeValueAsString(checklist));
+            logger.info(JsonUtil.OBJECT_MAPPER.writeValueAsString(checklist));
             throw e;
         }
     }
