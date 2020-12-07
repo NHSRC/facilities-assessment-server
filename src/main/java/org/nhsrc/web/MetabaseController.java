@@ -19,13 +19,18 @@ import java.util.Map;
 public class MetabaseController {
     private static String METABASE_SITE_URL = "http://localhost:3000";
     private static String METABASE_SECRET_KEY = "b2ccad4e7b2579af6a21efaf43fd608ffc47226014692550a6635a38a307c442";
+    private static final String DASHBOARD_ID = "dashboardId";
 
     @RequestMapping(value = "metabase-dashboard-url", method = {RequestMethod.GET})
-    public String getMetabaseDashboardEmbedUrl(@RequestParam(value = "dashboardId", required = true) Integer dashboardId) throws JsonProcessingException {
+    public String getMetabaseDashboardEmbedUrl(@RequestParam Map<String, String> params) throws JsonProcessingException {
         Payload payload = new Payload();
         PayloadResource payloadResource = new PayloadResource();
-        payloadResource.setDashboard(dashboardId);
+
+        payloadResource.setDashboard(Integer.parseInt(params.get(DASHBOARD_ID)));
         payload.setResource(payloadResource);
+        HashMap<String, String> metabaseRequestParams = new HashMap<>(params);
+        metabaseRequestParams.remove(DASHBOARD_ID);
+        payload.setParams(metabaseRequestParams);
         // Need to encode the secret key
 //        Jwt token = JwtHelper.encode("{\"resource\": {\"dashboard\": 1}, \"params\": {}}", new MacSigner(METABASE_SECRET_KEY));
         System.out.println(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload));

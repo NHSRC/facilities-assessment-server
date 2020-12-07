@@ -7,6 +7,6 @@ public class MetabaseControllerTest {
     @Test
     public void getMetabaseDashboardEmbedUrl() throws JsonProcessingException {
         MetabaseController metabaseController = new MetabaseController();
-        System.out.println(metabaseController.getMetabaseDashboardEmbedUrl());
+        System.out.println(metabaseController.getMetabaseDashboardEmbedUrl(2));
     }
 }
