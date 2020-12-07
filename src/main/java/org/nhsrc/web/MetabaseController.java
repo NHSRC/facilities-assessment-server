@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.nhsrc.utils.JsonUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.security.jwt.Jwt;
@@ -20,16 +21,16 @@ public class MetabaseController {
     private static String METABASE_SECRET_KEY = "b2ccad4e7b2579af6a21efaf43fd608ffc47226014692550a6635a38a307c442";
 
     @RequestMapping(value = "metabase-dashboard-url", method = {RequestMethod.GET})
-    public String getMetabaseDashboardEmbedUrl() throws JsonProcessingException {
+    public String getMetabaseDashboardEmbedUrl(@RequestParam(value = "dashboardId", required = true) Integer dashboardId) throws JsonProcessingException {
         Payload payload = new Payload();
         PayloadResource payloadResource = new PayloadResource();
-        payloadResource.setDashboard(1);
+        payloadResource.setDashboard(dashboardId);
         payload.setResource(payloadResource);
         // Need to encode the secret key
 //        Jwt token = JwtHelper.encode("{\"resource\": {\"dashboard\": 1}, \"params\": {}}", new MacSigner(METABASE_SECRET_KEY));
         System.out.println(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload));
         Jwt token = JwtHelper.encode(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload), new MacSigner(METABASE_SECRET_KEY));
-        return METABASE_SITE_URL + "/embed/dashboard/" + token.getEncoded() + "#theme=night&bordered=true&titled=true";
+        return METABASE_SITE_URL + "/embed/dashboard/" + token.getEncoded() + "#bordered=false&titled=false";
     }
 
     public class Payload {

@@ -48,11 +48,13 @@ public class ScoringService {
         transaction.begin();
         try {
             deleteScore(facilityAssessment.getId(), Delete_Checklist_Scores, entityManager);
+            deleteScore(facilityAssessment.getId(), Delete_Checklist_Only_Scores, entityManager);
             deleteScore(facilityAssessment.getId(), Delete_Standard_Scores, entityManager);
             deleteScore(facilityAssessment.getId(), Delete_AreaOfConcern_Scores, entityManager);
             deleteScore(facilityAssessment.getId(), Delete_Assessment_Scores, entityManager);
 
             createScore(facilityAssessment.getId(), Create_Checklist_Scores, entityManager);
+            createScore(facilityAssessment.getId(), Create_Checklist_Only_Scores, entityManager);
             createScore(facilityAssessment.getId(), Create_Standard_Scores, entityManager);
             createScore(facilityAssessment.getId(), Create_AreaOfConcern_Scores, entityManager);
             createScore(facilityAssessment.getId(), Create_Assessment_Scores, entityManager);

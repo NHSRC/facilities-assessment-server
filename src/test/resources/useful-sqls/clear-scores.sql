@@ -1,3 +1,4 @@
+delete from checklist_only_score;
 delete from checklist_score;
 delete from standard_score;
 delete from area_of_concern_score;
