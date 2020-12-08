@@ -6,6 +6,7 @@ import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.security.RoleRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.UserService;
+import org.nhsrc.web.contract.UserProfileRequest;
 import org.nhsrc.web.contract.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,8 +56,24 @@ public class UserController {
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setInactive(userRequest.getInactive());
-        Repository.mergeChildren(userRequest.getRoleIds(), user.getRoleIds(), roleRepository, role -> user.removeRole((Role)role), role -> user.addRole((Role) role));
+        Repository.mergeChildren(userRequest.getRoleIds(), user.getRoleIds(), roleRepository, role -> user.removeRole((Role) role), role -> user.addRole((Role) role));
         return userService.saveUser(user);
+    }
+
+    @RequestMapping(value = "currentUser", method = {RequestMethod.POST, RequestMethod.PUT})
+    @Transactional
+    public ResponseEntity saveProfile(@RequestBody UserProfileRequest userProfileRequest, Principal principal) {
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email);
+        if (userProfileRequest.getOldPassword() != null && !userProfileRequest.getOldPassword().isEmpty() && !user.getPassword().equals(bCryptPasswordEncoder.encode(userProfileRequest.getOldPassword())))
+            return new ResponseEntity<>("Old and new password doesn't match", HttpStatus.BAD_REQUEST);
+        user.setEmail(userProfileRequest.getEmail());
+        if (userProfileRequest.getNewPassword() != null && !userProfileRequest.getNewPassword().isEmpty()) {
+            user.setPassword(bCryptPasswordEncoder.encode(userProfileRequest.getNewPassword()));
+        }
+        user.setFirstName(userProfileRequest.getFirstName());
+        user.setLastName(userProfileRequest.getLastName());
+        return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
     }
 
     @RequestMapping(value = "users/first", method = {RequestMethod.POST, RequestMethod.PUT})
