@@ -65,15 +65,22 @@ public class UserController {
     public ResponseEntity saveProfile(@RequestBody UserProfileRequest userProfileRequest, Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email);
-        if (userProfileRequest.getOldPassword() != null && !userProfileRequest.getOldPassword().isEmpty() && !user.getPassword().equals(bCryptPasswordEncoder.encode(userProfileRequest.getOldPassword())))
-            return new ResponseEntity<>("Old and new password doesn't match", HttpStatus.BAD_REQUEST);
-        user.setEmail(userProfileRequest.getEmail());
-        if (userProfileRequest.getNewPassword() != null && !userProfileRequest.getNewPassword().isEmpty()) {
+        if (changingPassword(userProfileRequest) && !bCryptPasswordEncoder.matches(userProfileRequest.getOldPassword(), user.getPassword()))
+            return new ResponseEntity<>("Old password doesn't match", HttpStatus.BAD_REQUEST);
+        if (changingPassword(userProfileRequest) && userProfileRequest.getNewPassword() != null && !userProfileRequest.getNewPassword().isEmpty()) {
             user.setPassword(bCryptPasswordEncoder.encode(userProfileRequest.getNewPassword()));
+        } else if (changingPassword(userProfileRequest) && (userProfileRequest.getNewPassword() == null || userProfileRequest.getNewPassword().isEmpty() || userProfileRequest.getNewPassword().length() < 8)) {
+            return new ResponseEntity<>("New password cannot be empty or less than 8 characters", HttpStatus.BAD_REQUEST);
         }
+        user.setEmail(userProfileRequest.getEmail());
         user.setFirstName(userProfileRequest.getFirstName());
         user.setLastName(userProfileRequest.getLastName());
         return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
+    }
+
+    private boolean changingPassword(@RequestBody UserProfileRequest userProfileRequest) {
+        return userProfileRequest.getOldPassword() != null &&
+                !userProfileRequest.getOldPassword().isEmpty();
     }
 
     @RequestMapping(value = "users/first", method = {RequestMethod.POST, RequestMethod.PUT})

@@ -19,23 +19,31 @@ import java.util.Map;
 public class MetabaseController {
     private static String METABASE_SITE_URL = "http://localhost:3000";
     private static String METABASE_SECRET_KEY = "b2ccad4e7b2579af6a21efaf43fd608ffc47226014692550a6635a38a307c442";
-    private static final String DASHBOARD_ID = "dashboardId";
+    public static final String RESOURCE_ID = "resourceId";
 
     @RequestMapping(value = "metabase-dashboard-url", method = {RequestMethod.GET})
     public String getMetabaseDashboardEmbedUrl(@RequestParam Map<String, String> params) throws JsonProcessingException {
-        Payload payload = new Payload();
-        PayloadResource payloadResource = new PayloadResource();
+        return getEmbedUrl(params, "dashboard");
+    }
 
-        payloadResource.setDashboard(Integer.parseInt(params.get(DASHBOARD_ID)));
+    private String getEmbedUrl(Map<String, String> params, String type) throws JsonProcessingException {
+        Payload payload = new Payload();
+        PayloadResource payloadResource = type.equals("question") ? new PayloadQuestion() : new PayloadDashboard();
+        payloadResource.setResourceId(Integer.parseInt(params.get(RESOURCE_ID)));
         payload.setResource(payloadResource);
         HashMap<String, String> metabaseRequestParams = new HashMap<>(params);
-        metabaseRequestParams.remove(DASHBOARD_ID);
+        metabaseRequestParams.remove(RESOURCE_ID);
         payload.setParams(metabaseRequestParams);
         // Need to encode the secret key
-//        Jwt token = JwtHelper.encode("{\"resource\": {\"dashboard\": 1}, \"params\": {}}", new MacSigner(METABASE_SECRET_KEY));
+//        Jwt token = JwtHelper.encode("{\"resource\": {\"question\": 1}, \"params\": {}}", new MacSigner(METABASE_SECRET_KEY));
         System.out.println(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload));
         Jwt token = JwtHelper.encode(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload), new MacSigner(METABASE_SECRET_KEY));
-        return METABASE_SITE_URL + "/embed/dashboard/" + token.getEncoded() + "#bordered=false&titled=false";
+        return METABASE_SITE_URL + "/embed/" + type + "/" + token.getEncoded() + "#bordered=false&titled=true";
+    }
+
+    @RequestMapping(value = "metabase-question-url", method = {RequestMethod.GET})
+    public String getMetabaseQuestionEmbedUrl(@RequestParam Map<String, String> params) throws JsonProcessingException {
+        return getEmbedUrl(params, "question");
     }
 
     public class Payload {
@@ -68,7 +76,28 @@ public class MetabaseController {
         }
     }
 
-    public class PayloadResource {
+    public abstract class PayloadResource {
+        public abstract void setResourceId(int id);
+    }
+
+    public class PayloadQuestion extends PayloadResource {
+        private int question;
+
+        public int getQuestion() {
+            return question;
+        }
+
+        public void setQuestion(int question) {
+            this.question = question;
+        }
+
+        @Override
+        public void setResourceId(int id) {
+            this.setQuestion(id);
+        }
+    }
+
+    public class PayloadDashboard extends PayloadResource {
         private int dashboard;
 
         public int getDashboard() {
@@ -77,6 +106,11 @@ public class MetabaseController {
 
         public void setDashboard(int dashboard) {
             this.dashboard = dashboard;
+        }
+
+        @Override
+        public void setResourceId(int id) {
+            this.setDashboard(id);
         }
     }
 }
