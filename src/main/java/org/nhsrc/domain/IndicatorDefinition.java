@@ -36,6 +36,9 @@ public class IndicatorDefinition extends AbstractEntity {
     @Column(name = "coded_values")
     private String codedValues;
 
+    @Column(name = "description")
+    private String description;
+
     public String getName() {
         return name;
     }
@@ -104,5 +107,13 @@ public class IndicatorDefinition extends AbstractEntity {
 
     public void setCodedValues(String codedValues) {
         this.codedValues = codedValues;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

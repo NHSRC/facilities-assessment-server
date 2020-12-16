@@ -38,7 +38,7 @@ public class MetabaseController {
 //        Jwt token = JwtHelper.encode("{\"resource\": {\"question\": 1}, \"params\": {}}", new MacSigner(METABASE_SECRET_KEY));
         System.out.println(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload));
         Jwt token = JwtHelper.encode(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload), new MacSigner(METABASE_SECRET_KEY));
-        return METABASE_SITE_URL + "/embed/" + type + "/" + token.getEncoded() + "#bordered=false&titled=true";
+        return METABASE_SITE_URL + "/embed/" + type + "/" + token.getEncoded() + "#bordered=false&titled=false";
     }
 
     @RequestMapping(value = "metabase-question-url", method = {RequestMethod.GET})

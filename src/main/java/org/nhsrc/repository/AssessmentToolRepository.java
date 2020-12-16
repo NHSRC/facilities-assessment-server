@@ -1,6 +1,7 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.AssessmentTool;
+import org.nhsrc.domain.AssessmentToolType;
 import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,4 +42,6 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
     Page<AssessmentTool> findDistinctByChecklistsAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
 
     List<AssessmentTool> findByStateOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(State state);
+
+    List<AssessmentTool> findByAssessmentToolType(AssessmentToolType assessmentToolType);
 }

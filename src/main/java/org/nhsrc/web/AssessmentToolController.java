@@ -77,6 +77,17 @@ public class AssessmentToolController {
         return checklistService.getAssessmentToolsForState(stateId);
     }
 
+    @RequestMapping(value = "/assessmentTool/search/findByStateAndAssessmentToolMode", method = {RequestMethod.GET})
+    public List<AssessmentTool> findByState(@RequestParam(value = "stateId") Integer stateId,
+                                            @RequestParam(value = "assessmentToolModeId") Integer assessmentToolModeId) {
+        return checklistService.getAssessmentToolsForState(stateId).stream().filter(assessmentTool -> assessmentTool.getAssessmentToolMode().getId().equals(assessmentToolModeId)).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/assessmentTool/search/findByAssessmentToolType", method = {RequestMethod.GET})
+    public List<AssessmentTool> findByAssessmentToolType(@RequestParam(value = "assessmentToolType") String assessmentToolType) {
+        return assessmentToolRepository.findByAssessmentToolType(AssessmentToolType.valueOf(assessmentToolType));
+    }
+
     // Always provide default assessment tools for the convenience of client
     @RequestMapping(value = "/assessmentTool/search/lastModifiedByState", method = {RequestMethod.GET})
     public Page<AssessmentTool> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {

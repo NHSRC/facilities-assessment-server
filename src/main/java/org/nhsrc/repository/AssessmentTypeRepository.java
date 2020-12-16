@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 @Repository
 @RepositoryRestResource(collectionResourceRel = "assessmentType", path = "assessmentType")
@@ -21,4 +22,7 @@ public interface AssessmentTypeRepository extends NonTxDataRepository<Assessment
 
     @RestResource(path = "findAllById", rel = "findAllById")
     Page<AssessmentType> findByIdIn(@Param("ids") Integer[] ids, Pageable pageable);
+
+    @RestResource(path = "findAllByAssessmentToolModeId", rel = "findAllByAssessmentToolModeId")
+    List<AssessmentType> findAllByAssessmentToolModeId(@Param("assessmentToolModeId") Integer assessmentToolModeId);
 }
