@@ -37,5 +37,5 @@ public interface DistrictRepository extends NonTxDataRepository<District> {
     Page<District> findByNameStartingWithOrderByName(@Param("q") String q, Pageable pageable);
 
     List<District> findByNameContainingIgnoreCaseAndState(@Param("name") String name, @Param("state") State state);
-    List<District> findByNameAndState(@Param("name") String name, @Param("state") State state);
+    District findByNameAndState(@Param("name") String name, @Param("state") State state);
 }

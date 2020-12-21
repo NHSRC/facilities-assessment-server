@@ -2,15 +2,14 @@ package org.nhsrc.domain.nin;
 
 import org.nhsrc.domain.BaseEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "missing_nin_entity_in_local")
 public class MissingNinEntityInLocal extends BaseEntity {
     @Column(name = "name")
     private String name;
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private FacilityEntityType type;
 

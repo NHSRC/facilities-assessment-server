@@ -1,6 +1,7 @@
 package org.nhsrc.service;
 
 import org.nhsrc.domain.District;
+import org.nhsrc.domain.Facility;
 import org.nhsrc.domain.FacilityType;
 import org.nhsrc.domain.State;
 import org.nhsrc.domain.nin.*;
@@ -17,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -33,7 +36,6 @@ public class FacilityDownloadService {
     private static Logger logger = LoggerFactory.getLogger(FacilityDownloadService.class);
 
     private static final String SUB_CENTRE = "SubCentre";
-    private static final int PAGE_SIZE = 50;
 
     @Autowired
     public FacilityDownloadService(FacilityRepository facilityRepository, DistrictRepository districtRepository, StateRepository stateRepository, FacilityTypeRepository facilityTypeRepository, MissingNinEntityInLocalRepository missingNinEntityInLocalRepository, NinSyncDetailsRepository ninSyncDetailsRepository) {
@@ -47,54 +49,93 @@ public class FacilityDownloadService {
 
     public void download() throws IOException {
         RestTemplate restTemplate = new RestTemplate();
-        NINResponsePageDTO response = restTemplate.getForObject("https://nin.nhp.gov.in/api/facilities?api-key=SdafdfeDSF45r4dfdf5FFGcDAfa4eb88CN70da985&offset=0&limit=2", NINResponsePageDTO.class);
-        System.out.println(response);
+        NINResponsePageDTO response;
+        do {
+            response = processOnePageForFacility(restTemplate);
+            if (response == null) break;
+        } while (!response.getResult().isSyncComplete());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    protected NINResponsePageDTO processOnePageForFacility(RestTemplate restTemplate) {
+        try {
+            NinSyncDetails ninSyncDetails = ninSyncDetailsRepository.findByType(NinSyncType.FacilityMetadata);
+            NINResponsePageDTO response = getNinResponsePageDTO(restTemplate, ninSyncDetails);
+
+            List<RegisteredFacilityDTO> facilities = response.getData();
+            for (RegisteredFacilityDTO registeredFacility : facilities) {
+                if (registeredFacility.getFacilityType().equals(SUB_CENTRE))
+                    continue;
+
+                String stateName = registeredFacility.getState().replace("&", "and");
+                State state = stateRepository.findByName(stateName);
+                FacilityType facilityType = facilityTypeRepository.findByName(registeredFacility.getFacilityType());
+                District district = districtRepository.findByNameAndState(registeredFacility.getDistrict(), state);
+                if (districtRepository.findByNameAndState(registeredFacility.getDistrict(), state) == null)
+                    districtRepository.save(new District(registeredFacility.getDistrict(), state));
+                Facility facility = new Facility();
+                facility.setName(registeredFacility.getFacilityName());
+                facility.setFacilityType(facilityType);
+                facility.setDistrict(district);
+                facilityRepository.save(facility);
+            }
+        } catch (Exception e) {
+            logger.error("Sync failed/stopped", e);
+            throw e;
+        }
+        return null;
     }
 
     public void checkMetadata() {
         RestTemplate restTemplate = new RestTemplate();
-        NINResponsePageDTO response = null;
-
+        NINResponsePageDTO response;
         do {
-            try {
-                NinSyncDetails ninSyncDetails = ninSyncDetailsRepository.findByType(NinSyncType.FacilityMetadata);
-                StringBuilder stringBuilder = new StringBuilder("https://nin.nhp.gov.in/api/facilities?api-key=SdafdfeDSF45r4dfdf5FFGcDAfa4eb88CN70da985&fields=phc_chc_type,state_name,district_name&offset=");
-                logger.info(String.format("Making API call with offset %d", ninSyncDetails.getOffsetSuccessfullyProcessed()));
-                stringBuilder.append(ninSyncDetails.getOffsetSuccessfullyProcessed()).append("&limit=100");
-                response = restTemplate.getForObject(stringBuilder.toString(), NINResponsePageDTO.class);
-
-                List<RegisteredFacilityDTO> facilities = response.getData();
-                for (RegisteredFacilityDTO registeredFacility : facilities) {
-                    String stateName = registeredFacility.getState().replace("&", "and");
-                    State state = stateRepository.findByName(stateName);
-                    if (state == null && missingNinEntityInLocalRepository.findByNameAndType(stateName, FacilityEntityType.State) == null) {
-                        logger.info(String.format("New missing state %s", stateName));
-                        missingNinEntityInLocalRepository.save(new MissingNinEntityInLocal(stateName, FacilityEntityType.State));
-                    } else if (state == null) {
-                        continue;
-                    }
-
-                    FacilityType facilityType = facilityTypeRepository.findByName(registeredFacility.getFacilityType());
-                    if (!registeredFacility.getFacilityType().equals(SUB_CENTRE) && facilityType == null && missingNinEntityInLocalRepository.findByNameAndType(registeredFacility.getFacilityType(), FacilityEntityType.FacilityType) == null) {
-                        logger.info(String.format("New missing facility type %s", registeredFacility.getFacilityType()));
-                        missingNinEntityInLocalRepository.save(new MissingNinEntityInLocal(registeredFacility.getFacilityType(), FacilityEntityType.FacilityType));
-                    } else if (!registeredFacility.getFacilityType().equals(SUB_CENTRE) && facilityType == null) {
-                        continue;
-                    }
-
-                    List<District> district = districtRepository.findByNameAndState(registeredFacility.getDistrict(), state);
-                    if (district == null && missingNinEntityInLocalRepository.findByNameAndType(registeredFacility.getDistrict(), FacilityEntityType.District) == null) {
-                        logger.info(String.format("New missing district %s", registeredFacility.getDistrict()));
-                        missingNinEntityInLocalRepository.save(new MissingNinEntityInLocal(registeredFacility.getDistrict(), FacilityEntityType.District));
-                    }
-                }
-                ResponseResultDTO result = response.getResult();
-                ninSyncDetails.setOffsetSuccessfullyProcessed(result.getNextOffset());
-                ninSyncDetailsRepository.save(ninSyncDetails);
-            } catch (Exception e) {
-                logger.error("Sync failed/stopped", e);
-                break;
-            }
+            response = processOnePageForMetadata(restTemplate);
+            if (response == null) break;
         } while (!response.getResult().isSyncComplete());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    protected NINResponsePageDTO processOnePageForMetadata(RestTemplate restTemplate) {
+        try {
+            NinSyncDetails ninSyncDetails = ninSyncDetailsRepository.findByType(NinSyncType.FacilityMetadata);
+            NINResponsePageDTO response = getNinResponsePageDTO(restTemplate, ninSyncDetails);
+
+            List<RegisteredFacilityDTO> facilities = response.getData();
+            for (RegisteredFacilityDTO registeredFacility : facilities) {
+                if (registeredFacility.getFacilityType().equals(SUB_CENTRE)) continue;
+
+                String stateName = registeredFacility.getState().replace("&", "and");
+                State state = stateRepository.findByName(stateName);
+                if (state == null && missingNinEntityInLocalRepository.findByNameAndType(stateName, FacilityEntityType.State) == null) {
+                    logger.info(String.format("New missing state %s", stateName));
+                    missingNinEntityInLocalRepository.save(new MissingNinEntityInLocal(stateName, FacilityEntityType.State));
+                } else if (state == null) {
+                    continue;
+                }
+
+                FacilityType facilityType = facilityTypeRepository.findByName(registeredFacility.getFacilityType());
+                if (facilityType == null && missingNinEntityInLocalRepository.findByNameAndType(registeredFacility.getFacilityType(), FacilityEntityType.FacilityType) == null) {
+                    logger.info(String.format("New missing facility type %s", registeredFacility.getFacilityType()));
+                    missingNinEntityInLocalRepository.save(new MissingNinEntityInLocal(registeredFacility.getFacilityType(), FacilityEntityType.FacilityType));
+                }
+            }
+            ResponseResultDTO result = response.getResult();
+            ninSyncDetails.setOffsetSuccessfullyProcessed(result.getNextOffset());
+            ninSyncDetailsRepository.save(ninSyncDetails);
+            return response;
+        } catch (Exception e) {
+            logger.error("Sync failed/stopped", e);
+            throw e;
+        }
+    }
+
+    private NINResponsePageDTO getNinResponsePageDTO(RestTemplate restTemplate, NinSyncDetails ninSyncDetails) {
+        NINResponsePageDTO response;
+        StringBuilder stringBuilder = new StringBuilder("https://nin.nhp.gov.in/api/facilities?api-key=SdafdfeDSF45r4dfdf5FFGcDAfa4eb88CN70da985&fields=phc_chc_type,state_name,district_name&offset=");
+        logger.info(String.format("Making API call with offset %d", ninSyncDetails.getOffsetSuccessfullyProcessed()));
+        stringBuilder.append(ninSyncDetails.getOffsetSuccessfullyProcessed()).append("&limit=100");
+        response = restTemplate.getForObject(stringBuilder.toString(), NINResponsePageDTO.class);
+        return response;
     }
 }

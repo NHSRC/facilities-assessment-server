@@ -19,7 +19,7 @@ public class RegisteredFacilityDTO {
     private String district;
 
     public String getFacilityType() {
-        return facilityType;
+        return facilityType.trim();
     }
 
     public void setFacilityType(String facilityType) {
@@ -27,7 +27,7 @@ public class RegisteredFacilityDTO {
     }
 
     public String getNinId() {
-        return ninId;
+        return ninId.trim();
     }
 
     public void setNinId(String ninId) {
@@ -35,7 +35,7 @@ public class RegisteredFacilityDTO {
     }
 
     public String getFacilityName() {
-        return facilityName;
+        return facilityName.trim();
     }
 
     public void setFacilityName(String facilityName) {
@@ -43,7 +43,7 @@ public class RegisteredFacilityDTO {
     }
 
     public String getState() {
-        return state;
+        return state.trim();
     }
 
     public void setState(String state) {
@@ -51,7 +51,7 @@ public class RegisteredFacilityDTO {
     }
 
     public String getDistrict() {
-        return district;
+        return district.trim();
     }
 
     public void setDistrict(String district) {

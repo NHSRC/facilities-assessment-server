@@ -24,6 +24,14 @@ define _run_server
 	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3
 endef
 
+define _run_server_background
+	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.assessmentScoring="0/3 * * * * ?"
+endef
+
+define _debug_server_background
+	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.assessmentScoring="0/3 * * * * ?"
+endef
+
 define _deploy_qa
 	ssh $1 "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
 	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
@@ -99,6 +107,12 @@ build_server:
 
 run_server_nhsrc: build_server
 	$(call _run_server,nhsrc,false,true)
+
+run_server_background_nhsrc: build_server
+	$(call _run_server_background,nhsrc,false,true)
+
+debug_server_background_nhsrc: build_server
+	$(call _debug_server_background,nhsrc,false,true)
 
 debug_server_nhsrc: build_server
 	$(call _debug_server,nhsrc,false,true)
@@ -182,6 +196,9 @@ restart_service_jss_prod:
 
 stop_service_nhsrc_prod:
 	$(call _stop_service,gunak-main,fab)
+
+stop_service_jss_prod:
+	$(call _stop_service,igunatmac,fab)
 
 .foo:
 	@echo ".foo"
