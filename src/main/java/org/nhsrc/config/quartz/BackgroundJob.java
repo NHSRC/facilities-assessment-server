@@ -2,6 +2,7 @@ package org.nhsrc.config.quartz;
 
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
+import org.nhsrc.service.FacilityDownloadService;
 import org.nhsrc.service.ScoringService;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -25,17 +26,19 @@ import java.util.List;
 
 @Component
 @DisallowConcurrentExecution
-public class AssessmentScoringJob implements Job {
+public class BackgroundJob implements Job {
     //    Quartz cannot instantiate if auto-wired via constructor
     @Autowired
     private ScoringService scoringService;
+    @Autowired
+    private FacilityDownloadService facilityDownloadService;
     @Value("${cron.assessmentScoring}")
     private String cronExpression;
-    private static Logger logger = LoggerFactory.getLogger(AssessmentScoringJob.class);
+    private static Logger logger = LoggerFactory.getLogger(BackgroundJob.class);
     private static List<GrantedAuthority> backgroundJobAuthorities;
 
     static {
-        backgroundJobAuthorities = Privilege.createAuthorities(Privilege.USER.getSpringName(), Privilege.ASSESSMENT_READ.getSpringName(), Privilege.ASSESSMENT_WRITE.getSpringName());
+        backgroundJobAuthorities = Privilege.createAuthorities(Privilege.USER.getSpringName(), Privilege.FACILITY_WRITE.getSpringName(), Privilege.ASSESSMENT_READ.getSpringName(), Privilege.ASSESSMENT_WRITE.getSpringName());
     }
 
     @Override
@@ -44,7 +47,8 @@ public class AssessmentScoringJob implements Job {
 
         Authentication auth = new UsernamePasswordAuthenticationToken(User.BACKGROUND_SERVICE_USER_EMAIL, "", backgroundJobAuthorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
-        scoringService.scoreAssessments();
+//        scoringService.scoreAssessments();
+        facilityDownloadService.checkMetadata();
         logger.info("Completed Scoring");
     }
 

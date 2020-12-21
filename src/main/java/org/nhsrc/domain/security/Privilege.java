@@ -22,6 +22,7 @@ public class Privilege extends BaseEntity {
     public static final PrivilegeName ASSESSMENT_READ = new PrivilegeName("Assessment_Read");
     public static final PrivilegeName ASSESSMENT_WRITE = new PrivilegeName("Assessment_Write");
     public static final PrivilegeName USERS_WRITE = new PrivilegeName("Users_Write");
+    public static final PrivilegeName FACILITY_WRITE = new PrivilegeName("Facility_Write");
 
     @Column(name = "name")
     private String name;

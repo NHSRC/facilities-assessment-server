@@ -23,4 +23,6 @@ public interface FacilityTypeRepository extends NonTxDataRepository<FacilityType
 
     @RestResource(path = "findAllById", rel = "findAllById")
     List<FacilityType> findByIdIn(@Param("ids") Integer[] ids);
+
+    FacilityType findByName(String name);
 }
