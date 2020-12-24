@@ -4,6 +4,7 @@ import org.nhsrc.domain.District;
 import org.nhsrc.domain.Facility;
 import org.nhsrc.domain.FacilityType;
 import org.nhsrc.domain.State;
+import org.nhsrc.domain.metadata.EntityType;
 import org.nhsrc.domain.nin.*;
 import org.nhsrc.dto.nin.NINResponsePageDTO;
 import org.nhsrc.dto.nin.RegisteredFacilityDTO;
@@ -73,6 +74,7 @@ public class FacilityDownloadService {
                 District district = districtRepository.findByNameAndState(registeredFacility.getDistrict(), state);
                 if (districtRepository.findByNameAndState(registeredFacility.getDistrict(), state) == null)
                     districtRepository.save(new District(registeredFacility.getDistrict(), state));
+
                 Facility facility = new Facility();
                 facility.setName(registeredFacility.getFacilityName());
                 facility.setFacilityType(facilityType);
@@ -107,17 +109,17 @@ public class FacilityDownloadService {
 
                 String stateName = registeredFacility.getState().replace("&", "and");
                 State state = stateRepository.findByName(stateName);
-                if (state == null && missingNinEntityInLocalRepository.findByNameAndType(stateName, FacilityEntityType.State) == null) {
+                if (state == null && missingNinEntityInLocalRepository.findByNameAndType(stateName, EntityType.State) == null) {
                     logger.info(String.format("New missing state %s", stateName));
-                    missingNinEntityInLocalRepository.save(new MissingNinEntityInLocal(stateName, FacilityEntityType.State));
+                    missingNinEntityInLocalRepository.save(new MissingNinEntityInLocal(stateName, EntityType.State));
                 } else if (state == null) {
                     continue;
                 }
 
                 FacilityType facilityType = facilityTypeRepository.findByName(registeredFacility.getFacilityType());
-                if (facilityType == null && missingNinEntityInLocalRepository.findByNameAndType(registeredFacility.getFacilityType(), FacilityEntityType.FacilityType) == null) {
+                if (facilityType == null && missingNinEntityInLocalRepository.findByNameAndType(registeredFacility.getFacilityType(), EntityType.FacilityType) == null) {
                     logger.info(String.format("New missing facility type %s", registeredFacility.getFacilityType()));
-                    missingNinEntityInLocalRepository.save(new MissingNinEntityInLocal(registeredFacility.getFacilityType(), FacilityEntityType.FacilityType));
+                    missingNinEntityInLocalRepository.save(new MissingNinEntityInLocal(registeredFacility.getFacilityType(), EntityType.FacilityType));
                 }
             }
             ResponseResultDTO result = response.getResult();

@@ -21,7 +21,7 @@ set_host_dir_qa:
 	$(call _set_host_dir,qa)
 
 define _run_server
-	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3
+	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.assessmentScoring="0 0 0 ? * * 2099"
 endef
 
 define _run_server_background
@@ -58,7 +58,7 @@ define _restart_service
 endef
 
 define _debug_server
-	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3
+	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3 --cron.assessmentScoring="0 0 0 ? * * 2099"
 endef
 
 define _restore_db

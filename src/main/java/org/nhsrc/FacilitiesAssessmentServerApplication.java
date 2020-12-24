@@ -4,8 +4,10 @@ import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
 import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.*;
+import org.nhsrc.web.framework.RequestInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -16,21 +18,34 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceProcessor;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.handler.MappedInterceptor;
 
 import java.io.File;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SpringBootApplication
 @Import({RestConfiguration.class, DatabaseConfiguration.class, SecurityConfiguration.class})
 @EnableJpaAuditing
 public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapter {
+    private final RequestInterceptor requestInterceptor;
     private static Logger logger = LoggerFactory.getLogger(FacilitiesAssessmentServerApplication.class);
+
+    private final String[] interceptedPathList = Stream.of(
+            "district",
+            "facility"
+    ).map(path-> "/api/" + path + "/**").toArray(String[]::new);
 
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Calcutta"));
         logger.info("Server Starting...");
         SpringApplication.run(FacilitiesAssessmentServerApplication.class, args);
+    }
+
+    @Autowired
+    public FacilitiesAssessmentServerApplication(RequestInterceptor requestInterceptor) {
+        this.requestInterceptor = requestInterceptor;
     }
 
     @Override
@@ -207,5 +222,10 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
                 return resource;
             }
         };
+    }
+
+    @Bean("mappedRequestInterceptor")
+    public MappedInterceptor mappedTransactionalResourceInterceptor() {
+        return new MappedInterceptor(interceptedPathList, requestInterceptor);
     }
 }

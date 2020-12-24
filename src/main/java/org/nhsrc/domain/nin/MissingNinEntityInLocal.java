@@ -1,6 +1,7 @@
 package org.nhsrc.domain.nin;
 
 import org.nhsrc.domain.BaseEntity;
+import org.nhsrc.domain.metadata.EntityType;
 
 import javax.persistence.*;
 
@@ -11,12 +12,12 @@ public class MissingNinEntityInLocal extends BaseEntity {
     private String name;
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private FacilityEntityType type;
+    private EntityType type;
 
     public MissingNinEntityInLocal() {
     }
 
-    public MissingNinEntityInLocal(String name, FacilityEntityType type) {
+    public MissingNinEntityInLocal(String name, EntityType type) {
         this.name = name;
         this.type = type;
     }
@@ -29,11 +30,11 @@ public class MissingNinEntityInLocal extends BaseEntity {
         this.name = name;
     }
 
-    public FacilityEntityType getType() {
+    public EntityType getType() {
         return type;
     }
 
-    public void setType(FacilityEntityType type) {
+    public void setType(EntityType type) {
         this.type = type;
     }
 }
