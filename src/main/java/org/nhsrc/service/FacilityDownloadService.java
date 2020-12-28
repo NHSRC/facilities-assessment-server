@@ -18,6 +18,7 @@ import org.nhsrc.repository.nin.NinSyncDetailsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,9 @@ public class FacilityDownloadService {
     private static final String SUB_CENTRE = "SubCentre";
     private static final String FIELDS_FOR_FACILITY_METADATA = "phc_chc_type,state_name,district_name";
     private static final String FIELDS_FOR_FACILITY = "phc_chc_type,state_name,district_name,nin_to_hfi,hfi_name";
+
+    @Value("${nin.apiKey}")
+    private String apiKey;
 
     @Autowired
     public FacilityDownloadService(FacilityRepository facilityRepository, DistrictRepository districtRepository, StateRepository stateRepository, FacilityTypeRepository facilityTypeRepository, MissingNinEntityInLocalRepository missingNinEntityInLocalRepository, NinSyncDetailsRepository ninSyncDetailsRepository) {
@@ -150,7 +154,8 @@ public class FacilityDownloadService {
 
     private NINResponsePageDTO getNinResponsePageDTO(RestTemplate restTemplate, NinSyncDetails ninSyncDetails, String fields) {
         NINResponsePageDTO response;
-        StringBuilder stringBuilder = new StringBuilder("https://nin.nhp.gov.in/api/facilities?api-key=SdafdfeDSF45r4dfdf5FFGcDAfa4eb88CN70da985&fields=");
+        StringBuilder stringBuilder = new StringBuilder("https://nin.nhp.gov.in/api/facilities?api-key=");
+        stringBuilder.append(apiKey).append("&fields=");
         stringBuilder.append(fields);
         stringBuilder.append("&offset=");
         logger.info(String.format("Making API call with offset %d", ninSyncDetails.getOffsetSuccessfullyProcessed()));

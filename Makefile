@@ -21,15 +21,16 @@ set_host_dir_qa:
 	$(call _set_host_dir,qa)
 
 define _run_server
-	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.assessmentScoring="0 0 0 ? * * 2099"
+	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0 0 0 ? * * 2099"
 endef
 
 define _run_server_background
-	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.assessmentScoring="0/3 * * * * ?"
+	echo "Using API Key - $(NIN_API_KEY)"
+	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0/3 * * * * ?" --nin.apiKey=$(NIN_API_KEY)
 endef
 
 define _debug_server_background
-	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.assessmentScoring="0/3 * * * * ?"
+	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0/3 * * * * ?"
 endef
 
 define _deploy_qa
@@ -58,7 +59,7 @@ define _restart_service
 endef
 
 define _debug_server
-	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3 --cron.assessmentScoring="0 0 0 ? * * 2099"
+	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3 --cron.main="0 0 0 ? * * 2099"
 endef
 
 define _restore_db
@@ -94,8 +95,8 @@ seed_test_db:
 schema_clean:
 	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment -schemas=public clean
 
-schema_migrate:
-	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/$(database) -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
+schema_migrate_nhsrc:
+	flyway -user=nhsrc -password=password -url=jdbc:postgresql://localhost:5432/facilities_assessment_nhsrc -schemas=public -locations=filesystem:./src/main/resources/db/migration/ migrate
 # </schema>
 
 # <server>

@@ -32,7 +32,7 @@ public class BackgroundJob implements Job {
     private ScoringService scoringService;
     @Autowired
     private FacilityDownloadService facilityDownloadService;
-    @Value("${cron.assessmentScoring}")
+    @Value("${cron.main}")
     private String cronExpression;
     private static Logger logger = LoggerFactory.getLogger(BackgroundJob.class);
     private static List<GrantedAuthority> backgroundJobAuthorities;
@@ -47,7 +47,7 @@ public class BackgroundJob implements Job {
 
         Authentication auth = new UsernamePasswordAuthenticationToken(User.BACKGROUND_SERVICE_USER_EMAIL, "", backgroundJobAuthorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
-        scoringService.scoreAssessments();
+//        scoringService.scoreAssessments();
         logger.info("Completed scoring assessments.");
         facilityDownloadService.download();
         logger.info("Completed download and job.");
