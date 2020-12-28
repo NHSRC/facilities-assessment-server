@@ -70,14 +70,16 @@ public class FacilityDownloadService {
 
                 String stateName = registeredFacility.getState().replace("&", "and");
                 State state = stateRepository.findByName(stateName);
-                FacilityType facilityType = facilityTypeRepository.findByName(registeredFacility.getFacilityType());
                 District district = districtRepository.findByNameAndState(registeredFacility.getDistrict(), state);
                 if (district == null) {
                     district = new District(registeredFacility.getDistrict(), state);
                     district.setInactive(false);
                     districtRepository.save(district);
+                } else {
+                    district.setInactive(false);
                 }
 
+                FacilityType facilityType = facilityTypeRepository.findByName(registeredFacility.getFacilityType());
                 Facility facility = facilityRepository.findByNameAndDistrictAndFacilityType(registeredFacility.getFacilityName(), district, facilityType);
                 if (facility == null) {
                     facility = new Facility();
@@ -87,6 +89,7 @@ public class FacilityDownloadService {
                     facility.setRegistryUniqueId(registeredFacility.getNinId());
                     facility.setInactive(false);
                 } else {
+                    facility.setInactive(false);
                     facility.setRegistryUniqueId(registeredFacility.getNinId());
                 }
                 facilityRepository.save(facility);
