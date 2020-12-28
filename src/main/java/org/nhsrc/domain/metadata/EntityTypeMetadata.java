@@ -9,6 +9,8 @@ import java.util.Date;
 @Entity
 @Table(name = "entity_type_metadata")
 public class EntityTypeMetadata extends BaseEntity {
+    public static final String BULK_MODIFICATION_DATE_NAME = "BulkModificationDate";
+
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private EntityType type;

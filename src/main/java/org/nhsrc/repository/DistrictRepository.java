@@ -19,10 +19,10 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "district", path = "district")
 public interface DistrictRepository extends NonTxDataRepository<District> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<District> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<District> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("effectiveLastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date effectiveLastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "lastModifiedByState", rel = "lastModifiedByState")
-    Page<District> findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<District> findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("effectiveLastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date effectiveLastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "byState", rel = "byState")
     Page<District> findByStateNameOrderByName(@Param("stateName") String stateName, Pageable pageable);
@@ -37,5 +37,6 @@ public interface DistrictRepository extends NonTxDataRepository<District> {
     Page<District> findByNameStartingWithOrderByName(@Param("q") String q, Pageable pageable);
 
     List<District> findByNameContainingIgnoreCaseAndState(@Param("name") String name, @Param("state") State state);
+
     District findByNameAndState(@Param("name") String name, @Param("state") State state);
 }

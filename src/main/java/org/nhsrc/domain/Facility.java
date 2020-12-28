@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 
 @Entity
 @Table(name = "facility")
@@ -25,16 +24,16 @@ public class Facility extends AbstractEntity {
     @JoinColumn(name = "facility_type_id", nullable = false)
     private FacilityType facilityType;
 
-    @Column(name = "hmis_code")
-    private String hmisCode;
+    @Column(name = "registry_unique_id")
+    private String registryUniqueId;
 
     @JsonIgnore
-    public String getHmisCode() {
-        return hmisCode;
+    public String getRegistryUniqueId() {
+        return registryUniqueId;
     }
 
-    public void setHmisCode(String hmisCode) {
-        this.hmisCode = hmisCode;
+    public void setRegistryUniqueId(String registryUniqueId) {
+        this.registryUniqueId = registryUniqueId;
     }
 
     public String getName() {

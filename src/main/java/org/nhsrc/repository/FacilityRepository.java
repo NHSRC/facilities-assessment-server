@@ -2,6 +2,7 @@ package org.nhsrc.repository;
 
 import org.nhsrc.domain.District;
 import org.nhsrc.domain.Facility;
+import org.nhsrc.domain.FacilityType;
 import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +21,10 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "facility", path = "facility")
 public interface FacilityRepository extends NonTxDataRepository<Facility> {
     @RestResource(path = "lastModified", rel = "lastModified")
-    Page<Facility> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<Facility> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("effectiveLastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date effectiveLastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "lastModifiedByState", rel = "lastModifiedByState")
-    Page<Facility> findByDistrictStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
+    Page<Facility> findByDistrictStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("name") String name, @Param("effectiveLastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date effectiveLastModifiedDateTime, Pageable pageable);
 
     @RestResource(path = "byDistrictAndFacilityType", rel = "byDistrictAndFacilityType")
     Page<Facility> findByDistrictNameAndFacilityTypeNameOrderByName(@Param("districtName") String districtName, @Param("facilityTypeName") String facilityTypeName, Pageable pageable);
@@ -51,5 +52,6 @@ public interface FacilityRepository extends NonTxDataRepository<Facility> {
     List<Facility> findByNameAndDistrictState(@Param("name") String name, @Param("state") State state);
     List<Facility> findByNameContainingIgnoreCaseAndDistrict(@Param("name") String name, @Param("district") District district);
     List<Facility> findByNameAndDistrict(@Param("name") String name, @Param("district") District district);
+    Facility findByNameAndDistrictAndFacilityType(String name, District district, FacilityType facilityType);
     List<Facility> findByNameContainingIgnoreCaseAndDistrictAndFacilityTypeName(@Param("name") String name, @Param("district") District district, @Param("facilityTypeName") String facilityTypeName);
 }

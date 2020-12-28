@@ -2,7 +2,6 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.LocalDateTime;
 import org.nhsrc.domain.security.User;
@@ -15,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.nhsrc.utils.DateUtils.DATE_FORMAT_STRING;
 
@@ -231,7 +229,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
             State state = district.getState();
             String assessmentToolModeShortName = assessmentToolMode.getShortName();
             String stateShortName = state.getShortName();
-            String hmisCode = facility.getHmisCode();
+            String hmisCode = facility.getRegistryUniqueId();
             String assessmentTypeShortName = assessmentType.getShortName();
             this.assessmentCode = String.format("%s-%s-%s-%s-%s", assessmentToolModeShortName, assessmentTypeShortName, stateShortName, hmisCode, dateFormatter.format(new Date()));
         } catch (NullPointerException ignored) {

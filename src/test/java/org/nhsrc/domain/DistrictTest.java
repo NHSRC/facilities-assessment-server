@@ -50,10 +50,7 @@ public class DistrictTest {
         Date finalRequestDate = requestDate;
 
         return districts.stream().filter(district -> {
-            boolean after = district.getLastModifiedDate().after(finalRequestDate);
-            boolean afterSwitchOver = district.getCreatedDate().after(switchOverDate);
-            boolean beforeSwitchOver = (district.getCreatedDate().before(switchOverDate) || district.getCreatedDate().equals(switchOverDate));
-            return after && (beforeSwitchOver || afterSwitchOver);
+            return district.getLastModifiedDate().after(finalRequestDate);
         }).collect(Collectors.toList());
     }
 

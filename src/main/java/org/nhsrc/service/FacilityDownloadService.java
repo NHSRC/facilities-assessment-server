@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -37,6 +36,8 @@ public class FacilityDownloadService {
     private static Logger logger = LoggerFactory.getLogger(FacilityDownloadService.class);
 
     private static final String SUB_CENTRE = "SubCentre";
+    private static final String FIELDS_FOR_FACILITY_METADATA = "phc_chc_type,state_name,district_name";
+    private static final String FIELDS_FOR_FACILITY = "phc_chc_type,state_name,district_name,nin_to_hfi,hfi_name";
 
     @Autowired
     public FacilityDownloadService(FacilityRepository facilityRepository, DistrictRepository districtRepository, StateRepository stateRepository, FacilityTypeRepository facilityTypeRepository, MissingNinEntityInLocalRepository missingNinEntityInLocalRepository, NinSyncDetailsRepository ninSyncDetailsRepository) {
@@ -48,20 +49,19 @@ public class FacilityDownloadService {
         this.ninSyncDetailsRepository = ninSyncDetailsRepository;
     }
 
-    public void download() throws IOException {
+    public void download() {
         RestTemplate restTemplate = new RestTemplate();
         NINResponsePageDTO response;
         do {
             response = processOnePageForFacility(restTemplate);
-            if (response == null) break;
         } while (!response.getResult().isSyncComplete());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     protected NINResponsePageDTO processOnePageForFacility(RestTemplate restTemplate) {
         try {
-            NinSyncDetails ninSyncDetails = ninSyncDetailsRepository.findByType(NinSyncType.FacilityMetadata);
-            NINResponsePageDTO response = getNinResponsePageDTO(restTemplate, ninSyncDetails);
+            NinSyncDetails ninSyncDetails = ninSyncDetailsRepository.findByType(NinSyncType.Facility);
+            NINResponsePageDTO response = getNinResponsePageDTO(restTemplate, ninSyncDetails, FIELDS_FOR_FACILITY);
 
             List<RegisteredFacilityDTO> facilities = response.getData();
             for (RegisteredFacilityDTO registeredFacility : facilities) {
@@ -72,20 +72,34 @@ public class FacilityDownloadService {
                 State state = stateRepository.findByName(stateName);
                 FacilityType facilityType = facilityTypeRepository.findByName(registeredFacility.getFacilityType());
                 District district = districtRepository.findByNameAndState(registeredFacility.getDistrict(), state);
-                if (districtRepository.findByNameAndState(registeredFacility.getDistrict(), state) == null)
-                    districtRepository.save(new District(registeredFacility.getDistrict(), state));
+                if (district == null) {
+                    district = new District(registeredFacility.getDistrict(), state);
+                    district.setInactive(false);
+                    districtRepository.save(district);
+                }
 
-                Facility facility = new Facility();
-                facility.setName(registeredFacility.getFacilityName());
-                facility.setFacilityType(facilityType);
-                facility.setDistrict(district);
+                Facility facility = facilityRepository.findByNameAndDistrictAndFacilityType(registeredFacility.getFacilityName(), district, facilityType);
+                if (facility == null) {
+                    facility = new Facility();
+                    facility.setName(registeredFacility.getFacilityName());
+                    facility.setFacilityType(facilityType);
+                    facility.setDistrict(district);
+                    facility.setRegistryUniqueId(registeredFacility.getNinId());
+                    facility.setInactive(false);
+                } else {
+                    facility.setRegistryUniqueId(registeredFacility.getNinId());
+                }
                 facilityRepository.save(facility);
+
+                ResponseResultDTO result = response.getResult();
+                ninSyncDetails.setOffsetSuccessfullyProcessed(result.getNextOffset());
+                ninSyncDetailsRepository.save(ninSyncDetails);
             }
+            return response;
         } catch (Exception e) {
             logger.error("Sync failed/stopped", e);
             throw e;
         }
-        return null;
     }
 
     public void checkMetadata() {
@@ -93,7 +107,6 @@ public class FacilityDownloadService {
         NINResponsePageDTO response;
         do {
             response = processOnePageForMetadata(restTemplate);
-            if (response == null) break;
         } while (!response.getResult().isSyncComplete());
     }
 
@@ -101,7 +114,7 @@ public class FacilityDownloadService {
     protected NINResponsePageDTO processOnePageForMetadata(RestTemplate restTemplate) {
         try {
             NinSyncDetails ninSyncDetails = ninSyncDetailsRepository.findByType(NinSyncType.FacilityMetadata);
-            NINResponsePageDTO response = getNinResponsePageDTO(restTemplate, ninSyncDetails);
+            NINResponsePageDTO response = getNinResponsePageDTO(restTemplate, ninSyncDetails, FIELDS_FOR_FACILITY_METADATA);
 
             List<RegisteredFacilityDTO> facilities = response.getData();
             for (RegisteredFacilityDTO registeredFacility : facilities) {
@@ -132,9 +145,11 @@ public class FacilityDownloadService {
         }
     }
 
-    private NINResponsePageDTO getNinResponsePageDTO(RestTemplate restTemplate, NinSyncDetails ninSyncDetails) {
+    private NINResponsePageDTO getNinResponsePageDTO(RestTemplate restTemplate, NinSyncDetails ninSyncDetails, String fields) {
         NINResponsePageDTO response;
-        StringBuilder stringBuilder = new StringBuilder("https://nin.nhp.gov.in/api/facilities?api-key=SdafdfeDSF45r4dfdf5FFGcDAfa4eb88CN70da985&fields=phc_chc_type,state_name,district_name&offset=");
+        StringBuilder stringBuilder = new StringBuilder("https://nin.nhp.gov.in/api/facilities?api-key=SdafdfeDSF45r4dfdf5FFGcDAfa4eb88CN70da985&fields=");
+        stringBuilder.append(fields);
+        stringBuilder.append("&offset=");
         logger.info(String.format("Making API call with offset %d", ninSyncDetails.getOffsetSuccessfullyProcessed()));
         stringBuilder.append(ninSyncDetails.getOffsetSuccessfullyProcessed()).append("&limit=100");
         response = restTemplate.getForObject(stringBuilder.toString(), NINResponsePageDTO.class);
