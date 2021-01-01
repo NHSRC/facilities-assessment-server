@@ -1,8 +1,8 @@
-package org.nhsrc.dto;
+package org.nhsrc.dto.assessment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.nhsrc.dto.assessment.BaseFacilityAssessmentDTO;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 

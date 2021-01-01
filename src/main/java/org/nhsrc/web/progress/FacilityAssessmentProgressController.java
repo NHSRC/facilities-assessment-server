@@ -1,6 +1,6 @@
 package org.nhsrc.web.progress;
 
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.dto.FacilityAssessmentProgressDTO;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.service.AssessmentProgressService;

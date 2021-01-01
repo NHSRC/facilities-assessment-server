@@ -1,6 +1,7 @@
 package org.nhsrc.web.mapper;
 
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.repository.CheckpointScoreRepository;
 import org.nhsrc.repository.IndicatorRepository;
 import org.nhsrc.utils.CollectionUtil;

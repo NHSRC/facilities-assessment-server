@@ -1,6 +1,7 @@
 package org.nhsrc.referenceDataImport;
 
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 
 import java.util.ArrayList;
 import java.util.List;

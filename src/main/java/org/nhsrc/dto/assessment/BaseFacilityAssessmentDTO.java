@@ -1,7 +1,8 @@
-package org.nhsrc.dto;
+package org.nhsrc.dto.assessment;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class BaseFacilityAssessmentDTO implements Serializable {
@@ -21,7 +22,9 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
     private UUID facilityTypeUUID;
     private int facilityTypeId;
     private Boolean inactive;
+    @Deprecated
     private String assessorName;
+    private List<AssessmentCustomInfoDTO> customInfos;
 
     public UUID getUuid() {
         return uuid;
@@ -165,6 +168,14 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
 
     public void setAssessorName(String assessorName) {
         this.assessorName = assessorName;
+    }
+
+    public List<AssessmentCustomInfoDTO> getCustomInfos() {
+        return customInfos;
+    }
+
+    public void setCustomInfos(List<AssessmentCustomInfoDTO> customInfos) {
+        this.customInfos = customInfos;
     }
 
     @Override

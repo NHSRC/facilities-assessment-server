@@ -2,7 +2,7 @@ package org.nhsrc.domain.scores;
 
 import org.nhsrc.domain.BaseEntity;
 import org.nhsrc.domain.AreaOfConcern;
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

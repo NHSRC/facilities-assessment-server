@@ -1,6 +1,7 @@
 package org.nhsrc.config;
 
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.Role;
 import org.nhsrc.domain.security.User;

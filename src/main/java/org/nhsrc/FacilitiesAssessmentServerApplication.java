@@ -4,6 +4,8 @@ import org.nhsrc.config.DatabaseConfiguration;
 import org.nhsrc.config.RestConfiguration;
 import org.nhsrc.config.SecurityConfiguration;
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.assessment.AssessmentCustomInfo;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.web.framework.RequestInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -211,7 +213,7 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
     }
 
     @Bean
-    public ResourceProcessor<Resource<ExcludedAssessmentToolState>> ExcludedAssessmentToolStateProcessor() {
+    public ResourceProcessor<Resource<ExcludedAssessmentToolState>> excludedAssessmentToolStateProcessor() {
         return new ResourceProcessor<Resource<ExcludedAssessmentToolState>>() {
             @Override
             public Resource<ExcludedAssessmentToolState> process(Resource<ExcludedAssessmentToolState> resource) {

@@ -2,12 +2,16 @@ package org.nhsrc.service;
 
 import com.bugsnag.Bugsnag;
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.assessment.AssessmentCustomInfo;
+import org.nhsrc.domain.assessment.FacilityAssessment;
+import org.nhsrc.domain.metadata.AssessmentMetaData;
 import org.nhsrc.domain.security.User;
-import org.nhsrc.dto.BaseFacilityAssessmentDTO;
+import org.nhsrc.dto.assessment.BaseFacilityAssessmentDTO;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.mapper.FacilityAssessmentMapper;
 import org.nhsrc.repository.*;
+import org.nhsrc.repository.metadata.AssessmentMetaDataRepository;
 import org.nhsrc.repository.missing.FacilityAssessmentMissingCheckpointRepository;
 import org.nhsrc.repository.scores.AreaOfConcernScoreRepository;
 import org.nhsrc.repository.scores.ChecklistScoreRepository;
@@ -40,6 +44,7 @@ public class FacilityAssessmentService {
     private AreaOfConcernScoreRepository areaOfConcernScoreRepository;
     private ChecklistScoreRepository checklistScoreRepository;
     private FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository;
+    private AssessmentMetaDataRepository assessmentMetaDataRepository;
     private Bugsnag bugsnag;
 
     @Autowired
@@ -54,7 +59,7 @@ public class FacilityAssessmentService {
                                      IndicatorRepository indicatorRepository,
                                      StateRepository stateRepository,
                                      DistrictRepository districtRepository,
-                                     FacilityTypeRepository facilityTypeRepository, StandardScoreRepository standardScoreRepository, AreaOfConcernScoreRepository areaOfConcernScoreRepository, ChecklistScoreRepository checklistScoreRepository, FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository, Bugsnag bugsnag) {
+                                     FacilityTypeRepository facilityTypeRepository, StandardScoreRepository standardScoreRepository, AreaOfConcernScoreRepository areaOfConcernScoreRepository, ChecklistScoreRepository checklistScoreRepository, FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository, AssessmentMetaDataRepository assessmentMetaDataRepository, Bugsnag bugsnag) {
         this.facilityRepository = facilityRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
         this.checklistRepository = checklistRepository;
@@ -71,6 +76,7 @@ public class FacilityAssessmentService {
         this.areaOfConcernScoreRepository = areaOfConcernScoreRepository;
         this.checklistScoreRepository = checklistScoreRepository;
         this.facilityAssessmentMissingCheckpointRepository = facilityAssessmentMissingCheckpointRepository;
+        this.assessmentMetaDataRepository = assessmentMetaDataRepository;
         this.bugsnag = bugsnag;
     }
 
@@ -109,7 +115,17 @@ public class FacilityAssessmentService {
             facilityAssessment.setAssessmentTool(assessmentTool);
             facilityAssessment.setStartDate(facilityAssessmentDTO.getStartDate());
             facilityAssessment.setSeriesName(facilityAssessmentDTO.getSeriesName());
-            facilityAssessment.setAssessorName(facilityAssessmentDTO.getAssessorName());
+            if (facilityAssessmentDTO.getAssessorName() != null && !facilityAssessmentDTO.getAssessorName().isEmpty()) {
+                AssessmentMetaData assessmentMetaData = assessmentMetaDataRepository.findByName("Assessor name");
+                facilityAssessment.addCustomInfo(assessmentMetaData, facilityAssessmentDTO.getAssessorName());
+            }
+            if (facilityAssessmentDTO.getCustomInfos() != null && facilityAssessmentDTO.getCustomInfos().size() > 1) {
+                FacilityAssessment finalFacilityAssessment = facilityAssessment;
+                facilityAssessmentDTO.getCustomInfos().forEach(assessmentCustomInfoDTO -> {
+                    AssessmentMetaData assessmentMetaData = assessmentMetaDataRepository.findByUuid(UUID.fromString(assessmentCustomInfoDTO.getUuid()));
+                    finalFacilityAssessment.addCustomInfo(assessmentMetaData, assessmentCustomInfoDTO.getValue());
+                });
+            }
             facilityAssessment.setAssessmentType(assessmentType);
             facilityAssessment.setInactive(facilityAssessmentDTO.getInactive());
 

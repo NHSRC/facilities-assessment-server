@@ -2,6 +2,7 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;

@@ -1,9 +1,11 @@
-package org.nhsrc.domain;
+package org.nhsrc.domain.assessment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.LocalDateTime;
+import org.nhsrc.domain.*;
+import org.nhsrc.domain.metadata.AssessmentMetaData;
 import org.nhsrc.domain.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +43,6 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @Column(name = "series_name", nullable = true)
     private String seriesName;
 
-    @Column(name = "assessor_name", nullable = true)
-    private String assessorName;
-
     @Column(name = "assessment_code")
     private String assessmentCode;
 
@@ -63,6 +62,9 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "facilityAssessment")
     private Set<FacilityAssessmentDevice> facilityAssessmentDevices = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "facilityAssessment")
+    private Set<AssessmentCustomInfo> customInfos = new HashSet<>();
 
     public String getAssessmentCode() {
         return assessmentCode;
@@ -268,11 +270,18 @@ public class FacilityAssessment extends AbstractScoreEntity {
         return facility == null ? this.getFacilityName() : this.getFacility().getName();
     }
 
-    public String getAssessorName() {
-        return assessorName;
+    public void addCustomInfo(AssessmentMetaData assessmentMetaData, String value) {
+        AssessmentCustomInfo savedCustomInfo = this.customInfos.stream().filter(e -> e.getAssessmentMetaData().equals(assessmentMetaData)).findFirst().orElse(null);
+        if (savedCustomInfo == null) {
+            AssessmentCustomInfo customInfo = new AssessmentCustomInfo();
+            customInfo.setAssessmentMetaData(assessmentMetaData);
+            customInfo.setValueString(value);
+            this.customInfos.add(customInfo);
+        } else
+            savedCustomInfo.setValueString(value);
     }
 
-    public void setAssessorName(String assessorName) {
-        this.assessorName = assessorName;
+    public Set<AssessmentCustomInfo> getCustomInfos() {
+        return customInfos;
     }
 }

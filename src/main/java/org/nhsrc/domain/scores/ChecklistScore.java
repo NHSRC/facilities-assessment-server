@@ -2,6 +2,7 @@ package org.nhsrc.domain.scores;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

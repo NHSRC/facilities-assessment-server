@@ -1,7 +1,7 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Checklist;
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.missing.FacilityAssessmentMissingCheckpoint;
 import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.FacilityAssessmentRepository;

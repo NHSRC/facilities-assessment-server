@@ -1,4 +1,7 @@
-package org.nhsrc.domain;
+package org.nhsrc.domain.assessment;
+
+import org.nhsrc.domain.BaseEntity;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

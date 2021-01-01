@@ -2,14 +2,12 @@ package org.nhsrc.service;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Facility;
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.repository.FacilityAssessmentRepository;
-import org.springframework.security.access.method.P;
 
 import java.util.UUID;
 

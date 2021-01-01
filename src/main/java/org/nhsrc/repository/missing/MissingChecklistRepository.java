@@ -1,7 +1,6 @@
 package org.nhsrc.repository.missing;
 
-import org.nhsrc.domain.FacilityAssessment;
-import org.nhsrc.domain.Standard;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.missing.MissingChecklist;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;

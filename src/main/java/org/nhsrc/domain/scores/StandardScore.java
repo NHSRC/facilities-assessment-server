@@ -1,7 +1,7 @@
 package org.nhsrc.domain.scores;
 
 import org.nhsrc.domain.BaseEntity;
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.Standard;
 
 import javax.persistence.*;

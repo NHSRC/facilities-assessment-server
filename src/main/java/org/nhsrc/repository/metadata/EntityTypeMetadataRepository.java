@@ -10,5 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public interface EntityTypeMetadataRepository extends PagingAndSortingRepository<EntityTypeMetadata, Integer> {
-    EntityTypeMetadata findByTypeAndName(EntityType district, String name);
+    EntityTypeMetadata findByTypeAndName(EntityType entityType, String name);
 }

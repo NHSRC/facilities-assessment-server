@@ -1,13 +1,13 @@
 package org.nhsrc.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
-import org.nhsrc.dto.FacilityAssessmentAppDTO;
-import org.nhsrc.dto.FacilityAssessmentDTO;
+import org.nhsrc.dto.assessment.FacilityAssessmentAppDTO;
+import org.nhsrc.dto.assessment.FacilityAssessmentDTO;
 import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.repository.*;
 import org.nhsrc.repository.security.UserRepository;

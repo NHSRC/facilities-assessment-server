@@ -2,7 +2,7 @@ package org.nhsrc.service;
 
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Facility;
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

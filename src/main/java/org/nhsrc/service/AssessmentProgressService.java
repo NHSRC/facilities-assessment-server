@@ -1,6 +1,6 @@
 package org.nhsrc.service;
 
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.dto.AreaOfConcernProgressDTO;
 import org.nhsrc.dto.ChecklistProgressDTO;
 import org.nhsrc.dto.FacilityAssessmentProgressDTO;

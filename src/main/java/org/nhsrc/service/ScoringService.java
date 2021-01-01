@@ -1,6 +1,6 @@
 package org.nhsrc.service;
 
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.scores.ScoringProcessDetail;
 import org.nhsrc.repository.FacilityAssessmentRepository;
 import org.nhsrc.repository.scores.ScoringProcessDetailRepository;

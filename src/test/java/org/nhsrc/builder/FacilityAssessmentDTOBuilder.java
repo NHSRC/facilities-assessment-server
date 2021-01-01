@@ -1,6 +1,6 @@
 package org.nhsrc.builder;
 
-import org.nhsrc.dto.FacilityAssessmentAppDTO;
+import org.nhsrc.dto.assessment.FacilityAssessmentAppDTO;
 
 import java.util.Date;
 import java.util.UUID;

@@ -1,6 +1,6 @@
 package org.nhsrc.domain.missing;
 
-import org.nhsrc.domain.FacilityAssessment;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

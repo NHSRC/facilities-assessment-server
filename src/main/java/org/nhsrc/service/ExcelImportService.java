@@ -1,6 +1,7 @@
 package org.nhsrc.service;
 
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.missing.MissingChecklist;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.CheckpointScoreDTO;
