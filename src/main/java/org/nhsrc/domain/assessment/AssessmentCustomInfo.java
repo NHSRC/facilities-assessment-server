@@ -49,11 +49,11 @@ public class AssessmentCustomInfo extends AbstractPersistable {
         this.facilityAssessment = facilityAssessment;
     }
 
-    public String getAssessmentMetaDataUUID() {
+    public String getAssessmentMetaDataUuid() {
         return getAssessmentMetaData().getUuidString();
     }
 
-    public String getFacilityAssessmentUUID() {
+    public String getFacilityAssessmentUuid() {
         return getFacilityAssessment().getUuidString();
     }
 }

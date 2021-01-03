@@ -79,4 +79,7 @@ public interface FacilityAssessmentRepository extends TxDataRepository<FacilityA
     @RestResource(path = "find", rel = "find")
     @PreAuthorize("hasRole('Assessment_Read')")
     Page<FacilityAssessment> findByFacilityDistrictIdAndAssessmentToolId(@Param("districtId") Integer districtId, @Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+
+    @RestResource(path = "hasCustomInfos", rel = "hasCustomInfos")
+    Page<FacilityAssessment> findByCustomInfosIsNotNull(Pageable pageable);
 }

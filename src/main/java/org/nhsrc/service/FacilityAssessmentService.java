@@ -123,7 +123,8 @@ public class FacilityAssessmentService {
                 FacilityAssessment finalFacilityAssessment = facilityAssessment;
                 facilityAssessmentDTO.getCustomInfos().forEach(assessmentCustomInfoDTO -> {
                     AssessmentMetaData assessmentMetaData = assessmentMetaDataRepository.findByUuid(UUID.fromString(assessmentCustomInfoDTO.getUuid()));
-                    finalFacilityAssessment.addCustomInfo(assessmentMetaData, assessmentCustomInfoDTO.getValue());
+                    if (assessmentMetaData == null) assessmentMetaData = assessmentMetaDataRepository.findByName(assessmentCustomInfoDTO.getName());
+                    finalFacilityAssessment.addCustomInfo(assessmentMetaData, assessmentCustomInfoDTO.getValueString());
                 });
             }
             facilityAssessment.setAssessmentType(assessmentType);
