@@ -5,10 +5,13 @@ import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.repository.CheckpointScoreRepository;
 import org.nhsrc.repository.IndicatorRepository;
 import org.nhsrc.utils.CollectionUtil;
+import org.nhsrc.web.contract.assessment.AssessmentCustomInfoResponse;
+import org.nhsrc.web.contract.assessment.FacilityAssessmentResponse;
 import org.nhsrc.web.contract.ext.AssessmentResponse;
 import org.nhsrc.web.contract.ext.AssessmentSummaryResponse;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AssessmentMapper {
     public static AssessmentSummaryResponse map(AssessmentSummaryResponse summary, FacilityAssessment source, AssessmentTool assessmentTool) {
@@ -60,5 +63,13 @@ public class AssessmentMapper {
         });
         assessmentResponse.setNumberOfIndicators(indicators.size());
         return assessmentResponse;
+    }
+
+    public static FacilityAssessmentResponse map(FacilityAssessment facilityAssessment, List<String> filledChecklist) {
+        FacilityAssessmentResponse facilityAssessmentResponse = new FacilityAssessmentResponse();
+        facilityAssessmentResponse.setAssessmentUuid(facilityAssessment.getUuidString());
+        facilityAssessmentResponse.setCustomInfos(facilityAssessment.getCustomInfos().stream().map(assessmentCustomInfo -> new AssessmentCustomInfoResponse(assessmentCustomInfo.getAssessmentMetaData().getName(), assessmentCustomInfo.getValueString())).collect(Collectors.toList()));
+        facilityAssessmentResponse.setDepartmentsAssessed(filledChecklist);
+        return facilityAssessmentResponse;
     }
 }

@@ -1,20 +1,24 @@
 package org.nhsrc.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.nhsrc.domain.*;
+import org.nhsrc.domain.AssessmentTool;
+import org.nhsrc.domain.AssessmentToolMode;
+import org.nhsrc.domain.AssessmentToolType;
+import org.nhsrc.domain.CheckpointScore;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
+import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.dto.assessment.FacilityAssessmentAppDTO;
 import org.nhsrc.dto.assessment.FacilityAssessmentDTO;
-import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.repository.*;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
 import org.nhsrc.service.UserService;
 import org.nhsrc.utils.JsonUtil;
+import org.nhsrc.web.contract.assessment.FacilityAssessmentResponse;
 import org.nhsrc.web.contract.ext.AssessmentResponse;
 import org.nhsrc.web.contract.ext.AssessmentSummaryResponse;
 import org.nhsrc.web.mapper.AssessmentMapper;
@@ -67,12 +71,13 @@ public class FacilityAssessmentController {
     }
 
     @RequestMapping(value = "facility-assessment", method = RequestMethod.POST)
-    public ResponseEntity<FacilityAssessment> syncFacilityAssessment(Principal principal, @RequestBody FacilityAssessmentAppDTO facilityAssessmentAppDTO) {
+    public ResponseEntity<FacilityAssessmentResponse> syncFacilityAssessment(Principal principal, @RequestBody FacilityAssessmentAppDTO facilityAssessmentAppDTO) {
         logger.info(facilityAssessmentAppDTO.toString());
         User user = userService.findSubmissionUser(principal);
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessmentAppDTO.getAssessmentTool());
         FacilityAssessment facilityAssessment = facilityAssessmentService.save(facilityAssessmentAppDTO, assessmentTool, user);
-        return new ResponseEntity<>(facilityAssessment, HttpStatus.CREATED);
+        List<String> filledChecklists = checkpointScoreRepository.getFilledChecklists(facilityAssessment.getId());
+        return new ResponseEntity<>(AssessmentMapper.map(facilityAssessment, filledChecklists), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "facilityAssessment/{facilityAssessmentId}", method = RequestMethod.DELETE)
