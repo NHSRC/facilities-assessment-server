@@ -117,14 +117,14 @@ public class FacilityAssessmentService {
             facilityAssessment.setSeriesName(facilityAssessmentDTO.getSeriesName());
             if (facilityAssessmentDTO.getAssessorName() != null && !facilityAssessmentDTO.getAssessorName().isEmpty()) {
                 AssessmentMetaData assessmentMetaData = assessmentMetaDataRepository.findByName("Assessor name");
-                facilityAssessment.addCustomInfo(assessmentMetaData, facilityAssessmentDTO.getAssessorName());
+                facilityAssessment.addCustomInfo(assessmentMetaData, facilityAssessmentDTO.getAssessorName(), facilityAssessmentDTO.getDeviceId());
             }
             if (facilityAssessmentDTO.getCustomInfos() != null && facilityAssessmentDTO.getCustomInfos().size() > 1) {
                 FacilityAssessment finalFacilityAssessment = facilityAssessment;
                 facilityAssessmentDTO.getCustomInfos().forEach(assessmentCustomInfoDTO -> {
                     AssessmentMetaData assessmentMetaData = assessmentMetaDataRepository.findByUuid(UUID.fromString(assessmentCustomInfoDTO.getUuid()));
                     if (assessmentMetaData == null) assessmentMetaData = assessmentMetaDataRepository.findByName(assessmentCustomInfoDTO.getName());
-                    finalFacilityAssessment.addCustomInfo(assessmentMetaData, assessmentCustomInfoDTO.getValueString());
+                    finalFacilityAssessment.addCustomInfo(assessmentMetaData, assessmentCustomInfoDTO.getValueString(), facilityAssessmentDTO.getDeviceId());
                 });
             }
             facilityAssessment.setAssessmentType(assessmentType);

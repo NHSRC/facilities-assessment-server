@@ -23,6 +23,9 @@ public class AssessmentCustomInfo extends AbstractPersistable {
     @NotNull
     private FacilityAssessment facilityAssessment;
 
+    @Column(name = "device_id", nullable = true)
+    private String deviceId;
+
     @JsonIgnore
     public AssessmentMetaData getAssessmentMetaData() {
         return assessmentMetaData;
@@ -55,5 +58,17 @@ public class AssessmentCustomInfo extends AbstractPersistable {
 
     public String getFacilityAssessmentUuid() {
         return getFacilityAssessment().getUuidString();
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public boolean isSameKey(AssessmentMetaData assessmentMetaData, String deviceId) {
+        return this.getAssessmentMetaData().equals(assessmentMetaData) && this.getDeviceId().equals(deviceId);
     }
 }

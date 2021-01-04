@@ -270,12 +270,13 @@ public class FacilityAssessment extends AbstractScoreEntity {
         return facility == null ? this.getFacilityName() : this.getFacility().getName();
     }
 
-    public void addCustomInfo(AssessmentMetaData assessmentMetaData, String value) {
-        AssessmentCustomInfo savedCustomInfo = this.customInfos.stream().filter(e -> e.getAssessmentMetaData().equals(assessmentMetaData)).findFirst().orElse(null);
+    public void addCustomInfo(AssessmentMetaData assessmentMetaData, String value, String deviceId) {
+        AssessmentCustomInfo savedCustomInfo = this.customInfos.stream().filter(e -> e.isSameKey(assessmentMetaData, deviceId)).findFirst().orElse(null);
         if (savedCustomInfo == null) {
             AssessmentCustomInfo customInfo = new AssessmentCustomInfo();
             customInfo.setAssessmentMetaData(assessmentMetaData);
             customInfo.setValueString(value);
+            customInfo.setDeviceId(deviceId);
             this.customInfos.add(customInfo);
         } else
             savedCustomInfo.setValueString(value);
