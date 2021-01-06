@@ -21,6 +21,16 @@ ALTER TABLE ONLY assessment_custom_info
 ALTER TABLE ONLY assessment_custom_info
   ADD CONSTRAINT assessment_custom_info_facility_assessment FOREIGN KEY (facility_assessment_id) REFERENCES facility_assessment (id);
 
+DO $$
+BEGIN
+  BEGIN
+    alter table facility_assessment add column assessor_name varchar(255);
+    EXCEPTION
+    WHEN duplicate_column THEN RAISE NOTICE 'column <column_name> already exists in <table_name>.';
+  END;
+END;
+$$;
+
 insert into assessment_metadata (name, data_type)
 VALUES ('Assessor name', 'String');
 insert into assessment_custom_info (assessment_metadata_id, value_string, facility_assessment_id)
