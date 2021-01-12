@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FacilityAssessmentResponse {
-    private String assessmentUuid;
+    private String uuid;
     private List<AssessmentCustomInfoResponse> customInfos = new ArrayList<>();
     private List<String> departmentsAssessed = new ArrayList<>();
 
-    public String getAssessmentUuid() {
-        return assessmentUuid;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setAssessmentUuid(String assessmentUuid) {
-        this.assessmentUuid = assessmentUuid;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public List<AssessmentCustomInfoResponse> getCustomInfos() {

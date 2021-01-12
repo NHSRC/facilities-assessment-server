@@ -67,7 +67,7 @@ public class AssessmentMapper {
 
     public static FacilityAssessmentResponse map(FacilityAssessment facilityAssessment, List<String> filledChecklist) {
         FacilityAssessmentResponse facilityAssessmentResponse = new FacilityAssessmentResponse();
-        facilityAssessmentResponse.setAssessmentUuid(facilityAssessment.getUuidString());
+        facilityAssessmentResponse.setUuid(facilityAssessment.getUuidString());
         facilityAssessmentResponse.setCustomInfos(facilityAssessment.getCustomInfos().stream().map(assessmentCustomInfo -> new AssessmentCustomInfoResponse(assessmentCustomInfo.getAssessmentMetaData().getName(), assessmentCustomInfo.getValueString())).collect(Collectors.toList()));
         facilityAssessmentResponse.setDepartmentsAssessed(filledChecklist);
         return facilityAssessmentResponse;
