@@ -95,6 +95,7 @@ public class FacilityAssessmentController {
     }
 
     @RequestMapping(value = "facility-assessment/checklist", method = RequestMethod.POST)
+    @Transactional
     public ResponseEntity<List<CheckpointScore>> syncFacilityAssessment(@RequestBody ChecklistDTO checklist) throws JsonProcessingException {
         try {
             List<CheckpointScore> checkpointScores = this.facilityAssessmentService.saveChecklist(checklist);

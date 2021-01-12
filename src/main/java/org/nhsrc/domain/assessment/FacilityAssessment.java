@@ -277,6 +277,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
             customInfo.setAssessmentMetaData(assessmentMetaData);
             customInfo.setValueString(value);
             customInfo.setDeviceId(deviceId);
+            customInfo.setFacilityAssessment(this);
             this.customInfos.add(customInfo);
         } else
             savedCustomInfo.setValueString(value);

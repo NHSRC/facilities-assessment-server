@@ -170,10 +170,6 @@ public class FacilityAssessmentService {
                     checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
                 }
             });
-            checkpointScores.forEach(checkpointScore -> {
-                checkpointScore.getScoreNumerator();
-                checkpointScore.getScoreDenominator();
-            });
             return checkpointScores;
         }
     }
