@@ -94,6 +94,13 @@ public class FacilityAssessmentController {
         return new ResponseEntity<>(facilityAssessmentRepository.findOne(id), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "facilityAssessment/{facilityAssessmentUuid}/summary", method = RequestMethod.GET)
+    public ResponseEntity<FacilityAssessmentResponse> getSummary(@PathVariable("facilityAssessmentUuid") String uuid) {
+        FacilityAssessment assessment = facilityAssessmentRepository.findByUuid(UUID.fromString(uuid));
+        List<String> filledChecklists = checkpointScoreRepository.getFilledChecklists(assessment.getId());;
+        return new ResponseEntity<>(AssessmentMapper.map(assessment, filledChecklists), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "facility-assessment/checklist", method = RequestMethod.POST)
     @Transactional
     public ResponseEntity<List<CheckpointScore>> syncFacilityAssessment(@RequestBody ChecklistDTO checklist) throws JsonProcessingException {

@@ -70,6 +70,12 @@ public class AssessmentMapper {
         facilityAssessmentResponse.setUuid(facilityAssessment.getUuidString());
         facilityAssessmentResponse.setCustomInfos(facilityAssessment.getCustomInfos().stream().map(assessmentCustomInfo -> new AssessmentCustomInfoResponse(assessmentCustomInfo.getAssessmentMetaData().getName(), assessmentCustomInfo.getValueString())).collect(Collectors.toList()));
         facilityAssessmentResponse.setDepartmentsAssessed(filledChecklist);
+        facilityAssessmentResponse.setAssessmentEndDate(facilityAssessment.getEndDate());
+        facilityAssessmentResponse.setAssessmentNumber(facilityAssessment.getSeriesName());
+        facilityAssessmentResponse.setAssessmentStartDate(facilityAssessment.getStartDate());
+        facilityAssessmentResponse.setFacilityName(facilityAssessment.getFacilityName());
+        facilityAssessmentResponse.setAssessmentToolName(facilityAssessment.getAssessmentTool().getName());
+        facilityAssessmentResponse.setAssessmentTypeName(facilityAssessment.getAssessmentType().getName());
         return facilityAssessmentResponse;
     }
 }
