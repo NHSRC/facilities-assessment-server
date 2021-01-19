@@ -79,8 +79,9 @@ public class FacilityDownloadService {
                     district = new District(registeredFacility.getDistrict(), state);
                     district.setInactive(false);
                     districtRepository.save(district);
-                } else {
+                } else if (district.getInactive()) {
                     district.setInactive(false);
+                    districtRepository.save(district);
                 }
 
                 FacilityType facilityType = facilityTypeRepository.findByName(registeredFacility.getFacilityType());
