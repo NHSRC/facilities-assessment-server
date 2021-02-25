@@ -14,6 +14,8 @@ define _set_host_dir
 	$(eval host_dir := /home/app/$1/facilities-assessment-host)
 endef
 
+NIN_API_KEY=dummy
+
 set_host_dir_prod:
 	$(call _set_host_dir,)
 
@@ -100,8 +102,8 @@ schema_migrate_nhsrc:
 # </schema>
 
 # <server>
-build_server_online:
-	./gradlew clean build -x test
+download_dependencies:
+	./gradlew compileJava compileTestJava
 
 build_server:
 	./gradlew clean build -x test --offline
@@ -133,11 +135,7 @@ run_server_nhsrc_in_recording: clear_responses build_server
 test_server_only:
 	-./gradlew clean build --offline
 
-test_server_only_online:
-	-./gradlew clean build
-
 test_server: reset_test_db test_server_only open_test_results
-test_server_online: reset_test_db test_server_only_online open_test_results
 
 open_test_results:
 	open build/reports/tests/test/index.html
