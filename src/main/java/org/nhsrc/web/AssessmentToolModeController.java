@@ -9,6 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
@@ -35,5 +37,12 @@ public class AssessmentToolModeController {
     @PreAuthorize("hasRole('Checklist_Metadata_Write')")
     public AssessmentToolMode delete(@PathVariable("id") Integer id) {
         return Repository.delete(id, assessmentToolModeRepository);
+    }
+
+    @RequestMapping(value = "/assessmentToolMode/search/find", method = {RequestMethod.GET})
+    public List<AssessmentToolMode> find() {
+        ArrayList<AssessmentToolMode> assessmentToolModes = new ArrayList<>();
+        assessmentToolModeRepository.findAll().forEach(assessmentToolModes::add);
+        return assessmentToolModes;
     }
 }

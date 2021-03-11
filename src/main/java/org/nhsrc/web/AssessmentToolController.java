@@ -3,6 +3,7 @@ package org.nhsrc.web;
 import org.nhsrc.domain.*;
 import org.nhsrc.repository.*;
 import org.nhsrc.service.ChecklistService;
+import org.nhsrc.utils.StringUtil;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,7 +49,7 @@ public class AssessmentToolController {
         assessmentTool.setAssessmentToolMode(assessmentToolMode);
         assessmentTool.setInactive(request.getInactive());
         assessmentTool.setSortOrder(request.getSortOrder());
-        if (request.getAssessmentType() == null || request.getAssessmentType().isEmpty()) {
+        if (StringUtil.isEmpty(request.getAssessmentType())) {
             assessmentTool.setAssessmentToolType(AssessmentToolType.COMPLIANCE);
         } else {
             assessmentTool.setAssessmentToolType(AssessmentToolType.INDICATOR);
@@ -78,8 +79,8 @@ public class AssessmentToolController {
     }
 
     @RequestMapping(value = "/assessmentTool/search/findByStateAndAssessmentToolMode", method = {RequestMethod.GET})
-    public List<AssessmentTool> findByState(@RequestParam(value = "stateId") Integer stateId,
-                                            @RequestParam(value = "assessmentToolModeId") Integer assessmentToolModeId) {
+    public List<AssessmentTool> findByStateAndAssessmentTool(@RequestParam(value = "stateId") Integer stateId,
+                                                             @RequestParam(value = "assessmentToolModeId") Integer assessmentToolModeId) {
         return checklistService.getAssessmentToolsForState(stateId).stream().filter(assessmentTool -> assessmentTool.getAssessmentToolMode().getId().equals(assessmentToolModeId)).collect(Collectors.toList());
     }
 
@@ -93,5 +94,11 @@ public class AssessmentToolController {
     public Page<AssessmentTool> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
         State state = stateRepository.findByName(name);
         return new PageImpl<>(assessmentToolRepository.findByStateOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(state));
+    }
+
+    @RequestMapping(value = "/assessmentTool/search/find", method = {RequestMethod.GET})
+    public List<AssessmentTool> find(@RequestParam(value = "state") Integer stateId,
+                                     @RequestParam(value = "assessment_tool_mode", required = false) Integer assessmentToolModeId) {
+        return assessmentToolModeId == null ? findByState(stateId) : findByStateAndAssessmentTool(stateId, assessmentToolModeId);
     }
 }

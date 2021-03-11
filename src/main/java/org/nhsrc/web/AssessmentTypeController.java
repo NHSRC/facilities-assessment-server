@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
@@ -35,6 +36,11 @@ public class AssessmentTypeController {
         AssessmentToolMode assessmentToolMode = Repository.findById(request.getAssessmentToolModeId(), assessmentToolModeRepository);
         assessmentType.setAssessmentToolMode(assessmentToolMode);
         return assessmentTypeRepository.save(assessmentType);
+    }
+
+    @RequestMapping(value = "/assessmentType/search/find", method = {RequestMethod.GET})
+    public List<AssessmentType> find(@RequestParam(value = "assessment_tool_mode") Integer assessmentToolModeId) {
+        return assessmentTypeRepository.findAllByAssessmentToolModeId(assessmentToolModeId);
     }
 
     @RequestMapping(value = "/assessmentTypes/{id}", method = {RequestMethod.DELETE})
