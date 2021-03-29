@@ -1,16 +1,18 @@
 package org.nhsrc.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.utils.JsonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.jwt.Jwt;
+import org.springframework.security.jwt.JwtHelper;
+import org.springframework.security.jwt.crypto.sign.MacSigner;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.security.jwt.Jwt;
-import org.springframework.security.jwt.JwtHelper;
-import org.springframework.security.jwt.crypto.sign.MacSigner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,9 +23,11 @@ public class MetabaseController {
     @Value("${metabase.url}")
     private String metabaseUrl = "http://localhost:3000";
     @Value("${metabase.secret.key}")
-    private static String metabaseSecretKey;
+    private String metabaseSecretKey;
 
     static final String RESOURCE_ID = "resourceId";
+
+    private static Logger logger = LoggerFactory.getLogger(MetabaseController.class);
 
     @RequestMapping(value = "metabase-dashboard-url", method = {RequestMethod.GET})
     public String getMetabaseDashboardEmbedUrl(@RequestParam Map<String, String> params) throws JsonProcessingException {
@@ -38,11 +42,12 @@ public class MetabaseController {
         HashMap<String, String> metabaseRequestParams = new HashMap<>(params);
         metabaseRequestParams.remove(RESOURCE_ID);
         payload.setParams(metabaseRequestParams);
-        // Need to encode the secret key
-//        Jwt token = JwtHelper.encode("{\"resource\": {\"question\": 1}, \"params\": {}}", new MacSigner(METABASE_SECRET_KEY));
-        System.out.println(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload));
+
+        logger.info(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload));
         Jwt token = JwtHelper.encode(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload), new MacSigner(metabaseSecretKey));
-        return metabaseUrl + "/embed/" + type + "/" + token.getEncoded() + "#bordered=false&titled=false";
+        String s = metabaseUrl + "/embed/" + type + "/" + token.getEncoded() + "#bordered=false&titled=false";
+        logger.info(s);
+        return s;
     }
 
     @RequestMapping(value = "metabase-question-url", method = {RequestMethod.GET})

@@ -38,8 +38,6 @@ endef
 define _deploy_qa
 	ssh $1 "rm -rf /home/app/qa-server/facilities-assessment-host/app-servers/*.jar"
 	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/qa-server/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
-	$(call _restart_service,$1,qa-fab)
-	$(call _tail_server,$1,qa-server)
 endef
 
 define _deploy_prod
