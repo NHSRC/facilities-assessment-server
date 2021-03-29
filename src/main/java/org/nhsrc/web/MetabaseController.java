@@ -2,6 +2,7 @@ package org.nhsrc.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.nhsrc.utils.JsonUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,9 +18,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/")
 public class MetabaseController {
-    private static String METABASE_SITE_URL = "http://localhost:3000";
-    private static String METABASE_SECRET_KEY = "b2ccad4e7b2579af6a21efaf43fd608ffc47226014692550a6635a38a307c442";
-    public static final String RESOURCE_ID = "resourceId";
+    @Value("${metabase.url}")
+    private String metabaseUrl = "http://localhost:3000";
+    @Value("${metabase.secret.key}")
+    private static String metabaseSecretKey;
+
+    static final String RESOURCE_ID = "resourceId";
 
     @RequestMapping(value = "metabase-dashboard-url", method = {RequestMethod.GET})
     public String getMetabaseDashboardEmbedUrl(@RequestParam Map<String, String> params) throws JsonProcessingException {
@@ -37,8 +41,8 @@ public class MetabaseController {
         // Need to encode the secret key
 //        Jwt token = JwtHelper.encode("{\"resource\": {\"question\": 1}, \"params\": {}}", new MacSigner(METABASE_SECRET_KEY));
         System.out.println(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload));
-        Jwt token = JwtHelper.encode(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload), new MacSigner(METABASE_SECRET_KEY));
-        return METABASE_SITE_URL + "/embed/" + type + "/" + token.getEncoded() + "#bordered=false&titled=false";
+        Jwt token = JwtHelper.encode(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload), new MacSigner(metabaseSecretKey));
+        return metabaseUrl + "/embed/" + type + "/" + token.getEncoded() + "#bordered=false&titled=false";
     }
 
     @RequestMapping(value = "metabase-question-url", method = {RequestMethod.GET})
