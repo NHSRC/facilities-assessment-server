@@ -109,7 +109,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/ext/**", "/app/**");
+        web.ignoring().antMatchers("/ext/**", "/app/**", "/dashboard/**");
     }
 
 }

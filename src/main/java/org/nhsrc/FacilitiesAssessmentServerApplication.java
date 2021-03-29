@@ -54,6 +54,7 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/ext/**").addResourceLocations(String.format("file:///%s/", new File("external").getAbsolutePath()));
         registry.addResourceHandler("/app/**").addResourceLocations(String.format("file:///%s/", new File("app").getAbsolutePath()));
+        registry.addResourceHandler("/dashboard/**").addResourceLocations(String.format("file:///%s/", new File("dashboard").getAbsolutePath()));
     }
 
     @Bean

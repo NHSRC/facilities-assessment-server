@@ -33,4 +33,5 @@ metabase-migration/node_modules/*
 
 log/
 app/*
+dashboard/*
 temp
