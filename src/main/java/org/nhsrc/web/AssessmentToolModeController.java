@@ -41,8 +41,6 @@ public class AssessmentToolModeController {
 
     @RequestMapping(value = "/assessmentToolMode/search/find", method = {RequestMethod.GET})
     public List<AssessmentToolMode> find() {
-        ArrayList<AssessmentToolMode> assessmentToolModes = new ArrayList<>();
-        assessmentToolModeRepository.findAll().forEach(assessmentToolModes::add);
-        return assessmentToolModes;
+        return assessmentToolModeRepository.findAllByInactiveFalse();
     }
 }
