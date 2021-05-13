@@ -6,6 +6,7 @@ import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.security.RoleRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.UserService;
+import org.nhsrc.web.contract.LoginResponse;
 import org.nhsrc.web.contract.UserProfileRequest;
 import org.nhsrc.web.contract.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,6 @@ public class UserController {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @RequestMapping(value = "login", method = {RequestMethod.GET})
-    public ResponseEntity login(Principal principal) {
-        if (principal == null)
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
     @RequestMapping(value = "users", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
     @PreAuthorize("hasRole('Users_Write')")
@@ -49,6 +43,12 @@ public class UserController {
         User newEntity = new User();
         newEntity.setUuid(UUID.randomUUID());
         final User user = Repository.findByIdOrCreate(userRequest.getId(), userRepository, newEntity);
+        if (user.getPassword() == null) {
+            user.setPasswordChanged(false);
+        }
+        if (user.getPassword() != null && !userRequest.getPassword().isEmpty()) {
+            user.setPasswordChanged(true);
+        }
         if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
             user.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
         }

@@ -36,6 +36,9 @@ public class User extends AbstractEntity {
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @Column(name = "password_changed")
+    private boolean passwordChanged;
+
     @JsonIgnore
     public String getPassword() {
         return password;
@@ -99,5 +102,13 @@ public class User extends AbstractEntity {
     public boolean hasPrivilege(PrivilegeName privilegeName, String programName) {
         Role role = this.getRoles().stream().filter(x -> x.hasPrivilege(privilegeName.getName(), programName)).findFirst().orElse(null);
         return role != null;
+    }
+
+    public boolean isPasswordChanged() {
+        return passwordChanged;
+    }
+
+    public void setPasswordChanged(boolean passwordChanged) {
+        this.passwordChanged = passwordChanged;
     }
 }
