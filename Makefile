@@ -133,7 +133,11 @@ run_server_nhsrc_in_recording: clear_responses build_server
 test_server_only:
 	-./gradlew clean build --offline
 
+test_server_only_online:
+	-./gradlew clean build
+
 test_server: reset_test_db test_server_only open_test_results
+test_server_online: reset_test_db test_server_only_online open_test_results
 
 open_test_results:
 	open build/reports/tests/test/index.html
@@ -158,6 +162,9 @@ deploy_to_nhsrc_prod: build_server
 define _tail_server
 	ssh $1 "tail -n 500 -f /home/app/$2/facilities-assessment-host/app-servers/log/facilities_assessment.log"
 endef
+
+tail_access_log:
+	tail -f log/access*
 
 tail_server_jss_qa:
 	$(call _tail_server,igunatmac,qa-server)

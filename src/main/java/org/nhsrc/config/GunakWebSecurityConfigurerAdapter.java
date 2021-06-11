@@ -39,7 +39,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
     @Value("${fa.secure}")
     private boolean isSecure;
 
-    private static Logger logger = LoggerFactory.getLogger(GunakWebSecurityConfigurerAdapter.class);
+    private static final Logger logger = LoggerFactory.getLogger(GunakWebSecurityConfigurerAdapter.class);
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
@@ -56,7 +56,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
     protected void configure(HttpSecurity http) throws Exception {
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.
                 authorizeRequests()
-                .antMatchers("/", "/api/login", "/api/ping", "/api/users/first", "/api/error/throw").permitAll()
+                .antMatchers("/", "/api/login", "/api/logout", "/api/ping", "/api/users/first", "/api/error/throw").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist", "/api/facility-assessment/indicator", "/api/facility-assessment/**", "/api/facility-assessment").permitAll();
 
         permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
@@ -71,6 +71,12 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
         }
 
         handleLogin(registry);
+
+        http.exceptionHandling().authenticationEntryPoint((httpServletRequest, httpServletResponse, e) -> {
+            if (e != null) {
+                httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            }
+        });
     }
 
     private void handleLogin(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) throws Exception {
@@ -85,7 +91,9 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .and().logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
+                .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout")).logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
+            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+        })
                 .and().exceptionHandling();
     }
 

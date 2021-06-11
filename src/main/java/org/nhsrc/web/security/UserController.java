@@ -62,6 +62,7 @@ public class UserController {
 
     @RequestMapping(value = "currentUser", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
+    @PreAuthorize("hasRole('User')")
     public ResponseEntity saveProfile(@RequestBody UserProfileRequest userProfileRequest, Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email);
@@ -91,6 +92,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "currentUser", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('User')")
     public User loggedInUser(Principal principal) {
         String name = principal.getName();
         return userService.findUserByEmail(name);
