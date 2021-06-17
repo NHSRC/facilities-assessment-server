@@ -103,6 +103,10 @@ schema_migrate_nhsrc:
 download_dependencies:
 	./gradlew compileJava compileTestJava
 
+
+build_server_online:
+	./gradlew clean build -x test
+
 build_server:
 	./gradlew clean build -x test --offline
 
