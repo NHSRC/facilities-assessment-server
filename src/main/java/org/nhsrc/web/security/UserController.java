@@ -10,30 +10,35 @@ import org.nhsrc.web.contract.LoginResponse;
 import org.nhsrc.web.contract.UserProfileRequest;
 import org.nhsrc.web.contract.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/")
 public class UserController {
-    private UserService userService;
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
+    private final UserService userService;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final EntityManager entityManager;
 
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserController(UserService userService, UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, EntityManager entityManager) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.entityManager = entityManager;
     }
 
     @RequestMapping(value = "users", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -103,5 +108,11 @@ public class UserController {
     @PreAuthorize("hasRole('Users_Write')")
     public User delete(@PathVariable("id") Integer id) {
         return Repository.delete(id, userRepository);
+    }
+
+    @PreAuthorize("hasRole('Users_Write')")
+    @RequestMapping(value = "/user/search/find", method = {RequestMethod.GET})
+    public List<User> find(@RequestParam(value = "q") String q) {
+        return entityManager.createQuery("SELECT u FROM User u ORDER BY u.email", User.class).setMaxResults(100).getResultList();
     }
 }

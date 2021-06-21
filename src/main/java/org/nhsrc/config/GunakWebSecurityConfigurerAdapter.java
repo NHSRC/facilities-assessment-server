@@ -62,7 +62,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
         permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
         registry.antMatchers(new String[]{"/api/currentUser", "/api/loginSuccess"}).hasRole(Privilege.USER.getName());
         if (isSecure) {
-            String[] protectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user", "facilityAssessmentMissingCheckpoint"};
+            String[] protectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user", "facilityAssessmentMissingCheckpoint", "assessmentNumberAssignment"};
             permittedResourcesForOneDevice(protectedResources, registry);
             permittedResourcesWithAuthority(protectedResources, registry);
             registry.antMatchers("/api/**").permitAll();

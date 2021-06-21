@@ -23,6 +23,6 @@ public interface AssessmentTypeRepository extends NonTxDataRepository<Assessment
     @RestResource(path = "findAllById", rel = "findAllById")
     Page<AssessmentType> findByIdIn(@Param("ids") Integer[] ids, Pageable pageable);
 
-    @RestResource(path = "findAllByAssessmentToolModeId", rel = "findAllByAssessmentToolModeId")
+    @RestResource(path = "findByAssessmentToolMode", rel = "findByAssessmentToolMode")
     List<AssessmentType> findAllByAssessmentToolModeId(@Param("assessmentToolModeId") Integer assessmentToolModeId);
 }

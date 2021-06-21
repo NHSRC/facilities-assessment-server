@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/")
 public class AreaOfConcernController {
     private final AreaOfConcernRepository areaOfConcernRepository;
-    private ChecklistRepository checklistRepository;
-    private ChecklistService checklistService;
+    private final ChecklistRepository checklistRepository;
+    private final ChecklistService checklistService;
 
     @Autowired
     public AreaOfConcernController(AreaOfConcernRepository areaOfConcernRepository, ChecklistRepository checklistRepository, ChecklistService checklistService) {

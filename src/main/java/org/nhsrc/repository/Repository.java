@@ -36,6 +36,8 @@ public class Repository {
         }
         T t = findById(id, repository);
         if (t == null) {
+            if (newEntity instanceof AbstractEntity)
+                ((AbstractEntity)newEntity).setInactive(false);
             return newEntity;
         }
         return t;
@@ -49,6 +51,7 @@ public class Repository {
         T entity = baseRepository.findByUuid(UUID.fromString(uuid));
         if (entity == null) {
             newEntity.setUuid(UUID.fromString(uuid));
+            newEntity.setInactive(false);
             entity = newEntity;
         }
         return entity;

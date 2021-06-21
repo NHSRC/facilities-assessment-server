@@ -1,6 +1,7 @@
 package org.nhsrc.config;
 
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.assessment.AssessmentNumberAssignment;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.Role;
@@ -33,6 +34,7 @@ public class RepositoryConfig extends RepositoryRestConfigurerAdapter {
         config.exposeIdsFor(CheckpointScore.class);
         config.exposeIdsFor(Indicator.class);
 
+        config.exposeIdsFor(AssessmentNumberAssignment.class);
         config.exposeIdsFor(User.class);
         config.exposeIdsFor(Role.class);
         config.exposeIdsFor(Privilege.class);
