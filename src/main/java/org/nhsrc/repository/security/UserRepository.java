@@ -24,6 +24,6 @@ public interface UserRepository extends NonTxDataRepository<User> {
     @RestResource(path = "findAllById", rel = "findAllById")
     List<User> findByIdIn(@Param("ids") Integer[] ids);
 
-    @RestResource(path = "findByInactive", rel = "findAllById")
+    @RestResource(path = "findByInactive", rel = "findByInactive")
     Page<User> findByInactive(@Param("inactive") Boolean inactive, Pageable pageable);
 }
