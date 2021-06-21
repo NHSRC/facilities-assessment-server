@@ -22,8 +22,8 @@ import static org.nhsrc.utils.DateUtils.DATE_FORMAT_STRING;
 @Entity
 @Table(name = "facility_assessment")
 public class FacilityAssessment extends AbstractScoreEntity {
-    private static SimpleDateFormat dateFormatter = new SimpleDateFormat("ddMMyyyy");
-    private static Logger logger = LoggerFactory.getLogger(FacilityAssessment.class);
+    private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("ddMMyyyy");
+    private static final Logger logger = LoggerFactory.getLogger(FacilityAssessment.class);
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_id")
@@ -65,6 +65,10 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "facilityAssessment")
     private Set<AssessmentCustomInfo> customInfos = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "assessment_number_assignment_id")
+    private AssessmentNumberAssignment assessmentNumberAssignment;
 
     public String getAssessmentCode() {
         return assessmentCode;

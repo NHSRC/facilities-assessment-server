@@ -48,14 +48,14 @@ import java.util.UUID;
 public class FacilityAssessmentController {
     private final FacilityAssessmentService facilityAssessmentService;
     private final UserRepository userRepository;
-    private FacilityAssessmentRepository facilityAssessmentRepository;
-    private AssessmentToolRepository assessmentToolRepository;
-    private UserService userService;
-    private AssessmentToolModeRepository assessmentToolModeRepository;
-    private static Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
-    private ExcelImportService excelImportService;
-    private CheckpointScoreRepository checkpointScoreRepository;
-    private IndicatorRepository indicatorRepository;
+    private final FacilityAssessmentRepository facilityAssessmentRepository;
+    private final AssessmentToolRepository assessmentToolRepository;
+    private final UserService userService;
+    private final AssessmentToolModeRepository assessmentToolModeRepository;
+    private static final Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
+    private final ExcelImportService excelImportService;
+    private final CheckpointScoreRepository checkpointScoreRepository;
+    private final IndicatorRepository indicatorRepository;
 
     @Autowired
     public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, CheckpointScoreRepository checkpointScoreRepository, IndicatorRepository indicatorRepository) {

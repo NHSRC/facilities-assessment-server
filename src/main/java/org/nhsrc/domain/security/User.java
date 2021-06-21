@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.nhsrc.domain.AbstractEntity;
 import org.nhsrc.domain.BaseEntity;
+import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.assessment.AssessmentNumberAssignment;
 import org.springframework.data.annotation.Transient;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +41,14 @@ public class User extends AbstractEntity {
 
     @Column(name = "password_changed")
     private boolean passwordChanged;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    }, mappedBy = "users")
+    @NotNull
+    @JsonIgnore
+    private Set<AssessmentNumberAssignment> assessmentNumberAssignments = new HashSet<>();
 
     @JsonIgnore
     public String getPassword() {

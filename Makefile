@@ -43,7 +43,6 @@ endef
 define _deploy_prod
 	ssh $1 "cp -f /home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar /tmp/"
 	scp build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar $1:/home/app/facilities-assessment-host/app-servers/facilities-assessment-server-0.0.1-SNAPSHOT.jar
-	$(call _restart_service,$1,fab)
 endef
 
 define _stop_service

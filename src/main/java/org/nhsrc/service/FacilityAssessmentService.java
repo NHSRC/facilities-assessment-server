@@ -87,6 +87,8 @@ public class FacilityAssessmentService {
 
         AssessmentType assessmentType = Repository.findByUuidOrId(facilityAssessmentDTO.getAssessmentTypeUUID(), facilityAssessmentDTO.getAssessmentTypeId(), assessmentTypeRepository);
         FacilityType facilityType = Repository.findByUuidOrId(facilityAssessmentDTO.getFacilityTypeUUID(), facilityAssessmentDTO.getFacilityTypeId(), facilityTypeRepository);
+        if (facilityType == null && facility != null)
+            facilityType = facility.getFacilityType();
 
         State state;
         District district;
