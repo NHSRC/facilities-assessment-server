@@ -1,6 +1,7 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Facility;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.repository.*;
 import org.nhsrc.web.contract.FacilityRequest;
 import org.springframework.beans.factory.annotation.Autowired;

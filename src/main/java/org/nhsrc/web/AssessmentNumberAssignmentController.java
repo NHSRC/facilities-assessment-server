@@ -17,7 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/")
@@ -51,5 +53,16 @@ public class AssessmentNumberAssignmentController {
     @RequestMapping(value = "/assessmentNumberAssignment/search/find", method = {RequestMethod.GET})
     public Page<AssessmentNumberAssignment> find(@RequestParam(value = "districtId") Integer districtId, Pageable pageable) {
         return repository.findAllByFacilityDistrictId(districtId, pageable);
+    }
+
+    @RequestMapping(value = "/assessmentNumberAssignment/search/assessment", method = {RequestMethod.GET})
+    @PreAuthorize("hasRole('Assessment_Write')")
+    public Object[] find(@RequestParam(value = "facilityUuid") String facilityUuid,
+                         @RequestParam(value = "assessmentTypeUuid") String assessmentTypeUuid,
+                         Principal principal) {
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email);
+        List<AssessmentNumberAssignment> assessmentNumbers = repository.findAllByFacilityUuidAndAssessmentTypeUuidAndUsersIn(UUID.fromString(facilityUuid), UUID.fromString(assessmentTypeUuid), new User[]{user});
+        return assessmentNumbers.stream().map(AssessmentNumberAssignment::getAssessmentNumber).toArray();
     }
 }
