@@ -42,14 +42,16 @@ public class FacilityController {
     public Page<Facility> find(@RequestParam(value = "stateId", required = false) Integer stateId,
                                @RequestParam(value = "districtId", required = false) Integer districtId,
                                @RequestParam(value = "facilityTypeId", required = false) Integer facilityTypeId,
+                               @RequestParam(value = "inactive", required = false) Boolean inactive,
                                Pageable pageable) {
+        Boolean inactiveParam = inactive != null && inactive;
         if (districtId != null)
-            return facilityTypeId == null ? facilityRepository.findByDistrictId(districtId, pageable) : facilityRepository.findByDistrictIdAndFacilityTypeId(districtId, facilityTypeId, pageable);
+            return facilityTypeId == null ? facilityRepository.findByDistrictIdAndInactive(districtId, inactiveParam, pageable) : facilityRepository.findByDistrictIdAndFacilityTypeIdAndInactive(districtId, facilityTypeId, inactiveParam, pageable);
         if (stateId != null)
-            return facilityTypeId == null ? facilityRepository.findByDistrictStateId(stateId, pageable) : facilityRepository.findByDistrictStateIdAndFacilityTypeId(stateId, facilityTypeId, pageable);
+            return facilityTypeId == null ? facilityRepository.findByDistrictStateIdAndInactive(stateId, inactiveParam, pageable) : facilityRepository.findByDistrictStateIdAndFacilityTypeIdAndInactive(stateId, facilityTypeId, inactiveParam, pageable);
         if (facilityTypeId != null)
-            return facilityRepository.findByFacilityTypeId(facilityTypeId, pageable);
-        return facilityRepository.findAll(pageable);
+            return facilityRepository.findByFacilityTypeIdAndInactive(facilityTypeId, inactiveParam, pageable);
+        return facilityRepository.findAllByInactive(inactiveParam, pageable);
     }
 
     @RequestMapping(value = "/facilitys/{id}", method = {RequestMethod.DELETE})

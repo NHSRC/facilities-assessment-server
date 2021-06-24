@@ -33,6 +33,11 @@ public interface DistrictRepository extends NonTxDataRepository<District> {
     @RestResource(path = "findByState", rel = "findByState")
     Page<District> findByStateId(@Param("stateId") Integer stateId, Pageable pageable);
 
+    Page<District> findAllByStateIdAndInactive(Integer stateId, Boolean inactive, Pageable pageable);
+
+    @RestResource(path = "findByInactive", rel = "findByInactive")
+    Page<District> findByInactive(@Param("inactive") Boolean inactive, Pageable pageable);
+
     @RestResource(path = "find", rel = "find")
     Page<District> findByNameStartingWithOrderByName(@Param("q") String q, Pageable pageable);
 

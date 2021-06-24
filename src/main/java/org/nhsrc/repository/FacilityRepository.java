@@ -38,15 +38,24 @@ public interface FacilityRepository extends NonTxDataRepository<Facility> {
     @RestResource(path = "findByFacilityType", rel = "findByFacilityType")
     Page<Facility> findByFacilityTypeId(@Param("facilityTypeId") Integer facilityTypeId, Pageable pageable);
 
+    Page<Facility> findByFacilityTypeIdAndInactive(Integer facilityTypeId, Boolean inactive, Pageable pageable);
+
+    Page <Facility> findAllByInactive(Boolean inactive, Pageable pageable);
+
     @RestResource(path = "findByDistrict", rel = "findByDistrict")
     Page<Facility> findByDistrictId(@Param("districtId") Integer districtId, Pageable pageable);
 
-    Page<Facility> findByDistrictIdAndFacilityTypeId(@Param("districtId") Integer districtId, @Param("facilityTypeId") Integer facilityTypeId, Pageable pageable);
+    Page<Facility> findByDistrictIdAndInactive(Integer districtId, Boolean inactive, Pageable pageable);
+    List<Facility> findAllByDistrictIdAndInactive(Integer districtId, Boolean inactive);
+
+    Page<Facility> findByDistrictIdAndFacilityTypeIdAndInactive(Integer districtId, Integer facilityTypeId, Boolean inactive, Pageable pageable);
 
     @RestResource(path = "findByState", rel = "findByState")
     Page<Facility> findByDistrictStateId(@Param("stateId") Integer stateId, Pageable pageable);
 
-    Page<Facility> findByDistrictStateIdAndFacilityTypeId(@Param("stateId") Integer stateId, @Param("facilityTypeId") Integer facilityTypeId, Pageable pageable);
+    Page<Facility> findByDistrictStateIdAndInactive(Integer stateId, Boolean inactive, Pageable pageable);
+
+    Page<Facility> findByDistrictStateIdAndFacilityTypeIdAndInactive(Integer stateId, Integer facilityTypeId, Boolean inactive, Pageable pageable);
 
     List<Facility> findByNameContainingIgnoreCaseAndDistrictState(@Param("name") String name, @Param("state") State state);
     List<Facility> findByNameAndDistrictState(@Param("name") String name, @Param("state") State state);
