@@ -6,6 +6,7 @@ import org.nhsrc.domain.AbstractEntity;
 import org.nhsrc.domain.BaseEntity;
 import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.assessment.AssessmentNumberAssignment;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.springframework.data.annotation.Transient;
 
 import javax.persistence.*;
@@ -49,6 +50,14 @@ public class User extends AbstractEntity {
     @NotNull
     @JsonIgnore
     private Set<AssessmentNumberAssignment> assessmentNumberAssignments = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    }, mappedBy = "users")
+    @NotNull
+    @JsonIgnore
+    private Set<FacilityAssessment> facilityAssessments = new HashSet<>();
 
     @JsonIgnore
     public String getPassword() {

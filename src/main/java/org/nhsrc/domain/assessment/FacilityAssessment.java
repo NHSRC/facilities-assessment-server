@@ -51,11 +51,6 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @NotNull
     private AssessmentType assessmentType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    @NotNull
-    private User user;
-
     @Column(name = "inactive")
     private boolean inactive;
 
@@ -69,6 +64,11 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_number_assignment_id")
     private AssessmentNumberAssignment assessmentNumberAssignment;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "facility_assessment_users", joinColumns = @JoinColumn(name = "facility_assessment_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    @JsonIgnore
+    private Set<User> users = new HashSet<>();
 
     public String getAssessmentCode() {
         return assessmentCode;
@@ -258,10 +258,6 @@ public class FacilityAssessment extends AbstractScoreEntity {
         }
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public boolean getInactive() {
         return inactive;
     }
@@ -289,5 +285,13 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     public Set<AssessmentCustomInfo> getCustomInfos() {
         return customInfos;
+    }
+
+    public void addUser(User user) {
+        users.add(user);
+    }
+
+    public Set<User> getUsers() {
+        return users;
     }
 }

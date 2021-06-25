@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -133,7 +134,7 @@ public class FacilityAssessmentService {
             facilityAssessment.setInactive(facilityAssessmentDTO.getInactive());
 
             facilityAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
-            facilityAssessment.setUser(user);
+            facilityAssessment.addUser(user);
             if (facilityAssessment.getAssessmentCode() == null) {
                 facilityAssessment.setupCode();
             }
