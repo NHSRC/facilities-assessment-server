@@ -1,18 +1,14 @@
 package org.nhsrc.web.contract.assessment;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.nhsrc.domain.assessment.*;
-
 import java.util.List;
-
 
 public class FacilityWithAssessmentsResponse {
     private String facilityName;
     private String districtName;
     private String stateName;
     private String facilityType;
-    private String ninId;
-    private List assessments;
+    private String registryUniqueId;
+    private List<FacilityAssessmentResponse> assessments;
 
     public String getFacilityName() {
         return facilityName;
@@ -47,21 +43,19 @@ public class FacilityWithAssessmentsResponse {
         this.facilityType = facilityType;
     }
 
-    public String getNinId() {
-        return ninId;
+    public String getRegistryUniqueId() {
+        return registryUniqueId;
     }
 
-    public void setNinId(String ninId) {
-        this.ninId = ninId;
+    public void setRegistryUniqueId(String registryUniqueId) {
+        this.registryUniqueId = registryUniqueId;
     }
 
-    public List getAssessments() {
+    public List<FacilityAssessmentResponse> getAssessments() {
         return assessments;
     }
 
-    public void setAssessments(List assessments) {
+    public void setAssessments(List<FacilityAssessmentResponse> assessments) {
         this.assessments = assessments;
     }
-
-
 }

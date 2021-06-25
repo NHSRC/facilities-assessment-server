@@ -63,4 +63,6 @@ public interface FacilityRepository extends NonTxDataRepository<Facility> {
     List<Facility> findByNameAndDistrict(@Param("name") String name, @Param("district") District district);
     Facility findByNameAndDistrictAndFacilityType(String name, District district, FacilityType facilityType);
     List<Facility> findByNameContainingIgnoreCaseAndDistrictAndFacilityTypeName(@Param("name") String name, @Param("district") District district, @Param("facilityTypeName") String facilityTypeName);
+
+    Facility findByRegistryUniqueId(String id);
 }

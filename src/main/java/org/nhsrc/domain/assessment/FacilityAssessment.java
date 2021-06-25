@@ -294,4 +294,8 @@ public class FacilityAssessment extends AbstractScoreEntity {
     public Set<User> getUsers() {
         return users;
     }
+
+    public AssessmentNumberAssignment getAssessmentNumberAssignment() {
+        return assessmentNumberAssignment;
+    }
 }

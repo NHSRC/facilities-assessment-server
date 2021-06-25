@@ -82,4 +82,6 @@ public interface FacilityAssessmentRepository extends TxDataRepository<FacilityA
 
     @RestResource(path = "hasCustomInfos", rel = "hasCustomInfos")
     Page<FacilityAssessment> findByCustomInfosIsNotNull(Pageable pageable);
+
+    List<FacilityAssessment> findAllByFacility(Facility facility);
 }
