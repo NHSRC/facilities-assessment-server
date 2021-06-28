@@ -86,6 +86,8 @@ public class FacilityController {
             facilityAssessmentResponse.setAssessmentEndDate(facilityAssessment.getEndDate());
             facilityAssessmentResponse.setAssessmentStartDate(facilityAssessment.getStartDate());
             facilityAssessmentResponse.setUuid(facilityAssessment.getUuidString());
+            facilityAssessmentResponse.setAssessmentTypeName(facilityAssessment.getAssessmentType().getName());
+            facilityAssessmentResponse.setAssessmentToolName(facilityAssessment.getAssessmentTool().getName());
             List<AssessmentCustomInfoResponse> collect = facilityAssessment.getCustomInfos().stream().map(assessmentCustomInfo -> {
                 AssessmentCustomInfoResponse assessmentCustomInfoResponse = new AssessmentCustomInfoResponse();
                 assessmentCustomInfoResponse.setAssessmentMetaDataName(assessmentCustomInfo.getAssessmentMetaData().getName());
