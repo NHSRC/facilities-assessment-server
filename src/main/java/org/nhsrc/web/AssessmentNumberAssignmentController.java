@@ -62,7 +62,7 @@ public class AssessmentNumberAssignmentController {
                          Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email);
-        List<AssessmentNumberAssignment> assessmentNumbers = repository.findAllByFacilityUuidAndAssessmentTypeUuidAndUsersIn(UUID.fromString(facilityUuid), UUID.fromString(assessmentTypeUuid), new User[]{user});
+        List<AssessmentNumberAssignment> assessmentNumbers = repository.getActiveAssessmentNumbers(facilityUuid, assessmentTypeUuid, user);
         return assessmentNumbers.stream().map(AssessmentNumberAssignment::getAssessmentNumber).toArray();
     }
 }

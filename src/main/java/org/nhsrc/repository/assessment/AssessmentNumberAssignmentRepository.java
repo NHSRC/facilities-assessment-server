@@ -1,5 +1,6 @@
 package org.nhsrc.repository.assessment;
 
+import org.joda.time.LocalDate;
 import org.nhsrc.domain.assessment.AssessmentNumberAssignment;
 import org.nhsrc.domain.security.User;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,5 +23,10 @@ public interface AssessmentNumberAssignmentRepository extends PagingAndSortingRe
     @RestResource(path = "findByState", rel = "findByState")
     Page<AssessmentNumberAssignment> findAllByFacilityDistrictStateId(@Param("stateId") int stateId, Pageable pageable);
     Page<AssessmentNumberAssignment> findAllByFacilityDistrictId(@Param("districtId") int districtId, Pageable pageable);
-    List<AssessmentNumberAssignment> findAllByFacilityUuidAndAssessmentTypeUuidAndUsersIn(UUID facilityUuid, UUID assessmentTypeUuid, User[] users);
+    List<AssessmentNumberAssignment> findAllByFacilityUuidAndAssessmentTypeUuidAndUsersInAndLastModifiedDateAfter(UUID facilityUuid, UUID assessmentTypeUuid, User[] users, Date date);
+
+    default List<AssessmentNumberAssignment> getActiveAssessmentNumbers(String facilityUuid, String assessmentTypeUuid, User user) {
+        LocalDate localDate = LocalDate.now().minusYears(1);
+        return findAllByFacilityUuidAndAssessmentTypeUuidAndUsersInAndLastModifiedDateAfter(UUID.fromString(facilityUuid), UUID.fromString(assessmentTypeUuid), new User[]{user}, localDate.toDate());
+    }
 }
