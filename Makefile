@@ -23,7 +23,11 @@ set_host_dir_qa:
 	$(call _set_host_dir,qa)
 
 define _run_server
-	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0 0 0 ? * * 2099"
+	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0 0 0 ? * * 2099" --database.host=localhost
+endef
+
+define _run_server_prod_metabase
+	FA_ENV=dev FA_METABASE_URL=https://gunak.nhsrcindia.org:3000 java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0 0 0 ? * * 2099" --database.host=localhost
 endef
 
 define _run_server_background
@@ -111,6 +115,9 @@ build_server:
 
 run_server_nhsrc: build_server
 	$(call _run_server,nhsrc,false,true)
+
+run_server_nhsrc_prod_metabase: build_server
+	$(call _run_server_prod_metabase,nhsrc,false,true)
 
 run_server_background_nhsrc: build_server
 	$(call _run_server_background,nhsrc,false,true)
