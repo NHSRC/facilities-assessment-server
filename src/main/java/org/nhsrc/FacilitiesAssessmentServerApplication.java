@@ -52,6 +52,22 @@ public class FacilitiesAssessmentServerApplication extends WebMvcConfigurerAdapt
     }
 
     @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/dashboard").setViewName("forward:/dashboard/index.html");
+        registerDashboardPaths(registry, "account");
+        registerDashboardPaths(registry, "facilityView");
+        registerDashboardPaths(registry, "settings");
+        registerDashboardPaths(registry, "login");
+        registerDashboardPaths(registry, "register");
+        registerDashboardPaths(registry, "404");
+        registerDashboardPaths(registry, "noStateAccess");
+    }
+
+    private void registerDashboardPaths(ViewControllerRegistry registry, String subPath) {
+        registry.addViewController(String.format("/dashboard/%s", subPath)).setViewName(String.format("forward:/dashboard/index.html#/%s",subPath));
+    }
+
+    @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/ext/**").addResourceLocations(String.format("file:///%s/", new File("external").getAbsolutePath()));
         registry.addResourceHandler("/app/**").addResourceLocations(String.format("file:///%s/", new File("app").getAbsolutePath()));
