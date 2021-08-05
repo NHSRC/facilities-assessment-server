@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.nhsrc.domain.AbstractEntity;
 import org.nhsrc.domain.BaseEntity;
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.Facility;
 import org.nhsrc.domain.assessment.AssessmentNumberAssignment;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.springframework.data.annotation.Transient;
