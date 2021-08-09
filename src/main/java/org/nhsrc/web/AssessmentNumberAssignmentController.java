@@ -46,7 +46,7 @@ public class AssessmentNumberAssignmentController {
         assessmentNumberAssignment.setAssessmentNumber(request.getAssessmentNumber());
         assessmentNumberAssignment.setFacility(Repository.findById(request.getFacilityId(), facilityRepository));
         assessmentNumberAssignment.setAssessmentType(Repository.findById(request.getAssessmentTypeId(), assessmentTypeRepository));
-        Repository.mergeChildren(request.getUserIds(), request.getUserIds(), userRepository, user -> assessmentNumberAssignment.removeUser((User) user), user -> assessmentNumberAssignment.addUser((User) user));
+        Repository.mergeChildren(request.getUserIds(), assessmentNumberAssignment.getUserIds(), userRepository, user -> assessmentNumberAssignment.removeUser((User) user), user -> assessmentNumberAssignment.addUser((User) user));
         return new ResponseEntity<>(repository.save(assessmentNumberAssignment), HttpStatus.CREATED);
     }
 

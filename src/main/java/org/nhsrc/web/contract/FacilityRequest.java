@@ -1,5 +1,8 @@
 package org.nhsrc.web.contract;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FacilityRequest {
     private String uuid;
     private Boolean inactive;
@@ -8,6 +11,7 @@ public class FacilityRequest {
     private int facilityTypeId;
     private String districtUUID;
     private int districtId;
+    private List<Integer> userIdsWithAccess = new ArrayList<>();
 
     public String getUuid() {
         return uuid;
@@ -63,5 +67,13 @@ public class FacilityRequest {
 
     public void setFacilityTypeId(int facilityTypeId) {
         this.facilityTypeId = facilityTypeId;
+    }
+
+    public List<Integer> getUserIdsWithAccess() {
+        return userIdsWithAccess;
+    }
+
+    public void setUserIdsWithAccess(List<Integer> userIdsWithAccess) {
+        this.userIdsWithAccess = userIdsWithAccess;
     }
 }

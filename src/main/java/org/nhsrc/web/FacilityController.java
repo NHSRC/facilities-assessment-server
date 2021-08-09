@@ -1,9 +1,10 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.Facility;
-import org.nhsrc.domain.assessment.AssessmentCustomInfo;
 import org.nhsrc.domain.assessment.FacilityAssessment;
+import org.nhsrc.domain.security.User;
 import org.nhsrc.repository.*;
+import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.web.contract.FacilityRequest;
 import org.nhsrc.web.contract.assessment.AssessmentCustomInfoResponse;
 import org.nhsrc.web.contract.assessment.FacilityAssessmentResponse;
@@ -25,13 +26,15 @@ public class FacilityController {
     private final FacilityTypeRepository facilityTypeRepository;
     private final FacilityRepository facilityRepository;
     private final FacilityAssessmentRepository facilityAssessmentRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    public FacilityController(DistrictRepository districtRepository, FacilityTypeRepository facilityTypeRepository, FacilityRepository facilityRepository, FacilityAssessmentRepository facilityAssessmentRepository) {
+    public FacilityController(DistrictRepository districtRepository, FacilityTypeRepository facilityTypeRepository, FacilityRepository facilityRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserRepository userRepository) {
         this.districtRepository = districtRepository;
         this.facilityTypeRepository = facilityTypeRepository;
         this.facilityRepository = facilityRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
+        this.userRepository = userRepository;
     }
 
     @RequestMapping(value = "/facilitys", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -43,6 +46,7 @@ public class FacilityController {
         facility.setDistrict(Repository.findByUuidOrId(request.getDistrictUUID(), request.getDistrictId(), districtRepository));
         facility.setFacilityType(Repository.findByUuidOrId(request.getFacilityTypeUUID(), request.getFacilityTypeId(), facilityTypeRepository));
         facility.setInactive(request.getInactive());
+        Repository.mergeChildren(request.getUserIdsWithAccess(), facility.getUserIdsWithAccess(), userRepository, user -> facility.removeUserAccess((User) user), user -> facility.addUserAccess((User) user));
         return facilityRepository.save(facility);
     }
 

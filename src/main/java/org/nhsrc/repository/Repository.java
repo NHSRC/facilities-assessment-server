@@ -1,6 +1,7 @@
 package org.nhsrc.repository;
 
 import org.nhsrc.domain.AbstractEntity;
+import org.nhsrc.domain.AbstractPersistable;
 import org.nhsrc.domain.BaseEntity;
 import org.springframework.data.repository.CrudRepository;
 
@@ -57,7 +58,7 @@ public class Repository {
         return entity;
     }
 
-    public static <T extends BaseEntity> void mergeChildren(List<Integer> proposedChildrenIds, List<Integer> existingChildrenIds, CrudRepository<T, Integer> childRepository, Consumer<BaseEntity> removeChild, Consumer<BaseEntity> addChild) {
+    public static <T extends AbstractPersistable> void mergeChildren(List<Integer> proposedChildrenIds, List<Integer> existingChildrenIds, CrudRepository<T, Integer> childRepository, Consumer<AbstractPersistable> removeChild, Consumer<AbstractPersistable> addChild) {
         Set<Integer> proposedChildrenIdSet = new HashSet<>(proposedChildrenIds);
         HashSet<Integer> toRemoveChildrenIds = new HashSet<>(existingChildrenIds);
         toRemoveChildrenIds.removeAll(proposedChildrenIdSet);

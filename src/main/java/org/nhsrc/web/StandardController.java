@@ -1,6 +1,5 @@
 package org.nhsrc.web;
 
-import org.nhsrc.domain.MeasurableElement;
 import org.nhsrc.domain.ReferencableEntity;
 import org.nhsrc.domain.Standard;
 import org.nhsrc.repository.AreaOfConcernRepository;
@@ -27,7 +26,7 @@ import java.util.List;
 public class StandardController {
     private final StandardRepository standardRepository;
     private final AreaOfConcernRepository areaOfConcernRepository;
-    private ChecklistService checklistService;
+    private final ChecklistService checklistService;
 
     @Autowired
     public StandardController(StandardRepository standardRepository, AreaOfConcernRepository areaOfConcernRepository, ChecklistService checklistService) {

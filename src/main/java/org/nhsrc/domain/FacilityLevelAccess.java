@@ -8,13 +8,13 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "facility_level_access")
-public class FacilityLevelAccess extends AbstractEntity {
+public class FacilityLevelAccess extends AbstractPersistable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_id")
     @NotNull
     private Facility facility;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @NotNull
     private User user;

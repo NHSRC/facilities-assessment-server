@@ -2,9 +2,14 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.nhsrc.domain.security.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "facility")
@@ -23,6 +28,9 @@ public class Facility extends AbstractEntity {
 
     @Column(name = "registry_unique_id")
     private String registryUniqueId;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "facility")
+    private Set<FacilityLevelAccess> facilityLevelAccessList = new HashSet<>();
 
     @JsonIgnore
     public String getRegistryUniqueId() {
@@ -72,5 +80,20 @@ public class Facility extends AbstractEntity {
 
     public void setFacilityType(FacilityType facilityType) {
         this.facilityType = facilityType;
+    }
+
+    public List<Integer> getUserIdsWithAccess() {
+        return facilityLevelAccessList.stream().map(x -> x.getUser().getId()).collect(Collectors.toList());
+    }
+
+    public void removeUserAccess(User user) {
+        this.facilityLevelAccessList.stream().filter(x -> x.getUser().equals(user)).findAny().ifPresent(facilityLevelAccess -> this.facilityLevelAccessList.remove(facilityLevelAccess));
+    }
+
+    public void addUserAccess(User user) {
+        FacilityLevelAccess facilityLevelAccess = new FacilityLevelAccess();
+        facilityLevelAccess.setUser(user);
+        facilityLevelAccess.setFacility(this);
+        this.facilityLevelAccessList.add(facilityLevelAccess);
     }
 }
