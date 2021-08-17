@@ -28,13 +28,13 @@ import java.util.List;
 
 @Service
 public class FacilityDownloadService {
-    private FacilityRepository facilityRepository;
-    private DistrictRepository districtRepository;
-    private StateRepository stateRepository;
-    private FacilityTypeRepository facilityTypeRepository;
-    private MissingNinEntityInLocalRepository missingNinEntityInLocalRepository;
-    private NinSyncDetailsRepository ninSyncDetailsRepository;
-    private static Logger logger = LoggerFactory.getLogger(FacilityDownloadService.class);
+    private final FacilityRepository facilityRepository;
+    private final DistrictRepository districtRepository;
+    private final StateRepository stateRepository;
+    private final FacilityTypeRepository facilityTypeRepository;
+    private final MissingNinEntityInLocalRepository missingNinEntityInLocalRepository;
+    private final NinSyncDetailsRepository ninSyncDetailsRepository;
+    private static final Logger logger = LoggerFactory.getLogger(FacilityDownloadService.class);
 
     private static final String SUB_CENTRE = "SubCentre";
     private static final String FIELDS_FOR_FACILITY_METADATA = "phc_chc_type,state_name,district_name";
@@ -69,8 +69,9 @@ public class FacilityDownloadService {
 
             List<RegisteredFacilityDTO> facilities = response.getData();
             for (RegisteredFacilityDTO registeredFacility : facilities) {
-                if (registeredFacility.getFacilityType().equals(SUB_CENTRE))
+                if (!registeredFacility.getFacilityType().equals(SUB_CENTRE)) {
                     continue;
+                }
 
                 String stateName = registeredFacility.getState().replace("&", "and");
                 State state = stateRepository.findByName(stateName);
@@ -98,16 +99,20 @@ public class FacilityDownloadService {
                     facility.setRegistryUniqueId(registeredFacility.getNinId());
                 }
                 facilityRepository.save(facility);
-
-                ResponseResultDTO result = response.getResult();
-                ninSyncDetails.setOffsetSuccessfullyProcessed(result.getNextOffset());
-                ninSyncDetailsRepository.save(ninSyncDetails);
             }
+            updateSyncDetails(ninSyncDetails, response);
             return response;
         } catch (Exception e) {
             logger.error("Sync failed/stopped", e);
             throw e;
         }
+    }
+
+    private void updateSyncDetails(NinSyncDetails ninSyncDetails, NINResponsePageDTO response) {
+        ResponseResultDTO result = response.getResult();
+        ninSyncDetails.setOffsetSuccessfullyProcessed(result.getNextOffset());
+        ninSyncDetailsRepository.save(ninSyncDetails);
+        logger.error("Update sync details");
     }
 
     public void checkMetadata() {
@@ -126,7 +131,7 @@ public class FacilityDownloadService {
 
             List<RegisteredFacilityDTO> facilities = response.getData();
             for (RegisteredFacilityDTO registeredFacility : facilities) {
-                if (registeredFacility.getFacilityType().equals(SUB_CENTRE)) continue;
+                if (!registeredFacility.getFacilityType().equals(SUB_CENTRE)) continue;
 
                 String stateName = registeredFacility.getState().replace("&", "and");
                 State state = stateRepository.findByName(stateName);
@@ -143,9 +148,7 @@ public class FacilityDownloadService {
                     missingNinEntityInLocalRepository.save(new MissingNinEntityInLocal(registeredFacility.getFacilityType(), EntityType.FacilityType));
                 }
             }
-            ResponseResultDTO result = response.getResult();
-            ninSyncDetails.setOffsetSuccessfullyProcessed(result.getNextOffset());
-            ninSyncDetailsRepository.save(ninSyncDetails);
+            updateSyncDetails(ninSyncDetails, response);
             return response;
         } catch (Exception e) {
             logger.error("Sync failed/stopped", e);

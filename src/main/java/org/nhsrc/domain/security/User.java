@@ -1,7 +1,6 @@
 package org.nhsrc.domain.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import org.nhsrc.domain.*;
 import org.nhsrc.domain.assessment.AssessmentNumberAssignment;
 import org.nhsrc.domain.assessment.FacilityAssessment;
@@ -58,7 +57,7 @@ public class User extends AbstractEntity {
     private Set<FacilityAssessment> facilityAssessments = new HashSet<>();
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "user")
-    private Set<FacilityLevelAccess> facilityLevelAccess = new HashSet<>();
+    private Set<FacilityLevelAccess> facilityLevelAccessList = new HashSet<>();
 
     @JsonIgnore
     public String getPassword() {
@@ -134,6 +133,6 @@ public class User extends AbstractEntity {
     }
 
     public List<Integer> getAccessibleFacilityIds() {
-        return facilityLevelAccess.stream().map(x -> x.getFacility().getId()).collect(Collectors.toList());
+        return facilityLevelAccessList.stream().map(x -> x.getFacility().getId()).collect(Collectors.toList());
     }
 }

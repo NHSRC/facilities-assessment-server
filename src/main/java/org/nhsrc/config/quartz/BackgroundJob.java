@@ -32,10 +32,17 @@ public class BackgroundJob implements Job {
     private ScoringService scoringService;
     @Autowired
     private FacilityDownloadService facilityDownloadService;
+
     @Value("${cron.main}")
     private String cronExpression;
-    private static Logger logger = LoggerFactory.getLogger(BackgroundJob.class);
-    private static List<GrantedAuthority> backgroundJobAuthorities;
+
+    @Value("${facility.download.job.enabled}")
+    private boolean facilityDownloadJobEnabled;
+    @Value("${facility.metadata.download.job.enabled}")
+    private boolean facilityMetadataDownloadJobEnabled;
+
+    private static final Logger logger = LoggerFactory.getLogger(BackgroundJob.class);
+    private static final List<GrantedAuthority> backgroundJobAuthorities;
 
     static {
         backgroundJobAuthorities = Privilege.createAuthorities(Privilege.USER.getSpringName(), Privilege.FACILITY_WRITE.getSpringName(), Privilege.ASSESSMENT_READ.getSpringName(), Privilege.ASSESSMENT_WRITE.getSpringName());
@@ -43,14 +50,28 @@ public class BackgroundJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-        logger.info("Starting job.", cronExpression);
+        logger.info(String.format("Starting job. %s", cronExpression));
 
         Authentication auth = new UsernamePasswordAuthenticationToken(User.BACKGROUND_SERVICE_USER_EMAIL, "", backgroundJobAuthorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
         scoringService.scoreAssessments();
         logger.info("Completed scoring assessments.");
-        facilityDownloadService.download();
-        logger.info("Completed download and job.");
+
+        if (facilityDownloadJobEnabled) {
+            logger.info("Starting facility download job.");
+            facilityDownloadService.download();
+            logger.info("Completed facility download job.");
+        } else {
+            logger.info("Facility download job disabled.");
+        }
+
+        if (facilityMetadataDownloadJobEnabled) {
+            logger.info("Starting facility metadata download job.");
+            facilityDownloadService.checkMetadata();
+            logger.info("Completed facility metadata download job.");
+        } else {
+            logger.info("Facility metadata download job disabled.");
+        }
     }
 
     @Bean(name = "jobWithCronTriggerBean")
