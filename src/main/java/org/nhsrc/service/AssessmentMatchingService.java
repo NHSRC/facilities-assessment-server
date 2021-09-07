@@ -14,7 +14,7 @@ import java.util.UUID;
 @Service
 public class AssessmentMatchingService {
     private final FacilityAssessmentRepository facilityAssessmentRepository;
-    private static Logger logger = LoggerFactory.getLogger(AssessmentMatchingService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AssessmentMatchingService.class);
 
     @Autowired
     public AssessmentMatchingService(FacilityAssessmentRepository facilityAssessmentRepository) {

@@ -101,7 +101,7 @@ public class FacilityAssessmentService {
             district = Repository.findByUuidOrId(facilityAssessmentDTO.getDistrict(), facilityAssessmentDTO.getDistrictId(), districtRepository);
         }
 
-        String lockString = String.format("%s-%d", facility == null ? facilityAssessmentDTO.getFacilityName() : facility.getId(), assessmentTool.getId());
+        String lockString = String.format("%s-%d-%s", facility == null ? facilityAssessmentDTO.getFacilityName() : facility.getId(), assessmentTool.getId(), facilityAssessmentDTO.getSeriesName());
         synchronized (lockString.intern()) {
             FacilityAssessment facilityAssessment = this.assessmentMatchingService.findExistingAssessment(facilityAssessmentDTO.getSeriesName(), facilityAssessmentDTO.getUuid(), facility, facilityAssessmentDTO.getFacilityName(), assessmentTool);
             if (facilityAssessment == null)

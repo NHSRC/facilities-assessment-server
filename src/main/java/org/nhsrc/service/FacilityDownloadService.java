@@ -112,7 +112,7 @@ public class FacilityDownloadService {
         ResponseResultDTO result = response.getResult();
         ninSyncDetails.setOffsetSuccessfullyProcessed(result.getNextOffset());
         ninSyncDetailsRepository.save(ninSyncDetails);
-        logger.error("Update sync details");
+        logger.info("Update sync details");
     }
 
     public void checkMetadata() {
