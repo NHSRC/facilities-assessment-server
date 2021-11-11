@@ -25,13 +25,13 @@ import java.util.UUID;
 
 @Service
 public class ExcelImportService {
-    private AssessmentToolRepository assessmentToolRepository;
-    private CheckpointRepository checkpointRepository;
-    private FacilityAssessmentService facilityAssessmentService;
-    private ChecklistRepository checklistRepository;
-    private MissingChecklistItemsService missingChecklistItemsService;
-    private MissingChecklistRepository missingChecklistRepository;
-    private static Logger logger = LoggerFactory.getLogger(ExcelImportService.class);
+    private final AssessmentToolRepository assessmentToolRepository;
+    private final CheckpointRepository checkpointRepository;
+    private final FacilityAssessmentService facilityAssessmentService;
+    private final ChecklistRepository checklistRepository;
+    private final MissingChecklistItemsService missingChecklistItemsService;
+    private final MissingChecklistRepository missingChecklistRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ExcelImportService.class);
 
     @Autowired
     public ExcelImportService(AssessmentToolRepository assessmentToolRepository, CheckpointRepository checkpointRepository, FacilityAssessmentService facilityAssessmentService, ChecklistRepository checklistRepository, MissingChecklistItemsService missingChecklistItemsService, MissingChecklistRepository missingChecklistRepository) {
@@ -44,11 +44,12 @@ public class ExcelImportService {
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
+    @Deprecated
     public void saveAssessment(InputStream inputStream, FacilityAssessment facilityAssessment) throws Exception {
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
         ExcelImporter excelImporter = new ExcelImporter(assessmentChecklistData);
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessment.getAssessmentTool().getUuid());
-        excelImporter.importFile(inputStream, true);
+        excelImporter.importFile(inputStream);
 
         missingChecklistItemsService.clearMissingChecklists(facilityAssessment);
 

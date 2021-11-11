@@ -20,14 +20,14 @@ public class ExcelImporter {
         this.data = data;
     }
 
-    public void importFile(InputStream inputStream, boolean hasScores) throws Exception {
+    public void importFile(InputStream inputStream) throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         try {
             int numberOfSheets = workbook.getNumberOfSheets();
             for (int i = 0; i < numberOfSheets; i++) {
                 XSSFSheet sheet = workbook.getSheetAt(i);
                 logger.info("READING SHEET: " + sheet.getSheetName());
-                this.sheetImport(sheet, hasScores);
+                this.sheetImport(sheet);
                 logger.info("COMPLETED SHEET: " + sheet.getSheetName());
             }
         } finally {
@@ -36,7 +36,7 @@ public class ExcelImporter {
         }
     }
 
-    private void sheetImport(XSSFSheet sheet, boolean hasScores) {
+    private void sheetImport(XSSFSheet sheet) {
         String sheetName = sheet.getSheetName().trim();
         if (Arrays.stream(RESERVED_SHEET_NAMES).anyMatch(s -> s.equalsIgnoreCase(sheetName))) {
             return;
@@ -50,7 +50,7 @@ public class ExcelImporter {
 
         int i = 1;
         for (Row cells : sheet) {
-            boolean completed = sheetImporter.importRow(cells, checklist, hasScores);
+            boolean completed = sheetImporter.importRow(cells, checklist);
             if (completed) {
                 logger.info(String.format("Sheet completed at line number:%d on encountering score row", i));
                 break;

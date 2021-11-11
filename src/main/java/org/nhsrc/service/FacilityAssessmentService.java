@@ -2,13 +2,12 @@ package org.nhsrc.service;
 
 import com.bugsnag.Bugsnag;
 import org.nhsrc.domain.*;
-import org.nhsrc.domain.assessment.AssessmentCustomInfo;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.metadata.AssessmentMetaData;
 import org.nhsrc.domain.security.User;
-import org.nhsrc.dto.assessment.BaseFacilityAssessmentDTO;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.IndicatorListDTO;
+import org.nhsrc.dto.assessment.BaseFacilityAssessmentDTO;
 import org.nhsrc.mapper.FacilityAssessmentMapper;
 import org.nhsrc.repository.*;
 import org.nhsrc.repository.metadata.AssessmentMetaDataRepository;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,18 +33,18 @@ public class FacilityAssessmentService {
     private final CheckpointScoreRepository checkpointScoreRepository;
     private final CheckpointRepository checkpointRepository;
     private final AssessmentMatchingService assessmentMatchingService;
-    private AssessmentTypeRepository assessmentTypeRepository;
-    private IndicatorDefinitionRepository indicatorDefinitionRepository;
-    private IndicatorRepository indicatorRepository;
-    private StateRepository stateRepository;
-    private DistrictRepository districtRepository;
-    private FacilityTypeRepository facilityTypeRepository;
-    private StandardScoreRepository standardScoreRepository;
-    private AreaOfConcernScoreRepository areaOfConcernScoreRepository;
-    private ChecklistScoreRepository checklistScoreRepository;
-    private FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository;
-    private AssessmentMetaDataRepository assessmentMetaDataRepository;
-    private Bugsnag bugsnag;
+    private final AssessmentTypeRepository assessmentTypeRepository;
+    private final IndicatorDefinitionRepository indicatorDefinitionRepository;
+    private final IndicatorRepository indicatorRepository;
+    private final StateRepository stateRepository;
+    private final DistrictRepository districtRepository;
+    private final FacilityTypeRepository facilityTypeRepository;
+    private final StandardScoreRepository standardScoreRepository;
+    private final AreaOfConcernScoreRepository areaOfConcernScoreRepository;
+    private final ChecklistScoreRepository checklistScoreRepository;
+    private final FacilityAssessmentMissingCheckpointRepository facilityAssessmentMissingCheckpointRepository;
+    private final AssessmentMetaDataRepository assessmentMetaDataRepository;
+    private final Bugsnag bugsnag;
 
     @Autowired
     public FacilityAssessmentService(FacilityRepository facilityRepository,

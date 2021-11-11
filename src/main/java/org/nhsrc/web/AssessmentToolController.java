@@ -1,6 +1,7 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.*;
+import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.repository.*;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.utils.StringUtil;
@@ -12,11 +13,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -100,5 +104,19 @@ public class AssessmentToolController {
     public List<AssessmentTool> find(@RequestParam(value = "state") Integer stateId,
                                      @RequestParam(value = "assessment_tool_mode", required = false) Integer assessmentToolModeId) {
         return assessmentToolModeId == null ? findByState(stateId) : findByStateAndAssessmentTool(stateId, assessmentToolModeId);
+    }
+
+    @RequestMapping(value = "/assessmentTool/withFile", method = {RequestMethod.PUT, RequestMethod.POST})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Metadata_Write')")
+    public AssessmentTool importFile(Principal principal,
+                                               @RequestParam("uploadedFile") MultipartFile file,
+                                               @RequestParam(value = "id", required = false) Integer id,
+                                               @RequestParam("assessmentType") String assessmentTypeName,
+                                               @RequestParam("assessmentTool") String assessmentToolName,
+                                               @RequestParam("assessmentToolMode") String assessmentToolMode,
+                                               @RequestParam(value = "state", required = false) String stateName
+                                               ) throws Exception {
+        return null;
     }
 }
