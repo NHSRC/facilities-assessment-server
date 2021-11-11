@@ -2,6 +2,7 @@ package org.nhsrc.referenceDataImport;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.nhsrc.domain.AssessmentTool;
 
 import static org.junit.Assert.*;
 
@@ -10,7 +11,7 @@ public class SheetRowImporterTest {
 
     @Before
     public void setup() {
-        this.data = new AssessmentChecklistData();
+        this.data = new AssessmentChecklistData(new AssessmentTool());
     }
 
     @Test

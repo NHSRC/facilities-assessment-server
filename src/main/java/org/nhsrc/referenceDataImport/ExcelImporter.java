@@ -12,11 +12,11 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 public class ExcelImporter {
-    private static Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
-    private AssessmentChecklistData data;
-    private static String[] RESERVED_SHEET_NAMES = {"Compatibility Report", "Department Wise"};
+    private static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
+    private GunakExcelFile data;
+    private static final String[] RESERVED_SHEET_NAMES = {"Compatibility Report", "Department Wise"};
 
-    public ExcelImporter(AssessmentChecklistData data) {
+    public ExcelImporter(GunakExcelFile data) {
         this.data = data;
     }
 
@@ -62,14 +62,5 @@ public class ExcelImporter {
         } else if (checklist.getCheckpoints().size() == 0) {
             logger.error(String.format("[ERROR] No checkpoints were created for the sheet=%s. Ensure that the sheet is right. That is it has area of concerns and standards defined correctly.", checklist.getName()));
         }
-    }
-
-    private Department makeDepartment(String name) {
-        Department department = new Department();
-        if (name.contains(".") || name.contains("-") || name.contains("_")) {
-            logger.error(String.format("[ERROR] Department name=%s doesn't look right. Department name should not contain . - _ characters", name));
-        }
-        department.setName(name);
-        return department;
     }
 }

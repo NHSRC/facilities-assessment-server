@@ -1,9 +1,10 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.*;
-import org.nhsrc.domain.assessment.FacilityAssessment;
+import org.nhsrc.referenceDataImport.AssessmentToolExcelFile;
 import org.nhsrc.repository.*;
 import org.nhsrc.service.ChecklistService;
+import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.utils.StringUtil;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,27 +23,28 @@ import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/")
 public class AssessmentToolController {
     private final ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository;
-    private StateRepository stateRepository;
-    private ChecklistService checklistService;
-    private AssessmentToolRepository assessmentToolRepository;
-    private AssessmentToolModeRepository assessmentToolModeRepository;
-    private ChecklistRepository checklistRepository;
+    private final StateRepository stateRepository;
+    private final ChecklistService checklistService;
+    private final AssessmentToolRepository assessmentToolRepository;
+    private final AssessmentToolModeRepository assessmentToolModeRepository;
+    private final ChecklistRepository checklistRepository;
+    private final ExcelImportService excelImportService;
 
     @Autowired
-    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository, ChecklistService checklistService) {
+    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository, ChecklistService checklistService, ExcelImportService excelImportService) {
         this.assessmentToolRepository = assessmentToolRepository;
         this.assessmentToolModeRepository = assessmentToolModeRepository;
         this.checklistRepository = checklistRepository;
         this.excludedAssessmentToolStateRepository = excludedAssessmentToolStateRepository;
         this.stateRepository = stateRepository;
         this.checklistService = checklistService;
+        this.excelImportService = excelImportService;
     }
 
     @RequestMapping(value = "/assessmentTools", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -106,17 +110,58 @@ public class AssessmentToolController {
         return assessmentToolModeId == null ? findByState(stateId) : findByStateAndAssessmentTool(stateId, assessmentToolModeId);
     }
 
-    @RequestMapping(value = "/assessmentTool/withFile", method = {RequestMethod.PUT, RequestMethod.POST})
+    @RequestMapping(value = "/assessmentTool/withFile", method = {RequestMethod.POST})
     @Transactional
     @PreAuthorize("hasRole('Checklist_Metadata_Write')")
-    public AssessmentTool importFile(Principal principal,
-                                               @RequestParam("uploadedFile") MultipartFile file,
-                                               @RequestParam(value = "id", required = false) Integer id,
-                                               @RequestParam("assessmentType") String assessmentTypeName,
-                                               @RequestParam("assessmentTool") String assessmentToolName,
-                                               @RequestParam("assessmentToolMode") String assessmentToolMode,
-                                               @RequestParam(value = "state", required = false) String stateName
-                                               ) throws Exception {
-        return null;
+    public ResponseEntity<Object> update(Principal principal,
+                                         @RequestParam("uploadedFile") MultipartFile file,
+                                         @RequestParam("id") int id) throws Exception {
+        AssessmentTool assessmentTool = Repository.findById(id, assessmentToolRepository);
+        if (assessmentTool == null)
+            return new ResponseEntity<>(String.format("No assessment tool with id: %d", id), HttpStatus.BAD_REQUEST);
+
+        AssessmentToolExcelFile assessmentToolExcelFile = excelImportService.parseAssessmentTool(assessmentTool, file.getInputStream());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.PUT})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Metadata_Write')")
+    public ResponseEntity<Object> create(Principal principal,
+                                         @RequestParam("uploadedFile") MultipartFile file,
+                                         @RequestParam("assessmentTool") String assessmentToolName,
+                                         @RequestParam("assessmentToolMode") String assessmentToolModeName,
+                                         @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
+                                         @RequestParam(value = "state", required = false) String stateName,
+                                         @RequestParam("sortOrder") int sortOrder
+                                         ) throws Exception {
+        AssessmentToolMode assessmentToolMode = assessmentToolModeRepository.findByName(assessmentToolModeName);
+        if (assessmentToolMode == null)
+            return new ResponseEntity<>(String.format("No program by name: %s", assessmentToolModeName), HttpStatus.BAD_REQUEST);
+
+        State state = null;
+        if (stateName != null && !stateName.isEmpty()) {
+            state = stateRepository.findByName(stateName);
+            if (state == null)
+                return new ResponseEntity<>(String.format("No state by name: %s", stateName), HttpStatus.BAD_REQUEST);
+        }
+
+        AssessmentTool assessmentTool = new AssessmentTool();
+        assessmentTool.setAssessmentToolMode(assessmentToolMode);
+        assessmentTool.setAssessmentToolType(AssessmentToolType.COMPLIANCE);
+        assessmentTool.setName(assessmentToolName);
+        assessmentTool.setState(state);
+        assessmentTool.setSortOrder(sortOrder);
+        assessmentTool.setInactive(false);
+        if (overrideAssessmentToolId != null) {
+            AssessmentTool toOverrideAssessmentTool = Repository.findById(overrideAssessmentToolId, assessmentToolRepository);
+            if (toOverrideAssessmentTool == null)
+                return new ResponseEntity<>(String.format("No assessment tool found with id: %d", overrideAssessmentToolId), HttpStatus.BAD_REQUEST);
+            assessmentTool.addOverride(state, toOverrideAssessmentTool);
+        }
+        assessmentToolRepository.save(assessmentTool);
+
+        AssessmentToolExcelFile assessmentToolExcelFile = excelImportService.parseAssessmentTool(assessmentTool, file.getInputStream());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

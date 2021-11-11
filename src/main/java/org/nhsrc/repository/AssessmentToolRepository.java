@@ -42,6 +42,7 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
     Page<AssessmentTool> findDistinctByChecklistsAreasOfConcernId(@Param("areaOfConcernId") Integer areaOfConcernId, Pageable pageable);
 
     List<AssessmentTool> findByStateOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(State state);
+    AssessmentTool findByNameAndAssessmentToolModeNameAndStateOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(String name, String assessmentToolModeName, State state);
 
     List<AssessmentTool> findByAssessmentToolType(AssessmentToolType assessmentToolType);
 }

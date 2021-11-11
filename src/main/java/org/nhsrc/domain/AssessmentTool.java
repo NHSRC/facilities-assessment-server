@@ -135,8 +135,11 @@ public class AssessmentTool extends AbstractEntity {
         return excludedAssessmentToolStates;
     }
 
-    public void setExcludedAssessmentToolStates(Set<ExcludedAssessmentToolState> excludedAssessmentToolStates) {
-        this.excludedAssessmentToolStates = excludedAssessmentToolStates;
+    public void addOverride(State state, AssessmentTool assessmentTool) {
+        ExcludedAssessmentToolState excludedAssessmentToolState = new ExcludedAssessmentToolState();
+        excludedAssessmentToolState.setAssessmentTool(assessmentTool);
+        excludedAssessmentToolState.setState(state);
+        this.excludedAssessmentToolStates.add(excludedAssessmentToolState);
     }
 
     public List<Integer> getExcludedStateIds() {
@@ -153,6 +156,10 @@ public class AssessmentTool extends AbstractEntity {
             });
             this.excludedAssessmentToolStates.addAll(incidentExcludedAssessmentToolStates);
         }
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 
     public Integer getSortOrder() {

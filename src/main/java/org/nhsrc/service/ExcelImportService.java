@@ -6,6 +6,7 @@ import org.nhsrc.domain.missing.MissingChecklist;
 import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.CheckpointScoreDTO;
 import org.nhsrc.referenceDataImport.AssessmentChecklistData;
+import org.nhsrc.referenceDataImport.AssessmentToolExcelFile;
 import org.nhsrc.referenceDataImport.ExcelImporter;
 import org.nhsrc.repository.AssessmentToolRepository;
 import org.nhsrc.repository.ChecklistRepository;
@@ -46,9 +47,9 @@ public class ExcelImportService {
     @Transactional(propagation = Propagation.MANDATORY)
     @Deprecated
     public void saveAssessment(InputStream inputStream, FacilityAssessment facilityAssessment) throws Exception {
-        AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData();
-        ExcelImporter excelImporter = new ExcelImporter(assessmentChecklistData);
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessment.getAssessmentTool().getUuid());
+        AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData(assessmentTool);
+        ExcelImporter excelImporter = new ExcelImporter(assessmentChecklistData);
         excelImporter.importFile(inputStream);
 
         missingChecklistItemsService.clearMissingChecklists(facilityAssessment);
@@ -97,5 +98,12 @@ public class ExcelImportService {
                 logger.info(String.format("Saved checkpoints for checklist:%s, assessment:%d", x.getName(), facilityAssessment.getId()));
             }
         });
+    }
+
+    public AssessmentToolExcelFile parseAssessmentTool(AssessmentTool assessmentTool, InputStream inputStream) throws Exception {
+        AssessmentToolExcelFile assessmentToolExcelFile = new AssessmentToolExcelFile(assessmentTool);
+        ExcelImporter excelImporter = new ExcelImporter(assessmentToolExcelFile);
+        excelImporter.importFile(inputStream);
+        return assessmentToolExcelFile;
     }
 }
