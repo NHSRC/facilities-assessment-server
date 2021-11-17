@@ -49,8 +49,8 @@ public class ExcelImportService {
     public void saveAssessment(InputStream inputStream, FacilityAssessment facilityAssessment) throws Exception {
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessment.getAssessmentTool().getUuid());
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData(assessmentTool);
-        ExcelImporter excelImporter = new ExcelImporter(assessmentChecklistData);
-        excelImporter.importFile(inputStream);
+        ExcelImporter excelImporter = new ExcelImporter();
+        excelImporter.importFile(assessmentChecklistData, inputStream);
 
         missingChecklistItemsService.clearMissingChecklists(facilityAssessment);
 
@@ -102,8 +102,8 @@ public class ExcelImportService {
 
     public AssessmentToolExcelFile parseAssessmentTool(AssessmentTool assessmentTool, InputStream inputStream) throws Exception {
         AssessmentToolExcelFile assessmentToolExcelFile = new AssessmentToolExcelFile(assessmentTool);
-        ExcelImporter excelImporter = new ExcelImporter(assessmentToolExcelFile);
-        excelImporter.importFile(inputStream);
+        ExcelImporter excelImporter = new ExcelImporter();
+        excelImporter.importFile(assessmentToolExcelFile, inputStream);
         return assessmentToolExcelFile;
     }
 }

@@ -13,15 +13,21 @@ import java.util.Arrays;
 import java.util.List;
 
 public class HtmlVisitor implements GunakChecklistVisitor {
-    private final Context context;
+    private Context context;
     private Checklist currentChecklist;
+    private static final TemplateEngine templateEngine = new TemplateEngine();
 
-    public HtmlVisitor() {
-        context = new Context();
+    static {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setPrefix("templates/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateEngine.setTemplateResolver(templateResolver);
     }
 
     @Override
     public void visit(GunakExcelFile gunakExcelFile) {
+        context = new Context();
         context.setVariable("assessmentToolName", gunakExcelFile.getAssessmentTool().getName());
         context.setVariable("tables", new ArrayList<Table>());
     }
@@ -85,13 +91,6 @@ public class HtmlVisitor implements GunakChecklistVisitor {
     }
 
     public String generateHtml() {
-        TemplateEngine templateEngine = new TemplateEngine();
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("templates/");
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateEngine.setTemplateResolver(templateResolver);
-
         StringWriter stringWriter = new StringWriter();
         templateEngine.process("assessment-tool", context, stringWriter);
         return stringWriter.toString();

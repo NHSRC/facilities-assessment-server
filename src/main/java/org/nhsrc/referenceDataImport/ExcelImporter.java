@@ -13,21 +13,16 @@ import java.util.Arrays;
 
 public class ExcelImporter {
     private static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
-    private GunakExcelFile data;
     private static final String[] RESERVED_SHEET_NAMES = {"Compatibility Report", "Department Wise"};
 
-    public ExcelImporter(GunakExcelFile data) {
-        this.data = data;
-    }
-
-    public void importFile(InputStream inputStream) throws Exception {
+    public void importFile(GunakExcelFile gunakExcelFile, InputStream inputStream) throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         try {
             int numberOfSheets = workbook.getNumberOfSheets();
             for (int i = 0; i < numberOfSheets; i++) {
                 XSSFSheet sheet = workbook.getSheetAt(i);
                 logger.info("READING SHEET: " + sheet.getSheetName());
-                this.sheetImport(sheet);
+                this.sheetImport(sheet, gunakExcelFile);
                 logger.info("COMPLETED SHEET: " + sheet.getSheetName());
             }
         } finally {
@@ -36,7 +31,7 @@ public class ExcelImporter {
         }
     }
 
-    private void sheetImport(XSSFSheet sheet) {
+    private void sheetImport(XSSFSheet sheet, GunakExcelFile gunakExcelFile) {
         String sheetName = sheet.getSheetName().trim();
         if (Arrays.stream(RESERVED_SHEET_NAMES).anyMatch(s -> s.equalsIgnoreCase(sheetName))) {
             return;
@@ -44,9 +39,9 @@ public class ExcelImporter {
 
         final Checklist checklist = new Checklist();
         checklist.setName(sheetName);
-        data.addChecklist(checklist);
+        gunakExcelFile.addChecklist(checklist);
 
-        SheetRowImporter sheetImporter = new SheetRowImporter(data);
+        SheetRowImporter sheetImporter = new SheetRowImporter(gunakExcelFile);
 
         int i = 1;
         for (Row cells : sheet) {

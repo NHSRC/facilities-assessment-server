@@ -1,5 +1,6 @@
 package org.nhsrc.web;
 
+import org.jetbrains.annotations.NotNull;
 import org.nhsrc.domain.*;
 import org.nhsrc.referenceDataImport.AssessmentToolExcelFile;
 import org.nhsrc.repository.*;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.File;
 import java.io.FileWriter;
 import java.security.Principal;
 import java.util.Date;
@@ -123,8 +123,22 @@ public class AssessmentToolController {
         if (assessmentTool == null)
             return new ResponseEntity<>(String.format("No assessment tool with id: %d", id), HttpStatus.BAD_REQUEST);
 
-        AssessmentToolExcelFile assessmentToolExcelFile = excelImportService.parseAssessmentTool(assessmentTool, file.getInputStream());
+        processExcelFile(file, true, assessmentTool);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.HEAD})
+    @Transactional
+    @PreAuthorize("hasRole('Checklist_Metadata_Write')")
+    public ResponseEntity<Object> preview(Principal principal,
+                                         @RequestParam("uploadedFile") MultipartFile file,
+                                         @RequestParam("assessmentTool") String assessmentToolName,
+                                         @RequestParam("assessmentToolMode") String assessmentToolModeName,
+                                         @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
+                                         @RequestParam(value = "state", required = false) String stateName,
+                                         @RequestParam("sortOrder") int sortOrder
+    ) throws Exception {
+        return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, false);
     }
 
     @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.PUT})
@@ -138,6 +152,11 @@ public class AssessmentToolController {
                                          @RequestParam(value = "state", required = false) String stateName,
                                          @RequestParam("sortOrder") int sortOrder
                                          ) throws Exception {
+        return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, true);
+    }
+
+    @NotNull
+    private ResponseEntity<Object> processExcelFile(MultipartFile file, String assessmentToolName, String assessmentToolModeName, Integer overrideAssessmentToolId, String stateName, int sortOrder, boolean persistData) throws Exception {
         AssessmentToolMode assessmentToolMode = assessmentToolModeRepository.findByName(assessmentToolModeName);
         if (assessmentToolMode == null)
             return new ResponseEntity<>(String.format("No program by name: %s", assessmentToolModeName), HttpStatus.BAD_REQUEST);
@@ -162,8 +181,13 @@ public class AssessmentToolController {
                 return new ResponseEntity<>(String.format("No assessment tool found with id: %d", overrideAssessmentToolId), HttpStatus.BAD_REQUEST);
             assessmentTool.addOverride(state, toOverrideAssessmentTool);
         }
-        assessmentToolRepository.save(assessmentTool);
 
+        processExcelFile(file, persistData, assessmentTool);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void processExcelFile(MultipartFile file, boolean persistData, AssessmentTool assessmentTool) throws Exception {
         AssessmentToolExcelFile assessmentToolExcelFile = excelImportService.parseAssessmentTool(assessmentTool, file.getInputStream());
         HtmlVisitor visitor = new HtmlVisitor();
         assessmentToolExcelFile.accept(visitor);
@@ -171,6 +195,10 @@ public class AssessmentToolController {
         FileWriter fileWriter = new FileWriter(String.format("log/%s.html", assessmentTool.getName()));
         fileWriter.write(html);
         fileWriter.close();
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        if (persistData) {
+            assessmentToolRepository.save(assessmentTool);
+            checklistRepository.save(assessmentToolExcelFile.getChecklists());
+        }
     }
 }
