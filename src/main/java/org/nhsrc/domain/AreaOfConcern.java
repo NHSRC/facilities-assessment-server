@@ -5,13 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.nhsrc.visitor.GunakChecklistVisitor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -138,5 +136,10 @@ public class AreaOfConcern extends AbstractEntity implements ReferencableEntity 
         return "AreaOfConcern{" +
                 "reference='" + reference + '\'' +
                 '}';
+    }
+
+    public void accept(GunakChecklistVisitor visitor) {
+        visitor.visit(this);
+        this.getStandards().stream().sorted(Comparator.comparing(Standard::getReference)).forEach(std -> std.accept(visitor));
     }
 }

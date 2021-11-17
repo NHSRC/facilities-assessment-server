@@ -3,14 +3,17 @@ package org.nhsrc.referenceDataImport;
 import org.nhsrc.domain.AreaOfConcern;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.visitor.GunakChecklistVisitor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GunakExcelFile {
     private final List<Checklist> checklists = new ArrayList<>();
     private final AssessmentTool assessmentTool;
-    private final List<AreaOfConcern> areaOfConcerns = new ArrayList<>();
+    private final Set<AreaOfConcern> areaOfConcerns = new HashSet<>();
 
     public GunakExcelFile(AssessmentTool assessmentTool) {
         this.assessmentTool = assessmentTool;
@@ -36,7 +39,12 @@ public class GunakExcelFile {
         areaOfConcerns.add(areaOfConcern);
     }
 
-    public List<AreaOfConcern> getAreaOfConcerns() {
+    public Set<AreaOfConcern> getAreaOfConcerns() {
         return areaOfConcerns;
+    }
+
+    public void accept(GunakChecklistVisitor visitor) {
+        visitor.visit(this);
+        checklists.forEach(checklist -> checklist.accept(visitor));
     }
 }

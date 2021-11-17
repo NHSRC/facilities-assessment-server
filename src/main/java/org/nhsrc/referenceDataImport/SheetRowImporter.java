@@ -13,7 +13,7 @@ public class SheetRowImporter {
     private Standard currStandard;
     private MeasurableElement currME;
     private AreaOfConcern currAOC;
-    private GunakExcelFile data;
+    private final GunakExcelFile data;
     private static final Pattern mePattern = Pattern.compile("([a-zA-Z][0-9]+\\.[0-9]+)(.*)");
     private static final Pattern standardPattern = Pattern.compile("([a-zA-Z][0-9]+)(.*)");
 

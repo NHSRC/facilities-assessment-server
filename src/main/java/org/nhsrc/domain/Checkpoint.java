@@ -3,6 +3,7 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
+import org.nhsrc.visitor.GunakChecklistVisitor;
 import org.springframework.security.access.method.P;
 
 import javax.persistence.*;
@@ -192,5 +193,9 @@ public class Checkpoint extends AbstractEntity {
     @JsonProperty("measurableElementUUID")
     public String getMeasurableElementUUID() {
         return this.measurableElement.getUuidString();
+    }
+
+    public void accept(GunakChecklistVisitor visitor) {
+        visitor.visit(this);
     }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.nhsrc.visitor.GunakChecklistVisitor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -128,5 +129,10 @@ public class Standard extends AbstractEntity implements ReferencableEntity {
     @JsonProperty
     public String getAreaOfConcernUUID() {
         return this.areaOfConcern.getUuidString();
+    }
+
+    public void accept(GunakChecklistVisitor visitor) {
+        visitor.visit(this);
+        this.getMeasurableElements().stream().sorted(Comparator.comparing(MeasurableElement::getReference)).forEach(measurableElement -> measurableElement.accept(visitor));
     }
 }

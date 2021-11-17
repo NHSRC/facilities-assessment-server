@@ -4,6 +4,7 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
+import org.nhsrc.visitor.GunakChecklistVisitor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -142,5 +143,10 @@ public class MeasurableElement extends AbstractEntity implements ReferencableEnt
     @JsonProperty
     public String getStandardUUID() {
         return getStandard().getUuidString();
+    }
+
+    public void accept(GunakChecklistVisitor visitor) {
+        visitor.visit(this);
+        this.getCheckpoints().stream().sorted(Comparator.comparing(Checkpoint::getSortOrder)).forEach(cp -> cp.accept(visitor));
     }
 }

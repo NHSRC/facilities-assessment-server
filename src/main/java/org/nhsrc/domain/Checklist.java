@@ -3,13 +3,16 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
+import org.nhsrc.visitor.GunakChecklistVisitor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "checklist")
@@ -161,5 +164,10 @@ public class Checklist extends AbstractEntity {
     @JsonProperty
     public List<String> getAreasOfConcernUUIDs() {
         return getAreasOfConcern().stream().map(at -> at.getUuid().toString()).collect(Collectors.toList());
+    }
+
+    public void accept(GunakChecklistVisitor visitor) {
+        visitor.visit(this);
+        this.getAreasOfConcern().stream().sorted(Comparator.comparing(AreaOfConcern::getReference)).forEach(areaOfConcern -> areaOfConcern.accept(visitor));
     }
 }

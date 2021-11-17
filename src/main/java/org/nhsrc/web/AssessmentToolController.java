@@ -6,6 +6,7 @@ import org.nhsrc.repository.*;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.utils.StringUtil;
+import org.nhsrc.visitor.HtmlVisitor;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -162,6 +163,9 @@ public class AssessmentToolController {
         assessmentToolRepository.save(assessmentTool);
 
         AssessmentToolExcelFile assessmentToolExcelFile = excelImportService.parseAssessmentTool(assessmentTool, file.getInputStream());
+        HtmlVisitor visitor = new HtmlVisitor();
+        assessmentToolExcelFile.accept(visitor);
+        String html = visitor.generateHtml();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
