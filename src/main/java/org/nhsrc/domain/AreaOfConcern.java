@@ -140,6 +140,11 @@ public class AreaOfConcern extends AbstractEntity implements ReferencableEntity 
 
     public void accept(GunakChecklistVisitor visitor) {
         visitor.visit(this);
-        this.getStandards().stream().sorted(Comparator.comparing(Standard::getReference)).forEach(std -> std.accept(visitor));
+        this.getApplicableStandards(visitor.getCurrentChecklist()).stream().sorted(Comparator.comparing(Standard::getReference)).forEach(std -> std.accept(visitor));
+    }
+
+    @JsonIgnore
+    public Set<Standard> getApplicableStandards(Checklist checklist) {
+        return this.getStandards().parallelStream().filter(standard -> standard.getApplicableMeasurableElements(checklist).size() != 0).collect(Collectors.toSet());
     }
 }

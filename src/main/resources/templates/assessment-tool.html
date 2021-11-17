@@ -8,9 +8,9 @@
 <body>
 <div th:each="table : ${tables}">
     <p th:text="${table.checklistName}">Checklist name placeholder</p>
-    <table>
-        <tr th:each="row : ${table.rows}">
-            <td th:each="cell : ${row.cells}" th:text="${cell.value}">Onions</td>
+    <table style="border: 1px solid black; border-collapse: collapse;">
+        <tr th:each="row : ${table.rows}" style="background-color:darkgrey;" th:attr="style=${row.backgroundColor}">
+            <td th:each="cell : ${row.cells}" th:text="${cell.value}" style="border: 1px solid black; border-collapse: collapse;">Onions</td>
         </tr>
     </table>
 </div>

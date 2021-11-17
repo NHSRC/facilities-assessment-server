@@ -14,6 +14,7 @@ import java.util.List;
 
 public class HtmlVisitor implements GunakChecklistVisitor {
     private final Context context;
+    private Checklist currentChecklist;
 
     public HtmlVisitor() {
         context = new Context();
@@ -27,6 +28,7 @@ public class HtmlVisitor implements GunakChecklistVisitor {
 
     @Override
     public void visit(Checklist checklist) {
+        this.currentChecklist = checklist;
         List<Table> tables = getTables();
         Table table = new Table();
         table.setChecklistName(checklist.getName());
@@ -40,7 +42,9 @@ public class HtmlVisitor implements GunakChecklistVisitor {
     @Override
     public void visit(AreaOfConcern areaOfConcern) {
         Table table = getCurrentTable();
-        table.addRow(new TableRow(areaOfConcern.getReference(), areaOfConcern.getName()));
+        TableRow tableRow = new TableRow(areaOfConcern.getReference(), areaOfConcern.getName(), "", "");
+        tableRow.setBackgroundColor("darkgrey");
+        table.addRow(tableRow);
     }
 
     private Table getCurrentTable() {
@@ -51,13 +55,17 @@ public class HtmlVisitor implements GunakChecklistVisitor {
     @Override
     public void visit(Standard standard) {
         Table currentTable = getCurrentTable();
-        currentTable.addRow(new TableRow(standard.getReference(), standard.getName()));
+        TableRow tableRow = new TableRow(standard.getReference(), standard.getName(), "", "");
+        tableRow.setBackgroundColor("yellow");
+        currentTable.addRow(tableRow);
     }
 
     @Override
     public void visit(MeasurableElement measurableElement) {
         Table currentTable = getCurrentTable();
-        currentTable.addRow(new TableRow(measurableElement.getReference(), measurableElement.getName()));
+        TableRow tableRow = new TableRow(measurableElement.getReference(), measurableElement.getName(), "", "");
+        tableRow.setBackgroundColor("blue");
+        currentTable.addRow(tableRow);
     }
 
     @Override
@@ -69,6 +77,11 @@ public class HtmlVisitor implements GunakChecklistVisitor {
         if (checkpoint.getAssessmentMethodRecordReview()) stringBuilder.append("RR").append("/");
         if (checkpoint.getAssessmentMethodPatientInterview()) stringBuilder.append("PI");
         currentTable.addRow(new TableRow("", checkpoint.getName(), stringBuilder.toString(), checkpoint.getMeansOfVerification()));
+    }
+
+    @Override
+    public Checklist getCurrentChecklist() {
+        return currentChecklist;
     }
 
     public String generateHtml() {
@@ -86,7 +99,7 @@ public class HtmlVisitor implements GunakChecklistVisitor {
 
     public class Table {
         private String checklistName;
-        private final List<TableRow> tableRows =  new ArrayList<>();
+        private final List<TableRow> tableRows = new ArrayList<>();
 
         public String getChecklistName() {
             return checklistName;
@@ -107,8 +120,17 @@ public class HtmlVisitor implements GunakChecklistVisitor {
 
     public class TableRow {
         private final List<TableCell> tableCells = new ArrayList<>();
+        private String backgroundColor;
 
-        public TableRow(String ... cells) {
+        public String getBackgroundColor() {
+            return String.format("background-color:%s;", backgroundColor);
+        }
+
+        public void setBackgroundColor(String backgroundColor) {
+            this.backgroundColor = backgroundColor;
+        }
+
+        public TableRow(String... cells) {
             Arrays.stream(cells).forEach(this::addCell);
         }
 

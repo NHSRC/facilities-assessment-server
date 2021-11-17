@@ -11,4 +11,5 @@ public interface GunakChecklistVisitor {
     void visit(Standard standard);
     void visit(MeasurableElement measurableElement);
     void visit(Checkpoint checkpoint);
+    Checklist getCurrentChecklist();
 }

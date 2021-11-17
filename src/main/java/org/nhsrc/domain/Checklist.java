@@ -166,8 +166,12 @@ public class Checklist extends AbstractEntity {
         return getAreasOfConcern().stream().map(at -> at.getUuid().toString()).collect(Collectors.toList());
     }
 
+    private Set<AreaOfConcern> getApplicableAreasOfConcern() {
+        return this.getAreasOfConcern().parallelStream().filter(areaOfConcern -> areaOfConcern.getApplicableStandards(this).size() != 0).collect(Collectors.toSet());
+    }
+
     public void accept(GunakChecklistVisitor visitor) {
         visitor.visit(this);
-        this.getAreasOfConcern().stream().sorted(Comparator.comparing(AreaOfConcern::getReference)).forEach(areaOfConcern -> areaOfConcern.accept(visitor));
+        this.getApplicableAreasOfConcern().stream().sorted(Comparator.comparing(AreaOfConcern::getReference)).forEach(areaOfConcern -> areaOfConcern.accept(visitor));
     }
 }

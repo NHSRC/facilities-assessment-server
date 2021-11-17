@@ -10,6 +10,7 @@ import org.nhsrc.visitor.GunakChecklistVisitor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "standard")
@@ -133,6 +134,10 @@ public class Standard extends AbstractEntity implements ReferencableEntity {
 
     public void accept(GunakChecklistVisitor visitor) {
         visitor.visit(this);
-        this.getMeasurableElements().stream().sorted(Comparator.comparing(MeasurableElement::getReference)).forEach(measurableElement -> measurableElement.accept(visitor));
+        this.getApplicableMeasurableElements(visitor.getCurrentChecklist()).stream().sorted(Comparator.comparing(MeasurableElement::getReference)).forEach(measurableElement -> measurableElement.accept(visitor));
+    }
+
+    public Set<MeasurableElement> getApplicableMeasurableElements(Checklist checklist) {
+        return this.getMeasurableElements().parallelStream().filter(measurableElement -> measurableElement.getCheckpoints(checklist).size() != 0).collect(Collectors.toSet());
     }
 }
