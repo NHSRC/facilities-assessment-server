@@ -6,6 +6,13 @@
     <link rel="stylesheet" type="text/css" media="all"/>
 </head>
 <body>
-<p th:text="#{home.welcome}">Welcome to our grocery store!</p>
+<div th:each="table : ${tables}">
+    <p th:text="${table.checklistName}">Checklist name placeholder</p>
+    <table>
+        <tr th:each="row : ${table.rows}">
+            <td th:each="cell : ${row.cells}" th:text="${cell.value}">Onions</td>
+        </tr>
+    </table>
+</div>
 </body>
 </html>

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileWriter;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
@@ -166,6 +168,9 @@ public class AssessmentToolController {
         HtmlVisitor visitor = new HtmlVisitor();
         assessmentToolExcelFile.accept(visitor);
         String html = visitor.generateHtml();
+        FileWriter fileWriter = new FileWriter(String.format("log/%s.html", assessmentTool.getName()));
+        fileWriter.write(html);
+        fileWriter.close();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
