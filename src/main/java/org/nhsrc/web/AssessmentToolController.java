@@ -113,7 +113,7 @@ public class AssessmentToolController {
         return assessmentToolModeId == null ? findByState(stateId) : findByStateAndAssessmentTool(stateId, assessmentToolModeId);
     }
 
-    @RequestMapping(value = "/assessmentTool/withFile", method = {RequestMethod.POST})
+    @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.POST})
     @Transactional
     @PreAuthorize("hasRole('Checklist_Metadata_Write')")
     public ResponseEntity<Object> update(Principal principal,
@@ -189,6 +189,7 @@ public class AssessmentToolController {
 
     private void processExcelFile(MultipartFile file, boolean persistData, AssessmentTool assessmentTool) throws Exception {
         AssessmentToolExcelFile assessmentToolExcelFile = excelImportService.parseAssessmentTool(assessmentTool, file.getInputStream());
+        assessmentToolExcelFile.validate();
         HtmlVisitor visitor = new HtmlVisitor();
         assessmentToolExcelFile.accept(visitor);
         String html = visitor.generateHtml();
@@ -197,8 +198,9 @@ public class AssessmentToolController {
         fileWriter.close();
 
         if (persistData) {
+            List<Checklist> checklists = assessmentToolExcelFile.getChecklists();
+            checklistService.associatedDepartments(checklists);
             assessmentToolRepository.save(assessmentTool);
-            checklistRepository.save(assessmentToolExcelFile.getChecklists());
         }
     }
 }

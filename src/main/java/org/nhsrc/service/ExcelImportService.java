@@ -7,6 +7,7 @@ import org.nhsrc.dto.ChecklistDTO;
 import org.nhsrc.dto.CheckpointScoreDTO;
 import org.nhsrc.referenceDataImport.AssessmentChecklistData;
 import org.nhsrc.referenceDataImport.AssessmentToolExcelFile;
+import org.nhsrc.referenceDataImport.ExcelImportReport;
 import org.nhsrc.referenceDataImport.ExcelImporter;
 import org.nhsrc.repository.AssessmentToolRepository;
 import org.nhsrc.repository.ChecklistRepository;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -103,7 +105,8 @@ public class ExcelImportService {
     public AssessmentToolExcelFile parseAssessmentTool(AssessmentTool assessmentTool, InputStream inputStream) throws Exception {
         AssessmentToolExcelFile assessmentToolExcelFile = new AssessmentToolExcelFile(assessmentTool);
         ExcelImporter excelImporter = new ExcelImporter();
-        excelImporter.importFile(assessmentToolExcelFile, inputStream);
+        ExcelImportReport excelImportReport = excelImporter.importFile(assessmentToolExcelFile, inputStream);
+        assessmentToolExcelFile.setReport(excelImportReport);
         return assessmentToolExcelFile;
     }
 }

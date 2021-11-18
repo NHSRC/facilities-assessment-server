@@ -4,20 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 import org.nhsrc.visitor.GunakChecklistVisitor;
-import org.springframework.security.access.method.P;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "checkpoint")
 @BatchSize(size = 25)
 public class Checkpoint extends AbstractEntity {
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 1023)
     private String name;
 
     @Column(name = "means_of_verification", unique = true, nullable = false, length = 1023)
@@ -28,7 +24,7 @@ public class Checkpoint extends AbstractEntity {
     @NotNull
     private MeasurableElement measurableElement;
 
-    @ManyToOne(targetEntity = Checklist.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Checklist.class, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "checklist_id")
     @NotNull
     private Checklist checklist;
@@ -197,5 +193,9 @@ public class Checkpoint extends AbstractEntity {
 
     public void accept(GunakChecklistVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public String getChecklistMeasurableElementKey() {
+        return String.format("%s-%s-%s", checklist.getName(), measurableElement.getReference(), this.getName());
     }
 }

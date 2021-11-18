@@ -12,19 +12,21 @@ import java.util.stream.Collectors;
 
 @Service
 public class ChecklistService {
-    private AreaOfConcernRepository areaOfConcernRepository;
-    private ChecklistRepository checklistRepository;
-    private AssessmentToolRepository assessmentToolRepository;
-    private ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository;
-    private StateRepository stateRepository;
+    private final AreaOfConcernRepository areaOfConcernRepository;
+    private final ChecklistRepository checklistRepository;
+    private final AssessmentToolRepository assessmentToolRepository;
+    private final ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository;
+    private final StateRepository stateRepository;
+    private final DepartmentRepository departmentRepository;
 
     @Autowired
-    public ChecklistService(AreaOfConcernRepository areaOfConcernRepository, ChecklistRepository checklistRepository, AssessmentToolRepository assessmentToolRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository) {
+    public ChecklistService(AreaOfConcernRepository areaOfConcernRepository, ChecklistRepository checklistRepository, AssessmentToolRepository assessmentToolRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository, DepartmentRepository departmentRepository) {
         this.areaOfConcernRepository = areaOfConcernRepository;
         this.checklistRepository = checklistRepository;
         this.assessmentToolRepository = assessmentToolRepository;
         this.excludedAssessmentToolStateRepository = excludedAssessmentToolStateRepository;
         this.stateRepository = stateRepository;
+        this.departmentRepository = departmentRepository;
     }
 
     public void mergeAreaOfConcerns(Checklist checklist, Set<Integer> incidentAreaOfConcernIds) {
@@ -57,5 +59,17 @@ public class ChecklistService {
         List<AssessmentTool> assessmentTools = assessmentToolRepository.findByStateOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(state);
         List<ExcludedAssessmentToolState> excluded = excludedAssessmentToolStateRepository.findByState(state);
         return assessmentTools.stream().filter(assessmentTool -> excluded.stream().filter(assessmentToolState -> assessmentToolState.getAssessmentTool().equals(assessmentTool)).findAny().orElse(null) == null).collect(Collectors.toList());
+    }
+
+    public void associatedDepartments(List<Checklist> checklists) {
+        checklists.forEach(checklist -> {
+            Department department = departmentRepository.findByName(checklist.getName());
+            if (department == null) {
+                department = new Department();
+                department.setName(checklist.getName());
+                department = departmentRepository.save(department);
+            }
+            checklist.setDepartment(department);
+        });
     }
 }

@@ -19,7 +19,7 @@ public abstract class AbstractEntity extends BaseEntity {
     private UUID uuid;
 
     @Column(name = "inactive")
-    private Boolean inactive;
+    private boolean inactive;
 
     public AbstractEntity() {
         this.uuid = UUID.randomUUID();
@@ -42,9 +42,8 @@ public abstract class AbstractEntity extends BaseEntity {
         return inactive;
     }
 
-    public void setInactive(Boolean inactive) {
+    public void setInactive(boolean inactive) {
         this.inactive = inactive;
     }
-
 }
 

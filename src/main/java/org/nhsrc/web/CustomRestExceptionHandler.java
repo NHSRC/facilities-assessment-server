@@ -68,12 +68,9 @@ public class CustomRestExceptionHandler {
     }
 
     public ResponseEntity handleException(Exception e, HttpStatus httpStatus, String message, boolean notifyBugsnag, HttpServletRequest request) {
+        logger.error(message, e);
         if (notifyBugsnag) {
-            Report report = bugsnag.buildReport(GunakBugsnagException.create(request, e));
-            bugsnag.notify(report);
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
+            bugsnag.notify(e);
         }
 
         APIError apiError = createAPIError(httpStatus, message);

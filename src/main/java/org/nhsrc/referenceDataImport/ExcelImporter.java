@@ -4,44 +4,51 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.nhsrc.domain.Checklist;
-import org.nhsrc.domain.Department;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.*;
 
 public class ExcelImporter {
     private static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
     private static final String[] RESERVED_SHEET_NAMES = {"Compatibility Report", "Department Wise"};
 
-    public void importFile(GunakExcelFile gunakExcelFile, InputStream inputStream) throws Exception {
+    public ExcelImportReport importFile(GunakExcelFile gunakExcelFile, InputStream inputStream) throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+        Map<String, List<String>> errors = new HashMap<>();
+        Map<String, Integer> checkpointsCount = new HashMap<>();
+        ExcelImportReport excelImportReport = new ExcelImportReport();
         try {
             int numberOfSheets = workbook.getNumberOfSheets();
             for (int i = 0; i < numberOfSheets; i++) {
                 XSSFSheet sheet = workbook.getSheetAt(i);
                 logger.info("READING SHEET: " + sheet.getSheetName());
-                this.sheetImport(sheet, gunakExcelFile);
+                SheetImporter sheetImporter = new SheetImporter(gunakExcelFile);
+                this.sheetImport(sheet, gunakExcelFile, sheetImporter);
+                errors.put(sheet.getSheetName(), sheetImporter.getErrors());
+                checkpointsCount.put(sheet.getSheetName(), sheetImporter.getTotalCheckpoints());
                 logger.info("COMPLETED SHEET: " + sheet.getSheetName());
             }
         } finally {
             workbook.close();
             inputStream.close();
         }
+        excelImportReport.setErrors(errors);
+        excelImportReport.setCheckpoints(checkpointsCount);
+        return excelImportReport;
     }
 
-    private void sheetImport(XSSFSheet sheet, GunakExcelFile gunakExcelFile) {
+    private void sheetImport(XSSFSheet sheet, GunakExcelFile gunakExcelFile, SheetImporter sheetImporter) {
         String sheetName = sheet.getSheetName().trim();
         if (Arrays.stream(RESERVED_SHEET_NAMES).anyMatch(s -> s.equalsIgnoreCase(sheetName))) {
             return;
         }
 
-        final Checklist checklist = new Checklist();
+        Checklist checklist = new Checklist();
         checklist.setName(sheetName);
         gunakExcelFile.addChecklist(checklist);
-
-        SheetRowImporter sheetImporter = new SheetRowImporter(gunakExcelFile);
+        checklist.addAssessmentTool(gunakExcelFile.getAssessmentTool());
 
         int i = 1;
         for (Row cells : sheet) {
@@ -51,11 +58,6 @@ public class ExcelImporter {
                 break;
             }
             i++;
-        }
-        if (checklist.getAreasOfConcern().size() == 0) {
-            logger.error(String.format("[ERROR] No area of concern were created for the sheet=%s. Ensure that the sheet is right. That is it has area of concerns and standards defined correctly.", checklist.getName()));
-        } else if (checklist.getCheckpoints().size() == 0) {
-            logger.error(String.format("[ERROR] No checkpoints were created for the sheet=%s. Ensure that the sheet is right. That is it has area of concerns and standards defined correctly.", checklist.getName()));
         }
     }
 }

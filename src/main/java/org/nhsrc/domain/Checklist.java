@@ -46,9 +46,6 @@ public class Checklist extends AbstractEntity {
     @JsonIgnore
     private Set<AreaOfConcern> areasOfConcern = new HashSet<>();
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "checklist")
-    private Set<Checkpoint> checkpoints = new HashSet<>();
-
     public String getName() {
         return name;
     }
@@ -106,11 +103,6 @@ public class Checklist extends AbstractEntity {
         return areasOfConcern;
     }
 
-    @JsonIgnore
-    public Set<Checkpoint> getCheckpoints() {
-        return checkpoints;
-    }
-
     public State getState() {
         return state;
     }
@@ -127,12 +119,6 @@ public class Checklist extends AbstractEntity {
         this.areasOfConcern.add(areaOfConcern);
 //        areaOfConcern.addChecklist(this);
     }
-
-    public void addCheckpoint(Checkpoint checkpoint) {
-        checkpoints.add(checkpoint);
-        checkpoint.setChecklist(this);
-    }
-
 
     @Override
     public String toString() {
@@ -166,8 +152,13 @@ public class Checklist extends AbstractEntity {
         return getAreasOfConcern().stream().map(at -> at.getUuid().toString()).collect(Collectors.toList());
     }
 
-    private Set<AreaOfConcern> getApplicableAreasOfConcern() {
+    @JsonIgnore
+    public Set<AreaOfConcern> getApplicableAreasOfConcern() {
         return this.getAreasOfConcern().parallelStream().filter(areaOfConcern -> areaOfConcern.getApplicableStandards(this).size() != 0).collect(Collectors.toSet());
+    }
+
+    public List<Checkpoint> getCheckpoints() {
+        return this.getApplicableAreasOfConcern().stream().flatMap(areaOfConcern -> areaOfConcern.getApplicableStandards(this).parallelStream()).flatMap(standard -> standard.getApplicableMeasurableElements(this).parallelStream()).flatMap(measurableElement -> measurableElement.getCheckpoints().stream()).collect(Collectors.toList());
     }
 
     public void accept(GunakChecklistVisitor visitor) {

@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 
 public class GunakBugsnagException extends RuntimeException {
+    public GunakBugsnagException(Throwable cause) {
+        super(cause);
+    }
+
     private GunakBugsnagException(String message, Throwable cause) {
         super(message, cause);
     }
@@ -14,7 +18,9 @@ public class GunakBugsnagException extends RuntimeException {
         try {
             String requestData = request.getReader().lines().collect(Collectors.joining());
             return new GunakBugsnagException(requestData, e);
-        } catch (IOException e2) {
+        } catch (IllegalStateException ise) {
+            return new GunakBugsnagException(e);
+        } catch(IOException e2) {
             return e;
         }
     }

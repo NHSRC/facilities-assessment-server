@@ -6,10 +6,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.nhsrc.config.excelMetaDataError.AssessmentExcelMetaDataErrors;
 import org.nhsrc.domain.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SheetRowImporter {
+public class SheetImporter {
     private Standard currStandard;
     private MeasurableElement currME;
     private AreaOfConcern currAOC;
@@ -17,7 +19,10 @@ public class SheetRowImporter {
     private static final Pattern mePattern = Pattern.compile("([a-zA-Z][0-9]+\\.[0-9]+)(.*)");
     private static final Pattern standardPattern = Pattern.compile("([a-zA-Z][0-9]+)(.*)");
 
-    public SheetRowImporter(GunakExcelFile data) {
+    private int totalCheckpoints;
+    private final List<String> errors = new ArrayList<>();
+
+    public SheetImporter(GunakExcelFile data) {
         this.data = data;
     }
 
@@ -62,7 +67,7 @@ public class SheetRowImporter {
         } else if (!isEmpty(currentRow, 2) && !checklist.getName().equals("Kayakalp")) {
             this.checkpoint(currentRow, checklist);
         } else if (getText(currentRow, 0).toLowerCase().contains("score") || getText(currentRow, 1).toLowerCase().contains("score")) {
-            System.out.println(String.format("Found row containing text as score, assuming it to be end of file. %s      %s", getText(currentRow, 0), getText(currentRow, 1)));
+            // Found row containing text as score, assuming it to be end of file
             return true;
         }
         return false;
@@ -116,7 +121,7 @@ public class SheetRowImporter {
     private void checkpoint(Row row, Checklist checklist) {
         Checkpoint checkpoint = new Checkpoint();
         checkpoint.setName(getText(row, 2));
-        checklist.addCheckpoint(checkpoint);
+        checkpoint.setChecklist(checklist);
         String am = getText(row, 4);
         String scoreLevels = getText(row, 7);
         String isOptional = getText(row, 8);
@@ -135,16 +140,12 @@ public class SheetRowImporter {
             checkpoint.setMeansOfVerification(getText(row, 5));
         }
         if (currME == null) {
-            System.err.println(String.format("[ERROR] No measurable element created yet for checkpoint=%s", checkpoint.toString()));
+            errors.add(String.format("No measurable element created yet for checkpoint=%s", checkpoint.toString()));
         } else if (currME.containsCheckpoint(checkpoint)) {
-            System.err.println(String.format("[WARN] Another checkpoint with the same name=%s in this ME exists. Skipping this one.", checkpoint.toString()));
-            String meansOfVerification = checkpoint.getMeansOfVerification();
-            if (meansOfVerification != null && !meansOfVerification.isEmpty()) {
-                Checkpoint otherCheckpoint = currME.findCheckpoint(checkpoint.getName(), checklist);
-                otherCheckpoint.setMeansOfVerification(meansOfVerification);
-            }
+            errors.add(String.format("Another checkpoint with the same name=%s in this ME exists.", checkpoint.toString()));
         } else {
             currME.addCheckpoint(checkpoint);
+            totalCheckpoints++;
         }
     }
 
@@ -159,7 +160,7 @@ public class SheetRowImporter {
             currStandard.addMeasurableElement(me);
         }
         if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2)) || me.getReference().length() < 4) {
-            System.err.println(String.format("[ERROR] Found Measurable element with name=%s under standard=%s, in checklist=%s", me.getReference(), currStandard.getReference(), checklist.getName()));
+            errors.add(String.format("Found Measurable element with name=%s under standard=%s, in checklist=%s", me.getReference(), currStandard.getReference(), checklist.getName()));
         }
         currME = me;
 
@@ -173,7 +174,8 @@ public class SheetRowImporter {
         checkpoint.setMeansOfVerification(getText(currentRow, 4));
         checkpoint.setMeasurableElement(currME);
         currME.addCheckpoint(checkpoint);
-        checklist.addCheckpoint(checkpoint);
+        checkpoint.setChecklist(checklist);
+        totalCheckpoints++;
     }
 
     private void me(Row row, Checklist checklist) {
@@ -187,7 +189,7 @@ public class SheetRowImporter {
             currStandard.addMeasurableElement(me);
         }
         if (!currStandard.getReference().substring(0, 2).equals(me.getReference().substring(0, 2)) || me.getReference().length() < 4) {
-            System.err.println(String.format("[ERROR] Found MeasurableElement with name=%s under standard=%s, in checklist=%s, but their prefix do not match. Most likely the standard was not defined with correct format e.g. --> Standard A4", me.getReference(), currStandard.getReference(), checklist.getName()));
+            errors.add(String.format("Found MeasurableElement with name=%s under standard=%s, in checklist=%s, but their prefix do not match. Most likely the standard was not defined with correct format e.g. --> Standard A4", me.getReference(), currStandard.getReference(), checklist.getName()));
         }
         currME = me;
         checkpoint(row, checklist);
@@ -204,7 +206,7 @@ public class SheetRowImporter {
             currAOC.addStandard(standard);
         }
         if (!currAOC.getReference().substring(0, 1).equals(standard.getReference().substring(0, 1)) || standard.getReference().length() < 2) {
-            System.err.println(String.format("[ERROR] Found Standard with name=%s under Area of Concern=%s, in Checklist=%s but their prefix do not match. Quite likely that the area concern was not defined with right format which is ---> Area of Concern - <NAME>", standard.getReference(), currAOC.getReference(), checklist.getName()));
+            errors.add(String.format("Found Standard with name=%s under Area of Concern=%s, in Checklist=%s but their prefix do not match. Quite likely that the area concern was not defined with right format which is ---> Area of Concern - <NAME>", standard.getReference(), currAOC.getReference(), checklist.getName()));
         }
         currStandard = standard;
     }
@@ -223,5 +225,13 @@ public class SheetRowImporter {
         }
         checklist.addAreaOfConcern(areaOfConcern);
         currAOC = areaOfConcern;
+    }
+
+    public int getTotalCheckpoints() {
+        return totalCheckpoints;
+    }
+
+    public List<String> getErrors() {
+        return errors;
     }
 }

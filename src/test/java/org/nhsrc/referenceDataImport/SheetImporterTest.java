@@ -6,7 +6,7 @@ import org.nhsrc.domain.AssessmentTool;
 
 import static org.junit.Assert.*;
 
-public class SheetRowImporterTest {
+public class SheetImporterTest {
     private AssessmentChecklistData data;
 
     @Before
@@ -16,7 +16,7 @@ public class SheetRowImporterTest {
 
     @Test
     public void getMERefFromErraticInputs() {
-        SheetRowImporter importer = new SheetRowImporter(data);
+        SheetImporter importer = new SheetImporter(data);
         assertEquals("A3.2", importer.getMERef("ME A3.2"));
         assertEquals("A3.2", importer.getMERef("ME +A3.2"));
         assertEquals("A3.2", importer.getMERef("ME BA3.2"));

@@ -11,12 +11,15 @@ public class MeasurableElementTest {
         checklist.setName("clfoo");
         MeasurableElement measurableElement = new MeasurableElement();
         measurableElement.setName("mefoo");
-        checklist.addCheckpoint(createCheckpoint("foo", checklist, measurableElement));
-        checklist.addCheckpoint(createCheckpoint("bar", checklist, measurableElement));
+
+        Checkpoint cp1 = createCheckpoint("foo", checklist, measurableElement);
+        cp1.setChecklist(checklist);
+        Checkpoint cp2 = createCheckpoint("bar", checklist, measurableElement);
+        cp2.setChecklist(checklist);
 
         MeasurableElement anotherMeasurableElement = new MeasurableElement();
         anotherMeasurableElement.setName("amefoo");
-        assertTrue(measurableElement.containsCheckpoint(createCheckpoint("foo", checklist, measurableElement)));
+        assertTrue(measurableElement.containsCheckpoint(cp1));
         assertFalse(measurableElement.containsCheckpoint(createCheckpoint("baz", checklist, anotherMeasurableElement)));
     }
 
