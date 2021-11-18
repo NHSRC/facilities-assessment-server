@@ -158,7 +158,7 @@ public class Checklist extends AbstractEntity {
     }
 
     public List<Checkpoint> getCheckpoints() {
-        return this.getApplicableAreasOfConcern().stream().flatMap(areaOfConcern -> areaOfConcern.getApplicableStandards(this).parallelStream()).flatMap(standard -> standard.getApplicableMeasurableElements(this).parallelStream()).flatMap(measurableElement -> measurableElement.getCheckpoints().stream()).collect(Collectors.toList());
+        return this.getAreasOfConcern().stream().flatMap(areaOfConcern -> areaOfConcern.getStandards().parallelStream()).flatMap(standard -> standard.getMeasurableElements().parallelStream()).flatMap(measurableElement -> measurableElement.getCheckpoints().stream()).filter(checkpoint -> checkpoint.getChecklist() == this).collect(Collectors.toList());
     }
 
     public void accept(GunakChecklistVisitor visitor) {
