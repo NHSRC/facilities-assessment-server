@@ -9,6 +9,9 @@ create table theme
         constraint theme_uuid_key
             unique,
     inactive           boolean   default false                                not null,
+    short_name         varchar(300)                                           not null
+        constraint theme_short_name_key
+            unique,
     name               varchar(1024)                                          not null
         constraint theme_name_key
             unique,

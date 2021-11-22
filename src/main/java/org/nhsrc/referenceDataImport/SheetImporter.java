@@ -15,15 +15,15 @@ public class SheetImporter {
     private Standard currStandard;
     private MeasurableElement currME;
     private AreaOfConcern currAOC;
-    private final GunakExcelFile data;
+    private final GunakExcelFile gunakExcelFile;
     private static final Pattern mePattern = Pattern.compile("([a-zA-Z][0-9]+\\.[0-9]+)(.*)");
     private static final Pattern standardPattern = Pattern.compile("([a-zA-Z][0-9]+)(.*)");
 
     private int totalCheckpoints;
     private final List<String> errors = new ArrayList<>();
 
-    public SheetImporter(GunakExcelFile data) {
-        this.data = data;
+    public SheetImporter(GunakExcelFile gunakExcelFile) {
+        this.gunakExcelFile = gunakExcelFile;
     }
 
     private String getCleanedRef(String cellContent, Pattern pattern, String toReplace) {
@@ -92,8 +92,6 @@ public class SheetImporter {
                 cell2Text.startsWith("Area of Concern -") || cell2Text.startsWith("Area of Concern –");
     }
 
-
-
     private String getCellValue(Cell cell) {
         CellType cellType = cell.getCellTypeEnum();
         if (cellType == CellType.NUMERIC) return "" + cell.getNumericCellValue();
@@ -101,18 +99,16 @@ public class SheetImporter {
         else return cell.getStringCellValue();
     }
 
-    private boolean isEmpty(Row row, int cellnum) {
-        Cell cell = row.getCell(cellnum);
+    private boolean isEmpty(Row row, int columnNumber) {
+        Cell cell = row.getCell(gunakExcelFile.getColumnNumber(columnNumber));
         if (cell == null) return true;
 
         String stringCellValue = getCellValue(cell);
-        if (stringCellValue == null || stringCellValue.trim().equals("") || stringCellValue.trim().equals(".") || "Maximum".equals(stringCellValue)) return true;
-
-        return false;
+        return stringCellValue == null || stringCellValue.trim().equals("") || stringCellValue.trim().equals(".") || "Maximum".equals(stringCellValue);
     }
 
-    private String getText(Row row, int cellnum) {
-        Cell cell = row.getCell(cellnum);
+    private String getText(Row row, int columnNumber) {
+        Cell cell = row.getCell(gunakExcelFile.getColumnNumber(columnNumber));
         if (cell == null) return "";
         String stringCellValue = getCellValue(cell);
         return stringCellValue.trim().replaceAll(" +", " ");
@@ -211,17 +207,17 @@ public class SheetImporter {
         currStandard = standard;
     }
 
-    private void aoc(Row row, Checklist checklist, int cellnum) {
-        String aocRefName = row.getCell(cellnum).getStringCellValue().replace("Area of Concern - ", "").replace("Area of Concern – ", "").replace("Area of Concern -", "").replace("Area of Concern –", "");
+    private void aoc(Row row, Checklist checklist, int columnNumber) {
+        String aocRefName = row.getCell(gunakExcelFile.getColumnNumber(columnNumber)).getStringCellValue().replace("Area of Concern - ", "").replace("Area of Concern – ", "").replace("Area of Concern -", "").replace("Area of Concern –", "");
         String ref = aocRefName.substring(0, 1);
         String name = aocRefName.substring(2).trim().replaceAll(" +", " ");
 
-        AreaOfConcern areaOfConcern = data.findAreaOfConcern(ref);
+        AreaOfConcern areaOfConcern = gunakExcelFile.findAreaOfConcern(ref);
         if (areaOfConcern == null) {
             areaOfConcern = new AreaOfConcern();
             areaOfConcern.setName(name);
             areaOfConcern.setReference(ref);
-            data.add(areaOfConcern);
+            gunakExcelFile.add(areaOfConcern);
         }
         checklist.addAreaOfConcern(areaOfConcern);
         currAOC = areaOfConcern;

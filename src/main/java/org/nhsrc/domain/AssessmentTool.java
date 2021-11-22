@@ -52,6 +52,9 @@ public class AssessmentTool extends AbstractEntity {
     @NotNull
     private Integer sortOrder;
 
+    @Column(name = "themed")
+    private boolean themed;
+
     public String getName() {
         return name;
     }
@@ -168,5 +171,13 @@ public class AssessmentTool extends AbstractEntity {
 
     public void setSortOrder(Integer sortOrder) {
         this.sortOrder = sortOrder;
+    }
+
+    public boolean isThemed() {
+        return themed;
+    }
+
+    public void setThemed(boolean themed) {
+        this.themed = themed;
     }
 }

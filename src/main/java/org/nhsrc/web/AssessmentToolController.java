@@ -60,6 +60,7 @@ public class AssessmentToolController {
         assessmentTool.setAssessmentToolMode(assessmentToolMode);
         assessmentTool.setInactive(request.getInactive());
         assessmentTool.setSortOrder(request.getSortOrder());
+        assessmentTool.setThemed(false);
         if (StringUtil.isEmpty(request.getAssessmentType())) {
             assessmentTool.setAssessmentToolType(AssessmentToolType.COMPLIANCE);
         } else {
@@ -136,9 +137,10 @@ public class AssessmentToolController {
                                          @RequestParam("assessmentToolMode") String assessmentToolModeName,
                                          @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
                                          @RequestParam(value = "state", required = false) String stateName,
-                                         @RequestParam("sortOrder") int sortOrder
+                                         @RequestParam("sortOrder") int sortOrder,
+                                         @RequestParam("sortOrder") boolean themed
     ) throws Exception {
-        return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, false);
+        return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, themed, false);
     }
 
     @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.PUT})
@@ -150,13 +152,14 @@ public class AssessmentToolController {
                                          @RequestParam("assessmentToolMode") String assessmentToolModeName,
                                          @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
                                          @RequestParam(value = "state", required = false) String stateName,
-                                         @RequestParam("sortOrder") int sortOrder
+                                         @RequestParam("sortOrder") int sortOrder,
+                                         @RequestParam("sortOrder") boolean themed
                                          ) throws Exception {
-        return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, true);
+        return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, themed, true);
     }
 
     @NotNull
-    private ResponseEntity<Object> processExcelFile(MultipartFile file, String assessmentToolName, String assessmentToolModeName, Integer overrideAssessmentToolId, String stateName, int sortOrder, boolean persistData) throws Exception {
+    private ResponseEntity<Object> processExcelFile(MultipartFile file, String assessmentToolName, String assessmentToolModeName, Integer overrideAssessmentToolId, String stateName, int sortOrder, boolean themed, boolean persistData) throws Exception {
         AssessmentToolMode assessmentToolMode = assessmentToolModeRepository.findByName(assessmentToolModeName);
         if (assessmentToolMode == null)
             return new ResponseEntity<>(String.format("No program by name: %s", assessmentToolModeName), HttpStatus.BAD_REQUEST);
@@ -172,6 +175,7 @@ public class AssessmentToolController {
         assessmentTool.setAssessmentToolMode(assessmentToolMode);
         assessmentTool.setAssessmentToolType(AssessmentToolType.COMPLIANCE);
         assessmentTool.setName(assessmentToolName);
+        assessmentTool.setThemed(themed);
         assessmentTool.setState(state);
         assessmentTool.setSortOrder(sortOrder);
         assessmentTool.setInactive(false);

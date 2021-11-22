@@ -79,6 +79,10 @@ public class GunakExcelFile {
         }
     }
 
+    public int getColumnNumber(int columnNumber) {
+        return assessmentTool.isThemed() ? columnNumber + 1 : columnNumber;
+    }
+
     public static class EmptyChecklistException extends RuntimeException {
         public EmptyChecklistException(String message) {
             super(message);
