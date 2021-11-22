@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.repository.ThemeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,7 @@ public class ExcelImporter {
     private static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
     private static final String[] RESERVED_SHEET_NAMES = {"Compatibility Report", "Department Wise"};
 
-    public ExcelImportReport importFile(GunakExcelFile gunakExcelFile, InputStream inputStream) throws Exception {
+    public ExcelImportReport importFile(GunakExcelFile gunakExcelFile, ThemeRepository themeRepository, InputStream inputStream) throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         Map<String, List<String>> errors = new HashMap<>();
         Map<String, Integer> checkpointsCount = new HashMap<>();
@@ -24,7 +25,7 @@ public class ExcelImporter {
             for (int i = 0; i < numberOfSheets; i++) {
                 XSSFSheet sheet = workbook.getSheetAt(i);
                 logger.info("READING SHEET: " + sheet.getSheetName());
-                SheetImporter sheetImporter = new SheetImporter(gunakExcelFile);
+                SheetImporter sheetImporter = new SheetImporter(gunakExcelFile, themeRepository);
                 this.sheetImport(sheet, gunakExcelFile, sheetImporter);
                 errors.put(sheet.getSheetName(), sheetImporter.getErrors());
                 checkpointsCount.put(sheet.getSheetName(), sheetImporter.getTotalCheckpoints());

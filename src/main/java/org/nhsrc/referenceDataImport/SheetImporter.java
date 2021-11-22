@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.nhsrc.config.excelMetaDataError.AssessmentExcelMetaDataErrors;
 import org.nhsrc.domain.*;
+import org.nhsrc.repository.ThemeRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +17,16 @@ public class SheetImporter {
     private MeasurableElement currME;
     private AreaOfConcern currAOC;
     private final GunakExcelFile gunakExcelFile;
+    private ThemeRepository themeRepository;
     private static final Pattern mePattern = Pattern.compile("([a-zA-Z][0-9]+\\.[0-9]+)(.*)");
     private static final Pattern standardPattern = Pattern.compile("([a-zA-Z][0-9]+)(.*)");
 
     private int totalCheckpoints;
     private final List<String> errors = new ArrayList<>();
 
-    public SheetImporter(GunakExcelFile gunakExcelFile) {
+    public SheetImporter(GunakExcelFile gunakExcelFile, ThemeRepository themeRepository) {
         this.gunakExcelFile = gunakExcelFile;
+        this.themeRepository = themeRepository;
     }
 
     private String getCleanedRef(String cellContent, Pattern pattern, String toReplace) {
@@ -134,6 +137,13 @@ public class SheetImporter {
         checkpoint.setMeasurableElement(currME);
         if (!getText(row, 5).equals("")) {
             checkpoint.setMeansOfVerification(getText(row, 5));
+        }
+        if (gunakExcelFile.getAssessmentTool().isThemed()) {
+            String themeName = getText(row, -1);
+            if (!themeName.equals("All")) {
+                Theme theme = themeRepository.findByShortName(themeName);
+                checkpoint.addTheme(theme);
+            }
         }
         if (currME == null) {
             errors.add(String.format("No measurable element created yet for checkpoint=%s", checkpoint.toString()));

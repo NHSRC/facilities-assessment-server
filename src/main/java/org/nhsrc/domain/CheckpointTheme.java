@@ -17,4 +17,12 @@ public class CheckpointTheme extends AbstractEntity {
     @JoinColumn(name = "checkpoint_id")
     @NotNull
     private Checkpoint checkpoint;
+
+    public CheckpointTheme(Theme theme, Checkpoint checkpoint) {
+        this.theme = theme;
+        this.checkpoint = checkpoint;
+    }
+
+    protected CheckpointTheme() {
+    }
 }

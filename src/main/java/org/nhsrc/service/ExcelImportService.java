@@ -12,6 +12,7 @@ import org.nhsrc.referenceDataImport.ExcelImporter;
 import org.nhsrc.repository.AssessmentToolRepository;
 import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.CheckpointRepository;
+import org.nhsrc.repository.ThemeRepository;
 import org.nhsrc.repository.missing.MissingChecklistRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -34,16 +34,18 @@ public class ExcelImportService {
     private final ChecklistRepository checklistRepository;
     private final MissingChecklistItemsService missingChecklistItemsService;
     private final MissingChecklistRepository missingChecklistRepository;
+    private final ThemeRepository themeRepository;
     private static final Logger logger = LoggerFactory.getLogger(ExcelImportService.class);
 
     @Autowired
-    public ExcelImportService(AssessmentToolRepository assessmentToolRepository, CheckpointRepository checkpointRepository, FacilityAssessmentService facilityAssessmentService, ChecklistRepository checklistRepository, MissingChecklistItemsService missingChecklistItemsService, MissingChecklistRepository missingChecklistRepository) {
+    public ExcelImportService(AssessmentToolRepository assessmentToolRepository, CheckpointRepository checkpointRepository, FacilityAssessmentService facilityAssessmentService, ChecklistRepository checklistRepository, MissingChecklistItemsService missingChecklistItemsService, MissingChecklistRepository missingChecklistRepository, ThemeRepository themeRepository) {
         this.assessmentToolRepository = assessmentToolRepository;
         this.checkpointRepository = checkpointRepository;
         this.facilityAssessmentService = facilityAssessmentService;
         this.checklistRepository = checklistRepository;
         this.missingChecklistItemsService = missingChecklistItemsService;
         this.missingChecklistRepository = missingChecklistRepository;
+        this.themeRepository = themeRepository;
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
@@ -52,7 +54,7 @@ public class ExcelImportService {
         AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(facilityAssessment.getAssessmentTool().getUuid());
         AssessmentChecklistData assessmentChecklistData = new AssessmentChecklistData(assessmentTool);
         ExcelImporter excelImporter = new ExcelImporter();
-        excelImporter.importFile(assessmentChecklistData, inputStream);
+        excelImporter.importFile(assessmentChecklistData, themeRepository, inputStream);
 
         missingChecklistItemsService.clearMissingChecklists(facilityAssessment);
 
@@ -105,7 +107,7 @@ public class ExcelImportService {
     public AssessmentToolExcelFile parseAssessmentTool(AssessmentTool assessmentTool, InputStream inputStream) throws Exception {
         AssessmentToolExcelFile assessmentToolExcelFile = new AssessmentToolExcelFile(assessmentTool);
         ExcelImporter excelImporter = new ExcelImporter();
-        ExcelImportReport excelImportReport = excelImporter.importFile(assessmentToolExcelFile, inputStream);
+        ExcelImportReport excelImportReport = excelImporter.importFile(assessmentToolExcelFile, themeRepository, inputStream);
         assessmentToolExcelFile.setReport(excelImportReport);
         return assessmentToolExcelFile;
     }

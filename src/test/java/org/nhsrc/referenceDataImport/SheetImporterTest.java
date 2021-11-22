@@ -16,7 +16,7 @@ public class SheetImporterTest {
 
     @Test
     public void getMERefFromErraticInputs() {
-        SheetImporter importer = new SheetImporter(data);
+        SheetImporter importer = new SheetImporter(data, null);
         assertEquals("A3.2", importer.getMERef("ME A3.2"));
         assertEquals("A3.2", importer.getMERef("ME +A3.2"));
         assertEquals("A3.2", importer.getMERef("ME BA3.2"));

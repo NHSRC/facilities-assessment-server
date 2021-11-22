@@ -203,4 +203,9 @@ public class Checkpoint extends AbstractEntity {
     public String getChecklistMeasurableElementKey() {
         return String.format("%s-%s-%s", checklist.getName(), measurableElement.getReference(), this.getName());
     }
+
+    public void addTheme(Theme theme) {
+        CheckpointTheme checkpointTheme = new CheckpointTheme(theme, this);
+        this.checkpointThemes.add(checkpointTheme);
+    }
 }
