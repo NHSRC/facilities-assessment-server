@@ -16,6 +16,8 @@ public class RepositoryConfig extends RepositoryRestConfigurerAdapter {
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
         config.exposeIdsFor(AssessmentType.class);
         config.exposeIdsFor(Department.class);
+        config.exposeIdsFor(Theme.class);
+        config.exposeIdsFor(CheckpointTheme.class);
         config.exposeIdsFor(AssessmentToolMode.class);
         config.exposeIdsFor(AssessmentTool.class);
 

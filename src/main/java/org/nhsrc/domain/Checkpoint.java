@@ -7,7 +7,9 @@ import org.nhsrc.visitor.GunakChecklistVisitor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "checkpoint")
@@ -56,6 +58,9 @@ public class Checkpoint extends AbstractEntity {
     @Column(name = "score_levels")
     @NotNull
     private Integer scoreLevels = 3;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "checkpoint")
+    private Set<CheckpointTheme> checkpointThemes = new HashSet<>();
 
     public String getName() {
         return name;
