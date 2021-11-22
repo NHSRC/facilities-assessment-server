@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 @RestController
 @RequestMapping("/api/")
 public class DepartmentController {
-    private DepartmentRepository departmentRepository;
+    private final DepartmentRepository departmentRepository;
 
     @Autowired
     public DepartmentController(DepartmentRepository departmentRepository) {
