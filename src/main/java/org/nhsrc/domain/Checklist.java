@@ -157,6 +157,7 @@ public class Checklist extends AbstractEntity {
         return this.getAreasOfConcern().parallelStream().filter(areaOfConcern -> areaOfConcern.getApplicableStandards(this).size() != 0).collect(Collectors.toSet());
     }
 
+    @JsonIgnore
     public List<Checkpoint> getCheckpoints() {
         return this.getAreasOfConcern().stream().flatMap(areaOfConcern -> areaOfConcern.getStandards().parallelStream()).flatMap(standard -> standard.getMeasurableElements().parallelStream()).flatMap(measurableElement -> measurableElement.getCheckpoints().stream()).filter(checkpoint -> checkpoint.getChecklist() == this).collect(Collectors.toList());
     }
