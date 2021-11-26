@@ -107,8 +107,7 @@ public class ExcelImportService {
     public AssessmentToolExcelFile parseAssessmentTool(AssessmentTool assessmentTool, InputStream inputStream) throws Exception {
         AssessmentToolExcelFile assessmentToolExcelFile = new AssessmentToolExcelFile(assessmentTool);
         ExcelImporter excelImporter = new ExcelImporter();
-        ExcelImportReport excelImportReport = excelImporter.importFile(assessmentToolExcelFile, themeRepository, inputStream);
-        assessmentToolExcelFile.setReport(excelImportReport);
+        excelImporter.importFile(assessmentToolExcelFile, themeRepository, inputStream);
         return assessmentToolExcelFile;
     }
 }

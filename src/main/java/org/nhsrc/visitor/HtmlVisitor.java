@@ -2,10 +2,7 @@ package org.nhsrc.visitor;
 
 import org.nhsrc.domain.*;
 import org.nhsrc.referenceDataImport.GunakExcelFile;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -15,15 +12,6 @@ import java.util.List;
 public class HtmlVisitor implements GunakChecklistVisitor {
     private Context context;
     private Checklist currentChecklist;
-    private static final TemplateEngine templateEngine = new TemplateEngine();
-
-    static {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("templates/");
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateEngine.setTemplateResolver(templateResolver);
-    }
 
     @Override
     public void visit(GunakExcelFile gunakExcelFile) {
@@ -90,10 +78,8 @@ public class HtmlVisitor implements GunakChecklistVisitor {
         return currentChecklist;
     }
 
-    public String generateHtml() {
-        StringWriter stringWriter = new StringWriter();
-        templateEngine.process("assessment-tool", context, stringWriter);
-        return stringWriter.toString();
+    public Context getContext() {
+        return context;
     }
 
     public class Table {

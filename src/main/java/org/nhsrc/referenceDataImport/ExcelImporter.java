@@ -15,11 +15,11 @@ public class ExcelImporter {
     private static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
     private static final String[] RESERVED_SHEET_NAMES = {"Compatibility Report", "Department Wise"};
 
-    public ExcelImportReport importFile(GunakExcelFile gunakExcelFile, ThemeRepository themeRepository, InputStream inputStream) throws Exception {
+    public void importFile(GunakExcelFile gunakExcelFile, ThemeRepository themeRepository, InputStream inputStream) throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         Map<String, List<String>> errors = new HashMap<>();
         Map<String, Integer> checkpointsCount = new HashMap<>();
-        ExcelImportReport excelImportReport = new ExcelImportReport();
+        ExcelImportReport excelImportReport = new ExcelImportReport(gunakExcelFile);
         try {
             int numberOfSheets = workbook.getNumberOfSheets();
             for (int i = 0; i < numberOfSheets; i++) {
@@ -37,7 +37,7 @@ public class ExcelImporter {
         }
         excelImportReport.setErrors(errors);
         excelImportReport.setCheckpoints(checkpointsCount);
-        return excelImportReport;
+        gunakExcelFile.setReport(excelImportReport);
     }
 
     private void sheetImport(XSSFSheet sheet, GunakExcelFile gunakExcelFile, SheetImporter sheetImporter) {

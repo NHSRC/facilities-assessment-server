@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${assessmentToolName}">Assessment Tool Placeholder</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" media="all"/>
+</head>
+<body>
+
+<div th:each="fileLevelError : ${fileLevelErrors}">
+    <p th:text="${fileLevelError}">Onions</p>
+</div>
+
+<div th:each="checklistErrors : ${allChecklistErrors}">
+    <p th:text="${checklistErrors.key}">Checklist name placeholder</p>
+    <table style="border: 1px solid black; border-collapse: collapse;">
+        <tr th:each="error : ${checklistErrors.value}" style="background-color:darkgrey;">
+            <td th:text="${error}" style="border: 1px solid black; border-collapse: collapse;">Onions</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

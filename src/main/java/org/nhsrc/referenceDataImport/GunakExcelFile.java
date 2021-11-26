@@ -55,7 +55,7 @@ public class GunakExcelFile {
         if (checkpointsExceedColumnSizes.size() > 0) {
             String message = checkpointsExceedColumnSizes.stream().map(Checkpoint::getChecklistMeasurableElementKey)
                     .collect(Collectors.joining("\n"));
-            throw new CheckpointExceedingColumnSizeException(message);
+            excelImportReport.addFileLevelError(message);
         }
 
         List<Checkpoint> checkpoints = this.assessmentTool.getChecklists().stream().flatMap(checklist -> checklist.getCheckpoints().parallelStream()).collect(Collectors.toList());
@@ -63,19 +63,19 @@ public class GunakExcelFile {
         Map<String, Long> duplicateCheckpoints = uniqueCheckpoints.entrySet().stream().filter(stringLongEntry -> stringLongEntry.getValue() > 1).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (duplicateCheckpoints.size() > 0) {
             String duplicateCheckpointsString = String.join("\n", uniqueCheckpoints.keySet());
-            throw new DuplicateCheckpointException(duplicateCheckpointsString);
+            excelImportReport.addFileLevelError(duplicateCheckpointsString);
         }
 
         List<Checklist> emptyChecklists = this.assessmentTool.getChecklists().parallelStream().filter(checklist -> checklist.getApplicableAreasOfConcern().size() == 0).collect(Collectors.toList());
         if (emptyChecklists.size() != 0) {
             String emptyChecklistNames = emptyChecklists.stream().map(Checklist::getName).collect(Collectors.joining(","));
-            throw new EmptyChecklistException(emptyChecklistNames);
+            excelImportReport.addFileLevelError(emptyChecklistNames);
         }
 
         List<Checklist> checklistWithoutCheckpoints = this.assessmentTool.getChecklists().parallelStream().filter(checklist -> checklist.getCheckpoints().size() == 0).collect(Collectors.toList());
         if (checklistWithoutCheckpoints.size() > 0) {
             String emptyChecklistNames = checklistWithoutCheckpoints.stream().map(Checklist::getName).collect(Collectors.joining(","));
-            throw new EmptyChecklistException(emptyChecklistNames);
+            excelImportReport.addFileLevelError(emptyChecklistNames);
         }
     }
 
@@ -83,25 +83,11 @@ public class GunakExcelFile {
         return assessmentTool.isThemed() ? columnNumber + 1 : columnNumber;
     }
 
-    public static class EmptyChecklistException extends RuntimeException {
-        public EmptyChecklistException(String message) {
-            super(message);
-        }
-    }
-
-    public static class DuplicateCheckpointException extends RuntimeException {
-        public DuplicateCheckpointException(String message) {
-            super(message);
-        }
-    }
-
-    public static class CheckpointExceedingColumnSizeException extends RuntimeException {
-        public CheckpointExceedingColumnSizeException(String message) {
-            super(message);
-        }
-    }
-
     public void setReport(ExcelImportReport excelImportReport) {
         this.excelImportReport = excelImportReport;
+    }
+
+    public ExcelImportReport getExcelImportReport() {
+        return excelImportReport;
     }
 }

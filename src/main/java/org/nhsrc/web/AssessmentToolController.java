@@ -3,9 +3,11 @@ package org.nhsrc.web;
 import org.jetbrains.annotations.NotNull;
 import org.nhsrc.domain.*;
 import org.nhsrc.referenceDataImport.AssessmentToolExcelFile;
+import org.nhsrc.referenceDataImport.ExcelImportReport;
 import org.nhsrc.repository.*;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.service.ExcelImportService;
+import org.nhsrc.utils.HtmlOutputWriter;
 import org.nhsrc.utils.StringUtil;
 import org.nhsrc.visitor.HtmlVisitor;
 import org.nhsrc.web.contract.AssessmentToolRequest;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
@@ -38,9 +41,10 @@ public class AssessmentToolController {
     private final AssessmentToolModeRepository assessmentToolModeRepository;
     private final ChecklistRepository checklistRepository;
     private final ExcelImportService excelImportService;
+    private final HtmlOutputWriter htmlOutputWriter;
 
     @Autowired
-    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository, ChecklistService checklistService, ExcelImportService excelImportService) {
+    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository, ChecklistService checklistService, ExcelImportService excelImportService, HtmlOutputWriter htmlOutputWriter) {
         this.assessmentToolRepository = assessmentToolRepository;
         this.assessmentToolModeRepository = assessmentToolModeRepository;
         this.checklistRepository = checklistRepository;
@@ -48,6 +52,7 @@ public class AssessmentToolController {
         this.stateRepository = stateRepository;
         this.checklistService = checklistService;
         this.excelImportService = excelImportService;
+        this.htmlOutputWriter = htmlOutputWriter;
     }
 
     @RequestMapping(value = "/assessmentTools", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -131,14 +136,13 @@ public class AssessmentToolController {
     @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.HEAD})
     @Transactional
     @PreAuthorize("hasRole('Checklist_Metadata_Write')")
-    public ResponseEntity<Object> preview(Principal principal,
-                                         @RequestParam("uploadedFile") MultipartFile file,
+    public ResponseEntity<Object> preview(@RequestParam("uploadedFile") MultipartFile file,
                                          @RequestParam("assessmentTool") String assessmentToolName,
                                          @RequestParam("assessmentToolMode") String assessmentToolModeName,
                                          @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
                                          @RequestParam(value = "state", required = false) String stateName,
                                          @RequestParam("sortOrder") int sortOrder,
-                                         @RequestParam("sortOrder") boolean themed
+                                         @RequestParam(value = "themed", required = false) boolean themed
     ) throws Exception {
         return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, themed, false);
     }
@@ -153,7 +157,7 @@ public class AssessmentToolController {
                                          @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
                                          @RequestParam(value = "state", required = false) String stateName,
                                          @RequestParam("sortOrder") int sortOrder,
-                                         @RequestParam("sortOrder") boolean themed
+                                         @RequestParam(value = "themed", required = false) boolean themed
                                          ) throws Exception {
         return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, themed, true);
     }
@@ -191,20 +195,33 @@ public class AssessmentToolController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void processExcelFile(MultipartFile file, boolean persistData, AssessmentTool assessmentTool) throws Exception {
+    private boolean processExcelFile(MultipartFile file, boolean persistData, AssessmentTool assessmentTool) throws Exception {
         AssessmentToolExcelFile assessmentToolExcelFile = excelImportService.parseAssessmentTool(assessmentTool, file.getInputStream());
         assessmentToolExcelFile.validate();
+        ExcelImportReport excelImportReport = assessmentToolExcelFile.getExcelImportReport();
+        if (excelImportReport.hasErrors()) {
+            String errorHtml = htmlOutputWriter.generateErrorHtml(excelImportReport.getContext());
+            write(String.format("%s-error", assessmentTool.getName()), errorHtml);
+            return false;
+        }
+
         HtmlVisitor visitor = new HtmlVisitor();
         assessmentToolExcelFile.accept(visitor);
-        String html = visitor.generateHtml();
-        FileWriter fileWriter = new FileWriter(String.format("log/%s.html", assessmentTool.getName()));
-        fileWriter.write(html);
-        fileWriter.close();
+        String html = htmlOutputWriter.generateReportHtml(visitor.getContext());
+
+        write(assessmentTool.getName(), html);
 
         if (persistData) {
             List<Checklist> checklists = assessmentToolExcelFile.getChecklists();
             checklistService.associatedDepartments(checklists);
             assessmentToolRepository.save(assessmentTool);
         }
+        return true;
+    }
+
+    private void write(String fileName, String html) throws IOException {
+        FileWriter fileWriter = new FileWriter(String.format("log/%s.html", fileName));
+        fileWriter.write(html);
+        fileWriter.close();
     }
 }
