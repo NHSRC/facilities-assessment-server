@@ -17,7 +17,7 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
     private Integer numberOfIndicators;
     private Integer numberOfChecklists;
     private Integer totalNumberOfScoredCheckpoints;
-    private List<AreaOfConcernAssessmentScore> areaOfConcernScores;
+    private final List<AreaOfConcernAssessmentScore> areaOfConcernScores = new ArrayList<>();
 
     public static AssessmentResponse createNew(AssessmentTool assessmentTool) {
         AssessmentResponse assessmentResponse = new AssessmentResponse();
@@ -33,11 +33,13 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         return assessmentResponse;
     }
 
+    public List<AreaOfConcernAssessmentScore> getAreaOfConcernScores() {
+        return areaOfConcernScores;
+    }
+
     public AreaOfConcernAssessmentScore addAreaOfConcernScore(String reference, int score) {
-        AreaOfConcernAssessmentScore areaOfConcernAssessmentScore = new AreaOfConcernAssessmentScore();
-        areaOfConcernAssessmentScore.setScore(score);
-        areaOfConcernAssessmentScore.setReference(reference);
-        areaOfConcernScores.add(new AreaOfConcernAssessmentScore(reference, score));
+        AreaOfConcernAssessmentScore areaOfConcernAssessmentScore = new AreaOfConcernAssessmentScore(reference, score);
+        areaOfConcernScores.add(areaOfConcernAssessmentScore);
         return areaOfConcernAssessmentScore;
     }
 

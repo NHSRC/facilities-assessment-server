@@ -14,4 +14,5 @@ import java.util.List;
 public interface StandardScoreRepository extends PagingAndSortingRepository<StandardScore, Integer> {
     void deleteAllByFacilityAssessmentId(@Param("facilityAssessmentId") Integer facilityAssessmentId);
     List<StandardScore> findAllByFacilityAssessmentAndStandardAreaOfConcernReferenceOrderByStandardAreaOfConcernReferenceAsc(FacilityAssessment facilityAssessment, String areaOfConcernReference);
+    List<StandardScore> findAllByFacilityAssessmentOrderByStandardAreaOfConcernReferenceAsc(FacilityAssessment facilityAssessment);
 }

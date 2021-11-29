@@ -53,8 +53,8 @@ public class AssessmentMapper {
         summary.setFacilityType(facilityType == null ? "" : facilityType.getName());
         summary.setProgram(source.getAssessmentTool().getAssessmentToolMode().getName());
         summary.setSystemId(source.getUuidString());
-        summary.setFacilityNIN(source.getFacility().getRegistryUniqueId());
-        summary.setAssessmentNumber(source.getAssessmentNumberAssignment().getAssessmentNumber());
+        summary.setFacilityNIN(source.getFacility() == null ? null : source.getFacility().getRegistryUniqueId());
+        summary.setAssessmentNumber(source.getAssessmentNumber());
         return summary;
     }
 
@@ -74,8 +74,7 @@ public class AssessmentMapper {
             measurableElementAssessment.addCheckpointAssessment(checkpointAssessment);
         });
         assessmentResponse.getChecklists().forEach(checklistAssessment -> {
-            ChecklistScore checklistScore = checklistScoreRepository.findByChecklistNameAndFacilityAssessment(checklistAssessment.getName(), facilityAssessment);
-            checklistAssessment.setScore(checklistScore.getScore());
+            checklistAssessment.setScore(checklistScoreRepository.getChecklistScore(checklistAssessment.getName(), facilityAssessment.getId()));
         });
 
         List<AreaOfConcernScore> aocScores = areaOfConcernScoreRepository.findAllByFacilityAssessmentOrderByAreaOfConcernReferenceAsc(facilityAssessment);

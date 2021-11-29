@@ -295,7 +295,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
         return users;
     }
 
-    public AssessmentNumberAssignment getAssessmentNumberAssignment() {
-        return assessmentNumberAssignment;
+    public String getAssessmentNumber() {
+        return assessmentNumberAssignment == null ? null : assessmentNumberAssignment.getAssessmentNumber();
     }
 }
