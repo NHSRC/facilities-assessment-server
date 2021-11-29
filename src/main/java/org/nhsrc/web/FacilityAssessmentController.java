@@ -1,11 +1,10 @@
 package org.nhsrc.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.nhsrc.domain.AssessmentTool;
-import org.nhsrc.domain.AssessmentToolMode;
-import org.nhsrc.domain.AssessmentToolType;
-import org.nhsrc.domain.CheckpointScore;
+import org.joda.time.LocalDateTime;
+import org.nhsrc.domain.*;
 import org.nhsrc.domain.assessment.FacilityAssessment;
+import org.nhsrc.domain.scores.ScoringProcessDetail;
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.dto.ChecklistDTO;
@@ -13,6 +12,7 @@ import org.nhsrc.dto.IndicatorListDTO;
 import org.nhsrc.dto.assessment.FacilityAssessmentAppDTO;
 import org.nhsrc.dto.assessment.FacilityAssessmentDTO;
 import org.nhsrc.repository.*;
+import org.nhsrc.repository.scores.ScoringProcessDetailRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.service.FacilityAssessmentService;
@@ -54,11 +54,13 @@ public class FacilityAssessmentController {
     private final AssessmentToolModeRepository assessmentToolModeRepository;
     private static final Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
     private final ExcelImportService excelImportService;
+    private final AssessmentTypeRepository assessmentTypeRepository;
+    private final ScoringProcessDetailRepository scoringProcessDetailRepository;
+    private final AssessmentMapper assessmentMapper;
     private final CheckpointScoreRepository checkpointScoreRepository;
-    private final IndicatorRepository indicatorRepository;
 
     @Autowired
-    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, CheckpointScoreRepository checkpointScoreRepository, IndicatorRepository indicatorRepository) {
+    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, AssessmentTypeRepository assessmentTypeRepository, ScoringProcessDetailRepository scoringProcessDetailRepository, AssessmentMapper assessmentMapper, CheckpointScoreRepository checkpointScoreRepository) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
@@ -66,8 +68,10 @@ public class FacilityAssessmentController {
         this.excelImportService = excelImportService;
         this.assessmentToolRepository = assessmentToolRepository;
         this.assessmentToolModeRepository = assessmentToolModeRepository;
+        this.assessmentTypeRepository = assessmentTypeRepository;
+        this.scoringProcessDetailRepository = scoringProcessDetailRepository;
+        this.assessmentMapper = assessmentMapper;
         this.checkpointScoreRepository = checkpointScoreRepository;
-        this.indicatorRepository = indicatorRepository;
     }
 
     @RequestMapping(value = "facility-assessment", method = RequestMethod.POST)
@@ -97,7 +101,8 @@ public class FacilityAssessmentController {
     @RequestMapping(value = "facilityAssessment/{facilityAssessmentUuid}/summary", method = RequestMethod.GET)
     public ResponseEntity<FacilityAssessmentResponse> getSummary(@PathVariable("facilityAssessmentUuid") String uuid) {
         FacilityAssessment assessment = facilityAssessmentRepository.findByUuid(UUID.fromString(uuid));
-        List<String> filledChecklists = checkpointScoreRepository.getFilledChecklists(assessment.getId());;
+        List<String> filledChecklists = checkpointScoreRepository.getFilledChecklists(assessment.getId());
+        ;
         return new ResponseEntity<>(AssessmentMapper.map(assessment, filledChecklists), HttpStatus.OK);
     }
 
@@ -168,14 +173,38 @@ public class FacilityAssessmentController {
     @RequestMapping(value = "ext/assessmentSummary", method = {RequestMethod.GET})
     @PreAuthorize("hasRole('User')")
     // TODO: Find appropriate status code for privilege denied; Test with null values. Fix district/state in the db or put a null check.
-    public Page<AssessmentSummaryResponse> listAssessments(Principal principal, @Param("assessmentEndDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date assessmentEndDateTime, @Param("assessmentToolName") @NotNull String assessmentToolName, @Param("programName") @NotNull String programName, Pageable pageable) {
+    public Page<AssessmentSummaryResponse> listAssessments(Principal principal,
+                                                           @Param("assessmentEndDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date assessmentEndDateTime,
+                                                           @Param("assessmentToolName") @NotNull String assessmentToolName,
+                                                           @Param("programName") @NotNull String programName,
+                                                           @Param("assessmentTypeName") @NotNull String assessmentTypeName,
+                                                           Pageable pageable) {
         AssessmentTool assessmentTool = assessmentToolRepository.findByNameAndAssessmentToolModeName(assessmentToolName, programName);
         if (assessmentTool == null) {
             AssessmentToolMode program = assessmentToolModeRepository.findByName(programName);
             throw new GunakAPIException(program == null ? GunakAPIException.INVALID_PROGRAM_NAME : GunakAPIException.INVALID_ASSESSMENT_TOOL_NAME, HttpStatus.BAD_REQUEST);
         }
+
+        AssessmentType assessmentType = null;
+        if (assessmentTypeName != null && !assessmentTypeName.isEmpty()) {
+            assessmentType = assessmentTypeRepository.findByName(assessmentTypeName);
+            if (assessmentType == null) {
+                throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_TYPE, HttpStatus.BAD_REQUEST);
+            }
+        }
+
         checkAccess(principal, programName);
-        return facilityAssessmentRepository.findByAssessmentToolIdAndEndDateGreaterThanEqualOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentEndDateTime, pageable).map(source -> AssessmentMapper.map(new AssessmentSummaryResponse(), source, assessmentTool));
+
+        ScoringProcessDetail scoringProcessDetail = scoringProcessDetailRepository.get();
+        Date safeLastScoredUntilTime = scoringProcessDetail.getSafeLastScoredUntilTime();
+
+        Page<FacilityAssessment> assessments;
+        if (assessmentType == null) {
+            assessments = facilityAssessmentRepository.findByAssessmentToolIdAndEndDateIsBetweenOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentEndDateTime, safeLastScoredUntilTime, pageable);
+        } else
+            assessments = facilityAssessmentRepository.findByAssessmentToolIdAndAssessmentTypeAndEndDateIsBetweenOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentType, assessmentEndDateTime, safeLastScoredUntilTime, pageable);
+
+        return assessments.map(source -> assessmentMapper.map(new AssessmentSummaryResponse(), source, assessmentTool));
     }
 
     private void checkAccess(Principal principal, String programName) {
@@ -200,11 +229,11 @@ public class FacilityAssessmentController {
         checkAccess(principal, facilityAssessment.getAssessmentTool().getAssessmentToolMode().getName());
 
         AssessmentResponse assessmentResponse = AssessmentResponse.createNew(facilityAssessment.getAssessmentTool());
-        AssessmentMapper.map(assessmentResponse, facilityAssessment, facilityAssessment.getAssessmentTool());
+        assessmentMapper.map(assessmentResponse, facilityAssessment, facilityAssessment.getAssessmentTool());
         if (facilityAssessment.getAssessmentTool().getAssessmentToolType().equals(AssessmentToolType.COMPLIANCE)) {
-            return AssessmentMapper.mapAssessmentScores(facilityAssessment, assessmentResponse, checkpointScoreRepository);
+            return assessmentMapper.mapAssessmentScores(facilityAssessment, assessmentResponse);
         } else {
-            return AssessmentMapper.mapIndicators(facilityAssessment, assessmentResponse, indicatorRepository);
+            return assessmentMapper.mapIndicators(facilityAssessment, assessmentResponse);
         }
     }
 }

@@ -9,4 +9,7 @@ import java.util.UUID;
 @Repository
 public interface ScoringProcessDetailRepository extends PagingAndSortingRepository<ScoringProcessDetail, Integer> {
     ScoringProcessDetail findByUuid(UUID uuid);
+    default ScoringProcessDetail get() {
+        return this.findByUuid(ScoringProcessDetail.Fixed_UUID);
+    }
 }

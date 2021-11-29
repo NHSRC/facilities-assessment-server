@@ -11,14 +11,13 @@ public class AssessmentSummaryResponse {
     private String assessmentSeries;
     private Date assessmentStartDate;
     private Date assessmentEndDate;
+    private String assessmentNumber;
 
     private String state;
     private String district;
     private String facility;
     private String facilityType;
-    private String nin;
-
-    private String assessmentNumber;
+    private String facilityNIN;
 
     public String getSystemId() {
         return systemId;
@@ -108,12 +107,12 @@ public class AssessmentSummaryResponse {
         this.facilityType = facilityType;
     }
 
-    public String getNin() {
-        return nin;
+    public String getFacilityNIN() {
+        return facilityNIN;
     }
 
-    public void setNin(String nin) {
-        this.nin = nin;
+    public void setFacilityNIN(String facilityNIN) {
+        this.facilityNIN = facilityNIN;
     }
 
     public String getAssessmentNumber() {

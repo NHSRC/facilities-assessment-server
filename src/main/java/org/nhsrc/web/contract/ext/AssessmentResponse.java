@@ -3,10 +3,12 @@ package org.nhsrc.web.contract.ext;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.AssessmentToolType;
+import org.nhsrc.domain.CheckpointScore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AssessmentResponse extends AssessmentSummaryResponse {
@@ -15,6 +17,7 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
     private Integer numberOfIndicators;
     private Integer numberOfChecklists;
     private Integer totalNumberOfScoredCheckpoints;
+    private List<AreaOfConcernAssessmentScore> areaOfConcernScores;
 
     public static AssessmentResponse createNew(AssessmentTool assessmentTool) {
         AssessmentResponse assessmentResponse = new AssessmentResponse();
@@ -28,6 +31,14 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         }
 
         return assessmentResponse;
+    }
+
+    public AreaOfConcernAssessmentScore addAreaOfConcernScore(String reference, int score) {
+        AreaOfConcernAssessmentScore areaOfConcernAssessmentScore = new AreaOfConcernAssessmentScore();
+        areaOfConcernAssessmentScore.setScore(score);
+        areaOfConcernAssessmentScore.setReference(reference);
+        areaOfConcernScores.add(new AreaOfConcernAssessmentScore(reference, score));
+        return areaOfConcernAssessmentScore;
     }
 
     public static class IndicatorAssessment {
@@ -103,12 +114,12 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         private String name;
         private int numberOfAreaOfConcerns;
         private int numberOfCheckpoints;
+        private List<AreaOfConcernAssessment> areaOfConcerns = new ArrayList<>();
+        private double score;
 
         public ChecklistAssessment(String name) {
             this.name = name;
         }
-
-        private List<AreaOfConcernAssessment> areaOfConcerns = new ArrayList<>();
 
         public String getName() {
             return name;
@@ -135,12 +146,62 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
             this.getAreaOfConcerns().forEach(AreaOfConcernAssessment::updateCounts);
             this.numberOfCheckpoints = this.getAreaOfConcerns().stream().map(AreaOfConcernAssessment::getCheckpointCount).reduce((a, b) -> a + b).get();
         }
+
+        public void setScore(double score) {
+            this.score = score;
+        }
+
+        public double getScore() {
+            return score;
+        }
+    }
+
+    public static class AreaOfConcernAssessmentScore {
+        private String reference;
+        private int score;
+        private Map<String, Integer> standardScores = new HashMap<>();
+
+        public AreaOfConcernAssessmentScore() {
+        }
+
+        public AreaOfConcernAssessmentScore(String reference, int score) {
+            this.reference = reference;
+            this.score = score;
+        }
+
+        public String getReference() {
+            return reference;
+        }
+
+        public void setReference(String reference) {
+            this.reference = reference;
+        }
+
+        public double getScore() {
+            return score;
+        }
+
+        public void setScore(int score) {
+            this.score = score;
+        }
+
+        public void addStandardScore(String reference, int score) {
+            this.standardScores.put(reference, score);
+        }
+
+        public Map<String, Integer> getStandardScores() {
+            return standardScores;
+        }
     }
 
     public static class AreaOfConcernAssessment {
         private String reference;
         private int numberOfStandards;
         private List<StandardAssessment> standards = new ArrayList<>();
+        private int score;
+
+        public AreaOfConcernAssessment() {
+        }
 
         public AreaOfConcernAssessment(String reference) {
             this.reference = reference;
@@ -168,14 +229,18 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         }
 
         public int getCheckpointCount() {
-            return this.getStandards().stream().map(standardAssessment -> standardAssessment.getCheckpointCount()).reduce((a, b) -> a + b).get();
+            return this.getStandards().stream().map(StandardAssessment::getCheckpointCount).reduce(Integer::sum).get();
         }
     }
 
     public static class StandardAssessment {
         private String reference;
+        private int score;
         private int numberOfMeasurableElements;
-        private List<MeasurableElementAssessment> measurableElements = new ArrayList<>();
+        private final List<MeasurableElementAssessment> measurableElements = new ArrayList<>();
+
+        public StandardAssessment() {
+        }
 
         public StandardAssessment(String reference) {
             this.reference = reference;
@@ -203,13 +268,13 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         }
 
         public int getCheckpointCount() {
-            return this.getMeasurableElements().stream().map(MeasurableElementAssessment::getNumberOfCheckpoints).reduce((a, b) -> a + b).get();
+            return this.getMeasurableElements().stream().map(MeasurableElementAssessment::getNumberOfCheckpoints).reduce(Integer::sum).get();
         }
     }
 
     public static class MeasurableElementAssessment {
         private String reference;
-        private List<CheckpointAssessment> checkpointAssessments = new ArrayList<>();
+        private final List<CheckpointAssessment> checkpointAssessments = new ArrayList<>();
         private int numberOfCheckpoints;
 
         public MeasurableElementAssessment(String reference) {
@@ -249,10 +314,10 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         return numberOfChecklists;
     }
 
-    public void updateCounts(int size) {
+    public void updateCounts(List<CheckpointScore> scores) {
         this.checklists.forEach(ChecklistAssessment::updateCounts);
         this.numberOfChecklists = this.checklists.size();
-        this.totalNumberOfScoredCheckpoints = size;
+        this.totalNumberOfScoredCheckpoints = scores.size();
     }
 
     public Integer getTotalNumberOfScoredCheckpoints() {

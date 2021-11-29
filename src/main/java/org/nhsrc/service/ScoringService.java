@@ -1,5 +1,7 @@
 package org.nhsrc.service;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.scores.ScoringProcessDetail;
 import org.nhsrc.repository.FacilityAssessmentRepository;
@@ -19,10 +21,10 @@ import static org.nhsrc.service.ScoringSQLs.*;
 
 @Service
 public class ScoringService {
-    private ScoringProcessDetailRepository scoringProcessDetailRepository;
-    private FacilityAssessmentRepository facilityAssessmentRepository;
-    private EntityManagerFactory entityManagerFactory;
-    private static Logger logger = LoggerFactory.getLogger(ScoringService.class);
+    private final ScoringProcessDetailRepository scoringProcessDetailRepository;
+    private final FacilityAssessmentRepository facilityAssessmentRepository;
+    private final EntityManagerFactory entityManagerFactory;
+    private static final Logger logger = LoggerFactory.getLogger(ScoringService.class);
 
     @Autowired
     public ScoringService(ScoringProcessDetailRepository scoringProcessDetailRepository, FacilityAssessmentRepository facilityAssessmentRepository, EntityManagerFactory entityManagerFactory) {
@@ -32,7 +34,7 @@ public class ScoringService {
     }
 
     public void scoreAssessments() {
-        ScoringProcessDetail scoringProcessDetail = scoringProcessDetailRepository.findByUuid(ScoringProcessDetail.Fixed_UUID);
+        ScoringProcessDetail scoringProcessDetail = scoringProcessDetailRepository.get();
         Date safeLastScoredUntilTime = scoringProcessDetail.getSafeLastScoredUntilTime();
         logger.info(String.format("Loading assessments done after: %s", safeLastScoredUntilTime.toString()));
         List<FacilityAssessment> unscoredAssessments = facilityAssessmentRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(safeLastScoredUntilTime);

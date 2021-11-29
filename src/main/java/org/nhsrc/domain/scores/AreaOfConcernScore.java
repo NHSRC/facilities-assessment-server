@@ -20,6 +20,9 @@ public class AreaOfConcernScore extends BaseEntity {
     @NotNull
     private AreaOfConcern areaOfConcern;
 
+    @Column(name = "score")
+    private int score;
+
     public FacilityAssessment getFacilityAssessment() {
         return facilityAssessment;
     }
@@ -34,5 +37,9 @@ public class AreaOfConcernScore extends BaseEntity {
 
     public void setAreaOfConcern(AreaOfConcern areaOfConcern) {
         this.areaOfConcern = areaOfConcern;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

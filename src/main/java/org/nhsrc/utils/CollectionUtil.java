@@ -1,8 +1,7 @@
 package org.nhsrc.utils;
 
-import org.nhsrc.web.contract.ext.AssessmentResponse;
-
 import java.util.Collection;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class CollectionUtil {

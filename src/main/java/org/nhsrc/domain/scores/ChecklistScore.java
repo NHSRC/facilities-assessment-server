@@ -87,4 +87,8 @@ public class ChecklistScore extends BaseEntity {
     public void setFacilityAssessment(FacilityAssessment facilityAssessment) {
         this.facilityAssessment = facilityAssessment;
     }
+
+    public double getScore() {
+        return (numerator * 100.0) / (denominator);
+    }
 }

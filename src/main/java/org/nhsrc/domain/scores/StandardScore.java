@@ -20,6 +20,9 @@ public class StandardScore extends BaseEntity {
     @NotNull
     private FacilityAssessment facilityAssessment;
 
+    @Column(name = "score")
+    private int score;
+
     public Standard getStandard() {
         return standard;
     }
@@ -34,5 +37,13 @@ public class StandardScore extends BaseEntity {
 
     public void setFacilityAssessment(FacilityAssessment facilityAssessment) {
         this.facilityAssessment = facilityAssessment;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }

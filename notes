@@ -1,1 +1,4 @@
 What is the best way to report errors and what will be imported.
+
+Spring 2.0
+- @LastModifedBy cannot be Joda

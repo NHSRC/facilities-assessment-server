@@ -50,7 +50,8 @@ public interface FacilityAssessmentRepository extends TxDataRepository<FacilityA
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
     Page<FacilityAssessment> findByAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
-    Page<FacilityAssessment> findByAssessmentToolIdAndEndDateGreaterThanEqualOrderByEndDateAscIdAsc(Integer assessmentToolId, Date endDateTime, Pageable pageable);
+    Page<FacilityAssessment> findByAssessmentToolIdAndEndDateIsBetweenOrderByEndDateAscIdAsc(Integer assessmentToolId, Date endDateTime, Date maxDateTime, Pageable pageable);
+    Page<FacilityAssessment> findByAssessmentToolIdAndAssessmentTypeAndEndDateIsBetweenOrderByEndDateAscIdAsc(Integer assessmentToolId, AssessmentType assessmentType, Date endDateTime, Date maxDateTime, Pageable pageable);
 
     @RestResource(path = "findByFacility", rel = "findByFacility")
     @PreAuthorize("hasRole('Assessment_Read')")
