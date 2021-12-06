@@ -11,6 +11,8 @@ import org.nhsrc.utils.HtmlOutputWriter;
 import org.nhsrc.utils.StringUtil;
 import org.nhsrc.visitor.HtmlVisitor;
 import org.nhsrc.web.contract.AssessmentToolRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,9 +21,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,6 +46,7 @@ public class AssessmentToolController {
     private final ChecklistRepository checklistRepository;
     private final ExcelImportService excelImportService;
     private final HtmlOutputWriter htmlOutputWriter;
+    private static final Logger logger = LoggerFactory.getLogger(AssessmentToolController.class);
 
     @Autowired
     public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository, ChecklistService checklistService, ExcelImportService excelImportService, HtmlOutputWriter htmlOutputWriter) {
@@ -133,33 +138,19 @@ public class AssessmentToolController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.HEAD})
+    @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.HEAD, RequestMethod.PUT})
     @Transactional
     @PreAuthorize("hasRole('Checklist_Metadata_Write')")
-    public ResponseEntity<Object> preview(@RequestParam("uploadedFile") MultipartFile file,
-                                         @RequestParam("assessmentTool") String assessmentToolName,
-                                         @RequestParam("assessmentToolMode") String assessmentToolModeName,
-                                         @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
-                                         @RequestParam(value = "state", required = false) String stateName,
-                                         @RequestParam("sortOrder") int sortOrder,
-                                         @RequestParam(value = "themed", required = false) boolean themed
+    public ResponseEntity<Object> importAssessmentToolViaExcelFile(@RequestParam("uploadedFile") MultipartFile file,
+                                          @RequestParam("assessmentTool") String assessmentToolName,
+                                          @RequestParam("assessmentToolMode") String assessmentToolModeName,
+                                          @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
+                                          @RequestParam(value = "state", required = false) String stateName,
+                                          @RequestParam("sortOrder") int sortOrder,
+                                          @RequestParam(value = "themed", required = false) boolean themed,
+                                          HttpServletRequest httpServletRequest
     ) throws Exception {
-        return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, themed, false);
-    }
-
-    @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.PUT})
-    @Transactional
-    @PreAuthorize("hasRole('Checklist_Metadata_Write')")
-    public ResponseEntity<Object> create(Principal principal,
-                                         @RequestParam("uploadedFile") MultipartFile file,
-                                         @RequestParam("assessmentTool") String assessmentToolName,
-                                         @RequestParam("assessmentToolMode") String assessmentToolModeName,
-                                         @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
-                                         @RequestParam(value = "state", required = false) String stateName,
-                                         @RequestParam("sortOrder") int sortOrder,
-                                         @RequestParam(value = "themed", required = false) boolean themed
-                                         ) throws Exception {
-        return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, themed, true);
+        return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, themed, httpServletRequest.getMethod().equals(RequestMethod.PUT.name()));
     }
 
     @NotNull
@@ -211,10 +202,13 @@ public class AssessmentToolController {
 
         write(assessmentTool.getName(), html);
 
-        if (persistData) {
-            List<Checklist> checklists = assessmentToolExcelFile.getChecklists();
-            checklistService.associatedDepartments(checklists);
-            assessmentToolRepository.save(assessmentTool);
+        List<Checklist> checklists = assessmentToolExcelFile.getChecklists();
+        checklistService.associatedDepartments(checklists);
+        assessmentToolRepository.save(assessmentTool);
+
+        if (!persistData) {
+            logger.info("Rolling back transaction to avoid persistence");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return true;
     }

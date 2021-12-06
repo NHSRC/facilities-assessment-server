@@ -1,5 +1,6 @@
 package org.nhsrc.repository;
 
+import org.nhsrc.domain.AssessmentToolMode;
 import org.nhsrc.domain.AssessmentType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ public interface AssessmentTypeRepository extends NonTxDataRepository<Assessment
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<AssessmentType> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  Date lastModifiedDateTime, Pageable pageable);
 
+    AssessmentType findByNameAndAssessmentToolMode(String name, AssessmentToolMode assessmentToolMode);
     AssessmentType findByName(String name);
 
     @RestResource(path = "findAllById", rel = "findAllById")

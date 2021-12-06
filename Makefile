@@ -155,6 +155,9 @@ open_test_results:
 clean:
 	./gradlew clean
 
+clean_file_upload_reports:
+	rm log/*.html
+
 # DEPLOY
 deploy_to_jss_qa: build_server
 	$(call _deploy_qa,igunatmac)

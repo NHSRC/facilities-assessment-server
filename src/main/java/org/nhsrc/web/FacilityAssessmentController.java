@@ -180,14 +180,14 @@ public class FacilityAssessmentController {
                                                            @Param("assessmentTypeName") @NotNull String assessmentTypeName,
                                                            Pageable pageable) {
         AssessmentTool assessmentTool = assessmentToolRepository.findByNameAndAssessmentToolModeName(assessmentToolName, programName);
+        AssessmentToolMode program = assessmentToolModeRepository.findByName(programName);
         if (assessmentTool == null) {
-            AssessmentToolMode program = assessmentToolModeRepository.findByName(programName);
             throw new GunakAPIException(program == null ? GunakAPIException.INVALID_PROGRAM_NAME : GunakAPIException.INVALID_ASSESSMENT_TOOL_NAME, HttpStatus.BAD_REQUEST);
         }
 
         AssessmentType assessmentType = null;
         if (assessmentTypeName != null && !assessmentTypeName.isEmpty()) {
-            assessmentType = assessmentTypeRepository.findByName(assessmentTypeName);
+            assessmentType = assessmentTypeRepository.findByNameAndAssessmentToolMode(assessmentTypeName, program);
             if (assessmentType == null) {
                 throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_TYPE, HttpStatus.BAD_REQUEST);
             }
