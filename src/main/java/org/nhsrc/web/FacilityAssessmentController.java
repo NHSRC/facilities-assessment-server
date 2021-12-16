@@ -200,9 +200,9 @@ public class FacilityAssessmentController {
 
         Page<FacilityAssessment> assessments;
         if (assessmentType == null) {
-            assessments = facilityAssessmentRepository.findByAssessmentToolIdAndEndDateIsBetweenOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentEndDateTime, safeLastScoredUntilTime, pageable);
+            assessments = facilityAssessmentRepository.findByAssessmentToolIdAndEndDateIsGreaterThanAndEndDateIsLessThanOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentEndDateTime, safeLastScoredUntilTime, pageable);
         } else
-            assessments = facilityAssessmentRepository.findByAssessmentToolIdAndAssessmentTypeAndEndDateIsBetweenOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentType, assessmentEndDateTime, safeLastScoredUntilTime, pageable);
+            assessments = facilityAssessmentRepository.findByAssessmentToolIdAndAssessmentTypeAndEndDateIsGreaterThanAndEndDateIsLessThanOrderByEndDateAscIdAsc(assessmentTool.getId(), assessmentType, assessmentEndDateTime, safeLastScoredUntilTime, pageable);
 
         return assessments.map(source -> assessmentMapper.map(new AssessmentSummaryResponse(), source, assessmentTool));
     }
