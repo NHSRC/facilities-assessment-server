@@ -2,7 +2,9 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import org.nhsrc.domain.security.User;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,16 +22,19 @@ public class Facility extends AbstractEntity {
     @ManyToOne(targetEntity = District.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "district_id")
     @NotNull
+    @RestResource(exported = false)
     private District district;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_type_id", nullable = false)
+    @RestResource(exported = false)
     private FacilityType facilityType;
 
     @Column(name = "registry_unique_id")
     private String registryUniqueId;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "facility")
+    @RestResource(exported = false)
     private Set<FacilityLevelAccess> facilityLevelAccessList = new HashSet<>();
 
     @JsonIgnore

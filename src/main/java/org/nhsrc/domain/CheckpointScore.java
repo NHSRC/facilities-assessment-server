@@ -3,6 +3,7 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.nhsrc.domain.assessment.FacilityAssessment;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -29,18 +30,21 @@ public class CheckpointScore extends AbstractScoreEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_assessment_id")
     @NotNull
+    @RestResource(exported = false)
     private FacilityAssessment facilityAssessment;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "checklist_id")
     @NotNull
+    @RestResource(exported = false)
     private Checklist checklist;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "checkpoint_id")
     @NotNull
+    @RestResource(exported = false)
     private Checkpoint checkpoint;
 
     @Column(name = "score")

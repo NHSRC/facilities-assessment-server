@@ -9,6 +9,7 @@ import org.nhsrc.domain.metadata.AssessmentMetaData;
 import org.nhsrc.domain.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,6 +29,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_id")
     @NotNull
+    @RestResource(exported = false)
     private AssessmentTool assessmentTool;
 
     @Column(name = "start_date", nullable = false)
@@ -49,6 +51,7 @@ public class FacilityAssessment extends AbstractScoreEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_type_id")
     @NotNull
+    @RestResource(exported = false)
     private AssessmentType assessmentType;
 
     @Column(name = "inactive")
@@ -56,18 +59,22 @@ public class FacilityAssessment extends AbstractScoreEntity {
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "facilityAssessment")
+    @RestResource(exported = false)
     private Set<FacilityAssessmentDevice> facilityAssessmentDevices = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "facilityAssessment")
+    @RestResource(exported = false)
     private Set<AssessmentCustomInfo> customInfos = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_number_assignment_id")
+    @RestResource(exported = false)
     private AssessmentNumberAssignment assessmentNumberAssignment;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "facility_assessment_users", joinColumns = @JoinColumn(name = "facility_assessment_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     @JsonIgnore
+    @RestResource(exported = false)
     private Set<User> users = new HashSet<>();
 
     public String getAssessmentCode() {

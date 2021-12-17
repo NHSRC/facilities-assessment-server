@@ -2,6 +2,7 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ public class IndicatorDefinition extends AbstractEntity {
     @NotNull
     @ManyToOne(targetEntity = AssessmentTool.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_id")
+    @RestResource(exported = false)
     private AssessmentTool assessmentTool;
 
     @Column(name = "formula")

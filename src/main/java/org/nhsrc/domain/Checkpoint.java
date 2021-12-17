@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 import org.nhsrc.visitor.GunakChecklistVisitor;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,11 +25,13 @@ public class Checkpoint extends AbstractEntity {
     @ManyToOne(targetEntity = MeasurableElement.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "measurable_element_id")
     @NotNull
+    @RestResource(exported = false)
     private MeasurableElement measurableElement;
 
     @ManyToOne(targetEntity = Checklist.class, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "checklist_id")
     @NotNull
+    @RestResource(exported = false)
     private Checklist checklist;
 
     @Column(name = "am_observation")

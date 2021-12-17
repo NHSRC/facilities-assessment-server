@@ -6,6 +6,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.nhsrc.visitor.GunakChecklistVisitor;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,7 @@ public class AreaOfConcern extends AbstractEntity implements ReferencableEntity 
     private String reference;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "areaOfConcern")
+    @RestResource(exported = false)
     private Set<Standard> standards = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
@@ -31,6 +33,7 @@ public class AreaOfConcern extends AbstractEntity implements ReferencableEntity 
     }, mappedBy = "areasOfConcern")
     @NotNull
     @JsonIgnore
+    @RestResource(exported = false)
     private Set<Checklist> checklists = new HashSet<>();
 
     public String getName() {

@@ -3,6 +3,7 @@ package org.nhsrc.domain.security;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nhsrc.domain.AbstractEntity;
 import org.nhsrc.domain.BaseEntity;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ public class Role extends BaseEntity {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "role_privilege", inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"), joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @RestResource(exported = false)
     private Set<Privilege> privileges = new HashSet<>();
 
     @JsonIgnore

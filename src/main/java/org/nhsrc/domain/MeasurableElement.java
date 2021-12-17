@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 import org.nhsrc.visitor.GunakChecklistVisitor;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -25,11 +26,13 @@ public class MeasurableElement extends AbstractEntity implements ReferencableEnt
     private double refAsNumber;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "measurableElement")
+    @RestResource(exported = false)
     private Set<Checkpoint> checkpoints = new HashSet<>();
 
     @ManyToOne(targetEntity = Standard.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "standard_id")
     @NotNull
+    @RestResource(exported = false)
     private Standard standard;
 
     public String getName() {

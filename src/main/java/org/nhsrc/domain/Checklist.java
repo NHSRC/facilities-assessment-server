@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 import org.nhsrc.visitor.GunakChecklistVisitor;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -30,20 +31,24 @@ public class Checklist extends AbstractEntity {
     }, mappedBy = "checklists")
     @NotNull
     @JsonIgnore
+    @RestResource(exported = false)
     private Set<AssessmentTool> assessmentTools = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
     @NotNull
+    @RestResource(exported = false)
     private Department department;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id")
+    @RestResource(exported = false)
     private State state;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "checklist_area_of_concern", joinColumns = @JoinColumn(name = "checklist_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "area_of_concern_id", referencedColumnName = "id"))
     @JsonIgnore
+    @RestResource(exported = false)
     private Set<AreaOfConcern> areasOfConcern = new HashSet<>();
 
     public String getName() {

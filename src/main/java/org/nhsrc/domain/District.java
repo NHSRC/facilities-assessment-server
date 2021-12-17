@@ -2,6 +2,7 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,11 +25,13 @@ public class District extends AbstractEntity {
     private String name;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "district")
+    @RestResource(exported = false)
     private Set<Facility> facilities = new HashSet<>();
 
     @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id")
     @NotNull
+    @RestResource(exported = false)
     private State state;
 
     public String getName() {

@@ -3,6 +3,7 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -30,11 +31,13 @@ public class AssessmentTool extends AbstractEntity {
     @ManyToOne(targetEntity = AssessmentToolMode.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_mode_id")
     @NotNull
+    @RestResource(exported = false)
     private AssessmentToolMode assessmentToolMode;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "assessment_tool_checklist", joinColumns = @JoinColumn(name = "assessment_tool_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "checklist_id", referencedColumnName = "id"))
     @JsonIgnore
+    @RestResource(exported = false)
     private Set<Checklist> checklists = new HashSet<>();
 
     @Column(name = "type")
@@ -43,9 +46,11 @@ public class AssessmentTool extends AbstractEntity {
 
     @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "state_id")
+    @RestResource(exported = false)
     private State state;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "assessmentTool", orphanRemoval = true)
+    @RestResource(exported = false)
     private Set<ExcludedAssessmentToolState> excludedAssessmentToolStates = new HashSet<>();
 
     @Column(name = "sort_order")

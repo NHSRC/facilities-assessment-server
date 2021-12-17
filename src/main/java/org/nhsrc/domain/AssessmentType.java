@@ -2,6 +2,7 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ public class AssessmentType extends AbstractEntity {
     @ManyToOne(targetEntity = AssessmentToolMode.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_mode_id")
     @NotNull
+    @RestResource(exported = false)
     private AssessmentToolMode assessmentToolMode;
 
     public String getShortName() {

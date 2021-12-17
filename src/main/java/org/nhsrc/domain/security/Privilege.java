@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.nhsrc.domain.AssessmentToolMode;
 import org.nhsrc.domain.BaseEntity;
 import org.nhsrc.domain.State;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -29,10 +30,12 @@ public class Privilege extends BaseEntity {
 
     @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id")
+    @RestResource(exported = false)
     private State state;
 
     @ManyToOne(targetEntity = AssessmentToolMode.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_tool_mode_id")
+    @RestResource(exported = false)
     private AssessmentToolMode assessmentToolMode;
 
     public String getName() {

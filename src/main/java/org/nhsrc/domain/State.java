@@ -1,6 +1,7 @@
 package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -21,6 +22,7 @@ public class State extends AbstractEntity {
     private String name;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "state")
+    @RestResource(exported = false)
     private Set<District> districts = new HashSet<>();
 
     @Column(name = "short_name")

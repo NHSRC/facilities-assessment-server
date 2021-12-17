@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.nhsrc.domain.assessment.FacilityAssessment;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,11 +29,13 @@ public class Indicator extends BaseEntity {
     @ManyToOne(targetEntity = IndicatorDefinition.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "indicator_definition_id")
     @NotNull
+    @RestResource(exported = false)
     private IndicatorDefinition indicatorDefinition;
 
     @ManyToOne(targetEntity = FacilityAssessment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_assessment_id")
     @NotNull
+    @RestResource(exported = false)
     private FacilityAssessment facilityAssessment;
 
     @GeneratedValue(generator = "system-uuid")

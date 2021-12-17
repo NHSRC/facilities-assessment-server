@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.nhsrc.domain.*;
 import org.nhsrc.domain.security.User;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -18,16 +19,19 @@ public class AssessmentNumberAssignment extends AbstractEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_id")
     @NotNull
+    @RestResource(exported = false)
     private Facility facility;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assessment_type_id")
     @NotNull
+    @RestResource(exported = false)
     private AssessmentType assessmentType;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "assessment_number_assignment_users", joinColumns = @JoinColumn(name = "assessment_number_assignment_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     @JsonIgnore
+    @RestResource(exported = false)
     private Set<User> users = new HashSet<>();
 
     @Column(name = "assessment_number")

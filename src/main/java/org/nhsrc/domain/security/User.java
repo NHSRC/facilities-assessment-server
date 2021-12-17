@@ -5,6 +5,7 @@ import org.nhsrc.domain.*;
 import org.nhsrc.domain.assessment.AssessmentNumberAssignment;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -35,6 +36,7 @@ public class User extends AbstractEntity {
 
     @ManyToMany
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @RestResource(exported = false)
     private Set<Role> roles = new HashSet<>();
 
     @Column(name = "password_changed")
