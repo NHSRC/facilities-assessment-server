@@ -141,6 +141,6 @@ public class Standard extends AbstractEntity implements ReferencableEntity {
     }
 
     public Set<MeasurableElement> getApplicableMeasurableElements(Checklist checklist) {
-        return this.getMeasurableElements().parallelStream().filter(measurableElement -> measurableElement.getCheckpoints(checklist).size() != 0).collect(Collectors.toSet());
+        return this.getMeasurableElements().stream().filter(measurableElement -> measurableElement.getCheckpoints(checklist).size() != 0).collect(Collectors.toSet());
     }
 }

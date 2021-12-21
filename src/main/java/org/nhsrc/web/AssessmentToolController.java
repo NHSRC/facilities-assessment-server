@@ -9,6 +9,7 @@ import org.nhsrc.service.ChecklistService;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.utils.HtmlOutputWriter;
 import org.nhsrc.utils.StringUtil;
+import org.nhsrc.visitor.AssessmentToolResponseBuilder;
 import org.nhsrc.visitor.HtmlVisitor;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.nhsrc.web.contract.ext.AssessmentToolResponse;
@@ -31,9 +32,7 @@ import javax.transaction.Transactional;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -128,9 +127,9 @@ public class AssessmentToolController {
     @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.POST})
     @Transactional
     @PreAuthorize("hasRole('Checklist_Metadata_Write')")
-    public ResponseEntity<Object> update(Principal principal,
-                                         @RequestParam("uploadedFile") MultipartFile file,
-                                         @RequestParam("id") int id) throws Exception {
+    public ResponseEntity<Object> updateToolComponent(Principal principal,
+                                                      @RequestParam("uploadedFile") MultipartFile file,
+                                                      @RequestParam("id") int id) throws Exception {
         AssessmentTool assessmentTool = Repository.findById(id, assessmentToolRepository);
         if (assessmentTool == null)
             return new ResponseEntity<>(String.format("No assessment tool with id: %d", id), HttpStatus.BAD_REQUEST);
@@ -233,15 +232,39 @@ public class AssessmentToolController {
             assessmentTools = assessmentToolRepository.getUniversalTools();
         }
         return assessmentTools.stream().map(assessmentTool -> {
-            AssessmentToolResponse atr = new AssessmentToolResponse();
-            atr.setExternalId(assessmentTool.getUuidString());
-            atr.setName(assessmentTool.getName());
-            atr.setProgramName(assessmentTool.getAssessmentToolMode().getName());
-            atr.setAssessmentToolType(assessmentTool.getAssessmentToolType().name());
+            AssessmentToolResponse atr = createAssessmentToolExternalResponse(assessmentTool);
             if (stateSpecified) atr.setState(stateName);
             atr.setUniversal(!stateSpecified);
             atr.setChecklists(null);
             return atr;
         }).collect(Collectors.toList());
+    }
+
+    @NotNull
+    private AssessmentToolResponse createAssessmentToolExternalResponse(AssessmentTool assessmentTool) {
+        AssessmentToolResponse atr = new AssessmentToolResponse();
+        atr.setExternalId(assessmentTool.getUuidString());
+        atr.setName(assessmentTool.getName());
+        atr.setProgramName(assessmentTool.getAssessmentToolMode().getName());
+        atr.setAssessmentToolType(assessmentTool.getAssessmentToolType().name());
+        atr.setInactive(assessmentTool.getInactive());
+        return atr;
+    }
+
+    @RequestMapping(value = "/ext/assessmentTool/{systemId}", method = {RequestMethod.GET})
+    public AssessmentToolResponse getAssessmentTool(@PathVariable("systemId") @javax.validation.constraints.NotNull String systemId) {
+        AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(UUID.fromString(systemId));
+        if (assessmentTool == null)
+            throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_SYSTEM_ID, HttpStatus.BAD_REQUEST);
+
+        AssessmentToolResponse atr = createAssessmentToolExternalResponse(assessmentTool);
+        if (assessmentTool.getState() != null) atr.setState(assessmentTool.getState().getName());
+        atr.setUniversal(atr.getState() == null);
+
+        AssessmentToolResponseBuilder assessmentToolResponseBuilder = new AssessmentToolResponseBuilder(atr);
+        assessmentTool.getChecklists().forEach(checklist -> {
+            checklist.accept(assessmentToolResponseBuilder);
+        });
+        return atr;
     }
 }

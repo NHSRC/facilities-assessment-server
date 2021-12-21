@@ -14,6 +14,15 @@ public class AssessmentToolResponse {
     private List<ChecklistResponse> checklists = new ArrayList<>();
     private String state;
     private boolean universal;
+    private boolean inactive;
+
+    public boolean isInactive() {
+        return inactive;
+    }
+
+    public void setInactive(boolean inactive) {
+        this.inactive = inactive;
+    }
 
     public String getExternalId() {
         return externalId;
@@ -71,18 +80,21 @@ public class AssessmentToolResponse {
         this.checklists = checklists;
     }
 
-    public static class ChecklistResponse {
-        private String externalId;
-        private String name;
-        private String reference;
-        private List<AreaOfConcernResponse> areaOfConcerns = new ArrayList<>();
+    public void addChecklist(ChecklistResponse checklist) {
+        this.checklists.add(checklist);
+    }
 
-        public String getExternalId() {
-            return externalId;
+    public static class BaseToolComponent {
+        private String systemId;
+        private String name;
+        private boolean inactive;
+
+        public String getSystemId() {
+            return systemId;
         }
 
-        public void setExternalId(String externalId) {
-            this.externalId = externalId;
+        public void setSystemId(String systemId) {
+            this.systemId = systemId;
         }
 
         public String getName() {
@@ -93,6 +105,18 @@ public class AssessmentToolResponse {
             this.name = name;
         }
 
+        public boolean isInactive() {
+            return inactive;
+        }
+
+        public void setInactive(boolean inactive) {
+            this.inactive = inactive;
+        }
+    }
+
+    public static class BaseToolReferenceComponent extends BaseToolComponent {
+        private String reference;
+
         public String getReference() {
             return reference;
         }
@@ -100,6 +124,10 @@ public class AssessmentToolResponse {
         public void setReference(String reference) {
             this.reference = reference;
         }
+    }
+
+    public static class ChecklistResponse extends BaseToolComponent {
+        private List<AreaOfConcernResponse> areaOfConcerns = new ArrayList<>();
 
         public List<AreaOfConcernResponse> getAreaOfConcerns() {
             return areaOfConcerns;
@@ -108,37 +136,14 @@ public class AssessmentToolResponse {
         public void setAreaOfConcerns(List<AreaOfConcernResponse> areaOfConcerns) {
             this.areaOfConcerns = areaOfConcerns;
         }
+
+        public void addAreaOfConcern(AreaOfConcernResponse aocResponse) {
+            this.areaOfConcerns.add(aocResponse);
+        }
     }
 
-    public static class AreaOfConcernResponse {
-        private String externalId;
-        private String name;
-        private String reference;
+    public static class AreaOfConcernResponse extends BaseToolReferenceComponent {
         private List<StandardResponse> standards = new ArrayList<>();
-
-        public String getExternalId() {
-            return externalId;
-        }
-
-        public void setExternalId(String externalId) {
-            this.externalId = externalId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getReference() {
-            return reference;
-        }
-
-        public void setReference(String reference) {
-            this.reference = reference;
-        }
 
         public List<StandardResponse> getStandards() {
             return standards;
@@ -147,37 +152,14 @@ public class AssessmentToolResponse {
         public void setStandards(List<StandardResponse> standards) {
             this.standards = standards;
         }
+
+        public void addStandard(StandardResponse stdResponse) {
+            this.standards.add(stdResponse);
+        }
     }
 
-    public static class StandardResponse {
-        private String externalId;
-        private String name;
-        private String reference;
+    public static class StandardResponse extends BaseToolReferenceComponent {
         private List<MeasurableElementResponse> measurableElements = new ArrayList<>();
-
-        public String getExternalId() {
-            return externalId;
-        }
-
-        public void setExternalId(String externalId) {
-            this.externalId = externalId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getReference() {
-            return reference;
-        }
-
-        public void setReference(String reference) {
-            this.reference = reference;
-        }
 
         public List<MeasurableElementResponse> getMeasurableElements() {
             return measurableElements;
@@ -186,37 +168,14 @@ public class AssessmentToolResponse {
         public void setMeasurableElements(List<MeasurableElementResponse> measurableElements) {
             this.measurableElements = measurableElements;
         }
+
+        public void addMeasurableElement(MeasurableElementResponse meResponse) {
+            this.measurableElements.add(meResponse);
+        }
     }
 
-    public static class MeasurableElementResponse {
-        private String externalId;
-        private String name;
-        private String reference;
+    public static class MeasurableElementResponse extends BaseToolReferenceComponent {
         private List<CheckpointResponse> checkpoints = new ArrayList<>();
-
-        public String getExternalId() {
-            return externalId;
-        }
-
-        public void setExternalId(String externalId) {
-            this.externalId = externalId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getReference() {
-            return reference;
-        }
-
-        public void setReference(String reference) {
-            this.reference = reference;
-        }
 
         public List<CheckpointResponse> getCheckpoints() {
             return checkpoints;
@@ -225,32 +184,18 @@ public class AssessmentToolResponse {
         public void setCheckpoints(List<CheckpointResponse> checkpoints) {
             this.checkpoints = checkpoints;
         }
+
+        public void addCheckpoint(CheckpointResponse checkpointResponse) {
+            this.checkpoints.add(checkpointResponse);
+        }
     }
 
-    public static class CheckpointResponse {
-        private String uuid;
-        private String name;
+    public static class CheckpointResponse extends BaseToolComponent {
         private String meansOfVerification;
-        private boolean assessmentMethodByObservation;
-        private boolean assessmentMethodByStaffInterview;
-        private boolean assessmentMethodByPatientInterview;
-        private boolean assessmentMethodByRecordReview;
-
-        public String getUuid() {
-            return uuid;
-        }
-
-        public void setUuid(String uuid) {
-            this.uuid = uuid;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
+        private boolean byObservation;
+        private boolean byStaffInterview;
+        private boolean byPatientInterview;
+        private boolean byRecordReview;
 
         public String getMeansOfVerification() {
             return meansOfVerification;
@@ -260,36 +205,36 @@ public class AssessmentToolResponse {
             this.meansOfVerification = meansOfVerification;
         }
 
-        public boolean isAssessmentMethodByObservation() {
-            return assessmentMethodByObservation;
+        public boolean isByObservation() {
+            return byObservation;
         }
 
-        public void setAssessmentMethodByObservation(boolean assessmentMethodByObservation) {
-            this.assessmentMethodByObservation = assessmentMethodByObservation;
+        public void setByObservation(boolean byObservation) {
+            this.byObservation = byObservation;
         }
 
-        public boolean isAssessmentMethodByStaffInterview() {
-            return assessmentMethodByStaffInterview;
+        public boolean isByStaffInterview() {
+            return byStaffInterview;
         }
 
-        public void setAssessmentMethodByStaffInterview(boolean assessmentMethodByStaffInterview) {
-            this.assessmentMethodByStaffInterview = assessmentMethodByStaffInterview;
+        public void setByStaffInterview(boolean byStaffInterview) {
+            this.byStaffInterview = byStaffInterview;
         }
 
-        public boolean isAssessmentMethodByPatientInterview() {
-            return assessmentMethodByPatientInterview;
+        public boolean isByPatientInterview() {
+            return byPatientInterview;
         }
 
-        public void setAssessmentMethodByPatientInterview(boolean assessmentMethodByPatientInterview) {
-            this.assessmentMethodByPatientInterview = assessmentMethodByPatientInterview;
+        public void setByPatientInterview(boolean byPatientInterview) {
+            this.byPatientInterview = byPatientInterview;
         }
 
-        public boolean isAssessmentMethodByRecordReview() {
-            return assessmentMethodByRecordReview;
+        public boolean isByRecordReview() {
+            return byRecordReview;
         }
 
-        public void setAssessmentMethodByRecordReview(boolean assessmentMethodByRecordReview) {
-            this.assessmentMethodByRecordReview = assessmentMethodByRecordReview;
+        public void setByRecordReview(boolean byRecordReview) {
+            this.byRecordReview = byRecordReview;
         }
     }
 }

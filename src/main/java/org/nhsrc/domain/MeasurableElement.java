@@ -155,6 +155,6 @@ public class MeasurableElement extends AbstractEntity implements ReferencableEnt
     }
 
     public Set<Checkpoint> getCheckpoints(Checklist checklist) {
-        return checkpoints.parallelStream().filter(checkpoint -> checkpoint.getChecklist() == checklist).collect(Collectors.toSet());
+        return checkpoints.stream().filter(checkpoint -> checkpoint.getChecklist() == checklist).collect(Collectors.toSet());
     }
 }

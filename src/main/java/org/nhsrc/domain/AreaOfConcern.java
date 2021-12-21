@@ -3,8 +3,6 @@ package org.nhsrc.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.nhsrc.visitor.GunakChecklistVisitor;
 import org.springframework.data.rest.core.annotation.RestResource;
 
@@ -148,6 +146,6 @@ public class AreaOfConcern extends AbstractEntity implements ReferencableEntity 
 
     @JsonIgnore
     public Set<Standard> getApplicableStandards(Checklist checklist) {
-        return this.getStandards().parallelStream().filter(standard -> standard.getApplicableMeasurableElements(checklist).size() != 0).collect(Collectors.toSet());
+        return this.getStandards().stream().filter(standard -> standard.getApplicableMeasurableElements(checklist).size() != 0).collect(Collectors.toSet());
     }
 }

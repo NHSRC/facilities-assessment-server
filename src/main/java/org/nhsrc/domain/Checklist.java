@@ -159,7 +159,7 @@ public class Checklist extends AbstractEntity {
 
     @JsonIgnore
     public Set<AreaOfConcern> getApplicableAreasOfConcern() {
-        return this.getAreasOfConcern().parallelStream().filter(areaOfConcern -> areaOfConcern.getApplicableStandards(this).size() != 0).collect(Collectors.toSet());
+        return this.getAreasOfConcern().stream().filter(areaOfConcern -> areaOfConcern.getApplicableStandards(this).size() != 0).collect(Collectors.toSet());
     }
 
     @JsonIgnore

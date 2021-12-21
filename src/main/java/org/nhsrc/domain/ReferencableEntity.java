@@ -12,4 +12,7 @@ public interface ReferencableEntity extends Persistable<Integer> {
     void setReference(String reference);
 
     void setId(Integer id);
+
+    String getName();
+    void setName(String name);
 }
