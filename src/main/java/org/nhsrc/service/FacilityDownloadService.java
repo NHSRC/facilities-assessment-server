@@ -135,7 +135,7 @@ public class FacilityDownloadService {
         ResponseResultDTO result = response.getResult();
         ninSyncDetails.setDateProcessedUpto(page.getDate());
         ninSyncDetails.setOffsetSuccessfullyProcessed(result.getNextOffset());
-        ninSyncDetails.setHasMoreForDate(result.getTotalNumberOfRecords() > 100);
+        ninSyncDetails.setHasMoreForDate((result.getTotalNumberOfRecords() - result.getNextOffset()) > 0);
         ninSyncDetailsRepository.save(ninSyncDetails);
         logger.info("Update sync details");
     }

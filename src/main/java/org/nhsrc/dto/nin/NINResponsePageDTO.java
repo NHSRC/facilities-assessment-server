@@ -28,6 +28,7 @@ public class NINResponsePageDTO {
         ResponseResultDTO responseResultDTO = new ResponseResultDTO();
         responseResultDTO.setCount(0);
         responseResultDTO.setOffset(0);
+        responseResultDTO.setTotalRecords("0");
         ninResponsePageDTO.setResult(responseResultDTO);
         ninResponsePageDTO.setData(new ArrayList<>());
         return ninResponsePageDTO;
