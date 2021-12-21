@@ -3,6 +3,7 @@ package org.nhsrc.config.quartz;
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.service.FacilityDownloadService;
+import org.nhsrc.service.HealthCheckService;
 import org.nhsrc.service.ScoringService;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -32,14 +33,14 @@ public class BackgroundJob implements Job {
     private ScoringService scoringService;
     @Autowired
     private FacilityDownloadService facilityDownloadService;
+    @Autowired
+    private HealthCheckService healthCheckService;
 
     @Value("${cron.main}")
     private String cronExpression;
 
     @Value("${facility.download.job.enabled}")
     private boolean facilityDownloadJobEnabled;
-    @Value("${facility.metadata.download.job.enabled}")
-    private boolean facilityMetadataDownloadJobEnabled;
 
     private static final Logger logger = LoggerFactory.getLogger(BackgroundJob.class);
     private static final List<GrantedAuthority> backgroundJobAuthorities;
@@ -55,6 +56,7 @@ public class BackgroundJob implements Job {
         Authentication auth = new UsernamePasswordAuthenticationToken(User.BACKGROUND_SERVICE_USER_EMAIL, "", backgroundJobAuthorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
         scoringService.scoreAssessments();
+        healthCheckService.verifyScoringJob();
         logger.info("Completed scoring assessments.");
 
         if (facilityDownloadJobEnabled) {
@@ -64,14 +66,7 @@ public class BackgroundJob implements Job {
         } else {
             logger.info("Facility download job disabled.");
         }
-
-        if (facilityMetadataDownloadJobEnabled) {
-            logger.info("Starting facility metadata download job.");
-            facilityDownloadService.checkMetadata();
-            logger.info("Completed facility metadata download job.");
-        } else {
-            logger.info("Facility metadata download job disabled.");
-        }
+        healthCheckService.verifyMainJob();
     }
 
     @Bean(name = "jobWithCronTriggerBean")

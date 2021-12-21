@@ -32,7 +32,7 @@ endef
 
 define _run_server_background
 	echo "Using API Key - $(NIN_API_KEY)"
-	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0/3 * * * * ?" --nin.apiKey=$(NIN_API_KEY)
+	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --facility.download.job.enabled=true --database.host=localhost --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0/3 * * * * ?" --nin.apiKey=$(NIN_API_KEY)
 endef
 
 define _debug_server_background

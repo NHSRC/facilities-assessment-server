@@ -57,12 +57,8 @@ public interface FacilityRepository extends NonTxDataRepository<Facility> {
 
     Page<Facility> findByDistrictStateIdAndFacilityTypeIdAndInactive(Integer stateId, Integer facilityTypeId, Boolean inactive, Pageable pageable);
 
-    List<Facility> findByNameContainingIgnoreCaseAndDistrictState(@Param("name") String name, @Param("state") State state);
-    List<Facility> findByNameAndDistrictState(@Param("name") String name, @Param("state") State state);
-    List<Facility> findByNameContainingIgnoreCaseAndDistrict(@Param("name") String name, @Param("district") District district);
-    List<Facility> findByNameAndDistrict(@Param("name") String name, @Param("district") District district);
     Facility findByNameAndDistrictAndFacilityType(String name, District district, FacilityType facilityType);
-    List<Facility> findByNameContainingIgnoreCaseAndDistrictAndFacilityTypeName(@Param("name") String name, @Param("district") District district, @Param("facilityTypeName") String facilityTypeName);
 
     Facility findByRegistryUniqueId(String id);
+    Facility findByRegistryUniqueIdAndInactiveFalse(String id);
 }

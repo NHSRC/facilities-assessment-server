@@ -1,7 +1,6 @@
 package org.nhsrc.dto.nin;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class NINResponsePageDTO {
@@ -22,5 +21,15 @@ public class NINResponsePageDTO {
 
     public void setResult(ResponseResultDTO result) {
         this.result = result;
+    }
+
+    public static NINResponsePageDTO noContent() {
+        NINResponsePageDTO ninResponsePageDTO = new NINResponsePageDTO();
+        ResponseResultDTO responseResultDTO = new ResponseResultDTO();
+        responseResultDTO.setCount(0);
+        responseResultDTO.setOffset(0);
+        ninResponsePageDTO.setResult(responseResultDTO);
+        ninResponsePageDTO.setData(new ArrayList<>());
+        return ninResponsePageDTO;
     }
 }

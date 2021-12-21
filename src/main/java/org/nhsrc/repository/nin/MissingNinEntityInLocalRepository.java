@@ -10,5 +10,4 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public interface MissingNinEntityInLocalRepository extends PagingAndSortingRepository<MissingNinEntityInLocal, Integer> {
-    MissingNinEntityInLocal findByNameAndType(String name, EntityType type);
 }

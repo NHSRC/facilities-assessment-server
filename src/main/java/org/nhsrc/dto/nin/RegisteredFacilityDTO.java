@@ -57,4 +57,8 @@ public class RegisteredFacilityDTO {
     public void setDistrict(String district) {
         this.district = district;
     }
+
+    public String getStateName() {
+        return this.getState().replace("&", "and");
+    }
 }
