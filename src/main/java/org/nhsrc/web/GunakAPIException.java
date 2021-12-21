@@ -9,6 +9,7 @@ public class GunakAPIException extends RuntimeException {
     public static final String INVALID_ASSESSMENT_TOOL_NAME = "The name of assessment tool didn't match any assessment tool name in the system within the program";
     public static final String INVALID_ASSESSMENT_SYSTEM_ID = "The id of the assessment provided didn't match any assessment in the system";
     public static final String INVALID_ASSESSMENT_TYPE = "The name of assessment type didn't match any assessment type names in the system";
+    public static final String INVALID_STATE = "The name of teh state didn't match any of the state names in the system";
 
     public GunakAPIException(String errorMessage, HttpStatus httpStatusCode) {
         super(errorMessage);

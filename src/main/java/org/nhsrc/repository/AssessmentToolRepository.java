@@ -45,4 +45,11 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
     AssessmentTool findByNameAndAssessmentToolModeNameAndStateOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(String name, String assessmentToolModeName, State state);
 
     List<AssessmentTool> findByAssessmentToolType(AssessmentToolType assessmentToolType);
+
+    List<AssessmentTool> findByStateName(String stateName);
+    List<AssessmentTool> findByStateNull();
+
+    default List<AssessmentTool> getUniversalTools() {
+        return findByStateNull();
+    }
 }

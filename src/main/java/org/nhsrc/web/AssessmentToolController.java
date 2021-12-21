@@ -11,6 +11,7 @@ import org.nhsrc.utils.HtmlOutputWriter;
 import org.nhsrc.utils.StringUtil;
 import org.nhsrc.visitor.HtmlVisitor;
 import org.nhsrc.web.contract.AssessmentToolRequest;
+import org.nhsrc.web.contract.ext.AssessmentToolResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,5 +218,30 @@ public class AssessmentToolController {
         FileWriter fileWriter = new FileWriter(String.format("log/%s.html", fileName));
         fileWriter.write(html);
         fileWriter.close();
+    }
+
+    @RequestMapping(value = "/ext/assessmentTool", method = {RequestMethod.GET})
+    public List<AssessmentToolResponse> getAssessmentTools(@RequestParam(value = "stateName", required = false) String stateName) {
+        boolean stateSpecified = stateName != null && !stateName.isEmpty();
+        List<AssessmentTool> assessmentTools;
+        if (stateSpecified) {
+            State state = stateRepository.findByName(stateName);
+            if (state == null)
+                throw new GunakAPIException(GunakAPIException.INVALID_STATE, HttpStatus.BAD_REQUEST);
+            assessmentTools = assessmentToolRepository.findByStateName(stateName);
+        } else {
+            assessmentTools = assessmentToolRepository.getUniversalTools();
+        }
+        return assessmentTools.stream().map(assessmentTool -> {
+            AssessmentToolResponse atr = new AssessmentToolResponse();
+            atr.setExternalId(assessmentTool.getUuidString());
+            atr.setName(assessmentTool.getName());
+            atr.setProgramName(assessmentTool.getAssessmentToolMode().getName());
+            atr.setAssessmentToolType(assessmentTool.getAssessmentToolType().name());
+            if (stateSpecified) atr.setState(stateName);
+            atr.setUniversal(!stateSpecified);
+            atr.setChecklists(null);
+            return atr;
+        }).collect(Collectors.toList());
     }
 }
