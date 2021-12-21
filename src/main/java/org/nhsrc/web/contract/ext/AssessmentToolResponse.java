@@ -12,9 +12,18 @@ public class AssessmentToolResponse {
     private String programName;
     private String assessmentToolType;
     private List<ChecklistResponse> checklists = new ArrayList<>();
+    private List<IndicatorResponse> indicators = new ArrayList<>();
     private String state;
     private boolean universal;
     private boolean inactive;
+
+    public List<IndicatorResponse> getIndicators() {
+        return indicators;
+    }
+
+    public void setIndicators(List<IndicatorResponse> indicators) {
+        this.indicators = indicators;
+    }
 
     public boolean isInactive() {
         return inactive;
@@ -114,6 +123,7 @@ public class AssessmentToolResponse {
         }
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class BaseToolReferenceComponent extends BaseToolComponent {
         private String reference;
 
@@ -126,6 +136,7 @@ public class AssessmentToolResponse {
         }
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ChecklistResponse extends BaseToolComponent {
         private List<AreaOfConcernResponse> areaOfConcerns = new ArrayList<>();
 
@@ -142,6 +153,49 @@ public class AssessmentToolResponse {
         }
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class IndicatorResponse extends BaseToolComponent {
+        private String name;
+        private String description;
+        private String dataType;
+        private String codedValues;
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getDataType() {
+            return dataType;
+        }
+
+        public void setDataType(String dataType) {
+            this.dataType = dataType;
+        }
+
+        public String getCodedValues() {
+            return codedValues;
+        }
+
+        public void setCodedValues(String codedValues) {
+            this.codedValues = codedValues;
+        }
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class AreaOfConcernResponse extends BaseToolReferenceComponent {
         private List<StandardResponse> standards = new ArrayList<>();
 
@@ -158,6 +212,7 @@ public class AssessmentToolResponse {
         }
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class StandardResponse extends BaseToolReferenceComponent {
         private List<MeasurableElementResponse> measurableElements = new ArrayList<>();
 
@@ -174,6 +229,7 @@ public class AssessmentToolResponse {
         }
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class MeasurableElementResponse extends BaseToolReferenceComponent {
         private List<CheckpointResponse> checkpoints = new ArrayList<>();
 
@@ -190,6 +246,7 @@ public class AssessmentToolResponse {
         }
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class CheckpointResponse extends BaseToolComponent {
         private String meansOfVerification;
         private boolean byObservation;

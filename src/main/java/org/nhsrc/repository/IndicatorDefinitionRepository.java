@@ -1,5 +1,6 @@
 package org.nhsrc.repository;
 
+import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.IndicatorDefinition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,4 +26,5 @@ public interface IndicatorDefinitionRepository extends NonTxDataRepository<Indic
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
     Page<IndicatorDefinition> findByAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+    List<IndicatorDefinition> findByAssessmentToolOrderBySortOrder(AssessmentTool assessmentTool);
 }

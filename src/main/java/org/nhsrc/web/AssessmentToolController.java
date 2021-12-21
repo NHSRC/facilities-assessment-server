@@ -46,10 +46,11 @@ public class AssessmentToolController {
     private final ChecklistRepository checklistRepository;
     private final ExcelImportService excelImportService;
     private final HtmlOutputWriter htmlOutputWriter;
+    private final IndicatorDefinitionRepository indicatorDefinitionRepository;
     private static final Logger logger = LoggerFactory.getLogger(AssessmentToolController.class);
 
     @Autowired
-    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository, ChecklistService checklistService, ExcelImportService excelImportService, HtmlOutputWriter htmlOutputWriter) {
+    public AssessmentToolController(AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, ChecklistRepository checklistRepository, ExcludedAssessmentToolStateRepository excludedAssessmentToolStateRepository, StateRepository stateRepository, ChecklistService checklistService, ExcelImportService excelImportService, HtmlOutputWriter htmlOutputWriter, IndicatorDefinitionRepository indicatorDefinitionRepository) {
         this.assessmentToolRepository = assessmentToolRepository;
         this.assessmentToolModeRepository = assessmentToolModeRepository;
         this.checklistRepository = checklistRepository;
@@ -58,6 +59,7 @@ public class AssessmentToolController {
         this.checklistService = checklistService;
         this.excelImportService = excelImportService;
         this.htmlOutputWriter = htmlOutputWriter;
+        this.indicatorDefinitionRepository = indicatorDefinitionRepository;
     }
 
     @RequestMapping(value = "/assessmentTools", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -265,6 +267,19 @@ public class AssessmentToolController {
         assessmentTool.getChecklists().forEach(checklist -> {
             checklist.accept(assessmentToolResponseBuilder);
         });
+
+        List<IndicatorDefinition> indicators = indicatorDefinitionRepository.findByAssessmentToolOrderBySortOrder(assessmentTool);
+        List<AssessmentToolResponse.IndicatorResponse> indicatorResponses = indicators.stream().map(indicatorDefinition -> {
+            AssessmentToolResponse.IndicatorResponse indicatorResponse = new AssessmentToolResponse.IndicatorResponse();
+            indicatorResponse.setSystemId(indicatorDefinition.getUuidString());
+            indicatorResponse.setInactive(indicatorDefinition.getInactive());
+            indicatorResponse.setDataType(indicatorDefinition.getDataType().name());
+            indicatorResponse.setDescription(indicatorDefinition.getDescription());
+            indicatorResponse.setCodedValues(indicatorResponse.getCodedValues());
+            indicatorResponse.setName(indicatorDefinition.getName());
+            return indicatorResponse;
+        }).collect(Collectors.toList());
+        atr.setIndicators(indicatorResponses);
         return atr;
     }
 }
