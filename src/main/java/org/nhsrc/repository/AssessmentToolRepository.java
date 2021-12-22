@@ -46,10 +46,15 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
 
     List<AssessmentTool> findByAssessmentToolType(AssessmentToolType assessmentToolType);
 
-    List<AssessmentTool> findByStateName(String stateName);
-    List<AssessmentTool> findByStateNull();
+    List<AssessmentTool> findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(String stateName, Date afterDate);
 
-    default List<AssessmentTool> getUniversalTools() {
-        return findByStateNull();
+    default List<AssessmentTool> getStateTools(String stateName, Date afterDate) {
+        return findByStateNameAndLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(stateName, afterDate);
+    }
+
+    List<AssessmentTool> findByStateNullAndLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(Date afterDate);
+
+    default List<AssessmentTool> getUniversalTools(Date afterDate) {
+        return findByStateNullAndLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(afterDate);
     }
 }

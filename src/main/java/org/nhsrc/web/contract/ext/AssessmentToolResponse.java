@@ -3,19 +3,21 @@ package org.nhsrc.web.contract.ext;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AssessmentToolResponse {
     private String externalId;
     private String name;
-    private String programName;
+    private String program;
     private String assessmentToolType;
     private List<ChecklistResponse> checklists = new ArrayList<>();
     private List<IndicatorResponse> indicators = new ArrayList<>();
     private String state;
     private boolean universal;
     private boolean inactive;
+    private Date lastModifiedDate;
 
     public List<IndicatorResponse> getIndicators() {
         return indicators;
@@ -73,12 +75,12 @@ public class AssessmentToolResponse {
         this.assessmentToolType = assessmentToolType;
     }
 
-    public String getProgramName() {
-        return programName;
+    public String getProgram() {
+        return program;
     }
 
-    public void setProgramName(String programName) {
-        this.programName = programName;
+    public void setProgram(String program) {
+        this.program = program;
     }
 
     public List<ChecklistResponse> getChecklists() {
@@ -91,6 +93,14 @@ public class AssessmentToolResponse {
 
     public void addChecklist(ChecklistResponse checklist) {
         this.checklists.add(checklist);
+    }
+
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
     public static class BaseToolComponent {
