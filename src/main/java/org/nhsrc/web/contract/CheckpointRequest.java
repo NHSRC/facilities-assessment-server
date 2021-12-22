@@ -3,10 +3,8 @@ package org.nhsrc.web.contract;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CheckpointRequest {
+public class CheckpointRequest extends BaseRequest {
     private Integer id;
-    private String uuid;
-    private Boolean inactive;
     private String name;
     private String meansOfVerification;
     private String measurableElementUUID;
@@ -23,22 +21,6 @@ public class CheckpointRequest {
     private Integer stateId;
     private boolean isOptional;
     private List<Integer> excludedStateIds = new ArrayList<>();
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public Boolean getInactive() {
-        return inactive;
-    }
-
-    public void setInactive(Boolean inactive) {
-        this.inactive = inactive;
-    }
 
     public String getName() {
         return name;

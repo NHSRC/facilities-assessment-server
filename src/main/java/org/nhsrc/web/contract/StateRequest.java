@@ -1,27 +1,9 @@
 package org.nhsrc.web.contract;
 
-public class StateRequest {
-    private String uuid;
+public class StateRequest extends BaseRequest {
     private int id;
-    private Boolean inactive;
     private String name;
     private String shortName;
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public Boolean getInactive() {
-        return inactive;
-    }
-
-    public void setInactive(Boolean inactive) {
-        this.inactive = inactive;
-    }
 
     public String getName() {
         return name;

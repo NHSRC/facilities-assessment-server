@@ -21,7 +21,7 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
     private int districtId;
     private UUID facilityTypeUUID;
     private int facilityTypeId;
-    private Boolean inactive;
+    private boolean inactive;
     @Deprecated
     private String assessorName;
     private List<AssessmentCustomInfoDTO> customInfos;
@@ -154,11 +154,11 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
 
     public abstract void setEndDate(Date endDate);
 
-    public Boolean getInactive() {
-        return inactive == null ? false : inactive;
+    public boolean isInactive() {
+        return inactive;
     }
 
-    public void setInactive(Boolean inactive) {
+    public void setInactive(boolean inactive) {
         this.inactive = inactive;
     }
 

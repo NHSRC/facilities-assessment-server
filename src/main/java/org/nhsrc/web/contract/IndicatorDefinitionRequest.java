@@ -1,9 +1,8 @@
 package org.nhsrc.web.contract;
 
-public class IndicatorDefinitionRequest {
+public class IndicatorDefinitionRequest extends BaseRequest {
     private int id;
     private String name;
-    private Boolean inactive;
     private String dataType;
     private int assessmentToolId;
     private String codedValues;
@@ -12,7 +11,6 @@ public class IndicatorDefinitionRequest {
     private Boolean output;
     private int sortOrder;
     private String symbol;
-    private String uuid;
 
     public int getId() {
         return id;
@@ -86,27 +84,11 @@ public class IndicatorDefinitionRequest {
         this.symbol = symbol;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Boolean getInactive() {
-        return inactive;
-    }
-
-    public void setInactive(Boolean inactive) {
-        this.inactive = inactive;
     }
 }

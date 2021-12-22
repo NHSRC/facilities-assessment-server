@@ -60,7 +60,7 @@ public class ChecklistController {
 
         checklist.setName(checklistRequest.getName());
         checklist.setDepartment(Repository.findByUuidOrId(checklistRequest.getDepartmentUUID(), checklistRequest.getDepartmentId(), departmentRepository));
-        checklist.setInactive(checklistRequest.getInactive());
+        checklist.setInactive(checklistRequest.isInactive());
         checklistService.mergeAreaOfConcerns(checklist, new HashSet<>(checklistRequest.getAreaOfConcernIds()));
         checklist = checklistRepository.save(checklist);
 

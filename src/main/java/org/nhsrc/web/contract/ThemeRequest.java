@@ -1,19 +1,9 @@
 package org.nhsrc.web.contract;
 
-public class ThemeRequest {
-    private String uuid;
+public class ThemeRequest extends BaseRequest {
     private int id;
-    private boolean inactive;
     private String shortName;
     private String name;
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
 
     public String getName() {
         return name;
@@ -29,14 +19,6 @@ public class ThemeRequest {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public boolean isInactive() {
-        return inactive;
-    }
-
-    public void setInactive(boolean inactive) {
-        this.inactive = inactive;
     }
 
     public String getShortName() {

@@ -3,31 +3,13 @@ package org.nhsrc.web.contract;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FacilityRequest {
-    private String uuid;
-    private Boolean inactive;
+public class FacilityRequest extends BaseRequest {
     private String name;
     private String facilityTypeUUID;
     private int facilityTypeId;
     private String districtUUID;
     private int districtId;
     private List<Integer> userIdsWithAccess = new ArrayList<>();
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public Boolean getInactive() {
-        return inactive;
-    }
-
-    public void setInactive(Boolean inactive) {
-        this.inactive = inactive;
-    }
 
     public String getName() {
         return name;

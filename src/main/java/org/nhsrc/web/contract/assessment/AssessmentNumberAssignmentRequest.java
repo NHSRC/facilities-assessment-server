@@ -1,15 +1,16 @@
 package org.nhsrc.web.contract.assessment;
 
+import org.nhsrc.web.contract.BaseRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class AssessmentNumberAssignmentRequest {
+public class AssessmentNumberAssignmentRequest extends BaseRequest {
     private int id;
     private String assessmentNumber;
     private List<Integer> userIds = new ArrayList<>();
     private int assessmentTypeId;
     private int facilityId;
-    private Boolean inactive;
 
     public String getAssessmentNumber() {
         return assessmentNumber;
@@ -49,13 +50,5 @@ public class AssessmentNumberAssignmentRequest {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Boolean getInactive() {
-        return inactive;
-    }
-
-    public void setInactive(Boolean inactive) {
-        this.inactive = inactive;
     }
 }

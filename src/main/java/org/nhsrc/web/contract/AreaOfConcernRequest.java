@@ -3,28 +3,10 @@ package org.nhsrc.web.contract;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AreaOfConcernRequest {
-    private String uuid;
+public class AreaOfConcernRequest extends BaseRequest {
     private String name;
     private String reference;
-    private Boolean inactive;
     private List<Integer> checklistIds = new ArrayList<>();
-
-    public Boolean getInactive() {
-        return inactive;
-    }
-
-    public void setInactive(Boolean inactive) {
-        this.inactive = inactive;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
 
     public String getName() {
         return name;

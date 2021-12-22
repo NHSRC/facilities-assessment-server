@@ -2,14 +2,12 @@ package org.nhsrc.web.contract;
 
 import java.util.List;
 
-public class UserRequest {
+public class UserRequest extends BaseRequest {
     private int id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
-    private Boolean inactive;
-    private String uuid;
     private List<Integer> roleIds;
 
     public String getFirstName() {
@@ -42,22 +40,6 @@ public class UserRequest {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Boolean getInactive() {
-        return inactive;
-    }
-
-    public void setInactive(Boolean inactive) {
-        this.inactive = inactive;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     public Integer getId() {

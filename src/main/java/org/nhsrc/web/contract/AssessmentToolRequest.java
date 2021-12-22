@@ -3,10 +3,8 @@ package org.nhsrc.web.contract;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AssessmentToolRequest {
-    private String uuid;
+public class AssessmentToolRequest extends BaseRequest {
     private int id;
-    private Boolean inactive;
     private String name;
     private int assessmentToolModeId;
     private String assessmentType;
@@ -21,22 +19,6 @@ public class AssessmentToolRequest {
 
     public void setStateId(Integer stateId) {
         this.stateId = stateId;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public Boolean getInactive() {
-        return inactive;
-    }
-
-    public void setInactive(Boolean inactive) {
-        this.inactive = inactive;
     }
 
     public String getName() {

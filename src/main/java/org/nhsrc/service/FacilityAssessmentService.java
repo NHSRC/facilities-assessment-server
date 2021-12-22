@@ -129,7 +129,7 @@ public class FacilityAssessmentService {
                 });
             }
             facilityAssessment.setAssessmentType(assessmentType);
-            facilityAssessment.setInactive(facilityAssessmentDTO.getInactive());
+            facilityAssessment.setInactive(facilityAssessmentDTO.isInactive());
 
             facilityAssessment.incorporateDevice(facilityAssessmentDTO.getDeviceId());
             facilityAssessment.addUser(user);
@@ -166,7 +166,7 @@ public class FacilityAssessmentService {
                         checkpointScore.setUuid(checkpointScoreDTO.getUuid());
                     }
                     checkpointScore.setScore(checkpointScoreDTO.getScore());
-                    checkpointScore.setNa(checkpointScoreDTO.getNa());
+                    checkpointScore.setNa(checkpointScoreDTO.isNa());
                     checkpointScore.setRemarks(checkpointScoreDTO.getRemarks());
                     checkpointScores.add(checkpointScoreRepository.save(checkpointScore));
                 }

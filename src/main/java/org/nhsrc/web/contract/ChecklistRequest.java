@@ -3,9 +3,7 @@ package org.nhsrc.web.contract;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChecklistRequest {
-    private String uuid;
-    private Boolean inactive;
+public class ChecklistRequest extends BaseRequest {
     private String name;
     private List<Integer> assessmentToolIds = new ArrayList<>();
     private String assessmentToolUUID;
@@ -13,22 +11,6 @@ public class ChecklistRequest {
     private String departmentUUID;
     private List<Integer> areaOfConcernIds = new ArrayList<>();
     private Integer stateId;
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public Boolean getInactive() {
-        return inactive;
-    }
-
-    public void setInactive(Boolean inactive) {
-        this.inactive = inactive;
-    }
 
     public String getName() {
         return name;

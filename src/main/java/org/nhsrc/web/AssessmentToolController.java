@@ -70,7 +70,7 @@ public class AssessmentToolController {
         AssessmentToolMode assessmentToolMode = Repository.findById(request.getAssessmentToolModeId(), assessmentToolModeRepository);
         assessmentTool.setName(request.getName());
         assessmentTool.setAssessmentToolMode(assessmentToolMode);
-        assessmentTool.setInactive(request.getInactive());
+        assessmentTool.setInactive(request.isInactive());
         assessmentTool.setSortOrder(request.getSortOrder());
         assessmentTool.setThemed(false);
         if (StringUtil.isEmpty(request.getAssessmentType())) {
