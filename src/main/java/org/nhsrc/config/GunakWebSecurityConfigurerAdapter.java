@@ -36,9 +36,6 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
     @Value("${spring.queries.roles-query}")
     private String privilegesQuery;
 
-    @Value("${fa.secure}")
-    private boolean isSecure;
-
     private static final Logger logger = LoggerFactory.getLogger(GunakWebSecurityConfigurerAdapter.class);
 
     @Override
@@ -61,14 +58,11 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
         permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
         registry.antMatchers(new String[]{"/api/currentUser", "/api/loginSuccess"}).hasRole(Privilege.USER.getName());
-        if (isSecure) {
-            String[] protectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user", "facilityAssessmentMissingCheckpoint", "assessmentNumberAssignment"};
-            permittedResourcesForOneDevice(protectedResources, registry);
-            permittedResourcesWithAuthority(protectedResources, registry);
-            registry.antMatchers("/api/**").permitAll();
-        } else {
-            registry.antMatchers("/api/**").permitAll().and().csrf().disable();
-        }
+
+        String[] protectedResources = {"checkpointScore", "facilityAssessment", "facilityAssessmentProgress", "indicator", "users", "user", "facilityAssessmentMissingCheckpoint", "assessmentNumberAssignment"};
+        permittedResourcesForOneDevice(protectedResources, registry);
+        permittedResourcesWithAuthority(protectedResources, registry);
+        registry.antMatchers("/api/**").permitAll();
 
         handleLogin(registry);
 

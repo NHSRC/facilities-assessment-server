@@ -23,20 +23,20 @@ set_host_dir_qa:
 	$(call _set_host_dir,qa)
 
 define _run_server
-	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0 0 0 ? * * 2099" --database.host=localhost
+	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --cron.main="0 0 0 ? * * 2099" --database.host=localhost
 endef
 
 define _run_server_prod_metabase
-	FA_ENV=dev FA_METABASE_URL=https://gunak.nhsrcindia.org:3000 java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0 0 0 ? * * 2099" --database.host=localhost
+	FA_ENV=dev FA_METABASE_URL=https://gunak.nhsrcindia.org:3000 java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --cron.main="0 0 0 ? * * 2099" --database.host=localhost
 endef
 
 define _run_server_background
 	echo "Using API Key - $(NIN_API_KEY)"
-	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --facility.download.job.enabled=true --database.host=localhost --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0/3 * * * * ?" --nin.apiKey=$(NIN_API_KEY)
+	FA_ENV=dev java -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --facility.download.job.enabled=true --database.host=localhost --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --cron.main="0/3 * * * * ?" --nin.apiKey=$(NIN_API_KEY)
 endef
 
 define _debug_server_background
-	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --fa.secure=$3 --cron.main="0/3 * * * * ?" --database.host=localhost
+	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --cron.main="0/3 * * * * ?" --database.host=localhost
 endef
 
 define _deploy_qa
@@ -62,7 +62,7 @@ define _restart_service
 endef
 
 define _debug_server
-	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --fa.secure=$3 --cron.main="0 0 0 ? * * 2099" --database.host=localhost
+	FA_ENV=dev java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar build/libs/facilities-assessment-server-0.0.1-SNAPSHOT.jar --database=facilities_assessment_$1 --server.port=6002 --server.http.port=6001 --recording.mode=$2 --cron.main="0 0 0 ? * * 2099" --database.host=localhost
 endef
 
 define _restore_db
@@ -114,28 +114,28 @@ build_server:
 	./gradlew clean build -x test --offline
 
 run_server_nhsrc: build_server
-	$(call _run_server,nhsrc,false,true)
+	$(call _run_server,nhsrc,false)
 
 run_server_nhsrc_prod_metabase: build_server
-	$(call _run_server_prod_metabase,nhsrc,false,true)
+	$(call _run_server_prod_metabase,nhsrc,false)
 
 run_server_background_nhsrc: build_server
-	$(call _run_server_background,nhsrc,false,true)
+	$(call _run_server_background,nhsrc,false)
 
 debug_server_background_nhsrc: build_server
-	$(call _debug_server_background,nhsrc,false,true)
+	$(call _debug_server_background,nhsrc,false)
 
 debug_server_nhsrc: build_server
-	$(call _debug_server,nhsrc,false,true)
+	$(call _debug_server,nhsrc,false)
 
 run_server_nhsrc_insecure: build_server
-	$(call _run_server,nhsrc,false,false)
+	$(call _run_server,nhsrc,false)
 
 run_server_jss: build_server
-	$(call _run_server,cg,false,false)
+	$(call _run_server,cg,false)
 
 debug_server_jss: build_server
-	$(call _debug_server,cg,false,false)
+	$(call _debug_server,cg,false)
 
 run_server_nhsrc_in_recording: clear_responses build_server
 	$(call _run_server,nhsrc,true,false)

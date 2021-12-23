@@ -81,7 +81,8 @@ public class UserController {
         user.setEmail(userProfileRequest.getEmail());
         user.setFirstName(userProfileRequest.getFirstName());
         user.setLastName(userProfileRequest.getLastName());
-        return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
+        User savedUser = userRepository.save(user);
+        return new ResponseEntity<>(savedUser, HttpStatus.OK);
     }
 
     private boolean changingPassword(@RequestBody UserProfileRequest userProfileRequest) {

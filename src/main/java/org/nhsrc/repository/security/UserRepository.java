@@ -16,7 +16,6 @@ import java.util.List;
 @Repository
 @Transactional
 @RepositoryRestResource(collectionResourceRel = "user", path = "user")
-@PreAuthorize("hasRole('Users_Write')")
 public interface UserRepository extends NonTxDataRepository<User> {
     @PreAuthorize("permitAll()")
     User findByEmail(String email);
