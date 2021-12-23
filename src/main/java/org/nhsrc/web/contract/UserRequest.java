@@ -57,4 +57,8 @@ public class UserRequest extends BaseRequest {
     public void setRoleIds(List<Integer> roleIds) {
         this.roleIds = roleIds;
     }
+
+    public boolean hasPassword() {
+        return this.password != null && !this.password.isEmpty();
+    }
 }

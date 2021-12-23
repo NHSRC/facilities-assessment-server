@@ -51,10 +51,10 @@ public class UserController {
         if (user.getPassword() == null) {
             user.setPasswordChanged(false);
         }
-        if (user.getPassword() != null && !userRequest.getPassword().isEmpty()) {
+        if (user.getPassword() != null && userRequest.hasPassword()) {
             user.setPasswordChanged(true);
         }
-        if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
+        if (userRequest.getPassword() != null && userRequest.hasPassword()) {
             user.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
         }
         user.setEmail(userRequest.getEmail());
