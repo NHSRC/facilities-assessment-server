@@ -208,6 +208,7 @@ public class AssessmentToolResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class AreaOfConcernResponse extends BaseToolReferenceComponent {
         private List<StandardResponse> standards = new ArrayList<>();
+        private List<String> checklists;
 
         public List<StandardResponse> getStandards() {
             return standards;
@@ -220,11 +221,20 @@ public class AssessmentToolResponse {
         public void addStandard(StandardResponse stdResponse) {
             this.standards.add(stdResponse);
         }
+
+        public void setChecklists(List<String> checklists) {
+            this.checklists = checklists;
+        }
+
+        public List<String> getChecklists() {
+            return checklists;
+        }
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class StandardResponse extends BaseToolReferenceComponent {
         private List<MeasurableElementResponse> measurableElements = new ArrayList<>();
+        private String areaOfConcern;
 
         public List<MeasurableElementResponse> getMeasurableElements() {
             return measurableElements;
@@ -237,11 +247,20 @@ public class AssessmentToolResponse {
         public void addMeasurableElement(MeasurableElementResponse meResponse) {
             this.measurableElements.add(meResponse);
         }
+
+        public void setAreaOfConcern(String areaOfConcern) {
+            this.areaOfConcern = areaOfConcern;
+        }
+
+        public String getAreaOfConcern() {
+            return areaOfConcern;
+        }
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class MeasurableElementResponse extends BaseToolReferenceComponent {
         private List<CheckpointResponse> checkpoints = new ArrayList<>();
+        private String standard;
 
         public List<CheckpointResponse> getCheckpoints() {
             return checkpoints;
@@ -254,6 +273,14 @@ public class AssessmentToolResponse {
         public void addCheckpoint(CheckpointResponse checkpointResponse) {
             this.checkpoints.add(checkpointResponse);
         }
+
+        public void setStandard(String standard) {
+            this.standard = standard;
+        }
+
+        public String getStandard() {
+            return standard;
+        }
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -263,6 +290,15 @@ public class AssessmentToolResponse {
         private boolean byStaffInterview;
         private boolean byPatientInterview;
         private boolean byRecordReview;
+        private String measurableElement;
+
+        public String getMeasurableElement() {
+            return measurableElement;
+        }
+
+        public void setMeasurableElement(String measurableElementUuid) {
+            this.measurableElement = measurableElementUuid;
+        }
 
         public String getMeansOfVerification() {
             return meansOfVerification;

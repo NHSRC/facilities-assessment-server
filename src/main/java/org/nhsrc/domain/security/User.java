@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -136,5 +137,15 @@ public class User extends AbstractEntity {
 
     public List<Integer> getAccessibleFacilityIds() {
         return facilityLevelAccessList.stream().map(x -> x.getFacility().getId()).collect(Collectors.toList());
+    }
+
+    @JsonIgnore
+    public List<AssessmentToolMode> getPrivilegedAssessmentToolModes() {
+        return getPrivileges().stream().map(Privilege::getAssessmentToolMode).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    @JsonIgnore
+    public List<State> getPrivilegedStates() {
+        return getPrivileges().stream().map(Privilege::getState).filter(Objects::nonNull).collect(Collectors.toList());
     }
 }

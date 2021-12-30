@@ -128,17 +128,11 @@ debug_server_background_nhsrc: build_server
 debug_server_nhsrc: build_server
 	$(call _debug_server,nhsrc,false)
 
-run_server_nhsrc_insecure: build_server
-	$(call _run_server,nhsrc,false)
-
 run_server_jss: build_server
 	$(call _run_server,cg,false)
 
 debug_server_jss: build_server
 	$(call _debug_server,cg,false)
-
-run_server_nhsrc_in_recording: clear_responses build_server
-	$(call _run_server,nhsrc,true,false)
 
 test_server_only:
 	-./gradlew clean build --offline

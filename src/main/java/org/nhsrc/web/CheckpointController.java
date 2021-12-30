@@ -5,6 +5,7 @@ import org.nhsrc.domain.State;
 import org.nhsrc.repository.*;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.CheckpointRequest;
+import org.nhsrc.web.contract.ext.AssessmentToolResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,18 +26,16 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/")
 public class CheckpointController {
-    private CheckpointRepository checkpointRepository;
+    private final CheckpointRepository checkpointRepository;
     private final MeasurableElementRepository measurableElementRepository;
-    private ChecklistRepository checklistRepository;
-    private StateRepository stateRepository;
-    private ChecklistService checklistService;
+    private final ChecklistRepository checklistRepository;
+    private final ChecklistService checklistService;
 
     @Autowired
     public CheckpointController(CheckpointRepository checkpointRepository, MeasurableElementRepository measurableElementRepository, ChecklistRepository checklistRepository, StateRepository stateRepository, ChecklistService checklistService) {
         this.checkpointRepository = checkpointRepository;
         this.measurableElementRepository = measurableElementRepository;
         this.checklistRepository = checklistRepository;
-        this.stateRepository = stateRepository;
         this.checklistService = checklistService;
     }
 
@@ -103,7 +102,7 @@ public class CheckpointController {
         Checkpoint checkpoint = checkpointRepository.findOne(checkpointId);
         return checkpointRepository.findByChecklistIdAndMeasurableElementId(checkpoint.getChecklist().getId(), checkpoint.getMeasurableElement().getId(), pageable);
     }
-    
+
     @RequestMapping(value = "/checkpoints/{id}", method = {RequestMethod.DELETE})
     @Transactional
     @PreAuthorize("hasRole('Checklist_Metadata_Write')")
@@ -115,5 +114,11 @@ public class CheckpointController {
     public Page<Checkpoint> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
         List<Integer> checklists = checklistService.getChecklistsForState(name);
         return checkpointRepository.findAllByChecklistIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(checklists, lastModifiedDateTime, pageable);
+    }
+
+    @RequestMapping(value = "/ext/checkpoint", method = {RequestMethod.GET})
+    public Page<AssessmentToolResponse.CheckpointResponse> getCheckpoints(@RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+//        checkpointRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(lastModifiedDateTime, pageable)
+        return null;
     }
 }

@@ -6,6 +6,7 @@ import java.security.Principal;
 
 public interface UserService {
     User findUserByEmail(String email);
+    User findUserByPrincipal(Principal principal);
     User findSubmissionUser(Principal principal);
     User saveUser(User user);
 }

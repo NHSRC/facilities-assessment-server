@@ -23,6 +23,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findUserByPrincipal(Principal principal) {
+        String email = principal.getName();
+        if (email == null || email.isEmpty()) return null;
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public User findSubmissionUser(Principal principal) {
         if (principal == null) {
             return userRepository.findByEmail(User.ANONYMOUS_USERS_EMAIL);

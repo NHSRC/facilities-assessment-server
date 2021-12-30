@@ -19,4 +19,7 @@ public interface AssessmentToolModeRepository extends NonTxDataRepository<Assess
     List<AssessmentToolMode> findByIdIn(@Param("ids") Integer[] ids);
 
     List<AssessmentToolMode> findAllByInactiveFalse();
+
+    @RestResource(path = "findByInactive", rel = "findByInactive")
+    List<AssessmentToolMode> findAllByInactive(@Param("inactive") boolean inactive);
 }
