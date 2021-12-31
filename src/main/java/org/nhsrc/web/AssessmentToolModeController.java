@@ -43,7 +43,7 @@ public class AssessmentToolModeController {
         return Repository.delete(id, assessmentToolModeRepository);
     }
 
-    @RequestMapping(value = "/assessmentToolMode/search/find", method = {RequestMethod.GET})
+    @RequestMapping(value = "/assessmentToolMode/assessmentPrivilege", method = {RequestMethod.GET})
     public List<AssessmentToolMode> find(Principal principal) {
         User user = userService.findUserByPrincipal(principal);
         if (user == null)

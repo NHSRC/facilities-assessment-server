@@ -44,7 +44,7 @@ public class StateController {
         return Repository.delete(id, stateRepository);
     }
 
-    @RequestMapping(value = "/state/search/find", method = {RequestMethod.GET})
+    @RequestMapping(value = "/state/assessmentPrivilege", method = {RequestMethod.GET})
     @PreAuthorize("hasRole('User')")
     public List<State> find(Principal principal) {
         User user = userService.findUserByPrincipal(principal);
