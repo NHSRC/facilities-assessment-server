@@ -44,10 +44,15 @@ public class UserController {
     @RequestMapping(value = "users", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
     @PreAuthorize("hasRole('Users_Write')")
-    public User save(@RequestBody UserRequest userRequest) {
+    public ResponseEntity save(@RequestBody UserRequest userRequest) {
         User newEntity = new User();
         newEntity.setUuid(UUID.randomUUID());
         final User user = Repository.findByIdOrCreate(userRequest.getId(), userRepository, newEntity);
+
+        if (user.isNew() && userRepository.findByEmail(userRequest.getEmail()) != null) {
+            return new ResponseEntity("User with this email already exists", HttpStatus.CONFLICT);
+        }
+
         if (user.getPassword() == null) {
             user.setPasswordChanged(false);
         }
@@ -62,7 +67,7 @@ public class UserController {
         user.setLastName(userRequest.getLastName());
         user.setInactive(userRequest.getInactive());
         Repository.mergeChildren(userRequest.getRoleIds(), user.getRoleIds(), roleRepository, role -> user.removeRole((Role) role), role -> user.addRole((Role) role));
-        return userService.saveUser(user);
+        return new ResponseEntity(userService.saveUser(user), HttpStatus.OK);
     }
 
     @RequestMapping(value = "currentUser", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -92,7 +97,7 @@ public class UserController {
 
     @RequestMapping(value = "users/first", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    public User createFirstUser(@RequestBody UserRequest userRequest) {
+    public ResponseEntity createFirstUser(@RequestBody UserRequest userRequest) {
         userRequest.setInactive(true);
         return this.save(userRequest);
     }

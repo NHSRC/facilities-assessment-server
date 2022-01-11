@@ -32,6 +32,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -98,28 +100,26 @@ public class FacilityDownloadService {
 
                 FacilityType facilityType = facilityTypeRepository.findByName(registeredFacility.getFacilityType());
                 Facility ninMatch = facilityRepository.findByRegistryUniqueIdAndInactiveFalse(registeredFacility.getNinId());
-                Facility semanticMatch = facilityRepository.findByNameAndDistrictAndFacilityType(registeredFacility.getFacilityName(), district, facilityType);
-                if (ninMatch == null && semanticMatch == null) {
+                List<Facility> semanticMatches = facilityRepository.findByNameAndDistrictAndFacilityTypeAndInactiveFalse(registeredFacility.getFacilityName(), district, facilityType);
+
+                List<Facility> duplicateFacilities = new ArrayList<>(semanticMatches);
+                if (ninMatch != null && !duplicateFacilities.contains(ninMatch))
+                    duplicateFacilities.add(ninMatch);
+
+                if (duplicateFacilities.size() > 0) {
+                    duplicateFacilities.forEach(facility -> facility.setInactive(true));
+                    Facility oneFacility = duplicateFacilities.get(0);
+                    oneFacility.setInactive(false);
+                    oneFacility.setName(registeredFacility.getFacilityName());
+                    oneFacility.setFacilityType(facilityType);
+                    oneFacility.setDistrict(district);
+                    facilityRepository.save(duplicateFacilities);
+                } else {
                     ninMatch = new Facility();
                     ninMatch.setName(registeredFacility.getFacilityName());
                     ninMatch.setFacilityType(facilityType);
                     ninMatch.setDistrict(district);
                     ninMatch.setRegistryUniqueId(registeredFacility.getNinId());
-                    facilityRepository.save(ninMatch);
-                } else if (ninMatch == null && semanticMatch != null) {
-                    semanticMatch.setRegistryUniqueId(registeredFacility.getNinId());
-                    facilityRepository.save(semanticMatch);
-                } else if (ninMatch != null && semanticMatch == null) {
-                    ninMatch.setName(registeredFacility.getFacilityName());
-                    ninMatch.setFacilityType(facilityType);
-                    ninMatch.setDistrict(district);
-                    facilityRepository.save(ninMatch);
-                } else if (ninMatch != null && semanticMatch != null && ninMatch.getRegistryUniqueId().equals(semanticMatch.getRegistryUniqueId())) {
-//                    do nothing
-                } else if (ninMatch != null && semanticMatch != null && !ninMatch.getRegistryUniqueId().equals(semanticMatch.getRegistryUniqueId())) {
-                    ninMatch.setName(registeredFacility.getFacilityName());
-                    ninMatch.setFacilityType(facilityType);
-                    ninMatch.setDistrict(district);
                     facilityRepository.save(ninMatch);
                 }
             } catch (Exception e) {

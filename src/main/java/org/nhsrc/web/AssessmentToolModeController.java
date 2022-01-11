@@ -44,6 +44,7 @@ public class AssessmentToolModeController {
     }
 
     @RequestMapping(value = "/assessmentToolMode/assessmentPrivilege", method = {RequestMethod.GET})
+    @PreAuthorize("hasRole('User')")
     public List<AssessmentToolMode> find(Principal principal) {
         User user = userService.findUserByPrincipal(principal);
         if (user == null)

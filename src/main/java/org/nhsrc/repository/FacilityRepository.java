@@ -57,7 +57,7 @@ public interface FacilityRepository extends NonTxDataRepository<Facility> {
 
     Page<Facility> findByDistrictStateIdAndFacilityTypeIdAndInactive(Integer stateId, Integer facilityTypeId, Boolean inactive, Pageable pageable);
 
-    Facility findByNameAndDistrictAndFacilityType(String name, District district, FacilityType facilityType);
+    List<Facility> findByNameAndDistrictAndFacilityTypeAndInactiveFalse(String name, District district, FacilityType facilityType);
 
     Facility findByRegistryUniqueId(String id);
     Facility findByRegistryUniqueIdAndInactiveFalse(String id);
