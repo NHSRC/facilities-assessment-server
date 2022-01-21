@@ -1,11 +1,17 @@
 package org.nhsrc.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.nhsrc.domain.assessment.FacilityAssessment;
+import org.nhsrc.domain.security.User;
+import org.nhsrc.service.UserService;
 import org.nhsrc.utils.JsonUtil;
+import org.nhsrc.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.jwt.crypto.sign.MacSigner;
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,16 +34,34 @@ public class MetabaseController {
 
     static final String RESOURCE_ID = "resourceId";
 
-    private static Logger logger = LoggerFactory.getLogger(MetabaseController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetabaseController.class);
 
-    @RequestMapping(value = "metabase-dashboard-url", method = {RequestMethod.GET})
-    public String getMetabaseDashboardEmbedUrl(@RequestParam Map<String, String> params) throws JsonProcessingException {
-        return getEmbedUrl(params, "dashboard");
+    private static final String STATE_PARAM = "state";
+    private static final String PROGRAM_PARAM = "assessment_tool_mode";
+    private final UserService userService;
+
+    @Autowired
+    public MetabaseController(UserService userService) {
+        this.userService = userService;
     }
 
-    private String getEmbedUrl(Map<String, String> params, String type) throws JsonProcessingException {
+    @RequestMapping(value = "metabase-dashboard-url", method = {RequestMethod.GET})
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> getMetabaseDashboardEmbedUrl(@RequestParam Map<String, String> params, Principal principal) throws JsonProcessingException {
+        User user = userService.findUserByPrincipal(principal);
+        String stateName = params.get(STATE_PARAM);
+        String programName = params.get(PROGRAM_PARAM);
+        if (StringUtil.isNotEmpty(stateName) && !user.hasStatePrivilege(stateName)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } else if (StringUtil.isNotEmpty(programName) && !user.hasProgramPrivilege(programName)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<>(getEmbedUrl(params), HttpStatus.OK);
+    }
+
+    private String getEmbedUrl(Map<String, String> params) throws JsonProcessingException {
         Payload payload = new Payload();
-        PayloadResource payloadResource = type.equals("question") ? new PayloadQuestion() : new PayloadDashboard();
+        PayloadResource payloadResource = new PayloadDashboard();
         payloadResource.setResourceId(Integer.parseInt(params.get(RESOURCE_ID)));
         payload.setResource(payloadResource);
         HashMap<String, String> metabaseRequestParams = new HashMap<>(params);
@@ -45,19 +70,14 @@ public class MetabaseController {
 
         logger.info(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload));
         Jwt token = JwtHelper.encode(JsonUtil.OBJECT_MAPPER.writeValueAsString(payload), new MacSigner(metabaseSecretKey));
-        String s = metabaseUrl + "/embed/" + type + "/" + token.getEncoded() + "#bordered=false&titled=false";
+        String s = metabaseUrl + "/embed/" + "dashboard" + "/" + token.getEncoded() + "#bordered=false&titled=false";
         logger.info(s);
         return s;
     }
 
-    @RequestMapping(value = "metabase-question-url", method = {RequestMethod.GET})
-    public String getMetabaseQuestionEmbedUrl(@RequestParam Map<String, String> params) throws JsonProcessingException {
-        return getEmbedUrl(params, "question");
-    }
-
     public class Payload {
         private PayloadResource resource;
-        private Map params = new HashMap();
+        private Map<String, String> params = new HashMap<>();
         private int exp = 1606896785;
 
         public PayloadResource getResource() {
@@ -68,11 +88,11 @@ public class MetabaseController {
             this.resource = resource;
         }
 
-        public Map getParams() {
+        public Map<String, String> getParams() {
             return params;
         }
 
-        public void setParams(Map params) {
+        public void setParams(Map<String, String> params) {
             this.params = params;
         }
 

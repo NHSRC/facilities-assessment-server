@@ -1,7 +1,6 @@
 package org.nhsrc.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.joda.time.LocalDateTime;
 import org.nhsrc.domain.*;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.scores.ScoringProcessDetail;
@@ -209,7 +208,7 @@ public class FacilityAssessmentController {
 
     private void checkAccess(Principal principal, String programName) {
         User user = userService.findSubmissionUser(principal);
-        if (!user.hasPrivilege(Privilege.ASSESSMENT_READ, programName)) {
+        if (!user.hasProgramPrivilege(Privilege.ASSESSMENT_READ, programName)) {
             throw new GunakAPIException("Either you have not logged in or you do not have the right permission. If you have logged in please contact support.", HttpStatus.UNAUTHORIZED);
         }
     }

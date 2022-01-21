@@ -72,4 +72,12 @@ public class ChecklistService {
             checklist.setDepartment(department);
         });
     }
+
+    public List<AssessmentTool> findUniversalAssessmentTools() {
+        return assessmentToolRepository.findByStateNull();
+    }
+
+    public List<AssessmentTool> findUniversalAssessmentTools(int assessmentToolModeId) {
+        return assessmentToolRepository.findByStateNullAndAssessmentToolModeId(assessmentToolModeId);
+    }
 }

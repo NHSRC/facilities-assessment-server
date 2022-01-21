@@ -19,4 +19,6 @@ public interface PrivilegeRepository extends PagingAndSortingRepository<Privileg
 
     @RestResource(path = "findByRoleId", rel = "findByRoleId")
     List<Privilege> findByIdIn(@Param("userId") Integer userId);
+
+    Privilege findByName(String name);
 }

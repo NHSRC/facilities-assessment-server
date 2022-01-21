@@ -18,7 +18,7 @@ public class UserTest {
         role.addPrivilege(privilege);
         user.addRole(role);
 
-        assertTrue(user.hasPrivilege(Privilege.ASSESSMENT_READ, assessmentToolMode.getName()));
-        assertFalse(user.hasPrivilege(Privilege.ASSESSMENT_READ, "foo"));
+        assertTrue(user.hasProgramPrivilege(Privilege.ASSESSMENT_READ, assessmentToolMode.getName()));
+        assertFalse(user.hasProgramPrivilege(Privilege.ASSESSMENT_READ, "foo"));
     }
 }

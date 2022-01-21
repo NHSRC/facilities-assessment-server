@@ -1,0 +1,3 @@
+alter table excluded_assessment_tool_state add column overriding_assessment_tool_id int null;
+alter table only excluded_assessment_tool_state
+  add constraint excluded_assessment_tool_state_overriding_assessment_tool foreign key (overriding_assessment_tool_id) references assessment_tool (id);

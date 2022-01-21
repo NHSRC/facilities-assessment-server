@@ -53,6 +53,8 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
     }
 
     List<AssessmentTool> findByStateNullAndLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(Date afterDate);
+    List<AssessmentTool> findByStateNull();
+    List<AssessmentTool> findByStateNullAndAssessmentToolModeId(int assessmentToolModeId);
 
     default List<AssessmentTool> getUniversalTools(Date afterDate) {
         return findByStateNullAndLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(afterDate);

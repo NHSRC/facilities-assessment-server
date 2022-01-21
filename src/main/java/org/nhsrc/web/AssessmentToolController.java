@@ -123,7 +123,11 @@ public class AssessmentToolController {
     @RequestMapping(value = "/assessmentTool/search/find", method = {RequestMethod.GET})
     public List<AssessmentTool> find(@RequestParam(value = "state") Integer stateId,
                                      @RequestParam(value = "assessment_tool_mode", required = false) Integer assessmentToolModeId) {
-        return assessmentToolModeId == null ? findByState(stateId) : findByStateAndAssessmentTool(stateId, assessmentToolModeId);
+        if (stateId == -1) {
+            return assessmentToolModeId == null ? checklistService.findUniversalAssessmentTools() : checklistService.findUniversalAssessmentTools(assessmentToolModeId);
+        } else {
+            return assessmentToolModeId == null ? findByState(stateId) : findByStateAndAssessmentTool(stateId, assessmentToolModeId);
+        }
     }
 
     @RequestMapping(value = "/assessmentTool/asFile", method = {RequestMethod.POST})
@@ -144,13 +148,13 @@ public class AssessmentToolController {
     @Transactional
     @PreAuthorize("hasRole('Checklist_Metadata_Write')")
     public ResponseEntity<Object> importAssessmentToolViaExcelFile(@RequestParam("uploadedFile") MultipartFile file,
-                                          @RequestParam("assessmentTool") String assessmentToolName,
-                                          @RequestParam("assessmentToolMode") String assessmentToolModeName,
-                                          @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
-                                          @RequestParam(value = "state", required = false) String stateName,
-                                          @RequestParam("sortOrder") int sortOrder,
-                                          @RequestParam(value = "themed", required = false) boolean themed,
-                                          HttpServletRequest httpServletRequest
+                                                                   @RequestParam("assessmentTool") String assessmentToolName,
+                                                                   @RequestParam("assessmentToolMode") String assessmentToolModeName,
+                                                                   @RequestParam(value = "overrideAssessmentToolId", required = false) Integer overrideAssessmentToolId,
+                                                                   @RequestParam(value = "state", required = false) String stateName,
+                                                                   @RequestParam("sortOrder") int sortOrder,
+                                                                   @RequestParam(value = "themed", required = false) boolean themed,
+                                                                   HttpServletRequest httpServletRequest
     ) throws Exception {
         return processExcelFile(file, assessmentToolName, assessmentToolModeName, overrideAssessmentToolId, stateName, sortOrder, themed, httpServletRequest.getMethod().equals(RequestMethod.PUT.name()));
     }

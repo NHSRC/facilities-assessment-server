@@ -1,10 +1,12 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.State;
+import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.service.UserService;
+import org.nhsrc.web.contract.StateResponse;
 import org.nhsrc.web.contract.StateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/")
@@ -46,8 +49,10 @@ public class StateController {
 
     @RequestMapping(value = "/state/assessmentPrivilege", method = {RequestMethod.GET})
     @PreAuthorize("hasRole('User')")
-    public List<State> find(Principal principal) {
+    public List<StateResponse> find(Principal principal) {
         User user = userService.findUserByPrincipal(principal);
-        return user.getPrivilegedStates();
+        List<StateResponse> states = user.getPrivilegedStates().stream().map(state -> new StateResponse(state.getId(), state.getName())).collect(Collectors.toList());
+        if (userService.hasAllStatesDashboardPrivilege()) states.add(new StateResponse(-1, Privilege.ALL_STATES_DASHBOARD.getName()));
+        return states;
     }
 }

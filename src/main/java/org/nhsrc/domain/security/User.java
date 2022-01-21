@@ -122,7 +122,7 @@ public class User extends AbstractEntity {
         roles.add(role);
     }
 
-    public boolean hasPrivilege(PrivilegeName privilegeName, String programName) {
+    public boolean hasProgramPrivilege(PrivilegeName privilegeName, String programName) {
         Role role = this.getRoles().stream().filter(x -> x.hasPrivilege(privilegeName.getName(), programName)).findFirst().orElse(null);
         return role != null;
     }
@@ -147,5 +147,13 @@ public class User extends AbstractEntity {
     @JsonIgnore
     public List<State> getPrivilegedStates() {
         return getPrivileges().stream().map(Privilege::getState).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    public boolean hasStatePrivilege(String stateName) {
+        return getPrivileges().stream().map(Privilege::getState).filter(Objects::nonNull).anyMatch(state -> state.getName().equals(stateName));
+    }
+
+    public boolean hasProgramPrivilege(String programName) {
+        return getPrivileges().stream().map(Privilege::getAssessmentToolMode).filter(Objects::nonNull).anyMatch(program -> program.getName().equals(programName));
     }
 }

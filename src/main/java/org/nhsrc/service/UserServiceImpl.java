@@ -1,6 +1,8 @@
 package org.nhsrc.service;
 
+import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
+import org.nhsrc.repository.security.PrivilegeRepository;
 import org.nhsrc.repository.security.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,10 +13,12 @@ import java.security.Principal;
 @Service("userService")
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PrivilegeRepository privilegeRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PrivilegeRepository privilegeRepository) {
         this.userRepository = userRepository;
+        this.privilegeRepository = privilegeRepository;
     }
 
     @Override
@@ -41,5 +45,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public boolean hasAllStatesDashboardPrivilege() {
+        return privilegeRepository.findByName(Privilege.ALL_STATES_DASHBOARD.getName()) != null;
     }
 }
