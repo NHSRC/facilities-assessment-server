@@ -51,7 +51,7 @@ public class MetabaseController {
         User user = userService.findUserByPrincipal(principal);
         String stateName = params.get(STATE_PARAM);
         String programName = params.get(PROGRAM_PARAM);
-        if (StringUtil.isNotEmpty(stateName) && !user.hasStatePrivilege(stateName)) {
+        if (StringUtil.isNotEmpty(stateName) && !userService.hasStatePrivilege(stateName, user)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } else if (StringUtil.isNotEmpty(programName) && !user.hasProgramPrivilege(programName)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

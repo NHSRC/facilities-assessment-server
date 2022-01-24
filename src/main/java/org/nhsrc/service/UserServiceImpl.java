@@ -51,4 +51,9 @@ public class UserServiceImpl implements UserService {
     public boolean hasAllStatesDashboardPrivilege() {
         return privilegeRepository.findByName(Privilege.ALL_STATES_DASHBOARD.getName()) != null;
     }
+
+    @Override
+    public boolean hasStatePrivilege(String stateName, User user) {
+        return Privilege.ALL_STATES_DASHBOARD.getName().equals(stateName) ? hasAllStatesDashboardPrivilege() : user.hasStatePrivilege(stateName);
+    }
 }
