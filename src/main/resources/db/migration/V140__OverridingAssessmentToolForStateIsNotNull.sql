@@ -1,0 +1,1 @@
+alter table excluded_assessment_tool_state alter column overriding_assessment_tool_id set not null;
