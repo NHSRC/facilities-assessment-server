@@ -6,7 +6,7 @@ import org.nhsrc.domain.security.User;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StateRepository;
 import org.nhsrc.service.UserService;
-import org.nhsrc.web.contract.StateResponse;
+import org.nhsrc.web.contract.DashboardFilterResponse;
 import org.nhsrc.web.contract.StateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,10 +49,10 @@ public class StateController {
 
     @RequestMapping(value = "/state/assessmentPrivilege", method = {RequestMethod.GET})
     @PreAuthorize("hasRole('User')")
-    public List<StateResponse> find(Principal principal) {
+    public List<DashboardFilterResponse> find(Principal principal) {
         User user = userService.findUserByPrincipal(principal);
-        List<StateResponse> states = user.getPrivilegedStates().stream().map(state -> new StateResponse(state.getId(), state.getName())).collect(Collectors.toList());
-        if (userService.hasAllStatesDashboardPrivilege()) states.add(new StateResponse(-1, Privilege.ALL_STATES_DASHBOARD.getName()));
+        List<DashboardFilterResponse> states = user.getPrivilegedStates().stream().map(state -> new DashboardFilterResponse(state.getId(), state.getName())).collect(Collectors.toList());
+        if (userService.hasAllStatesDashboardPrivilege()) states.add(0, new DashboardFilterResponse(State.ALL_STATES.getId(), State.ALL_STATES.getName()));
         return states;
     }
 }

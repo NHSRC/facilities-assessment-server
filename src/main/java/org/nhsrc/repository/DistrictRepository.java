@@ -44,4 +44,6 @@ public interface DistrictRepository extends NonTxDataRepository<District> {
     List<District> findByNameContainingIgnoreCaseAndState(@Param("name") String name, @Param("state") State state);
 
     District findByNameAndState(@Param("name") String name, @Param("state") State state);
+
+    List<District> findByStateIdAndInactiveFalse(int stateId);
 }

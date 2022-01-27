@@ -1,13 +1,13 @@
 package org.nhsrc.web.contract;
 
-public class StateResponse {
+public class DashboardFilterResponse {
     private int id;
     private String name;
 
-    public StateResponse() {
+    public DashboardFilterResponse() {
     }
 
-    public StateResponse(int id, String name) {
+    public DashboardFilterResponse(int id, String name) {
         this.id = id;
         this.name = name;
     }

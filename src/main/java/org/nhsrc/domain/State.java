@@ -11,8 +11,15 @@ import java.util.Set;
 @Entity
 @Table(name = "state")
 public class State extends AbstractEntity {
+    public static final State ALL_STATES = new State(-1, "All States");
+
     public State(String name) {
         this.name = name;
+    }
+
+    public State(int id, String name) {
+        this.name = name;
+        this.setId(id);
     }
 
     public State() {

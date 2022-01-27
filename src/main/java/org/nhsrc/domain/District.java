@@ -13,7 +13,14 @@ import java.util.Set;
 @Entity
 @Table(name = "district")
 public class District extends AbstractEntity {
+    public static final District ALL_DISTRICTS = new District(-1, "All Districts");
+
     public District() {
+    }
+
+    public District(int id, String name) {
+        this.name = name;
+        this.setId(id);
     }
 
     public District(String name, State state) {
