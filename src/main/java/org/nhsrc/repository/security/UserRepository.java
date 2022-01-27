@@ -59,4 +59,28 @@ public interface UserRepository extends NonTxDataRepository<User> {
 
     @RestResource(path = "findByInactive", rel = "findByInactive")
     Page<User> findByInactive(@Param("inactive") Boolean inactive, Pageable pageable);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    <S extends User> S save(S entity);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    <S extends User> Iterable<S> save(Iterable<S> entities);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    void delete(Integer integer);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    void delete(User entity);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    void delete(Iterable<? extends User> entities);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    void deleteAll();
 }

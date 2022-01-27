@@ -13,7 +13,6 @@ import java.util.List;
 
 @Repository
 @RepositoryRestResource(collectionResourceRel = "role", path = "role")
-@PreAuthorize("hasRole('Users_Write')")
 public interface RoleRepository extends PagingAndSortingRepository<Role, Integer> {
     Role findByName(String name);
 
@@ -22,4 +21,28 @@ public interface RoleRepository extends PagingAndSortingRepository<Role, Integer
 
     @RestResource(path = "findByUserId", rel = "findByUserId")
     List<Role> findByIdIn(@Param("userId") Integer userId);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    <S extends Role> S save(S s);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    <S extends Role> Iterable<S> save(Iterable<S> iterable);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    void delete(Integer integer);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    void delete(Role role);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    void delete(Iterable<? extends Role> iterable);
+
+    @Override
+    @PreAuthorize("hasRole('Users_Write')")
+    void deleteAll();
 }
