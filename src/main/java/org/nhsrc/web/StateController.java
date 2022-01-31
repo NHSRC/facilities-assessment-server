@@ -52,7 +52,7 @@ public class StateController {
     public List<DashboardFilterResponse> find(Principal principal) {
         User user = userService.findUserByPrincipal(principal);
         List<DashboardFilterResponse> states = user.getPrivilegedStates().stream().map(state -> new DashboardFilterResponse(state.getId(), state.getName())).collect(Collectors.toList());
-        if (userService.hasAllStatesDashboardPrivilege()) states.add(0, new DashboardFilterResponse(State.ALL_STATES.getId(), State.ALL_STATES.getName()));
+        if (userService.hasAllStatesDashboardPrivilege(user)) states.add(0, new DashboardFilterResponse(State.ALL_STATES.getId(), State.ALL_STATES.getName()));
         return states;
     }
 }

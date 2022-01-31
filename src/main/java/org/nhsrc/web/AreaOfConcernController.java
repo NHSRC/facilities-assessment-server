@@ -3,11 +3,14 @@ package org.nhsrc.web;
 import org.nhsrc.domain.AreaOfConcern;
 import org.nhsrc.domain.BaseEntity;
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.MeasurableElement;
+import org.nhsrc.mapper.AssessmentToolComponentMapper;
 import org.nhsrc.repository.AreaOfConcernRepository;
 import org.nhsrc.repository.ChecklistRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.AreaOfConcernRequest;
+import org.nhsrc.web.contract.ext.AssessmentToolResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -105,5 +108,11 @@ public class AreaOfConcernController {
     public Page<AreaOfConcern> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
         List<Integer> checklists = checklistService.getChecklistsForState(name);
         return areaOfConcernRepository.findAllByChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(checklists, lastModifiedDateTime, pageable);
+    }
+
+    @RequestMapping(value = "/ext/areaOfConcern", method = {RequestMethod.GET})
+    public Page<AssessmentToolResponse.AreaOfConcernResponse> getAreaOfConcerns(@RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        Page<AreaOfConcern> areaOfConcerns = areaOfConcernRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(lastModifiedDateTime, pageable);
+        return areaOfConcerns.map(AssessmentToolComponentMapper::mapAreaOfConcern);
     }
 }

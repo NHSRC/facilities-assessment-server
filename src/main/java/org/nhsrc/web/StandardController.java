@@ -1,13 +1,16 @@
 package org.nhsrc.web;
 
+import org.nhsrc.domain.MeasurableElement;
 import org.nhsrc.domain.ReferencableEntity;
 import org.nhsrc.domain.Standard;
+import org.nhsrc.mapper.AssessmentToolComponentMapper;
 import org.nhsrc.repository.AreaOfConcernRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StandardRepository;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.ErrorResponse;
 import org.nhsrc.web.contract.StandardRequest;
+import org.nhsrc.web.contract.ext.AssessmentToolResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -77,5 +80,11 @@ public class StandardController {
     public Page<Standard> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
         List<Integer> checklists = checklistService.getChecklistsForState(name);
         return standardRepository.findAllByAreaOfConcernChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(checklists, lastModifiedDateTime, pageable);
+    }
+
+    @RequestMapping(value = "/ext/standard", method = {RequestMethod.GET})
+    public Page<AssessmentToolResponse.StandardResponse> getStandards(@RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        Page<Standard> standards = standardRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(lastModifiedDateTime, pageable);
+        return standards.map(AssessmentToolComponentMapper::mapStandard);
     }
 }

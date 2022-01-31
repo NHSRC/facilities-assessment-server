@@ -3,6 +3,7 @@ package org.nhsrc.repository;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.MeasurableElement;
+import org.nhsrc.domain.scores.ChecklistScore;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -68,4 +69,6 @@ public interface ChecklistRepository extends NonTxDataRepository<Checklist> {
         List<Checklist> list = all.stream().distinct().collect(Collectors.toList());
         return new PageImpl<>(list, pageable, list.size());
     }
+
+    Page<Checklist> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(Date lastModifiedDate, Pageable pageable);
 }

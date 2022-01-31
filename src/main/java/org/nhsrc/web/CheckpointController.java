@@ -2,6 +2,7 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.Checkpoint;
 import org.nhsrc.domain.State;
+import org.nhsrc.mapper.AssessmentToolComponentMapper;
 import org.nhsrc.repository.*;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.CheckpointRequest;
@@ -117,8 +118,8 @@ public class CheckpointController {
     }
 
     @RequestMapping(value = "/ext/checkpoint", method = {RequestMethod.GET})
-    public Page<AssessmentToolResponse.CheckpointResponse> getCheckpoints(@RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
-//        checkpointRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(lastModifiedDateTime, pageable)
-        return null;
+    public Page<AssessmentToolResponse.CheckpointResponse> getCheckpoints(@RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        Page<Checkpoint> checkpoints = checkpointRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(lastModifiedDateTime, pageable);
+        return checkpoints.map(AssessmentToolComponentMapper::mapCheckpoint);
     }
 }

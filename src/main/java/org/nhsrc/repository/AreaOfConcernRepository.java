@@ -56,4 +56,6 @@ public interface AreaOfConcernRepository extends NonTxDataRepository<AreaOfConce
     }
 
     Page<AreaOfConcern> findAllByChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(List<Integer> checklistIds, Date lastModifiedDate, Pageable pageable);
+
+    Page<AreaOfConcern> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(Date lastModifiedDate, Pageable pageable);
 }

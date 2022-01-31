@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.nhsrc.config.excelMetaDataError.AssessmentExcelMetaDataErrors;
 import org.nhsrc.domain.*;
 import org.nhsrc.repository.ThemeRepository;
+import org.nhsrc.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class SheetImporter {
     private MeasurableElement currME;
     private AreaOfConcern currAOC;
     private final GunakExcelFile gunakExcelFile;
-    private ThemeRepository themeRepository;
+    private final ThemeRepository themeRepository;
     private static final Pattern mePattern = Pattern.compile("([a-zA-Z][0-9]+\\.[0-9]+)(.*)");
     private static final Pattern standardPattern = Pattern.compile("([a-zA-Z][0-9]+)(.*)");
 
@@ -125,11 +126,11 @@ public class SheetImporter {
         String scoreLevels = getText(row, 7);
         String isOptional = getText(row, 8);
         try {
-            checkpoint.setScoreLevels(scoreLevels != null && scoreLevels.length() != 0 ? (int) Double.parseDouble(scoreLevels) : 3);
+            checkpoint.setScoreLevels(StringUtil.isNotEmpty(scoreLevels) && scoreLevels.length() != 0 ? (int) Double.parseDouble(scoreLevels) : 3);
         } catch (NumberFormatException e) {
             checkpoint.setScoreLevels(3);
         }
-        checkpoint.setOptional(isOptional != null && isOptional.equalsIgnoreCase("yes"));
+        checkpoint.setOptional(StringUtil.isNotEmpty(scoreLevels) && isOptional.equalsIgnoreCase("yes"));
         checkpoint.setAssessmentMethodObservation(am.toLowerCase().contains("ob"));
         checkpoint.setAssessmentMethodPatientInterview(am.toLowerCase().contains("pi"));
         checkpoint.setAssessmentMethodRecordReview(am.toLowerCase().contains("rr"));

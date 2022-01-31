@@ -40,4 +40,6 @@ public interface StandardRepository extends NonTxDataRepository<Standard> {
     Page<Standard> findDistinctByAreaOfConcernChecklistsAssessmentToolsId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
 
     Page<Standard> findAllByAreaOfConcernChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(List<Integer> checklistIds, Date lastModifiedDate, Pageable pageable);
+
+    Page<Standard> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(Date lastModifiedDate, Pageable pageable);
 }

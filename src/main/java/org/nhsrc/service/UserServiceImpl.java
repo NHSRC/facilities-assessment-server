@@ -1,5 +1,6 @@
 package org.nhsrc.service;
 
+import org.nhsrc.domain.State;
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.repository.security.PrivilegeRepository;
@@ -48,13 +49,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean hasAllStatesDashboardPrivilege() {
-        return privilegeRepository.findByName(Privilege.ALL_STATES_DASHBOARD.getName()) != null;
+    public boolean hasAllStatesDashboardPrivilege(User user) {
+        return user.getPrivileges().stream().filter(privilege -> privilege.getName().equals(State.ALL_STATES.getName())).findFirst().orElse(null) != null;
     }
 
     @Override
     public boolean hasStatePrivilege(String stateName, User user) {
-        if (hasAllStatesDashboardPrivilege()) return true;
+        if (hasAllStatesDashboardPrivilege(user)) return true;
         return user.hasStatePrivilege(stateName);
     }
 }

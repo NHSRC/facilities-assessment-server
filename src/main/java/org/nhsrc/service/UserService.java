@@ -9,6 +9,6 @@ public interface UserService {
     User findUserByPrincipal(Principal principal);
     User findSubmissionUser(Principal principal);
     User saveUser(User user);
-    boolean hasAllStatesDashboardPrivilege();
+    boolean hasAllStatesDashboardPrivilege(User user);
     boolean hasStatePrivilege(String stateName, User user);
 }

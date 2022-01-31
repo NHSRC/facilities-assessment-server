@@ -9,7 +9,6 @@ import org.nhsrc.service.ChecklistService;
 import org.nhsrc.service.ExcelImportService;
 import org.nhsrc.utils.HtmlOutputWriter;
 import org.nhsrc.utils.StringUtil;
-import org.nhsrc.visitor.AssessmentToolResponseBuilder;
 import org.nhsrc.visitor.HtmlVisitor;
 import org.nhsrc.web.contract.AssessmentToolRequest;
 import org.nhsrc.web.contract.ext.AssessmentToolResponse;
@@ -257,36 +256,6 @@ public class AssessmentToolController {
         atr.setProgram(assessmentTool.getAssessmentToolMode().getName());
         atr.setAssessmentToolType(assessmentTool.getAssessmentToolType().name());
         atr.setInactive(assessmentTool.getInactive());
-        return atr;
-    }
-
-    @RequestMapping(value = "/ext/assessmentTool/{systemId}", method = {RequestMethod.GET})
-    public AssessmentToolResponse getAssessmentTool(@PathVariable("systemId") @javax.validation.constraints.NotNull String systemId) {
-        AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(UUID.fromString(systemId));
-        if (assessmentTool == null)
-            throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_SYSTEM_ID, HttpStatus.BAD_REQUEST);
-
-        AssessmentToolResponse atr = createAssessmentToolExternalResponse(assessmentTool);
-        if (assessmentTool.getState() != null) atr.setState(assessmentTool.getState().getName());
-        atr.setUniversal(atr.getState() == null);
-
-        AssessmentToolResponseBuilder assessmentToolResponseBuilder = new AssessmentToolResponseBuilder(atr);
-        assessmentTool.getChecklists().forEach(checklist -> {
-            checklist.accept(assessmentToolResponseBuilder);
-        });
-
-        List<IndicatorDefinition> indicators = indicatorDefinitionRepository.findByAssessmentToolOrderBySortOrder(assessmentTool);
-        List<AssessmentToolResponse.IndicatorResponse> indicatorResponses = indicators.stream().map(indicatorDefinition -> {
-            AssessmentToolResponse.IndicatorResponse indicatorResponse = new AssessmentToolResponse.IndicatorResponse();
-            indicatorResponse.setSystemId(indicatorDefinition.getUuidString());
-            indicatorResponse.setInactive(indicatorDefinition.getInactive());
-            indicatorResponse.setDataType(indicatorDefinition.getDataType().name());
-            indicatorResponse.setDescription(indicatorDefinition.getDescription());
-            indicatorResponse.setCodedValues(indicatorResponse.getCodedValues());
-            indicatorResponse.setName(indicatorDefinition.getName());
-            return indicatorResponse;
-        }).collect(Collectors.toList());
-        atr.setIndicators(indicatorResponses);
         return atr;
     }
 }

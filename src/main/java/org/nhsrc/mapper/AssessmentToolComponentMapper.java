@@ -3,6 +3,7 @@ package org.nhsrc.mapper;
 import org.nhsrc.domain.*;
 import org.nhsrc.web.contract.ext.AssessmentToolResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,9 @@ public class AssessmentToolComponentMapper {
         checkpointResponse.setByRecordReview(checkpoint.getAssessmentMethodRecordReview());
         checkpointResponse.setMeansOfVerification(checkpoint.getMeansOfVerification());
         checkpointResponse.setMeasurableElement(checkpoint.getMeasurableElementUUID());
+        checkpointResponse.setLastModifiedDate(checkpoint.getLastModifiedDate());
+        checkpointResponse.setCreatedDate(checkpoint.getCreatedDate());
+        checkpointResponse.setSortOrder(checkpoint.getSortOrder());
         return checkpointResponse;
     }
 
@@ -59,7 +63,11 @@ public class AssessmentToolComponentMapper {
         AssessmentToolResponse.ChecklistResponse checklistResponse = new AssessmentToolResponse.ChecklistResponse();
         updateToolComponent(checklist, checklistResponse);
         checklistResponse.setName(checklist.getName());
-//        checklistResponse.set(checklist.getAs)
+        checklistResponse.setAreaOfConcerns(checklist.getAreasOfConcern().stream().map(AbstractEntity::getUuidString).collect(Collectors.toList()));
+        AssessmentTool assessmentTool = checklist.getAssessmentTools().stream().findFirst().orElse(null);
+        if (assessmentTool == null)
+            throw new RuntimeException(String.format("No assessment tool found for checklist: %s. This may be due to checklist is currently being authored. Please contact the administrator, if you think that may not be case.", checklist.getUuid()));
+        checklistResponse.setAssessmentTool(assessmentTool.getUuidString());
         return checklistResponse;
     }
 }

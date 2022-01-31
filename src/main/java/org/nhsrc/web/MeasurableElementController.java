@@ -1,13 +1,16 @@
 package org.nhsrc.web;
 
+import org.nhsrc.domain.Checkpoint;
 import org.nhsrc.domain.MeasurableElement;
 import org.nhsrc.domain.ReferencableEntity;
+import org.nhsrc.mapper.AssessmentToolComponentMapper;
 import org.nhsrc.repository.MeasurableElementRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.repository.StandardRepository;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.ErrorResponse;
 import org.nhsrc.web.contract.MeasurableElementRequest;
+import org.nhsrc.web.contract.ext.AssessmentToolResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +29,7 @@ import java.util.List;
 public class MeasurableElementController {
     private final StandardRepository standardRepository;
     private final MeasurableElementRepository measurableElementRepository;
-    private ChecklistService checklistService;
+    private final ChecklistService checklistService;
 
     @Autowired
     public MeasurableElementController(StandardRepository standardRepository, MeasurableElementRepository measurableElementRepository, ChecklistService checklistService) {
@@ -90,5 +93,11 @@ public class MeasurableElementController {
     public Page<MeasurableElement> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
         List<Integer> checklists = checklistService.getChecklistsForState(name);
         return measurableElementRepository.findAllByStandardAreaOfConcernChecklistsIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(checklists, lastModifiedDateTime, pageable);
+    }
+
+    @RequestMapping(value = "/ext/measurableElement", method = {RequestMethod.GET})
+    public Page<AssessmentToolResponse.MeasurableElementResponse> getMeasurableElements(@RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        Page<MeasurableElement> measurableElements = measurableElementRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(lastModifiedDateTime, pageable);
+        return measurableElements.map(AssessmentToolComponentMapper::mapMeasurableElement);
     }
 }

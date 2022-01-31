@@ -107,6 +107,8 @@ public class AssessmentToolResponse {
         private String systemId;
         private String name;
         private boolean inactive;
+        private java.util.Date lastModifiedDate;
+        private java.util.Date createdDate;
 
         public String getSystemId() {
             return systemId;
@@ -131,6 +133,22 @@ public class AssessmentToolResponse {
         public void setInactive(boolean inactive) {
             this.inactive = inactive;
         }
+
+        public Date getLastModifiedDate() {
+            return lastModifiedDate;
+        }
+
+        public void setLastModifiedDate(Date lastModifiedDate) {
+            this.lastModifiedDate = lastModifiedDate;
+        }
+
+        public Date getCreatedDate() {
+            return createdDate;
+        }
+
+        public void setCreatedDate(Date createdDate) {
+            this.createdDate = createdDate;
+        }
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -148,18 +166,23 @@ public class AssessmentToolResponse {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ChecklistResponse extends BaseToolComponent {
-        private List<AreaOfConcernResponse> areaOfConcerns = new ArrayList<>();
+        private List<String> areaOfConcerns = new ArrayList<>();
+        private String assessmentTool;
 
-        public List<AreaOfConcernResponse> getAreaOfConcerns() {
+        public List<String> getAreaOfConcerns() {
             return areaOfConcerns;
         }
 
-        public void setAreaOfConcerns(List<AreaOfConcernResponse> areaOfConcerns) {
+        public void setAreaOfConcerns(List<String> areaOfConcerns) {
             this.areaOfConcerns = areaOfConcerns;
         }
 
-        public void addAreaOfConcern(AreaOfConcernResponse aocResponse) {
-            this.areaOfConcerns.add(aocResponse);
+        public void setAssessmentTool(String assessmentTool) {
+            this.assessmentTool = assessmentTool;
+        }
+
+        public String getAssessmentTool() {
+            return assessmentTool;
         }
     }
 
@@ -207,20 +230,7 @@ public class AssessmentToolResponse {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class AreaOfConcernResponse extends BaseToolReferenceComponent {
-        private List<StandardResponse> standards = new ArrayList<>();
         private List<String> checklists;
-
-        public List<StandardResponse> getStandards() {
-            return standards;
-        }
-
-        public void setStandards(List<StandardResponse> standards) {
-            this.standards = standards;
-        }
-
-        public void addStandard(StandardResponse stdResponse) {
-            this.standards.add(stdResponse);
-        }
 
         public void setChecklists(List<String> checklists) {
             this.checklists = checklists;
@@ -233,20 +243,7 @@ public class AssessmentToolResponse {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class StandardResponse extends BaseToolReferenceComponent {
-        private List<MeasurableElementResponse> measurableElements = new ArrayList<>();
         private String areaOfConcern;
-
-        public List<MeasurableElementResponse> getMeasurableElements() {
-            return measurableElements;
-        }
-
-        public void setMeasurableElements(List<MeasurableElementResponse> measurableElements) {
-            this.measurableElements = measurableElements;
-        }
-
-        public void addMeasurableElement(MeasurableElementResponse meResponse) {
-            this.measurableElements.add(meResponse);
-        }
 
         public void setAreaOfConcern(String areaOfConcern) {
             this.areaOfConcern = areaOfConcern;
@@ -259,20 +256,7 @@ public class AssessmentToolResponse {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class MeasurableElementResponse extends BaseToolReferenceComponent {
-        private List<CheckpointResponse> checkpoints = new ArrayList<>();
         private String standard;
-
-        public List<CheckpointResponse> getCheckpoints() {
-            return checkpoints;
-        }
-
-        public void setCheckpoints(List<CheckpointResponse> checkpoints) {
-            this.checkpoints = checkpoints;
-        }
-
-        public void addCheckpoint(CheckpointResponse checkpointResponse) {
-            this.checkpoints.add(checkpointResponse);
-        }
 
         public void setStandard(String standard) {
             this.standard = standard;
@@ -291,6 +275,7 @@ public class AssessmentToolResponse {
         private boolean byPatientInterview;
         private boolean byRecordReview;
         private String measurableElement;
+        private Integer sortOrder;
 
         public String getMeasurableElement() {
             return measurableElement;
@@ -338,6 +323,14 @@ public class AssessmentToolResponse {
 
         public void setByRecordReview(boolean byRecordReview) {
             this.byRecordReview = byRecordReview;
+        }
+
+        public void setSortOrder(Integer sortOrder) {
+            this.sortOrder = sortOrder;
+        }
+
+        public Integer getSortOrder() {
+            return sortOrder;
         }
     }
 }

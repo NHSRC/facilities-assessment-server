@@ -2,11 +2,14 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.Checklist;
+import org.nhsrc.domain.MeasurableElement;
 import org.nhsrc.domain.State;
+import org.nhsrc.mapper.AssessmentToolComponentMapper;
 import org.nhsrc.repository.*;
 import org.nhsrc.service.ChecklistService;
 import org.nhsrc.web.contract.ChecklistRequest;
 import org.nhsrc.web.contract.ErrorResponse;
+import org.nhsrc.web.contract.ext.AssessmentToolResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,12 +29,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/")
 public class ChecklistController {
-    private DepartmentRepository departmentRepository;
-    private ChecklistRepository checklistRepository;
-    private AssessmentToolRepository assessmentToolRepository;
-    private StateRepository stateRepository;
-    private CheckpointRepository checkpointRepository;
-    private ChecklistService checklistService;
+    private final DepartmentRepository departmentRepository;
+    private final ChecklistRepository checklistRepository;
+    private final AssessmentToolRepository assessmentToolRepository;
+    private final StateRepository stateRepository;
+    private final CheckpointRepository checkpointRepository;
+    private final ChecklistService checklistService;
 
     @Autowired
     public ChecklistController(DepartmentRepository departmentRepository, ChecklistRepository checklistRepository, AssessmentToolRepository assessmentToolRepository, StateRepository stateRepository, CheckpointRepository checkpointRepository, ChecklistService checklistService) {
@@ -95,5 +98,11 @@ public class ChecklistController {
     public Page<Checklist> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
         List<Integer> checklists = checklistService.getChecklistsForState(name);
         return checklistRepository.findAllByIdInAndLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(checklists, lastModifiedDateTime, pageable);
+    }
+
+    @RequestMapping(value = "/ext/checklist", method = {RequestMethod.GET})
+    public Page<AssessmentToolResponse.ChecklistResponse> getChecklists(@RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        Page<Checklist> checklists = checklistRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(lastModifiedDateTime, pageable);
+        return checklists.map(AssessmentToolComponentMapper::mapChecklist);
     }
 }
