@@ -87,6 +87,7 @@ public class AssessmentToolResponse extends BaseToolComponent {
         private String dataType;
         private String codedValues;
         private String assessmentTool;
+        private int sortOrder;
 
         public String getAssessmentTool() {
             return assessmentTool;
@@ -128,6 +129,14 @@ public class AssessmentToolResponse extends BaseToolComponent {
 
         public void setCodedValues(String codedValues) {
             this.codedValues = codedValues;
+        }
+
+        public void setSortOrder(int sortOrder) {
+            this.sortOrder = sortOrder;
+        }
+
+        public int getSortOrder() {
+            return sortOrder;
         }
     }
 
