@@ -2,6 +2,7 @@ package org.nhsrc.web;
 
 import org.jetbrains.annotations.NotNull;
 import org.nhsrc.domain.*;
+import org.nhsrc.mapper.AssessmentToolComponentMapper;
 import org.nhsrc.referenceDataImport.AssessmentToolExcelFile;
 import org.nhsrc.referenceDataImport.ExcelImportReport;
 import org.nhsrc.repository.*;
@@ -225,37 +226,14 @@ public class AssessmentToolController {
     }
 
     @RequestMapping(value = "/ext/assessmentTool", method = {RequestMethod.GET})
-    public List<AssessmentToolResponse> getAssessmentTools(
-            @RequestParam(value = "fromDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date fromDate,
-            @RequestParam(value = "stateName", required = false) String stateName) {
-        boolean stateSpecified = stateName != null && !stateName.isEmpty();
-        List<AssessmentTool> assessmentTools;
-        if (stateSpecified) {
-            State state = stateRepository.findByName(stateName);
-            if (state == null)
-                throw new GunakAPIException(GunakAPIException.INVALID_STATE, HttpStatus.BAD_REQUEST);
-            assessmentTools = assessmentToolRepository.getStateTools(stateName, fromDate);
-        } else {
-            assessmentTools = assessmentToolRepository.getUniversalTools(fromDate);
-        }
-        return assessmentTools.stream().map(assessmentTool -> {
-            AssessmentToolResponse atr = createAssessmentToolExternalResponse(assessmentTool);
-            if (stateSpecified) atr.setState(stateName);
-            atr.setUniversal(!stateSpecified);
-            atr.setChecklists(null);
-            atr.setLastModifiedDate(assessmentTool.getLastModifiedDate());
-            return atr;
-        }).collect(Collectors.toList());
-    }
-
-    @NotNull
-    private AssessmentToolResponse createAssessmentToolExternalResponse(AssessmentTool assessmentTool) {
-        AssessmentToolResponse atr = new AssessmentToolResponse();
-        atr.setExternalId(assessmentTool.getUuidString());
-        atr.setName(assessmentTool.getName());
-        atr.setProgram(assessmentTool.getAssessmentToolMode().getName());
-        atr.setAssessmentToolType(assessmentTool.getAssessmentToolType().name());
-        atr.setInactive(assessmentTool.getInactive());
-        return atr;
+    public Page<AssessmentToolResponse> getAssessmentTools(@RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        Page<AssessmentTool> assessmentTools = assessmentToolRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(lastModifiedDateTime, pageable);
+        return assessmentTools.map(assessmentTool -> {
+            AssessmentToolResponse assessmentToolResponse = AssessmentToolComponentMapper.mapAssessmentTool(assessmentTool);
+            ExcludedAssessmentToolState eats = excludedAssessmentToolStateRepository.findByOverridingAssessmentTool(assessmentTool);
+            if (eats != null)
+                assessmentToolResponse.setOverridingAssessmentTool(eats.getOverridingAssessmentTool().getUuidString());
+            return assessmentToolResponse;
+        });
     }
 }

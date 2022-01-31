@@ -18,6 +18,10 @@ public class ExcludedAssessmentToolState extends AbstractEntity {
     @JoinColumn(name = "state_id")
     private State state;
 
+    @ManyToOne(targetEntity = AssessmentTool.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "overriding_assessment_tool_id")
+    private AssessmentTool overridingAssessmentTool;
+
     public ExcludedAssessmentToolState() {
     }
 
@@ -49,5 +53,9 @@ public class ExcludedAssessmentToolState extends AbstractEntity {
                 "assessmentTool=" + assessmentTool.getName() +
                 ", state=" + state.getName() +
                 '}';
+    }
+
+    public AssessmentTool getOverridingAssessmentTool() {
+        return overridingAssessmentTool;
     }
 }

@@ -1,9 +1,9 @@
 package org.nhsrc.mapper;
 
 import org.nhsrc.domain.*;
+import org.nhsrc.web.contract.BaseToolComponent;
 import org.nhsrc.web.contract.ext.AssessmentToolResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,8 +18,6 @@ public class AssessmentToolComponentMapper {
         checkpointResponse.setByRecordReview(checkpoint.getAssessmentMethodRecordReview());
         checkpointResponse.setMeansOfVerification(checkpoint.getMeansOfVerification());
         checkpointResponse.setMeasurableElement(checkpoint.getMeasurableElementUUID());
-        checkpointResponse.setLastModifiedDate(checkpoint.getLastModifiedDate());
-        checkpointResponse.setCreatedDate(checkpoint.getCreatedDate());
         checkpointResponse.setSortOrder(checkpoint.getSortOrder());
         return checkpointResponse;
     }
@@ -29,9 +27,11 @@ public class AssessmentToolComponentMapper {
         baseToolReferenceComponent.setReference(referencableEntity.getReference());
     }
 
-    private static void updateToolComponent(AbstractEntity toolComponentEntity, AssessmentToolResponse.BaseToolComponent baseToolComponent) {
+    private static void updateToolComponent(AbstractEntity toolComponentEntity, BaseToolComponent baseToolComponent) {
         baseToolComponent.setInactive(toolComponentEntity.getInactive());
         baseToolComponent.setSystemId(toolComponentEntity.getUuidString());
+        baseToolComponent.setLastModifiedDate(toolComponentEntity.getLastModifiedDate());
+        baseToolComponent.setCreatedDate(toolComponentEntity.getCreatedDate());
     }
 
     public static AssessmentToolResponse.MeasurableElementResponse mapMeasurableElement(MeasurableElement measurableElement) {
@@ -69,5 +69,23 @@ public class AssessmentToolComponentMapper {
             throw new RuntimeException(String.format("No assessment tool found for checklist: %s. This may be due to checklist is currently being authored. Please contact the administrator, if you think that may not be case.", checklist.getUuid()));
         checklistResponse.setAssessmentTool(assessmentTool.getUuidString());
         return checklistResponse;
+    }
+
+    public static AssessmentToolResponse mapAssessmentTool(AssessmentTool assessmentTool) {
+        AssessmentToolResponse atr = new AssessmentToolResponse();
+        updateToolComponent(assessmentTool, atr);
+        atr.setProgram(assessmentTool.getAssessmentToolMode().getUuidString());
+        atr.setAssessmentToolType(assessmentTool.getAssessmentToolType().name());
+        atr.setName(assessmentTool.getName());
+        if (assessmentTool.getState() != null)
+            atr.setState(assessmentTool.getState().getName());
+        return atr;
+    }
+
+    public static AssessmentToolResponse.ProgramResponse mapProgram(AssessmentToolMode assessmentToolMode) {
+        AssessmentToolResponse.ProgramResponse programResponse = new AssessmentToolResponse.ProgramResponse();
+        updateToolComponent(assessmentToolMode, programResponse);
+        programResponse.setName(assessmentToolMode.getName());
+        return programResponse;
     }
 }

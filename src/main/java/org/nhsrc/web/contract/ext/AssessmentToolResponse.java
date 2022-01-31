@@ -1,47 +1,17 @@
 package org.nhsrc.web.contract.ext;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.nhsrc.web.contract.BaseToolComponent;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class AssessmentToolResponse {
-    private String externalId;
-    private String name;
+public class AssessmentToolResponse extends BaseToolComponent {
     private String program;
     private String assessmentToolType;
-    private List<ChecklistResponse> checklists = new ArrayList<>();
-    private List<IndicatorResponse> indicators = new ArrayList<>();
     private String state;
-    private boolean universal;
-    private boolean inactive;
-    private Date lastModifiedDate;
-
-    public List<IndicatorResponse> getIndicators() {
-        return indicators;
-    }
-
-    public void setIndicators(List<IndicatorResponse> indicators) {
-        this.indicators = indicators;
-    }
-
-    public boolean isInactive() {
-        return inactive;
-    }
-
-    public void setInactive(boolean inactive) {
-        this.inactive = inactive;
-    }
-
-    public String getExternalId() {
-        return externalId;
-    }
-
-    public void setExternalId(String externalId) {
-        this.externalId = externalId;
-    }
+    private String overridingAssessmentTool;
 
     public String getState() {
         return state;
@@ -49,22 +19,6 @@ public class AssessmentToolResponse {
 
     public void setState(String state) {
         this.state = state;
-    }
-
-    public boolean isUniversal() {
-        return universal;
-    }
-
-    public void setUniversal(boolean universal) {
-        this.universal = universal;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getAssessmentToolType() {
@@ -83,72 +37,12 @@ public class AssessmentToolResponse {
         this.program = program;
     }
 
-    public List<ChecklistResponse> getChecklists() {
-        return checklists;
+    public void setOverridingAssessmentTool(String overridingAssessmentTool) {
+        this.overridingAssessmentTool = overridingAssessmentTool;
     }
 
-    public void setChecklists(List<ChecklistResponse> checklists) {
-        this.checklists = checklists;
-    }
-
-    public void addChecklist(ChecklistResponse checklist) {
-        this.checklists.add(checklist);
-    }
-
-    public void setLastModifiedDate(Date lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public static class BaseToolComponent {
-        private String systemId;
-        private String name;
-        private boolean inactive;
-        private java.util.Date lastModifiedDate;
-        private java.util.Date createdDate;
-
-        public String getSystemId() {
-            return systemId;
-        }
-
-        public void setSystemId(String systemId) {
-            this.systemId = systemId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public boolean isInactive() {
-            return inactive;
-        }
-
-        public void setInactive(boolean inactive) {
-            this.inactive = inactive;
-        }
-
-        public Date getLastModifiedDate() {
-            return lastModifiedDate;
-        }
-
-        public void setLastModifiedDate(Date lastModifiedDate) {
-            this.lastModifiedDate = lastModifiedDate;
-        }
-
-        public Date getCreatedDate() {
-            return createdDate;
-        }
-
-        public void setCreatedDate(Date createdDate) {
-            this.createdDate = createdDate;
-        }
+    public String getOverridingAssessmentTool() {
+        return overridingAssessmentTool;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -192,6 +86,15 @@ public class AssessmentToolResponse {
         private String description;
         private String dataType;
         private String codedValues;
+        private String assessmentTool;
+
+        public String getAssessmentTool() {
+            return assessmentTool;
+        }
+
+        public void setAssessmentTool(String assessmentTool) {
+            this.assessmentTool = assessmentTool;
+        }
 
         @Override
         public String getName() {
@@ -239,6 +142,10 @@ public class AssessmentToolResponse {
         public List<String> getChecklists() {
             return checklists;
         }
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ProgramResponse extends BaseToolReferenceComponent {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

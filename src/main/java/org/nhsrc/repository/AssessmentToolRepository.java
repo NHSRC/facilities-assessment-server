@@ -2,6 +2,7 @@ package org.nhsrc.repository;
 
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.AssessmentToolType;
+import org.nhsrc.domain.MeasurableElement;
 import org.nhsrc.domain.State;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,4 +60,6 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
     default List<AssessmentTool> getUniversalTools(Date afterDate) {
         return findByStateNullAndLastModifiedDateGreaterThanOrderByLastModifiedDateAsc(afterDate);
     }
+
+    Page<AssessmentTool> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(Date lastModifiedDate, Pageable pageable);
 }

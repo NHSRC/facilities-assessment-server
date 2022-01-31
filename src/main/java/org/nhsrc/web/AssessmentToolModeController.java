@@ -1,17 +1,24 @@
 package org.nhsrc.web;
 
 import org.nhsrc.domain.AssessmentToolMode;
+import org.nhsrc.domain.Checklist;
 import org.nhsrc.domain.security.User;
+import org.nhsrc.mapper.AssessmentToolComponentMapper;
 import org.nhsrc.repository.AssessmentToolModeRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.service.UserService;
 import org.nhsrc.web.contract.AssessmentToolModeRequest;
+import org.nhsrc.web.contract.ext.AssessmentToolResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -51,5 +58,11 @@ public class AssessmentToolModeController {
             return assessmentToolModeRepository.findAllByInactiveFalse();
 
         return user.getPrivilegedAssessmentToolModes();
+    }
+
+    @RequestMapping(value = "/ext/program", method = {RequestMethod.GET})
+    public Page<AssessmentToolResponse.ProgramResponse> getPrograms(@RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        Page<AssessmentToolMode> programs = assessmentToolModeRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(lastModifiedDateTime, pageable);
+        return programs.map(AssessmentToolComponentMapper::mapProgram);
     }
 }
