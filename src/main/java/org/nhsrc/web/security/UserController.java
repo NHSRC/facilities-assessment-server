@@ -113,7 +113,10 @@ public class UserController {
     @Transactional
     @PreAuthorize("hasRole('Users_Write')")
     public User delete(@PathVariable("id") Integer id) {
-        return Repository.delete(id, userRepository);
+        User user = new User();
+        user.setId(id);
+        Repository.delete(id, userRepository);
+        return user;
     }
 
     @PreAuthorize("hasRole('Users_Write')")

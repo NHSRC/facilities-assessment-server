@@ -1,12 +1,17 @@
 package org.nhsrc.web.contract;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class BaseToolComponent {
     private String systemId;
     private String name;
     private boolean inactive;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
     private Date lastModifiedDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
     private Date createdDate;
 
     public String getSystemId() {
