@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,7 +67,7 @@ public class DistrictController {
             filters.add(allDistricts);
         } else {
             List<District> districts = districtRepository.findByStateIdAndInactiveFalse(stateId);
-            filters = districts.stream().map(district -> new DashboardFilterResponse(district.getId(), district.getName())).collect(Collectors.toList());
+            filters = districts.stream().map(district -> new DashboardFilterResponse(district.getId(), district.getName())).sorted(Comparator.comparing(DashboardFilterResponse::getName)).collect(Collectors.toList());
             filters.add(0, allDistricts);
         }
 
