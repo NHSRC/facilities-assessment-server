@@ -26,6 +26,9 @@ public interface IndicatorDefinitionRepository extends NonTxDataRepository<Indic
 
     @RestResource(path = "findByAssessmentTool", rel = "findByAssessmentTool")
     Page<IndicatorDefinition> findByAssessmentToolId(@Param("assessmentToolId") Integer assessmentToolId, Pageable pageable);
+
     List<IndicatorDefinition> findByAssessmentToolOrderBySortOrder(AssessmentTool assessmentTool);
+
+    @RestResource(exported = false)
     List<IndicatorDefinition> findByAssessmentTool(AssessmentTool assessmentTool);
 }
