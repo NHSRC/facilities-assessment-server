@@ -89,6 +89,14 @@ public class AssessmentToolComponentMapper {
         return programResponse;
     }
 
+    public static AssessmentToolResponse.AssessmentTypeResponse mapAssessmentType(AssessmentType assessmentType) {
+        AssessmentToolResponse.AssessmentTypeResponse assessmentTypeResponse = new AssessmentToolResponse.AssessmentTypeResponse();
+        updateToolComponent(assessmentType, assessmentTypeResponse);
+        assessmentTypeResponse.setName(assessmentType.getName());
+        assessmentTypeResponse.setProgram(assessmentType.getAssessmentToolMode().getUuidString());
+        return assessmentTypeResponse;
+    }
+
     public static AssessmentToolResponse.IndicatorResponse mapIndicatorDefinitions(IndicatorDefinition indicatorDefinition) {
         AssessmentToolResponse.IndicatorResponse indicatorResponse = new AssessmentToolResponse.IndicatorResponse();
         updateToolComponent(indicatorDefinition, indicatorResponse);

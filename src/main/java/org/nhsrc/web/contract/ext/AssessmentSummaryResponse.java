@@ -19,6 +19,8 @@ public class AssessmentSummaryResponse {
     private String facilityType;
     private String facilityNIN;
 
+    private boolean inactive;
+
     public String getSystemId() {
         return systemId;
     }
@@ -121,5 +123,13 @@ public class AssessmentSummaryResponse {
 
     public void setAssessmentNumber(String assessmentNumber) {
         this.assessmentNumber = assessmentNumber;
+    }
+
+    public boolean isInactive() {
+        return inactive;
+    }
+
+    public void setInactive(boolean inactive) {
+        this.inactive = inactive;
     }
 }

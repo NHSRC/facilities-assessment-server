@@ -154,7 +154,20 @@ public class AssessmentToolResponse extends BaseToolComponent {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class ProgramResponse extends BaseToolReferenceComponent {
+    public static class ProgramResponse extends BaseToolComponent {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class AssessmentTypeResponse extends BaseToolComponent {
+        private String program;
+
+        public String getProgram() {
+            return program;
+        }
+
+        public void setProgram(String program) {
+            this.program = program;
+        }
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

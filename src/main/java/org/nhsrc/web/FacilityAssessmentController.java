@@ -173,26 +173,22 @@ public class FacilityAssessmentController {
     @PreAuthorize("hasRole('User')")
     // TODO: Find appropriate status code for privilege denied; Test with null values. Fix district/state in the db or put a null check.
     public Page<AssessmentSummaryResponse> listAssessments(Principal principal,
-                                                           @Param("assessmentEndDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date assessmentEndDateTime,
-                                                           @Param("assessmentToolName") @NotNull String assessmentToolName,
-                                                           @Param("programName") @NotNull String programName,
-                                                           @Param("assessmentTypeName") @NotNull String assessmentTypeName,
+                                                           @RequestParam("assessmentEndDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date assessmentEndDateTime,
+                                                           @RequestParam(value = "assessmentTool") @NotNull String assessmentToolUuid,
+                                                           @RequestParam(value = "assessmentType", required = false) String assessmentTypeUuid,
                                                            Pageable pageable) {
-        AssessmentTool assessmentTool = assessmentToolRepository.findByNameAndAssessmentToolModeName(assessmentToolName, programName);
-        AssessmentToolMode program = assessmentToolModeRepository.findByName(programName);
+        AssessmentTool assessmentTool = assessmentToolRepository.findByUuid(UUID.fromString(assessmentToolUuid));
         if (assessmentTool == null) {
-            throw new GunakAPIException(program == null ? GunakAPIException.INVALID_PROGRAM_NAME : GunakAPIException.INVALID_ASSESSMENT_TOOL_NAME, HttpStatus.BAD_REQUEST);
+            throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_TOOL_UUID, HttpStatus.BAD_REQUEST);
         }
 
         AssessmentType assessmentType = null;
-        if (assessmentTypeName != null && !assessmentTypeName.isEmpty()) {
-            assessmentType = assessmentTypeRepository.findByNameAndAssessmentToolMode(assessmentTypeName, program);
+        if (assessmentTypeUuid != null && !assessmentTypeUuid.isEmpty()) {
+            assessmentType = assessmentTypeRepository.findByUuid(UUID.fromString(assessmentTypeUuid));
             if (assessmentType == null) {
                 throw new GunakAPIException(GunakAPIException.INVALID_ASSESSMENT_TYPE, HttpStatus.BAD_REQUEST);
             }
         }
-
-        checkAccess(principal, programName);
 
         ScoringProcessDetail scoringProcessDetail = scoringProcessDetailRepository.get();
         Date safeLastScoredUntilTime = scoringProcessDetail.getSafeLastScoredUntilTime();

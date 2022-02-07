@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface ChecklistScoreRepository extends PagingAndSortingRepository<ChecklistScore, Integer> {
     void deleteAllByFacilityAssessmentId(@Param("facilityAssessmentId") Integer facilityAssessmentId);
 
-    @Query("SELECT SUM((cs.numerator * 100.0) /cs.denominator) from ChecklistScore cs join cs.checklist c join cs.facilityAssessment fa where c.name = ? and cs.facilityAssessment.id = ?")
-    double getChecklistScore(String checklistName, int facilityAssessmentId);
+    @Query("SELECT SUM((cs.numerator * 100.0) /cs.denominator) from ChecklistScore cs join cs.checklist c join cs.facilityAssessment fa where c.id = ? and cs.facilityAssessment.id = ?")
+    double getChecklistScore(int checklistId, int facilityAssessmentId);
 }

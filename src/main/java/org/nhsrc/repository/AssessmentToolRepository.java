@@ -31,7 +31,6 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
     Page<AssessmentTool> findByAssessmentToolModeNameOrderByNameAsc(@Param("assessmentToolModeName") String assessmentToolModeName, Pageable pageable);
 
     AssessmentTool findByName(String name);
-    AssessmentTool findByNameAndAssessmentToolModeName(String name, String assessmentToolModeName);
 
     @RestResource(path = "findAllById", rel = "findAllById")
     List<AssessmentTool> findByIdIn(@Param("ids") Integer[] ids);

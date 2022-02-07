@@ -1,5 +1,6 @@
 package org.nhsrc.web.contract.ext;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.nhsrc.domain.AssessmentTool;
 import org.nhsrc.domain.AssessmentToolType;
@@ -37,31 +38,31 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         return areaOfConcernScores;
     }
 
-    public AreaOfConcernAssessmentScore addAreaOfConcernScore(String reference, int score) {
-        AreaOfConcernAssessmentScore areaOfConcernAssessmentScore = new AreaOfConcernAssessmentScore(reference, score);
+    public AreaOfConcernAssessmentScore addAreaOfConcernScore(String uuid, int score) {
+        AreaOfConcernAssessmentScore areaOfConcernAssessmentScore = new AreaOfConcernAssessmentScore(uuid, score);
         areaOfConcernScores.add(areaOfConcernAssessmentScore);
         return areaOfConcernAssessmentScore;
     }
 
     public static class IndicatorAssessment {
-        private String name;
-        private String dataType;
+        private String systemId;
+        private String indicatorDefinition;
         private String value;
 
-        public String getName() {
-            return name;
+        public String getSystemId() {
+            return systemId;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setSystemId(String systemId) {
+            this.systemId = systemId;
         }
 
-        public String getDataType() {
-            return dataType;
+        public String getIndicatorDefinition() {
+            return indicatorDefinition;
         }
 
-        public void setDataType(String dataType) {
-            this.dataType = dataType;
+        public void setIndicatorDefinition(String indicatorDefinition) {
+            this.indicatorDefinition = indicatorDefinition;
         }
 
         public String getValue() {
@@ -74,17 +75,17 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
     }
 
     public static class CheckpointAssessment {
-        private String checkpoint;
+        private String systemId;
         private int score;
         private boolean markedNotApplicable;
         private String remarks;
 
-        public String getCheckpoint() {
-            return checkpoint;
+        public String getSystemId() {
+            return systemId;
         }
 
-        public void setCheckpoint(String checkpoint) {
-            this.checkpoint = checkpoint;
+        public void setSystemId(String systemId) {
+            this.systemId = systemId;
         }
 
         public int getScore() {
@@ -113,18 +114,25 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
     }
 
     public static class ChecklistAssessment {
-        private String name;
+        private int checklistId;
+        private String systemId;
         private int numberOfAreaOfConcerns;
         private int numberOfCheckpoints;
         private List<AreaOfConcernAssessment> areaOfConcerns = new ArrayList<>();
         private double score;
 
-        public ChecklistAssessment(String name) {
-            this.name = name;
+        public ChecklistAssessment(String systemId, int checklistId) {
+            this.systemId = systemId;
+            this.checklistId = checklistId;
         }
 
-        public String getName() {
-            return name;
+        @JsonIgnore
+        public int getChecklistId() {
+            return checklistId;
+        }
+
+        public String getSystemId() {
+            return systemId;
         }
 
         public List<AreaOfConcernAssessment> getAreaOfConcerns() {
@@ -159,24 +167,24 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
     }
 
     public static class AreaOfConcernAssessmentScore {
-        private String reference;
+        private String systemId;
         private int score;
         private Map<String, Integer> standardScores = new HashMap<>();
 
         public AreaOfConcernAssessmentScore() {
         }
 
-        public AreaOfConcernAssessmentScore(String reference, int score) {
-            this.reference = reference;
+        public AreaOfConcernAssessmentScore(String systemId, int score) {
+            this.systemId = systemId;
             this.score = score;
         }
 
-        public String getReference() {
-            return reference;
+        public String getSystemId() {
+            return systemId;
         }
 
-        public void setReference(String reference) {
-            this.reference = reference;
+        public void setSystemId(String systemId) {
+            this.systemId = systemId;
         }
 
         public double getScore() {
@@ -187,8 +195,8 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
             this.score = score;
         }
 
-        public void addStandardScore(String reference, int score) {
-            this.standardScores.put(reference, score);
+        public void addStandardScore(String uuid, int score) {
+            this.standardScores.put(uuid, score);
         }
 
         public Map<String, Integer> getStandardScores() {
@@ -197,7 +205,7 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
     }
 
     public static class AreaOfConcernAssessment {
-        private String reference;
+        private String systemId;
         private int numberOfStandards;
         private List<StandardAssessment> standards = new ArrayList<>();
         private int score;
@@ -205,12 +213,12 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         public AreaOfConcernAssessment() {
         }
 
-        public AreaOfConcernAssessment(String reference) {
-            this.reference = reference;
+        public AreaOfConcernAssessment(String systemId) {
+            this.systemId = systemId;
         }
 
-        public String getReference() {
-            return reference;
+        public String getSystemId() {
+            return systemId;
         }
 
         public List<StandardAssessment> getStandards() {
@@ -236,7 +244,7 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
     }
 
     public static class StandardAssessment {
-        private String reference;
+        private String systemId;
         private int score;
         private int numberOfMeasurableElements;
         private final List<MeasurableElementAssessment> measurableElements = new ArrayList<>();
@@ -244,12 +252,12 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         public StandardAssessment() {
         }
 
-        public StandardAssessment(String reference) {
-            this.reference = reference;
+        public StandardAssessment(String systemId) {
+            this.systemId = systemId;
         }
 
-        public String getReference() {
-            return reference;
+        public String getSystemId() {
+            return systemId;
         }
 
         public List<MeasurableElementAssessment> getMeasurableElements() {
@@ -275,24 +283,24 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
     }
 
     public static class MeasurableElementAssessment {
-        private String reference;
-        private final List<CheckpointAssessment> checkpointAssessments = new ArrayList<>();
+        private String systemId;
+        private final List<CheckpointAssessment> checkpoints = new ArrayList<>();
         private int numberOfCheckpoints;
 
-        public MeasurableElementAssessment(String reference) {
-            this.reference = reference;
+        public MeasurableElementAssessment(String systemId) {
+            this.systemId = systemId;
         }
 
-        public String getReference() {
-            return reference;
+        public String getSystemId() {
+            return systemId;
         }
 
-        public List<CheckpointAssessment> getCheckpointAssessments() {
-            return checkpointAssessments;
+        public List<CheckpointAssessment> getCheckpoints() {
+            return checkpoints;
         }
 
         public void addCheckpointAssessment(CheckpointAssessment checkpointAssessment) {
-            checkpointAssessments.add(checkpointAssessment);
+            checkpoints.add(checkpointAssessment);
         }
 
         public int getNumberOfCheckpoints() {
@@ -300,7 +308,7 @@ public class AssessmentResponse extends AssessmentSummaryResponse {
         }
 
         public void updateCounts() {
-            this.numberOfCheckpoints = this.checkpointAssessments.size();
+            this.numberOfCheckpoints = this.checkpoints.size();
         }
     }
 

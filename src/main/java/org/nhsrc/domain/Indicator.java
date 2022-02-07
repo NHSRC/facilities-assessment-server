@@ -112,4 +112,9 @@ public class Indicator extends BaseEntity {
         }
         throw new RuntimeException(String.format("Indicator with data type:%s that is not support", dataType));
     }
+
+    @JsonIgnore
+    public String getUuidString() {
+        return this.getUuid().toString();
+    }
 }

@@ -3,7 +3,6 @@ package org.nhsrc.web.mapper;
 import org.nhsrc.domain.*;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.scores.AreaOfConcernScore;
-import org.nhsrc.domain.scores.ChecklistScore;
 import org.nhsrc.domain.scores.StandardScore;
 import org.nhsrc.repository.CheckpointScoreRepository;
 import org.nhsrc.repository.IndicatorRepository;
@@ -30,11 +29,11 @@ public class AssessmentMapper {
     private final IndicatorRepository indicatorRepository;
 
     @Autowired
-    public AssessmentMapper(CheckpointScoreRepository checkpointScoreRepository, ChecklistScoreRepository checklistScoreRepository, AreaOfConcernScoreRepository areaOfConcernScoreRepository, StandardScoreRepository standardScoreRepository, ChecklistScoreRepository checklistScoreRepository1, IndicatorRepository indicatorRepository) {
+    public AssessmentMapper(CheckpointScoreRepository checkpointScoreRepository, ChecklistScoreRepository checklistScoreRepository, AreaOfConcernScoreRepository areaOfConcernScoreRepository, StandardScoreRepository standardScoreRepository, IndicatorRepository indicatorRepository) {
         this.checkpointScoreRepository = checkpointScoreRepository;
         this.areaOfConcernScoreRepository = areaOfConcernScoreRepository;
         this.standardScoreRepository = standardScoreRepository;
-        this.checklistScoreRepository = checklistScoreRepository1;
+        this.checklistScoreRepository = checklistScoreRepository;
         this.indicatorRepository = indicatorRepository;
     }
 
@@ -42,8 +41,8 @@ public class AssessmentMapper {
         summary.setAssessmentEndDate(source.getEndDate());
         summary.setAssessmentSeries(source.getSeriesName());
         summary.setAssessmentStartDate(source.getStartDate());
-        summary.setAssessmentTool(assessmentTool.getName());
-        summary.setAssessmentType(source.getAssessmentType().getName());
+        summary.setAssessmentTool(assessmentTool.getUuidString());
+        summary.setAssessmentType(source.getAssessmentType().getUuidString());
         District district = source.getDistrict();
         summary.setDistrict(district == null ? "" : district.getName());
         State state = source.getState();
@@ -51,40 +50,41 @@ public class AssessmentMapper {
         summary.setFacility(source.getEffectiveFacilityName());
         FacilityType facilityType = source.getFacilityType();
         summary.setFacilityType(facilityType == null ? "" : facilityType.getName());
-        summary.setProgram(source.getAssessmentTool().getAssessmentToolMode().getName());
+        summary.setProgram(source.getAssessmentTool().getAssessmentToolMode().getUuidString());
         summary.setSystemId(source.getUuidString());
         summary.setFacilityNIN(source.getFacility() == null ? null : source.getFacility().getRegistryUniqueId());
         summary.setAssessmentNumber(source.getAssessmentNumber());
+        summary.setInactive(source.getInactive());
         return summary;
     }
 
     public AssessmentResponse mapAssessmentScores(FacilityAssessment facilityAssessment, AssessmentResponse assessmentResponse) {
         List<CheckpointScore> scores = checkpointScoreRepository.findByFacilityAssessmentId(facilityAssessment.getId());
         scores.forEach(checkpointScore -> {
-            AssessmentResponse.ChecklistAssessment checklistAssessment = CollectionUtil.addIfNotExists(assessmentResponse.getChecklists(), x -> x.getName().equals(checkpointScore.getCheckpoint().getChecklist().getName()), new AssessmentResponse.ChecklistAssessment(checkpointScore.getCheckpoint().getChecklist().getName()));
-            AssessmentResponse.AreaOfConcernAssessment areaOfConcernAssessment = CollectionUtil.addIfNotExists(checklistAssessment.getAreaOfConcerns(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getReference()), new AssessmentResponse.AreaOfConcernAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getReference()));
-            AssessmentResponse.StandardAssessment standardAssessment = CollectionUtil.addIfNotExists(areaOfConcernAssessment.getStandards(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference()), new AssessmentResponse.StandardAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getReference()));
-            AssessmentResponse.MeasurableElementAssessment measurableElementAssessment = CollectionUtil.addIfNotExists(standardAssessment.getMeasurableElements(), x -> x.getReference().equals(checkpointScore.getCheckpoint().getMeasurableElement().getReference()), new AssessmentResponse.MeasurableElementAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getReference()));
+            Checklist checklist = checkpointScore.getCheckpoint().getChecklist();
+            AssessmentResponse.ChecklistAssessment checklistAssessment = CollectionUtil.addIfNotExists(assessmentResponse.getChecklists(), x -> x.getSystemId().equals(checkpointScore.getCheckpoint().getChecklist().getUuidString()), new AssessmentResponse.ChecklistAssessment(checklist.getUuidString(), checkpointScore.getChecklist().getId()));
+            AssessmentResponse.AreaOfConcernAssessment areaOfConcernAssessment = CollectionUtil.addIfNotExists(checklistAssessment.getAreaOfConcerns(), x -> x.getSystemId().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getUuidString()), new AssessmentResponse.AreaOfConcernAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getAreaOfConcern().getUuidString()));
+            AssessmentResponse.StandardAssessment standardAssessment = CollectionUtil.addIfNotExists(areaOfConcernAssessment.getStandards(), x -> x.getSystemId().equals(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getUuidString()), new AssessmentResponse.StandardAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getStandard().getUuidString()));
+            AssessmentResponse.MeasurableElementAssessment measurableElementAssessment = CollectionUtil.addIfNotExists(standardAssessment.getMeasurableElements(), x -> x.getSystemId().equals(checkpointScore.getCheckpoint().getMeasurableElement().getUuidString()), new AssessmentResponse.MeasurableElementAssessment(checkpointScore.getCheckpoint().getMeasurableElement().getUuidString()));
 
             AssessmentResponse.CheckpointAssessment checkpointAssessment = new AssessmentResponse.CheckpointAssessment();
-            checkpointAssessment.setCheckpoint(checkpointScore.getCheckpoint().getName());
+            checkpointAssessment.setSystemId(checkpointScore.getCheckpoint().getUuidString());
             checkpointAssessment.setMarkedNotApplicable(checkpointScore.getNa());
             checkpointAssessment.setRemarks(checkpointScore.getRemarks());
             checkpointAssessment.setScore(checkpointScore.getScore());
             measurableElementAssessment.addCheckpointAssessment(checkpointAssessment);
         });
         assessmentResponse.getChecklists().forEach(checklistAssessment -> {
-            checklistAssessment.setScore(checklistScoreRepository.getChecklistScore(checklistAssessment.getName(), facilityAssessment.getId()));
+            checklistAssessment.setScore(checklistScoreRepository.getChecklistScore(checklistAssessment.getChecklistId(), facilityAssessment.getId()));
         });
 
         List<AreaOfConcernScore> aocScores = areaOfConcernScoreRepository.findAllByFacilityAssessmentOrderByAreaOfConcernReferenceAsc(facilityAssessment);
         aocScores.forEach(areaOfConcernScore -> {
-            String aocReference = areaOfConcernScore.getAreaOfConcern().getReference();
-            AssessmentResponse.AreaOfConcernAssessmentScore areaOfConcernAssessmentScore = assessmentResponse.addAreaOfConcernScore(aocReference, areaOfConcernScore.getScore());
+            AreaOfConcern areaOfConcern = areaOfConcernScore.getAreaOfConcern();
+            String aocReference = areaOfConcern.getReference();
+            AssessmentResponse.AreaOfConcernAssessmentScore areaOfConcernAssessmentScore = assessmentResponse.addAreaOfConcernScore(areaOfConcern.getUuidString(), areaOfConcernScore.getScore());
             List<StandardScore> standardScores = standardScoreRepository.findAllByFacilityAssessmentAndStandardAreaOfConcernReferenceOrderByStandardAreaOfConcernReferenceAsc(facilityAssessment, aocReference);
-            standardScores.forEach(standardScore -> {
-                areaOfConcernAssessmentScore.addStandardScore(standardScore.getStandard().getReference(), standardScore.getScore());
-            });
+            standardScores.forEach(standardScore -> areaOfConcernAssessmentScore.addStandardScore(standardScore.getStandard().getUuidString(), standardScore.getScore()));
         });
 
         assessmentResponse.updateCounts(scores);
@@ -94,10 +94,9 @@ public class AssessmentMapper {
     public AssessmentResponse mapIndicators(FacilityAssessment facilityAssessment, AssessmentResponse assessmentResponse) {
         List<Indicator> indicators = indicatorRepository.findByFacilityAssessmentIdOrderByIndicatorDefinitionSortOrder(facilityAssessment.getId());
         indicators.forEach(indicator -> {
-            IndicatorDefinition indicatorDefinition = indicator.getIndicatorDefinition();
             AssessmentResponse.IndicatorAssessment indicatorAssessment = new AssessmentResponse.IndicatorAssessment();
-            indicatorAssessment.setDataType(indicatorDefinition.getDataType().toString());
-            indicatorAssessment.setName(indicatorDefinition.getName());
+            indicatorAssessment.setSystemId(indicator.getUuidString());
+            indicatorAssessment.setIndicatorDefinition(indicator.getIndicatorDefinition().getUuidString());
             indicatorAssessment.setValue(indicator.getValue());
             assessmentResponse.getIndicators().add(indicatorAssessment);
         });

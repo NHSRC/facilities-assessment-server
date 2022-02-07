@@ -2,22 +2,28 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.AssessmentToolMode;
 import org.nhsrc.domain.AssessmentType;
+import org.nhsrc.mapper.AssessmentToolComponentMapper;
 import org.nhsrc.repository.AssessmentToolModeRepository;
 import org.nhsrc.repository.AssessmentTypeRepository;
 import org.nhsrc.repository.Repository;
 import org.nhsrc.web.contract.AssessmentTypeRequest;
+import org.nhsrc.web.contract.ext.AssessmentToolResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
 public class AssessmentTypeController {
-    private AssessmentTypeRepository assessmentTypeRepository;
-    private AssessmentToolModeRepository assessmentToolModeRepository;
+    private final AssessmentTypeRepository assessmentTypeRepository;
+    private final AssessmentToolModeRepository assessmentToolModeRepository;
 
     @Autowired
     public AssessmentTypeController(AssessmentTypeRepository assessmentTypeRepository, AssessmentToolModeRepository assessmentToolModeRepository) {
@@ -48,5 +54,11 @@ public class AssessmentTypeController {
     @PreAuthorize("hasRole('Checklist_Metadata_Write')")
     public AssessmentType delete(@PathVariable("id") Integer id) {
         return Repository.delete(id, assessmentTypeRepository);
+    }
+
+    @RequestMapping(value = "/ext/assessmentType", method = {RequestMethod.GET})
+    public Page<AssessmentToolResponse.AssessmentTypeResponse> getPrograms(@RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+        Page<AssessmentType> assessmentTypes = assessmentTypeRepository.findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(lastModifiedDateTime, pageable);
+        return assessmentTypes.map(AssessmentToolComponentMapper::mapAssessmentType);
     }
 }
