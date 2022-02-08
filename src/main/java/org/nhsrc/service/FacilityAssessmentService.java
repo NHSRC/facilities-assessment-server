@@ -105,7 +105,7 @@ public class FacilityAssessmentService {
             if (facilityAssessment == null)
                 facilityAssessment = FacilityAssessmentMapper.fromDTO(facilityAssessmentDTO);
             else
-                facilityAssessment.updateEndDate(facilityAssessmentDTO.getEndDate());
+                facilityAssessment.updateEndDate(facilityAssessmentDTO.getEndDateAsDate());
 
             facilityAssessment.setFacility(facility);
             facilityAssessment.setState(state);
@@ -114,7 +114,7 @@ public class FacilityAssessmentService {
             facilityAssessment.setFacilityName(facilityAssessmentDTO.getFacilityName());
 
             facilityAssessment.setAssessmentTool(assessmentTool);
-            facilityAssessment.setStartDate(facilityAssessmentDTO.getStartDate());
+            facilityAssessment.setStartDate(facilityAssessmentDTO.getStartDateAsDate());
             facilityAssessment.setSeriesName(facilityAssessmentDTO.getSeriesName());
             if (facilityAssessmentDTO.getAssessorName() != null && !facilityAssessmentDTO.getAssessorName().isEmpty()) {
                 AssessmentMetaData assessmentMetaData = assessmentMetaDataRepository.findByName("Assessor name");

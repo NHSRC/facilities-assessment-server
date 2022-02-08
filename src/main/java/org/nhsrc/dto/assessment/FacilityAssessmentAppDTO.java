@@ -1,34 +1,39 @@
 package org.nhsrc.dto.assessment;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.nhsrc.dto.assessment.BaseFacilityAssessmentDTO;
+import org.nhsrc.utils.DateUtils;
 
 import java.util.Date;
 import java.util.UUID;
 
-import static org.nhsrc.utils.DateUtils.DATE_TIME_FORMAT_STRING;
-
 public class FacilityAssessmentAppDTO extends BaseFacilityAssessmentDTO {
-    @JsonFormat(pattern = DATE_TIME_FORMAT_STRING)
-    private Date startDate;
-    @JsonFormat(pattern = DATE_TIME_FORMAT_STRING)
-    private Date endDate;
+    private String startDate;
+    private String endDate;
 
     private UUID assessmentTool;
 
-    public Date getStartDate() {
+    @Override
+    public Date getStartDateAsDate() {
+        return DateUtils.getUtilDateTime(startDate);
+    }
+
+    @Override
+    public Date getEndDateAsDate() {
+        return DateUtils.getUtilDateTime(endDate);
+    }
+
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 

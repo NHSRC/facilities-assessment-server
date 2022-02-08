@@ -50,7 +50,6 @@ public class FacilityAssessmentController {
     private final FacilityAssessmentRepository facilityAssessmentRepository;
     private final AssessmentToolRepository assessmentToolRepository;
     private final UserService userService;
-    private final AssessmentToolModeRepository assessmentToolModeRepository;
     private static final Logger logger = LoggerFactory.getLogger(FacilityAssessmentController.class);
     private final ExcelImportService excelImportService;
     private final AssessmentTypeRepository assessmentTypeRepository;
@@ -59,14 +58,13 @@ public class FacilityAssessmentController {
     private final CheckpointScoreRepository checkpointScoreRepository;
 
     @Autowired
-    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, AssessmentToolRepository assessmentToolRepository, AssessmentToolModeRepository assessmentToolModeRepository, AssessmentTypeRepository assessmentTypeRepository, ScoringProcessDetailRepository scoringProcessDetailRepository, AssessmentMapper assessmentMapper, CheckpointScoreRepository checkpointScoreRepository) {
+    public FacilityAssessmentController(FacilityAssessmentService facilityAssessmentService, UserRepository userRepository, FacilityAssessmentRepository facilityAssessmentRepository, UserService userService, ExcelImportService excelImportService, AssessmentToolRepository assessmentToolRepository, AssessmentTypeRepository assessmentTypeRepository, ScoringProcessDetailRepository scoringProcessDetailRepository, AssessmentMapper assessmentMapper, CheckpointScoreRepository checkpointScoreRepository) {
         this.facilityAssessmentService = facilityAssessmentService;
         this.userRepository = userRepository;
         this.facilityAssessmentRepository = facilityAssessmentRepository;
         this.userService = userService;
         this.excelImportService = excelImportService;
         this.assessmentToolRepository = assessmentToolRepository;
-        this.assessmentToolModeRepository = assessmentToolModeRepository;
         this.assessmentTypeRepository = assessmentTypeRepository;
         this.scoringProcessDetailRepository = scoringProcessDetailRepository;
         this.assessmentMapper = assessmentMapper;
@@ -100,8 +98,9 @@ public class FacilityAssessmentController {
     @RequestMapping(value = "facilityAssessment/{facilityAssessmentUuid}/summary", method = RequestMethod.GET)
     public ResponseEntity<FacilityAssessmentResponse> getSummary(@PathVariable("facilityAssessmentUuid") String uuid) {
         FacilityAssessment assessment = facilityAssessmentRepository.findByUuid(UUID.fromString(uuid));
+        if (assessment == null)
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         List<String> filledChecklists = checkpointScoreRepository.getFilledChecklists(assessment.getId());
-        ;
         return new ResponseEntity<>(AssessmentMapper.map(assessment, filledChecklists), HttpStatus.OK);
     }
 
@@ -147,8 +146,8 @@ public class FacilityAssessmentController {
                                                @RequestParam("stateId") int stateId,
                                                @RequestParam("districtId") int districtId,
                                                @RequestParam("facilityTypeId") int facilityTypeId,
-                                               @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-                                               @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) throws Exception {
+                                               @RequestParam("startDate") String startDate,
+                                               @RequestParam(value = "endDate", required = false) String endDate) throws Exception {
 
         FacilityAssessmentDTO facilityAssessmentDTO = new FacilityAssessmentDTO();
         facilityAssessmentDTO.setAssessmentTypeId(assessmentTypeId);

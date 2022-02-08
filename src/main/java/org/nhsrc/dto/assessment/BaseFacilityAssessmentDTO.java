@@ -146,13 +146,17 @@ public abstract class BaseFacilityAssessmentDTO implements Serializable {
         this.facilityTypeId = facilityTypeId;
     }
 
-    public abstract Date getStartDate();
+    public abstract String getStartDate();
 
-    public abstract void setStartDate(Date startDate);
+    public abstract Date getStartDateAsDate();
 
-    public abstract Date getEndDate();
+    public abstract void setStartDate(String startDate);
 
-    public abstract void setEndDate(Date endDate);
+    public abstract String getEndDate();
+
+    public abstract Date getEndDateAsDate();
+
+    public abstract void setEndDate(String endDate);
 
     public boolean isInactive() {
         return inactive;

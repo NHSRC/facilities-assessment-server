@@ -7,7 +7,7 @@ public class FacilityAssessmentMapper {
     public static FacilityAssessment fromDTO(BaseFacilityAssessmentDTO facilityAssessmentDTO) {
         FacilityAssessment facilityAssessment = new FacilityAssessment();
         facilityAssessment.setUuid(facilityAssessmentDTO.getUuid());
-        facilityAssessment.setEndDate(facilityAssessmentDTO.getEndDate());
+        facilityAssessment.setEndDate(facilityAssessmentDTO.getEndDateAsDate());
         return facilityAssessment;
     }
 }
