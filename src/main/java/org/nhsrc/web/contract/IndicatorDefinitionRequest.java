@@ -1,14 +1,16 @@
 package org.nhsrc.web.contract;
 
+import java.util.List;
+
 public class IndicatorDefinitionRequest extends BaseRequest {
     private int id;
     private String name;
     private String dataType;
     private int assessmentToolId;
-    private String codedValues;
+    private List<String> codedValuesJson;
     private String description;
     private String formula;
-    private Boolean output;
+    private boolean output;
     private int sortOrder;
     private String symbol;
 
@@ -36,12 +38,12 @@ public class IndicatorDefinitionRequest extends BaseRequest {
         this.assessmentToolId = assessmentToolId;
     }
 
-    public String getCodedValues() {
-        return codedValues;
+    public List<String> getCodedValuesJson() {
+        return codedValuesJson;
     }
 
-    public void setCodedValues(String codedValues) {
-        this.codedValues = codedValues;
+    public void setCodedValuesJson(List<String> codedValuesJson) {
+        this.codedValuesJson = codedValuesJson;
     }
 
     public String getDescription() {
@@ -58,14 +60,6 @@ public class IndicatorDefinitionRequest extends BaseRequest {
 
     public void setFormula(String formula) {
         this.formula = formula;
-    }
-
-    public Boolean getOutput() {
-        return output;
-    }
-
-    public void setOutput(Boolean output) {
-        this.output = output;
     }
 
     public int getSortOrder() {
@@ -90,5 +84,13 @@ public class IndicatorDefinitionRequest extends BaseRequest {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isOutput() {
+        return output;
+    }
+
+    public void setOutput(boolean output) {
+        this.output = output;
     }
 }

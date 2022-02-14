@@ -2,10 +2,15 @@ package org.nhsrc.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.nhsrc.utils.JsonUtil;
+import org.nhsrc.utils.StringUtil;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.List;
 
 @Entity
 @Table(name = "indicator_definition")
@@ -105,6 +110,12 @@ public class IndicatorDefinition extends AbstractEntity {
 
     public String getCodedValues() {
         return codedValues;
+    }
+
+    public List<String> getCodedValuesJson() throws IOException {
+        if (StringUtil.isNotEmpty(codedValues))
+            return JsonUtil.OBJECT_MAPPER.readValue(codedValues, new TypeReference<List<String>>(){});
+        return null;
     }
 
     public void setCodedValues(String codedValues) {
