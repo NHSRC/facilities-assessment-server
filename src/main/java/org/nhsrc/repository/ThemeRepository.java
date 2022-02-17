@@ -18,5 +18,5 @@ import java.util.Date;
 public interface ThemeRepository extends NonTxDataRepository<Theme> {
     @RestResource(path = "lastModified", rel = "lastModified")
     Page<Theme> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(@Param("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable);
-    Theme findByShortName(String shortName);
+    Theme findByName(String name);
 }

@@ -25,7 +25,6 @@ public class ThemeController {
     @PreAuthorize("hasRole('Checklist_Write')")
     public Theme save(@RequestBody ThemeRequest request) {
         Theme theme = Repository.findByUuidOrCreate(request.getUuid(), themeRepository, new Theme());
-        theme.setShortName(request.getShortName());
         theme.setName(request.getName());
         theme.setInactive(request.isInactive());
         return themeRepository.save(theme);

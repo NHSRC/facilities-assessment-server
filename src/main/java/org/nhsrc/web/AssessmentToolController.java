@@ -209,7 +209,7 @@ public class AssessmentToolController {
         write(assessmentTool.getName(), html);
 
         List<Checklist> checklists = assessmentToolExcelFile.getChecklists();
-        checklistService.associatedDepartments(checklists);
+        checklistService.associateDepartments(checklists);
         assessmentToolRepository.save(assessmentTool);
 
         if (!persistData) {

@@ -61,7 +61,7 @@ public class ChecklistService {
         return assessmentTools.stream().filter(assessmentTool -> excluded.stream().filter(assessmentToolState -> assessmentToolState.getAssessmentTool().equals(assessmentTool)).findAny().orElse(null) == null).collect(Collectors.toList());
     }
 
-    public void associatedDepartments(List<Checklist> checklists) {
+    public void associateDepartments(List<Checklist> checklists) {
         checklists.forEach(checklist -> {
             Department department = departmentRepository.findByName(checklist.getName());
             if (department == null) {

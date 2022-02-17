@@ -140,10 +140,18 @@ public class SheetImporter {
             checkpoint.setMeansOfVerification(getText(row, 5));
         }
         if (gunakExcelFile.getAssessmentTool().isThemed()) {
-            String themeName = getText(row, -1);
-            if (!themeName.equals("All")) {
-                Theme theme = themeRepository.findByShortName(themeName);
-                checkpoint.addTheme(theme);
+            String themeCellText = getText(row, -1);
+            if (StringUtil.isEmpty(themeCellText)) {
+                errors.add(String.format("Not theme provided for checkpoint: %s", checkpoint.toString()));
+            } else {
+                List<String> themeNames = Theme.getThemeNames(themeCellText);
+                themeNames.forEach(themeName -> {
+                    Theme theme = themeRepository.findByName(themeName.trim());
+                    if (theme == null)
+                        errors.add(String.format("Could not find theme: %s", themeName.trim()));
+                    else
+                        checkpoint.addTheme(theme);
+                });
             }
         }
         if (currME == null) {

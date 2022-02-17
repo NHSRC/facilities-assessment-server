@@ -4,13 +4,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "theme")
 public class Theme extends AbstractEntity {
-    @Column(name = "shortName", unique = true, nullable = false)
-    private String shortName;
-
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
@@ -22,11 +24,7 @@ public class Theme extends AbstractEntity {
         this.name = name;
     }
 
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
+    public static List<String> getThemeNames(String fullName) {
+        return Arrays.asList(fullName.split(",")).stream().map(s -> s.trim()).collect(Collectors.toList());
     }
 }

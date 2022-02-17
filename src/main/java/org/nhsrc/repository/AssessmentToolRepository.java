@@ -61,4 +61,6 @@ public interface AssessmentToolRepository extends NonTxDataRepository<Assessment
     }
 
     Page<AssessmentTool> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(Date lastModifiedDate, Pageable pageable);
+
+    AssessmentTool findByNameAndAssessmentToolModeName(String name, String assessmentToolModeName);
 }
