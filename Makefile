@@ -144,7 +144,12 @@ test_server: reset_test_db test_server_only open_test_results
 test_server_online: reset_test_db test_server_only_online open_test_results
 
 open_test_results:
+ifeq ($(shell uname),Darwin)
 	open build/reports/tests/test/index.html
+endif
+
+temp:
+	@echo $(shell uname)
 # </server>
 clean:
 	./gradlew clean
