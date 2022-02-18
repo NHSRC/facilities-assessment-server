@@ -25,6 +25,6 @@ public class Theme extends AbstractEntity {
     }
 
     public static List<String> getThemeNames(String fullName) {
-        return Arrays.asList(fullName.split(",")).stream().map(s -> s.trim()).collect(Collectors.toList());
+        return Arrays.stream(fullName.split(",")).map(String::trim).collect(Collectors.toList());
     }
 }

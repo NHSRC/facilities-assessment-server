@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "checkpoint")
@@ -210,5 +211,9 @@ public class Checkpoint extends AbstractEntity {
     public void addTheme(Theme theme) {
         CheckpointTheme checkpointTheme = new CheckpointTheme(theme, this);
         this.checkpointThemes.add(checkpointTheme);
+    }
+
+    public String getThemeNames() {
+        return checkpointThemes.stream().map(checkpointTheme -> checkpointTheme.getTheme().getName()).collect(Collectors.joining(","));
     }
 }

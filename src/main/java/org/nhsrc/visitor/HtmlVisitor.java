@@ -2,6 +2,7 @@ package org.nhsrc.visitor;
 
 import org.nhsrc.domain.*;
 import org.nhsrc.referenceDataImport.GunakExcelFile;
+import org.nhsrc.utils.StringUtil;
 import org.thymeleaf.context.Context;
 
 import java.io.StringWriter;
@@ -70,7 +71,7 @@ public class HtmlVisitor implements GunakChecklistVisitor {
         if (checkpoint.getAssessmentMethodObservation()) stringBuilder.append("OB").append("/");
         if (checkpoint.getAssessmentMethodRecordReview()) stringBuilder.append("RR").append("/");
         if (checkpoint.getAssessmentMethodPatientInterview()) stringBuilder.append("PI");
-        currentTable.addRow(new TableRow("", checkpoint.getName(), stringBuilder.toString(), checkpoint.getMeansOfVerification()));
+        currentTable.addRow(new TableRow("", checkpoint.getName(), stringBuilder.toString(), checkpoint.getMeansOfVerification(), checkpoint.getThemeNames()));
     }
 
     @Override

@@ -25,4 +25,8 @@ public class CheckpointTheme extends AbstractEntity {
 
     protected CheckpointTheme() {
     }
+
+    public Theme getTheme() {
+        return theme;
+    }
 }
