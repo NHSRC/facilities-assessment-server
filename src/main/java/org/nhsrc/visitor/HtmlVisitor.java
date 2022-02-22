@@ -38,7 +38,8 @@ public class HtmlVisitor implements GunakChecklistVisitor {
     public void visit(AreaOfConcern areaOfConcern) {
         Table table = getCurrentTable();
         TableRow tableRow = new TableRow(areaOfConcern.getReference(), areaOfConcern.getName(), "", "");
-        tableRow.setBackgroundColor("darkgrey");
+        tableRow.setFontColor("White");
+        tableRow.setBackgroundColor("dimgrey");
         table.addRow(tableRow);
     }
 
@@ -59,7 +60,8 @@ public class HtmlVisitor implements GunakChecklistVisitor {
     public void visit(MeasurableElement measurableElement) {
         Table currentTable = getCurrentTable();
         TableRow tableRow = new TableRow(measurableElement.getReference(), measurableElement.getName(), "", "");
-        tableRow.setBackgroundColor("blue");
+        tableRow.setFontColor("White");
+        tableRow.setBackgroundColor("SteelBlue");
         currentTable.addRow(tableRow);
     }
 
@@ -107,9 +109,10 @@ public class HtmlVisitor implements GunakChecklistVisitor {
     public class TableRow {
         private final List<TableCell> tableCells = new ArrayList<>();
         private String backgroundColor;
+        private String fontColor;
 
-        public String getBackgroundColor() {
-            return String.format("background-color:%s;", backgroundColor);
+        public String getStyle() {
+            return String.format("background-color:%s;color:%s", backgroundColor, fontColor);
         }
 
         public void setBackgroundColor(String backgroundColor) {
@@ -123,6 +126,10 @@ public class HtmlVisitor implements GunakChecklistVisitor {
         public void addCell(String cellValue) {
             TableCell tableCell = new TableCell(cellValue);
             tableCells.add(tableCell);
+        }
+
+        public void setFontColor(String fontColor) {
+            this.fontColor = fontColor;
         }
 
         public List<TableCell> getCells() {

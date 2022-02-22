@@ -29,19 +29,25 @@ public class DateUtils {
         return LocalDate.parse(string, DATE_FORMATTER);
     }
 
-    public static Date getUtilDateTime(String string) {
+    public static Date getUtilDateTime(String string, Date defaultValue) {
         try {
             return SIMPLE_DATE_TIME_FORMAT.parse(string);
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Error parsing datetime for: %s", string));
+            if (defaultValue == null)
+                throw new RuntimeException(String.format("Error parsing datetime for: %s", string));
+            else
+                return defaultValue;
         }
     }
 
-    public static Date getUtilDate(String string) {
+    public static Date getUtilDate(String string, Date defaultValue) {
         try {
             return SIMPLE_DATE_FORMAT.parse(string);
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Error parsing date for: %s", string));
+            if (defaultValue == null)
+                throw new RuntimeException(String.format("Error parsing date for: %s", string));
+            else
+                return defaultValue;
         }
     }
 }

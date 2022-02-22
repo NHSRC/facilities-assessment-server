@@ -59,11 +59,7 @@ public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
 
     Page<Checkpoint> findByChecklistIdAndMeasurableElementId(@Param("checklistId") Integer checklistId, @Param("measurableElementId") Integer measurableElementId, Pageable pageable);
 
-    Page<Checkpoint> findAllByChecklistId(@Param("checklistId") Integer checklistId, Pageable pageable);
-
     Page<Checkpoint> findAllByChecklistIdAndInactive(@Param("checklistId") Integer checklistId, @Param("inactive") Boolean inactive, Pageable pageable);
-
-    Page<Checkpoint> findByInactive(@Param("inactive") Boolean inactive, Pageable pageable);
 
     @Deprecated // "For backward compatibility"
     @RestResource(path = "lastModified", rel = "lastModified")

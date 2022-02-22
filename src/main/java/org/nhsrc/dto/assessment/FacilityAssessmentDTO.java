@@ -10,7 +10,7 @@ public class FacilityAssessmentDTO extends BaseFacilityAssessmentDTO {
 
     @Override
     public Date getEndDateAsDate() {
-        return DateUtils.getUtilDate(endDate);
+        return DateUtils.getUtilDate(endDate, new Date());
     }
 
     @Override
@@ -35,6 +35,6 @@ public class FacilityAssessmentDTO extends BaseFacilityAssessmentDTO {
 
     @Override
     public Date getStartDateAsDate() {
-        return DateUtils.getUtilDate(startDate);
+        return DateUtils.getUtilDate(startDate, new Date());
     }
 }

@@ -13,12 +13,12 @@ public class FacilityAssessmentAppDTO extends BaseFacilityAssessmentDTO {
 
     @Override
     public Date getStartDateAsDate() {
-        return DateUtils.getUtilDateTime(startDate);
+        return DateUtils.getUtilDateTime(startDate, new Date());
     }
 
     @Override
     public Date getEndDateAsDate() {
-        return DateUtils.getUtilDateTime(endDate);
+        return DateUtils.getUtilDateTime(endDate, new Date());
     }
 
     public String getStartDate() {
