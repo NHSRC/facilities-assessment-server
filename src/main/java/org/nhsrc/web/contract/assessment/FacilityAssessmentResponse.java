@@ -2,6 +2,7 @@ package org.nhsrc.web.contract.assessment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.nhsrc.web.contract.UserResponse;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +26,7 @@ public class FacilityAssessmentResponse {
 
     private List<AssessmentCustomInfoResponse> customInfos = new ArrayList<>();
     private List<String> departmentsAssessed = new ArrayList<>();
+    private List<UserResponse> assessors = new ArrayList<>();
 
     public String getUuid() {
         return uuid;
@@ -96,5 +98,13 @@ public class FacilityAssessmentResponse {
 
     public void setAssessmentEndDate(Date assessmentEndDate) {
         this.assessmentEndDate = assessmentEndDate;
+    }
+
+    public List<UserResponse> getAssessors() {
+        return assessors;
+    }
+
+    public void setAssessors(List<UserResponse> assessors) {
+        this.assessors = assessors;
     }
 }

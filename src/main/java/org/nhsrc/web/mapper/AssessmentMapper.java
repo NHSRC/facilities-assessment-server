@@ -4,12 +4,14 @@ import org.nhsrc.domain.*;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.scores.AreaOfConcernScore;
 import org.nhsrc.domain.scores.StandardScore;
+import org.nhsrc.domain.security.User;
 import org.nhsrc.repository.CheckpointScoreRepository;
 import org.nhsrc.repository.IndicatorRepository;
 import org.nhsrc.repository.scores.AreaOfConcernScoreRepository;
 import org.nhsrc.repository.scores.ChecklistScoreRepository;
 import org.nhsrc.repository.scores.StandardScoreRepository;
 import org.nhsrc.utils.CollectionUtil;
+import org.nhsrc.web.contract.UserResponse;
 import org.nhsrc.web.contract.assessment.AssessmentCustomInfoResponse;
 import org.nhsrc.web.contract.assessment.FacilityAssessmentResponse;
 import org.nhsrc.web.contract.ext.AssessmentResponse;
@@ -17,6 +19,7 @@ import org.nhsrc.web.contract.ext.AssessmentSummaryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -115,6 +118,8 @@ public class AssessmentMapper {
         facilityAssessmentResponse.setFacilityName(facilityAssessment.getFacilityName());
         facilityAssessmentResponse.setAssessmentToolName(facilityAssessment.getAssessmentTool().getName());
         facilityAssessmentResponse.setAssessmentTypeName(facilityAssessment.getAssessmentType().getName());
+        List<UserResponse> users = facilityAssessment.getUsers().stream().filter(user -> !user.getEmail().equals(User.ANONYMOUS_USERS_EMAIL)).map(UserResponse::fromUser).collect(Collectors.toList());
+        facilityAssessmentResponse.setAssessors(users);
         return facilityAssessmentResponse;
     }
 }

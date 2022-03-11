@@ -88,6 +88,11 @@ public class User extends AbstractEntity {
     }
 
     @JsonIgnore
+    public String getName() {
+        return String.format("%s %s", firstName, lastName);
+    }
+
+    @JsonIgnore
     public Set<Role> getRoles() {
         return this.roles == null ? new HashSet<>() : this.roles;
     }

@@ -69,4 +69,8 @@ public interface CheckpointRepository extends NonTxDataRepository<Checkpoint> {
     Page<Checkpoint> findByLastModifiedDateGreaterThanOrderByLastModifiedDateAscIdAsc(Date lastModifiedDate, Pageable pageable);
 
     int countAllByChecklist(@Param("checklist") Checklist checklist);
+
+    Page<Checkpoint> findByInactive(@Param("inactive") Boolean inactive, Pageable pageable);
+
+    Page<Checkpoint> findAllByChecklistId(@Param("checklistId") Integer checklistId, Pageable pageable);
 }

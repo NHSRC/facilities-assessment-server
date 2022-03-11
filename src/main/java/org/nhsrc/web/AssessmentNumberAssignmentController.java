@@ -65,4 +65,9 @@ public class AssessmentNumberAssignmentController {
         List<AssessmentNumberAssignment> assessmentNumbers = repository.getActiveAssessmentNumbers(facilityUuid, assessmentTypeUuid, user);
         return assessmentNumbers.stream().map(AssessmentNumberAssignment::getAssessmentNumber).toArray();
     }
+
+    @RequestMapping(value = "/assessmentNumberAssignment/exists", method = {RequestMethod.GET})
+    public boolean exists(@RequestParam(value = "facilityUuid") String facilityUuid, @RequestParam(value = "assessmentTypeUuid") String assessmentTypeUuid) {
+        return repository.hasAnyActionAssessmentNumbers(facilityUuid, assessmentTypeUuid);
+    }
 }

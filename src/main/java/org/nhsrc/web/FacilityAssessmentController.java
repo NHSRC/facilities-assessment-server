@@ -1,7 +1,10 @@
 package org.nhsrc.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.nhsrc.domain.*;
+import org.nhsrc.domain.AssessmentTool;
+import org.nhsrc.domain.AssessmentToolType;
+import org.nhsrc.domain.AssessmentType;
+import org.nhsrc.domain.CheckpointScore;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.scores.ScoringProcessDetail;
 import org.nhsrc.domain.security.Privilege;
@@ -27,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -106,7 +108,7 @@ public class FacilityAssessmentController {
 
     @RequestMapping(value = "facility-assessment/checklist", method = RequestMethod.POST)
     @Transactional
-    public ResponseEntity<List<CheckpointScore>> syncFacilityAssessment(@RequestBody ChecklistDTO checklist) throws JsonProcessingException {
+    public ResponseEntity<List<CheckpointScore>> syncFacilityAssessmentCheckpointScores(@RequestBody ChecklistDTO checklist) throws JsonProcessingException {
         try {
             List<CheckpointScore> checkpointScores = this.facilityAssessmentService.saveChecklist(checklist);
             return new ResponseEntity<>(checkpointScores, HttpStatus.CREATED);
@@ -117,7 +119,7 @@ public class FacilityAssessmentController {
     }
 
     @RequestMapping(value = "facility-assessment/indicator", method = RequestMethod.POST)
-    public ResponseEntity<Object> syncFacilityAssessment(@RequestBody IndicatorListDTO indicatorListDTO) {
+    public ResponseEntity<Object> syncFacilityAssessmentIndicator(@RequestBody IndicatorListDTO indicatorListDTO) {
         this.facilityAssessmentService.saveIndicatorList(indicatorListDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
