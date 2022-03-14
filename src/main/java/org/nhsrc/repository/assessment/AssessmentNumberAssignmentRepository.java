@@ -36,11 +36,11 @@ public interface AssessmentNumberAssignmentRepository extends PagingAndSortingRe
         return LocalDate.now().minusYears(1);
     }
 
-    List<AssessmentNumberAssignment> findAllByFacilityUuidAndAssessmentTypeUuidAndLastModifiedDateAfter(UUID facilityUuid, UUID assessmentTypeUuid, Date date);
+    List<AssessmentNumberAssignment> findAllByFacilityUuidAndAssessmentTypeUuidAndLastModifiedDateAfterAndInactiveFalse(UUID facilityUuid, UUID assessmentTypeUuid, Date date);
 
     default boolean hasAnyActionAssessmentNumbers(String facilityUuid, String assessmentTypeUuid) {
         LocalDate localDate = getDate();
-        List<AssessmentNumberAssignment> anas = findAllByFacilityUuidAndAssessmentTypeUuidAndLastModifiedDateAfter(UUID.fromString(facilityUuid), UUID.fromString(assessmentTypeUuid), localDate.toDate());
+        List<AssessmentNumberAssignment> anas = findAllByFacilityUuidAndAssessmentTypeUuidAndLastModifiedDateAfterAndInactiveFalse(UUID.fromString(facilityUuid), UUID.fromString(assessmentTypeUuid), localDate.toDate());
         return anas.size() > 0;
     }
 
