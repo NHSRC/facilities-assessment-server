@@ -65,6 +65,8 @@ public class AssessmentNumberAssignmentController {
                          @RequestParam(value = "assessmentTypeUuid") String assessmentTypeUuid,
                          @RequestParam(value = "assessmentToolUuid") String assessmentToolUuid,
                          Principal principal) {
+        //backward compatibility
+        if (assessmentToolUuid == null || assessmentToolUuid.isEmpty()) return new String[0];
         String email = principal.getName();
         User user = userRepository.findByEmail(email);
         List<AssessmentNumberAssignment> assessmentNumbers = repository.getActiveAssessmentNumbers(facilityUuid, assessmentToolUuid, assessmentTypeUuid, user);
@@ -72,7 +74,9 @@ public class AssessmentNumberAssignmentController {
     }
 
     @RequestMapping(value = "/assessmentNumberAssignment/exists", method = {RequestMethod.GET})
-    public boolean exists(@RequestParam(value = "facilityUuid") String facilityUuid, @RequestParam(value = "assessmentToolUuid") String assessmentToolUuid, @RequestParam(value = "assessmentTypeUuid") String assessmentTypeUuid) {
+    public boolean exists(@RequestParam(value = "facilityUuid") String facilityUuid, @RequestParam(value = "assessmentToolUuid", required = false) String assessmentToolUuid, @RequestParam(value = "assessmentTypeUuid") String assessmentTypeUuid) {
+        //backward compatibility
+        if (assessmentToolUuid == null || assessmentToolUuid.isEmpty()) return false;
         return repository.hasAnyActionAssessmentNumbers(facilityUuid, assessmentToolUuid, assessmentTypeUuid);
     }
 }
