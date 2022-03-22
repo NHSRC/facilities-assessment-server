@@ -2,6 +2,7 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.assessment.AssessmentNumberAssignment;
 import org.nhsrc.domain.security.User;
+import org.nhsrc.repository.AssessmentToolRepository;
 import org.nhsrc.repository.AssessmentTypeRepository;
 import org.nhsrc.repository.FacilityRepository;
 import org.nhsrc.repository.Repository;
@@ -28,13 +29,15 @@ public class AssessmentNumberAssignmentController {
     private final FacilityRepository facilityRepository;
     private final UserRepository userRepository;
     private final AssessmentTypeRepository assessmentTypeRepository;
+    private final AssessmentToolRepository assessmentToolRepository;
 
     @Autowired
-    public AssessmentNumberAssignmentController(AssessmentNumberAssignmentRepository repository, FacilityRepository facilityRepository, UserRepository userRepository, AssessmentTypeRepository assessmentTypeRepository) {
+    public AssessmentNumberAssignmentController(AssessmentNumberAssignmentRepository repository, FacilityRepository facilityRepository, UserRepository userRepository, AssessmentTypeRepository assessmentTypeRepository, AssessmentToolRepository assessmentToolRepository) {
         this.repository = repository;
         this.facilityRepository = facilityRepository;
         this.userRepository = userRepository;
         this.assessmentTypeRepository = assessmentTypeRepository;
+        this.assessmentToolRepository = assessmentToolRepository;
     }
 
     @RequestMapping(value = "/assessmentNumberAssignments", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -45,6 +48,7 @@ public class AssessmentNumberAssignmentController {
         assessmentNumberAssignment.setInactive(request.getInactive());
         assessmentNumberAssignment.setAssessmentNumber(request.getAssessmentNumber());
         assessmentNumberAssignment.setFacility(Repository.findById(request.getFacilityId(), facilityRepository));
+        assessmentNumberAssignment.setAssessmentTool(Repository.findById(request.getAssessmentToolId(), assessmentToolRepository));
         assessmentNumberAssignment.setAssessmentType(Repository.findById(request.getAssessmentTypeId(), assessmentTypeRepository));
         Repository.mergeChildren(request.getUserIds(), assessmentNumberAssignment.getUserIds(), userRepository, user -> assessmentNumberAssignment.removeUser((User) user), user -> assessmentNumberAssignment.addUser((User) user));
         return new ResponseEntity<>(repository.save(assessmentNumberAssignment), HttpStatus.CREATED);
@@ -59,15 +63,16 @@ public class AssessmentNumberAssignmentController {
     @PreAuthorize("hasRole('Assessment_Write')")
     public Object[] find(@RequestParam(value = "facilityUuid") String facilityUuid,
                          @RequestParam(value = "assessmentTypeUuid") String assessmentTypeUuid,
+                         @RequestParam(value = "assessmentToolUuid") String assessmentToolUuid,
                          Principal principal) {
         String email = principal.getName();
         User user = userRepository.findByEmail(email);
-        List<AssessmentNumberAssignment> assessmentNumbers = repository.getActiveAssessmentNumbers(facilityUuid, assessmentTypeUuid, user);
+        List<AssessmentNumberAssignment> assessmentNumbers = repository.getActiveAssessmentNumbers(facilityUuid, assessmentToolUuid, assessmentTypeUuid, user);
         return assessmentNumbers.stream().map(AssessmentNumberAssignment::getAssessmentNumber).toArray();
     }
 
     @RequestMapping(value = "/assessmentNumberAssignment/exists", method = {RequestMethod.GET})
-    public boolean exists(@RequestParam(value = "facilityUuid") String facilityUuid, @RequestParam(value = "assessmentTypeUuid") String assessmentTypeUuid) {
-        return repository.hasAnyActionAssessmentNumbers(facilityUuid, assessmentTypeUuid);
+    public boolean exists(@RequestParam(value = "facilityUuid") String facilityUuid, @RequestParam(value = "assessmentToolUuid") String assessmentToolUuid, @RequestParam(value = "assessmentTypeUuid") String assessmentTypeUuid) {
+        return repository.hasAnyActionAssessmentNumbers(facilityUuid, assessmentToolUuid, assessmentTypeUuid);
     }
 }

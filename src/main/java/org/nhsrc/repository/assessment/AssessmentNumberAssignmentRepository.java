@@ -25,22 +25,22 @@ public interface AssessmentNumberAssignmentRepository extends PagingAndSortingRe
 
     Page<AssessmentNumberAssignment> findAllByFacilityDistrictId(@Param("districtId") int districtId, Pageable pageable);
 
-    List<AssessmentNumberAssignment> findAllByFacilityUuidAndAssessmentTypeUuidAndUsersInAndLastModifiedDateAfter(UUID facilityUuid, UUID assessmentTypeUuid, User[] users, Date date);
+    List<AssessmentNumberAssignment> findAllByFacilityUuidAndAssessmentToolUuidAndAssessmentTypeUuidAndUsersInAndLastModifiedDateAfter(UUID facilityUuid, UUID assessmentToolUuid, UUID assessmentTypeUuid, User[] users, Date date);
 
-    default List<AssessmentNumberAssignment> getActiveAssessmentNumbers(String facilityUuid, String assessmentTypeUuid, User user) {
+    default List<AssessmentNumberAssignment> getActiveAssessmentNumbers(String facilityUuid, String assessmentToolUuid, String assessmentTypeUuid, User user) {
         LocalDate localDate = getDate();
-        return findAllByFacilityUuidAndAssessmentTypeUuidAndUsersInAndLastModifiedDateAfter(UUID.fromString(facilityUuid), UUID.fromString(assessmentTypeUuid), new User[]{user}, localDate.toDate());
+        return findAllByFacilityUuidAndAssessmentToolUuidAndAssessmentTypeUuidAndUsersInAndLastModifiedDateAfter(UUID.fromString(facilityUuid), UUID.fromString(assessmentToolUuid), UUID.fromString(assessmentTypeUuid), new User[]{user}, localDate.toDate());
     }
 
     default LocalDate getDate() {
         return LocalDate.now().minusYears(1);
     }
 
-    List<AssessmentNumberAssignment> findAllByFacilityUuidAndAssessmentTypeUuidAndLastModifiedDateAfterAndInactiveFalse(UUID facilityUuid, UUID assessmentTypeUuid, Date date);
+    List<AssessmentNumberAssignment> findAllByFacilityUuidAndAssessmentToolUuidAndAssessmentTypeUuidAndLastModifiedDateAfterAndInactiveFalse(UUID facilityUuid, UUID assessmentToolUuid, UUID assessmentTypeUuid, Date date);
 
-    default boolean hasAnyActionAssessmentNumbers(String facilityUuid, String assessmentTypeUuid) {
+    default boolean hasAnyActionAssessmentNumbers(String facilityUuid, String assessmentToolUuid, String assessmentTypeUuid) {
         LocalDate localDate = getDate();
-        List<AssessmentNumberAssignment> anas = findAllByFacilityUuidAndAssessmentTypeUuidAndLastModifiedDateAfterAndInactiveFalse(UUID.fromString(facilityUuid), UUID.fromString(assessmentTypeUuid), localDate.toDate());
+        List<AssessmentNumberAssignment> anas = findAllByFacilityUuidAndAssessmentToolUuidAndAssessmentTypeUuidAndLastModifiedDateAfterAndInactiveFalse(UUID.fromString(facilityUuid), UUID.fromString(assessmentToolUuid), UUID.fromString(assessmentTypeUuid), localDate.toDate());
         return anas.size() > 0;
     }
 

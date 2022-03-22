@@ -9,6 +9,7 @@ public class AssessmentNumberAssignmentRequest extends BaseRequest {
     private int id;
     private String assessmentNumber;
     private List<Integer> userIds = new ArrayList<>();
+    private int assessmentToolId;
     private int assessmentTypeId;
     private int facilityId;
 
@@ -50,5 +51,13 @@ public class AssessmentNumberAssignmentRequest extends BaseRequest {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getAssessmentToolId() {
+        return assessmentToolId;
+    }
+
+    public void setAssessmentToolId(int assessmentToolId) {
+        this.assessmentToolId = assessmentToolId;
     }
 }

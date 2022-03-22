@@ -37,6 +37,12 @@ public class AssessmentNumberAssignment extends AbstractEntity {
     @Column(name = "assessment_number")
     private String assessmentNumber;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "assessment_tool_id")
+    @NotNull
+    @RestResource(exported = false)
+    private AssessmentTool assessmentTool;
+
     public void setFacility(Facility facility) {
         this.facility = facility;
     }
@@ -47,6 +53,10 @@ public class AssessmentNumberAssignment extends AbstractEntity {
 
     public void setAssessmentNumber(String assessmentNumber) {
         this.assessmentNumber = assessmentNumber;
+    }
+
+    public void setAssessmentTool(AssessmentTool assessmentTool) {
+        this.assessmentTool = assessmentTool;
     }
 
     public List<Integer> getUserIds() {
@@ -98,5 +108,10 @@ public class AssessmentNumberAssignment extends AbstractEntity {
     @JsonProperty("assessmentToolModeId")
     public int _getAssessmentToolModeId() {
         return assessmentType.getAssessmentToolMode().getId();
+    }
+
+    @JsonProperty("assessmentToolId")
+    public int _getAssessmentToolId() {
+        return assessmentTool.getId();
     }
 }
