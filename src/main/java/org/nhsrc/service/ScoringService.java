@@ -1,7 +1,5 @@
 package org.nhsrc.service;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import org.nhsrc.domain.assessment.FacilityAssessment;
 import org.nhsrc.domain.scores.ScoringProcessDetail;
 import org.nhsrc.repository.FacilityAssessmentRepository;
@@ -46,6 +44,7 @@ public class ScoringService {
     }
 
     private void scoreAssessment(FacilityAssessment facilityAssessment, ScoringProcessDetail scoringProcessDetail, EntityManager entityManager) {
+        logger.info(String.format("Scoring assessment id %d", facilityAssessment.getId()));
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         try {
@@ -64,6 +63,7 @@ public class ScoringService {
             scoringProcessDetail.setLastScoredUntil(facilityAssessment.getLastModifiedDate());
             scoringProcessDetailRepository.save(scoringProcessDetail);
             transaction.commit();
+            logger.info(String.format("Completed scoring assessment id %d", facilityAssessment.getId()));
         } catch (Exception e) {
             logger.error(String.format("Couldn't score assessment: %s", facilityAssessment.getUuid()), e);
             transaction.rollback();
