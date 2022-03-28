@@ -31,7 +31,7 @@ class ScoringSQLs {
             "SELECT\n" +
             "  checklist.id,\n" +
             "  facility_assessment.id,\n" +
-            "  round(cast(cast((sum(checkpoint_score.score) * 100) / (2 * count(checkpoint_score.id)) as float8) as numeric))\n" +
+            "  round(float8 (sum(checkpoint_score.score) * 100) / (2 * count(checkpoint_score.id)))\n" +
             "    FROM checkpoint_score\n" +
             "    INNER JOIN checkpoint ON checkpoint_score.checkpoint_id = checkpoint.id\n" +
             "    LEFT OUTER JOIN checklist ON checklist.id = checkpoint_score.checklist_id\n" +

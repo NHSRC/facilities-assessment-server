@@ -46,6 +46,7 @@ public class ScoringProcessDetail implements Persistable<Integer> {
         this.lastScoredUntil = lastScoredUntil;
     }
 
+//    Note that the last assessment processed will keep getting processed over and over. But since the job is run once a day and new assessments keep coming this is not an serious issue.
     public Date getSafeLastScoredUntilTime() {
         LocalDateTime time = new LocalDateTime(this.lastScoredUntil);
         time.minusMinutes(1);
