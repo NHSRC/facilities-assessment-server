@@ -31,7 +31,7 @@ class ScoringSQLs {
             "SELECT\n" +
             "  checklist.id,\n" +
             "  facility_assessment.id,\n" +
-            "  round(float8 (sum(checkpoint_score.score) * 100) / (2 * count(checkpoint_score.id)))\n" +
+            "  round(cast(sum(checkpoint_score.score)*100 as numeric) / (2 * count(checkpoint_score.id)),2)\n" +
             "    FROM checkpoint_score\n" +
             "    INNER JOIN checkpoint ON checkpoint_score.checkpoint_id = checkpoint.id\n" +
             "    LEFT OUTER JOIN checklist ON checklist.id = checkpoint_score.checklist_id\n" +
@@ -43,7 +43,7 @@ class ScoringSQLs {
             "  SELECT\n" +
             "    standard.id,\n" +
             "    facility_assessment.id,\n" +
-            "    round(CAST((CAST(sum(checkpoint_score.score) AS float8) / (CAST(2 * count(checkpoint_score.score) AS float8)) * CAST(100 AS float8)) AS numeric), 1)\n" +
+            "    round(cast(sum(checkpoint_score.score)*100 as numeric) / (2 * count(checkpoint_score.score)), 2)\n" +
             "  FROM checkpoint_score\n" +
             "    INNER JOIN checkpoint ON checkpoint_score.checkpoint_id = checkpoint.id\n" +
             "    LEFT OUTER JOIN checklist ON checklist.id = checkpoint_score.checklist_id\n" +
@@ -57,7 +57,7 @@ class ScoringSQLs {
             "SELECT\n" +
             "  area_of_concern.id,\n" +
             "  facility_assessment.id,\n" +
-            "    round(CAST((CAST(sum(checkpoint_score.score) AS float8) / (CAST(2 * count(checkpoint_score.score) AS float8)) * CAST(100 AS float8)) AS numeric), 1)\n" +
+            "  round(cast(sum(checkpoint_score.score)*100 as numeric) / (2 * count(checkpoint_score.score)), 2)\n" +
             "FROM checkpoint_score\n" +
             "  INNER JOIN checkpoint ON checkpoint_score.checkpoint_id = checkpoint.id\n" +
             "  LEFT OUTER JOIN checklist ON checklist.id = checkpoint_score.checklist_id\n" +
@@ -71,7 +71,7 @@ class ScoringSQLs {
     static final String Create_Assessment_Scores = "insert into facility_assessment_score (facility_assessment_id, score)\n" +
             "SELECT\n" +
             "  facility_assessment.id,\n" +
-            "    round(CAST((CAST(sum(checkpoint_score.score) AS float8) / (CAST(2 * count(checkpoint_score.score) AS float8)) * CAST(100 AS float8)) AS numeric), 1)\n" +
+            "  round(cast(sum(checkpoint_score.score)*100 as numeric) / (2 * count(checkpoint_score.score)), 2)\n" +
             "FROM checkpoint_score\n" +
             "  INNER JOIN checkpoint ON checkpoint_score.checkpoint_id = checkpoint.id\n" +
             "  LEFT OUTER JOIN facility_assessment ON checkpoint_score.facility_assessment_id = facility_assessment.id\n" +
