@@ -115,12 +115,13 @@ public class FacilityDownloadService {
                     oneFacility.setDistrict(district);
                     facilityRepository.save(duplicateFacilities);
                 } else {
-                    ninMatch = new Facility();
-                    ninMatch.setName(registeredFacility.getFacilityName());
-                    ninMatch.setFacilityType(facilityType);
-                    ninMatch.setDistrict(district);
-                    ninMatch.setRegistryUniqueId(registeredFacility.getNinId());
-                    facilityRepository.save(ninMatch);
+                    Facility facility = new Facility();
+                    facility.setName(registeredFacility.getFacilityName());
+                    facility.setFacilityType(facilityType);
+                    facility.setDistrict(district);
+                    facility.setRegistryUniqueId(registeredFacility.getNinId());
+                    facility.setInactive(facilityType.getInactive());
+                    facilityRepository.save(facility);
                 }
             } catch (Exception e) {
                 logger.error(String.format("Sync failed/stopped while processing registered facility: %s", registeredFacility.getNinId()), e);
