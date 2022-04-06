@@ -61,4 +61,5 @@ public interface FacilityRepository extends NonTxDataRepository<Facility> {
 
     Facility findByRegistryUniqueId(String id);
     Facility findByRegistryUniqueIdAndInactiveFalse(String id);
+    Facility findByRegistryUniqueIdAndInactiveTrue(String id);
 }

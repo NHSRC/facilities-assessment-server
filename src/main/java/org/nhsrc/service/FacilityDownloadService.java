@@ -100,6 +100,7 @@ public class FacilityDownloadService {
 
                 FacilityType facilityType = facilityTypeRepository.findByName(registeredFacility.getFacilityType());
                 Facility ninMatch = facilityRepository.findByRegistryUniqueIdAndInactiveFalse(registeredFacility.getNinId());
+                Facility inactiveNinMatch = facilityRepository.findByRegistryUniqueIdAndInactiveTrue(registeredFacility.getNinId());
                 List<Facility> semanticMatches = facilityRepository.findByNameAndDistrictAndFacilityTypeAndInactiveFalse(registeredFacility.getFacilityName(), district, facilityType);
 
                 List<Facility> duplicateFacilities = new ArrayList<>(semanticMatches);
@@ -114,7 +115,7 @@ public class FacilityDownloadService {
                     oneFacility.setFacilityType(facilityType);
                     oneFacility.setDistrict(district);
                     facilityRepository.save(duplicateFacilities);
-                } else {
+                } else if (inactiveNinMatch == null) {
                     Facility facility = new Facility();
                     facility.setName(registeredFacility.getFacilityName());
                     facility.setFacilityType(facilityType);
