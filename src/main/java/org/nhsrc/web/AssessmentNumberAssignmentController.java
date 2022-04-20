@@ -42,7 +42,7 @@ public class AssessmentNumberAssignmentController {
 
     @RequestMapping(value = "/assessmentNumberAssignments", method = {RequestMethod.POST, RequestMethod.PUT})
     @Transactional
-    @PreAuthorize("hasRole('Users_Write')")
+    @PreAuthorize("hasRole('ANA_Write')")
     public ResponseEntity save(@RequestBody AssessmentNumberAssignmentRequest request) {
         AssessmentNumberAssignment assessmentNumberAssignment = Repository.findByIdOrCreate(request.getId(), repository, new AssessmentNumberAssignment());
         assessmentNumberAssignment.setInactive(request.getInactive());
@@ -60,7 +60,6 @@ public class AssessmentNumberAssignmentController {
     }
 
     @RequestMapping(value = "/assessmentNumberAssignment/search/assessment", method = {RequestMethod.GET})
-    @PreAuthorize("hasRole('Assessment_Write')")
     public Object[] find(@RequestParam(value = "facilityUuid") String facilityUuid,
                          @RequestParam(value = "assessmentTypeUuid") String assessmentTypeUuid,
                          @RequestParam(value = "assessmentToolUuid") String assessmentToolUuid,
