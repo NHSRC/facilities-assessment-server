@@ -1,5 +1,6 @@
 package org.nhsrc.config.quartz;
 
+import com.bugsnag.Bugsnag;
 import org.nhsrc.domain.security.Privilege;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.service.FacilityDownloadService;
@@ -29,12 +30,10 @@ import java.util.List;
 @DisallowConcurrentExecution
 public class BackgroundJob implements Job {
     //    Quartz cannot instantiate if auto-wired via constructor
-    @Autowired
-    private ScoringService scoringService;
-    @Autowired
-    private FacilityDownloadService facilityDownloadService;
-    @Autowired
-    private HealthCheckService healthCheckService;
+    private final ScoringService scoringService;
+    private final FacilityDownloadService facilityDownloadService;
+    private final HealthCheckService healthCheckService;
+    private final Bugsnag bugsnag;
 
     @Value("${cron.main}")
     private String cronExpression;
@@ -49,24 +48,36 @@ public class BackgroundJob implements Job {
         backgroundJobAuthorities = Privilege.createAuthorities(Privilege.USER.getSpringName(), Privilege.FACILITY_WRITE.getSpringName(), Privilege.ASSESSMENT_READ.getSpringName(), Privilege.ASSESSMENT_WRITE.getSpringName());
     }
 
+    @Autowired
+    public BackgroundJob(ScoringService scoringService, FacilityDownloadService facilityDownloadService, HealthCheckService healthCheckService, Bugsnag bugsnag) {
+        this.scoringService = scoringService;
+        this.facilityDownloadService = facilityDownloadService;
+        this.healthCheckService = healthCheckService;
+        this.bugsnag = bugsnag;
+    }
+
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-        logger.info(String.format("Starting job. %s", cronExpression));
+        try {
+            logger.info(String.format("Starting job. %s", cronExpression));
 
-        Authentication auth = new UsernamePasswordAuthenticationToken(User.BACKGROUND_SERVICE_USER_EMAIL, "", backgroundJobAuthorities);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        scoringService.scoreAssessments();
-        healthCheckService.verifyScoringJob();
-        logger.info("Completed scoring assessments.");
-
-        if (facilityDownloadJobEnabled) {
-            logger.info("Starting facility download job.");
-            facilityDownloadService.download();
-            logger.info("Completed facility download job.");
-        } else {
-            logger.info("Facility download job disabled.");
+            Authentication auth = new UsernamePasswordAuthenticationToken(User.BACKGROUND_SERVICE_USER_EMAIL, "", backgroundJobAuthorities);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            scoringService.scoreAssessments();
+            healthCheckService.verifyScoringJob();
+            logger.info("Completed scoring assessments.");
+            if (facilityDownloadJobEnabled) {
+                logger.info("Starting facility download job.");
+                facilityDownloadService.download();
+                logger.info("Completed facility download job.");
+            } else {
+                logger.info("Facility download job disabled.");
+            }
+            healthCheckService.verifyMainJob();
+        } catch (Exception e) {
+            bugsnag.notify(e);
+            throw e;
         }
-        healthCheckService.verifyMainJob();
     }
 
     @Bean(name = "jobWithCronTriggerBean")
