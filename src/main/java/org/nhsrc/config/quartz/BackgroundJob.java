@@ -30,10 +30,14 @@ import java.util.List;
 @DisallowConcurrentExecution
 public class BackgroundJob implements Job {
     //    Quartz cannot instantiate if auto-wired via constructor
-    private final ScoringService scoringService;
-    private final FacilityDownloadService facilityDownloadService;
-    private final HealthCheckService healthCheckService;
-    private final Bugsnag bugsnag;
+    @Autowired
+    private ScoringService scoringService;
+    @Autowired
+    private FacilityDownloadService facilityDownloadService;
+    @Autowired
+    private HealthCheckService healthCheckService;
+    @Autowired
+    private Bugsnag bugsnag;
 
     @Value("${cron.main}")
     private String cronExpression;
@@ -46,14 +50,6 @@ public class BackgroundJob implements Job {
 
     static {
         backgroundJobAuthorities = Privilege.createAuthorities(Privilege.USER.getSpringName(), Privilege.FACILITY_WRITE.getSpringName(), Privilege.ASSESSMENT_READ.getSpringName(), Privilege.ASSESSMENT_WRITE.getSpringName());
-    }
-
-    @Autowired
-    public BackgroundJob(ScoringService scoringService, FacilityDownloadService facilityDownloadService, HealthCheckService healthCheckService, Bugsnag bugsnag) {
-        this.scoringService = scoringService;
-        this.facilityDownloadService = facilityDownloadService;
-        this.healthCheckService = healthCheckService;
-        this.bugsnag = bugsnag;
     }
 
     @Override
