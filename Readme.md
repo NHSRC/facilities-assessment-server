@@ -26,3 +26,5 @@ The API takes following parameters (mandatory parameters marked as *)
 - state, if it is state specific checklist then the name of the state
 - sortOrder (*), to control the order in which the assessment tool is displayed in the mobile app (higher sort order is shown first in the app)
 - themed, if the assessment tool uses the themes (tags). true/false. default false.
+
+Once you create the assessment tool in development/test environment it can be tested via the mobile app. Also one should submit assessment in test/development environment to ensure the tool is imported correctly. After this this can be deployed to production via the same process.
