@@ -1,5 +1,7 @@
 package org.nhsrc.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
@@ -26,7 +28,23 @@ public class CheckpointTheme extends AbstractEntity {
     protected CheckpointTheme() {
     }
 
+    @JsonIgnore
     public Theme getTheme() {
         return theme;
+    }
+
+    @JsonProperty("checkpoint")
+    public String getCheckpointUuid() {
+        return checkpoint.getUuidString();
+    }
+
+    @JsonProperty("theme")
+    public String getThemeUuid() {
+        return theme.getUuidString();
+    }
+
+    @JsonProperty("checklist")
+    public String getChecklistUuid() {
+        return checkpoint.getChecklistUUID();
     }
 }

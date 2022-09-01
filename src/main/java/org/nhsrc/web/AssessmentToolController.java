@@ -114,8 +114,9 @@ public class AssessmentToolController {
     }
 
     // Always provide default assessment tools for the convenience of client
+    // Do not use last modified date time due to backward compatibility with older version of client. Ideally better solution is required but the number of entities are too small and hence syncing all assessment tools every time is not an issue.
     @RequestMapping(value = "/assessmentTool/search/lastModifiedByState", method = {RequestMethod.GET})
-    public Page<AssessmentTool> findLastModifiedByState(@RequestParam("name") String name, @RequestParam("lastModifiedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastModifiedDateTime, Pageable pageable) {
+    public Page<AssessmentTool> findLastModifiedByState(@RequestParam("name") String name) {
         State state = stateRepository.findByName(name);
         return new PageImpl<>(assessmentToolRepository.findByStateOrStateIsNullOrderByAssessmentToolModeNameAscNameAsc(state));
     }

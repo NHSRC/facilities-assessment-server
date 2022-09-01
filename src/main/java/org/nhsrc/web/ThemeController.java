@@ -2,7 +2,7 @@ package org.nhsrc.web;
 
 import org.nhsrc.domain.Theme;
 import org.nhsrc.repository.Repository;
-import org.nhsrc.repository.ThemeRepository;
+import org.nhsrc.repository.theme.ThemeRepository;
 import org.nhsrc.web.contract.ThemeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

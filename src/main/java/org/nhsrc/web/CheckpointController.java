@@ -33,7 +33,7 @@ public class CheckpointController {
     private final ChecklistService checklistService;
 
     @Autowired
-    public CheckpointController(CheckpointRepository checkpointRepository, MeasurableElementRepository measurableElementRepository, ChecklistRepository checklistRepository, StateRepository stateRepository, ChecklistService checklistService) {
+    public CheckpointController(CheckpointRepository checkpointRepository, MeasurableElementRepository measurableElementRepository, ChecklistRepository checklistRepository, ChecklistService checklistService) {
         this.checkpointRepository = checkpointRepository;
         this.measurableElementRepository = measurableElementRepository;
         this.checklistRepository = checklistRepository;

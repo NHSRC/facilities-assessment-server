@@ -4,7 +4,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.nhsrc.domain.Checklist;
-import org.nhsrc.repository.ThemeRepository;
+import org.nhsrc.repository.theme.ThemeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

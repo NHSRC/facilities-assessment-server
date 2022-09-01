@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.nhsrc.config.excelMetaDataError.AssessmentExcelMetaDataErrors;
 import org.nhsrc.domain.*;
-import org.nhsrc.repository.ThemeRepository;
+import org.nhsrc.repository.theme.ThemeRepository;
 import org.nhsrc.utils.StringUtil;
 
 import java.util.ArrayList;
