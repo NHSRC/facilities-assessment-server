@@ -36,6 +36,9 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
     @Value("${spring.queries.roles-query}")
     private String privilegesQuery;
 
+    @Value("${metabase.url}")
+    private String metabaseUrl;
+
     private static final Logger logger = LoggerFactory.getLogger(GunakWebSecurityConfigurerAdapter.class);
 
     @Override
@@ -51,9 +54,14 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.requiresChannel().anyRequest().requiresSecure();
+        http.headers().frameOptions().sameOrigin();
+        String metabaseOrigin = metabaseUrl.replace("http://", "").replace("https://", "");
+        String policyDirectives = String.format("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; frame-src %s; font-src fonts.gstatic.com", metabaseOrigin);
+        http.headers().xssProtection().and().contentSecurityPolicy(policyDirectives);
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.
                 authorizeRequests()
-                .antMatchers("/", "/api/login", "/api/logout", "/api/ping", "/api/users/first", "/api/error/throw").permitAll()
+                .antMatchers("/", "/api/login", "/api/logout", "/api/ping", "/api/users/first", "/api/error/throw", "/app/**", "/dashboard/**", "/ext/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/facility-assessment/checklist", "/api/facility-assessment/indicator", "/api/facility-assessment/**", "/api/facility-assessment").permitAll();
 
         permittedResources(new String[]{"checkpoint", "measurableElement", "standard", "areaOfConcern", "checklist", "assessmentToolMode", "assessmentTool", "assessmentType", "department", "facilityType", "facility", "district", "state", "indicatorDefinition"}, registry);
@@ -108,10 +116,4 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
             registry.antMatchers(String.format("/api/%s/**", s)).permitAll();
         });
     }
-
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/ext/**", "/app/**", "/dashboard/**");
-    }
-
 }
