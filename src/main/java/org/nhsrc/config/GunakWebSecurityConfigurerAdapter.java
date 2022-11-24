@@ -57,7 +57,7 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
         http.requiresChannel().anyRequest().requiresSecure();
         http.headers().frameOptions().sameOrigin();
         String metabaseOrigin = metabaseUrl.replace("http://", "").replace("https://", "");
-        String policyDirectives = String.format("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; frame-src %s; font-src fonts.gstatic.com", metabaseOrigin);
+        String policyDirectives = String.format("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; frame-src %s; font-src fonts.gstatic.com", metabaseOrigin);
         http.headers().xssProtection().and().contentSecurityPolicy(policyDirectives);
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.
                 authorizeRequests()
