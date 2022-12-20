@@ -9,7 +9,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
@@ -29,6 +28,9 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private SpringProfile springProfiles;
 
     @Value("${spring.queries.users-query}")
     private String usersQuery;
@@ -54,7 +56,8 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.requiresChannel().anyRequest().requiresSecure();
+        if (!springProfiles.isDev())
+            http.requiresChannel().anyRequest().requiresSecure();
         http.headers().frameOptions().sameOrigin();
         String metabaseOrigin = metabaseUrl.replace("http://", "").replace("https://", "");
         String policyDirectives = String.format("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; frame-src %s; font-src fonts.gstatic.com", metabaseOrigin);
