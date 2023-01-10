@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletResponse;
@@ -87,7 +88,8 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
     }
 
     private void handleLogin(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) throws Exception {
-        registry.anyRequest().authenticated().and().csrf().disable()
+        registry.anyRequest().authenticated().and().csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
                 .formLogin().loginPage("/api/login").successHandler((request, response, authentication) -> {
             response.setStatus(HttpServletResponse.SC_OK);
             logger.info("Login Successful");
