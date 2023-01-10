@@ -56,9 +56,11 @@ public class GunakWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdap
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        if (!springProfiles.isDev())
+        if (!springProfiles.isDev()) {
             http.requiresChannel().anyRequest().requiresSecure();
-        http.headers().frameOptions().sameOrigin();
+            http.headers().frameOptions().sameOrigin();
+        }
+
         String metabaseOrigin = metabaseUrl.replace("http://", "").replace("https://", "");
         String policyDirectives = String.format("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; frame-src %s; font-src fonts.gstatic.com", metabaseOrigin);
         http.headers().xssProtection().and().contentSecurityPolicy(policyDirectives);

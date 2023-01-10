@@ -79,7 +79,7 @@ Cache-Control: no-cache
 email=EMAIL&password=PASSWORD
 ```
 #### Description
-When the post is successful in your response you would get cookie by name JSESSIONID. This indicates a successful session being established.
+When the post is successful in your response you would get cookie by name GUNSESSID. This indicates a successful session being established.
 
 ### Get all assessment types
 #### Format

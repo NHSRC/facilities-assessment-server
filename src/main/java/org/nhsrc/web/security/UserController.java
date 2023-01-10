@@ -1,5 +1,6 @@
 package org.nhsrc.web.security;
 
+import org.nhsrc.config.PasswordPolicy;
 import org.nhsrc.domain.security.Role;
 import org.nhsrc.domain.security.User;
 import org.nhsrc.repository.Repository;
@@ -9,6 +10,7 @@ import org.nhsrc.service.UserService;
 import org.nhsrc.web.contract.LoginResponse;
 import org.nhsrc.web.contract.UserProfileRequest;
 import org.nhsrc.web.contract.UserRequest;
+import org.passay.RuleResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -31,14 +33,16 @@ public class UserController {
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EntityManager entityManager;
+    private final PasswordPolicy passwordPolicy;
 
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, EntityManager entityManager) {
+    public UserController(UserService userService, UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, EntityManager entityManager, PasswordPolicy passwordPolicy) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.entityManager = entityManager;
+        this.passwordPolicy = passwordPolicy;
     }
 
     @RequestMapping(value = "users", method = {RequestMethod.POST, RequestMethod.PUT})
@@ -60,6 +64,9 @@ public class UserController {
             user.setPasswordChanged(true);
         }
         if (userRequest.getPassword() != null && userRequest.hasPassword()) {
+            RuleResult ruleResult = passwordPolicy.validate(userRequest.getPassword());
+            if (!ruleResult.isValid())
+                return new ResponseEntity(String.format("Password doesn't match the policy. %s", passwordPolicy.getMessage(ruleResult)), HttpStatus.NOT_ACCEPTABLE);
             user.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
         }
         user.setEmail(userRequest.getEmail());
@@ -79,9 +86,10 @@ public class UserController {
         if (changingPassword(userProfileRequest) && !bCryptPasswordEncoder.matches(userProfileRequest.getOldPassword(), user.getPassword()))
             return new ResponseEntity<>("Old password doesn't match", HttpStatus.BAD_REQUEST);
         if (changingPassword(userProfileRequest) && userProfileRequest.getNewPassword() != null && !userProfileRequest.getNewPassword().isEmpty()) {
+            RuleResult ruleResult = passwordPolicy.validate(userProfileRequest.getNewPassword());
+            if (!ruleResult.isValid())
+                return new ResponseEntity(String.format("Password doesn't match the policy. %s", passwordPolicy.getMessage(ruleResult)), HttpStatus.NOT_ACCEPTABLE);
             user.setPassword(bCryptPasswordEncoder.encode(userProfileRequest.getNewPassword()));
-        } else if (changingPassword(userProfileRequest) && (userProfileRequest.getNewPassword() == null || userProfileRequest.getNewPassword().isEmpty() || userProfileRequest.getNewPassword().length() < 8)) {
-            return new ResponseEntity<>("New password cannot be empty or less than 8 characters", HttpStatus.BAD_REQUEST);
         }
         user.setEmail(userProfileRequest.getEmail());
         user.setFirstName(userProfileRequest.getFirstName());
